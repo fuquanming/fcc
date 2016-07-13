@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+   
+    <!--外部properties资源文件配置，如jdbc.properties-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" name="propertyConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/config/properties/jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!--转移系统所需的配置环境,不依赖数据库-->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" name="messageSource">
+       <property name="basenames">
+           <list>
+				<value>config/properties/system</value>
+          </list>
+        </property>
+    </bean>
+	
+    <bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource" name="dataSource">
+		<property name="driver">
+			<value>${database.driver}</value>
+		</property>
+		<property name="driverUrl">
+			<value>${database.url}</value>
+		</property>
+		<property name="user">
+			<value>${database.user}</value>
+		</property>
+		<property name="password">
+			<value>${database.password}</value>
+		</property>
+		<property name="alias">
+			<value>MySql</value>
+		</property>
+		<property name="prototypeCount">
+			<value>5</value>
+		</property>
+		<property name="trace">
+            <value>true</value>
+        </property>
+        <property name="verbose">
+            <value>true</value>
+        </property>
+        <property name="maximumActiveTime">
+			<value>3600000</value>
+		</property>
+		<property name="maximumConnectionCount">
+			<value>${database.maximumConnectionCount}</value>
+		</property>
+		<property name="minimumConnectionCount">
+			<value>${database.minimumConnectionCount}</value>
+		</property>
+		<property name="simultaneousBuildThrottle">
+			<value>20</value>
+		</property>
+		<property name="houseKeepingTestSql">
+			<value>select 1 from dual</value>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" name="sessionFactory">
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.connection.provider_class">org.hibernate.connection.ProxoolConnectionProvider</prop>
+				<prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
+				<prop key="hibernate.cache.provider_class">com.googlecode.hibernate.memcached.MemcachedCacheProvider</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${database.memcached.isopen}</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<!-- 设置二级缓存的前缀名称 -->
+				<prop key="hibernate.cache.region_prefix">${database.memcached.prefix}</prop>
+				<!-- 是否使用结构化的方式缓存对象   -->
+				<prop key="hibernate.cache.use_structured_entries">true</prop>
+				
+				<!-- 设置memcached缓存服务器的端口 -->
+				<prop key="hibernate.memcached.servers">${database.memcached}</prop>
+				<!-- 设置memcached缓存300秒 -->
+				<prop key="hibernate.memcached.cacheTimeSeconds">${database.memcached.cache.time}</prop>
+				<prop key="hibernate.jdbc.fetch_size">50</prop>
+				<prop key="hibernate.jdbc.batch_size">30</prop>
+				<prop key="hibernate.use_outer_join">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.proxool.pool_alias">MySql</prop>
+				<prop key="hibernate.hbm2ddl.auto">none</prop>
+			</props>
+		</property>
+		<property name="eventListeners">
+			<map>
+				<entry key="merge">
+					<bean class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener" />
+				</entry>
+			</map>
+		</property>
+		<!--hibernate O/R mapping文件位置-->
+		<property name="packagesToScan">
+			<list>
+				<value>com.**.pojo</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" name="jdbcTemplate">
+		<property name="dataSource">
+			<ref local="dataSource" />
+		</property>
+	</bean>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate" name="hibernateTemplate">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="hibernateDao" class="com.besprout.qis.dao.HibernateDao" name="hibernateDao">
+		<property name="hibernateTemplate">
+			<ref local="hibernateTemplate"/>
+		</property>
+	</bean>
+
+	<!-- hibernate 事物管理器  hibernate专用-->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager" name="transactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	
+	<context:component-scan base-package="com.besprout.*" />
+	
+	<bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor" name="transactionInterceptor">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="get*">readOnly</prop>
+				<prop key="query*">readOnly</prop>
+				<prop key="find*">readOnly</prop>
+				<prop key="login*">PROPAGATION_REQUIRED</prop>
+				<prop key="logout*">PROPAGATION_REQUIRED</prop>
+				<prop key="generate*">PROPAGATION_REQUIRED</prop>
+				<prop key="add*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="use*">PROPAGATION_REQUIRED</prop>
+				<prop key="exchange*">PROPAGATION_REQUIRED</prop>
+				<prop key="request*">PROPAGATION_REQUIRED</prop>
+				<prop key="recommend*">PROPAGATION_REQUIRED</prop>
+				<prop key="normal*">PROPAGATION_REQUIRED</prop>
+				<prop key="do*">PROPAGATION_REQUIRED</prop>
+				<prop key="send*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate" name="restTemplate"> 
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="memcachedFactory"
+		class="com.besprout.qis.bean.memcached.MemcachedFactory"
+		name="memcachedFactory">
+		  <constructor-arg name="url" value="${database.memcached}"  />
+		  <constructor-arg name="prefix" value="${database.memcached.prefix}" />
+		  <constructor-arg name="isOpen" value="${database.memcached.isopen}" />
+	</bean>
+
+	<!-- coupon 推送   -->
+	<bean id="couponTask" class="com.besprout.qis.task.CouponTask" name="couponTask"/>
+	<bean id="pushCouponJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="pushCouponJob">
+		<property name="targetObject">
+			<ref bean="couponTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+    <!-- 每5分钟一次-->
+	 <bean id="couponTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="couponTrigger">
+		<property name="jobDetail">
+			<ref bean="pushCouponJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0/5 * ? * *</value> 
+		</property>
+	</bean> 
+	
+	<!-- 每个品牌默认店铺的store loyalty user和app store follower变化初始化数据 -->
+	<bean id="storeFollowersAndLoyaltyUserTask" class="com.besprout.qis.task.StoreFollowersAndLoyaltyUserTask" name="storeFollowersAndLoyaltyUserTask"/>
+	<bean id="storeFollowersAndLoyaltyUserJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="storeFollowersAndLoyaltyUserJob">
+		<property name="targetObject">
+			<ref bean="storeFollowersAndLoyaltyUserTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+	<!-- 每天凌晨0点执行一次-->
+	<bean id="storeFollowersAndLoyaltyUserTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="storeFollowersAndLoyaltyUserTrigger">
+		<property name="jobDetail">
+			<ref bean="storeFollowersAndLoyaltyUserJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0 0 * * ?</value> 
+		</property>
+	</bean> 
+	
+	<!-- 每日订单统计 -->
+	<bean id="orderDailyReportTask" class="com.besprout.qis.task.OrderDailyReportTask" name="orderDailyReportTask"/>
+	<bean id="orderDailyReportJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="orderDailyReportJob">
+		<property name="targetObject">
+			<ref bean="orderDailyReportTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+	<!-- 每天凌晨5点执行一次-->
+	<bean id="orderDailyReportTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="orderDailyReportTrigger">
+		<property name="jobDetail">
+			<ref bean="orderDailyReportJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0 5 * * ?</value> 
+		</property>
+	</bean> 
+	
+	<!-- 每月订单统计 -->
+	<bean id="orderMonthlyReportTask" class="com.besprout.qis.task.OrderMonthlyReportTask" name="orderMonthlyReportTask"/>
+	<bean id="orderMonthlyReportJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="orderMonthlyReportJob">
+		<property name="targetObject">
+			<ref bean="orderMonthlyReportTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+	<!-- 每月1号凌晨6点执行一次-->
+	<bean id="orderMonthlyReportTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="orderMonthlyReportTrigger">
+		<property name="jobDetail">
+			<ref bean="orderMonthlyReportJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0 6 1 * ?</value> 
+		</property>
+	</bean>
+	
+	<!-- 发送 SMS Message -->
+	<bean id="smsMessageTask" class="com.besprout.qis.task.SmsMessageTask" name="smsMessageTask"/>
+	<bean id="smsMessageJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="smsMessageJob">
+		<property name="targetObject">
+			<ref bean="smsMessageTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+    <!-- 每30分钟一次-->
+	 <bean id="smsMessageTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="smsMessageTrigger">
+		<property name="jobDetail">
+			<ref bean="smsMessageJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0/30 0-23 ? * *</value> 
+		</property>
+	</bean> 
+	
+	<!-- 发送 每周报表 -->
+	<bean id="weekReportTask" class="com.besprout.qis.task.WeekReportTask" name="weekReportTask"/>
+	<bean id="weekReportJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="weekReportJob">
+		<property name="targetObject">
+			<ref bean="weekReportTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+    <!-- 每周星期一 13点触发-->
+	 <bean id="weekReportTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="weekReportTrigger">
+		<property name="jobDetail">
+			<ref bean="weekReportJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0 13 * * ?</value> 
+		</property>
+	</bean> 
+	
+	
+	<!-- 发送 每月报表 -->
+	<bean id="monthlyReportTask" class="com.besprout.qis.task.MonthlyReportTask" name="monthlyReportTask"/>
+	<bean id="monthlyReportJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="monthlyReportJob">
+		<property name="targetObject">
+			<ref bean="monthlyReportTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+    <!-- 每月1号 13点触发-->
+	 <bean id="monthlyReportTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="monthlyReportTrigger">
+		<property name="jobDetail">
+			<ref bean="monthlyReportJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0 13 1 * ?</value> 
+		</property>
+	</bean> 
+	
+	<!-- Memcached Order信息的移除及其订单信息的提醒和补发等一分钟任务   -->
+	<bean id="oneMinuteTask" class="com.besprout.qis.task.OneMinuteTask" name="oneMinuteTask"/>
+	<bean id="oneMinuteJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" name="oneMinuteJob">
+		<property name="targetObject">
+			<ref bean="oneMinuteTask" />
+		</property>
+		<property name="targetMethod">
+			<value>task</value>
+		</property>
+	</bean>
+    <!-- 每1分钟一次-->
+	 <bean id="oneMinuteTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean" name="oneMinuteTrigger">
+		<property name="jobDetail">
+			<ref bean="oneMinuteJob" />
+		</property>
+		<property name="cronExpression">
+			 <value>0 0/1 * ? * *</value> 
+		</property>
+	</bean> 
+	
+	<bean id="triggers" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" name="triggers">
+		<property name="triggers">
+			<list>
+				<ref local="couponTrigger" />
+				<ref local="storeFollowersAndLoyaltyUserTrigger" />
+				<ref local="orderDailyReportTrigger" />
+				<ref local="orderMonthlyReportTrigger" />
+				<ref local="smsMessageTrigger" />
+				<ref local="weekReportTrigger" />
+				<ref local="monthlyReportTrigger" />
+				<ref local="oneMinuteTrigger" />
+			</list>
+		</property>
+	</bean>
+	
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+     <tx:annotation-driven transaction-manager="transactionManager"  
+      proxy-target-class="true"/>   
+      
+      
+	<bean id="exceptionMail" class="org.springframework.mail.javamail.JavaMailSenderImpl" name="exceptionMail">
+		<!--定义发送邮件的邮件服务器-->
+        <property name="host" value="smtp.gmail.com"/>
+        <!--定义登入的邮件服务器的用户名和密码-->
+        <property name="username" value="fb.besprouttech@gmail.com"/>
+        <property name="password" value="besprout2011"/>
+        <property name="port" value="587"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.timeout">250000</prop>
+            </props>
+        </property>
+	</bean>
+      
+</beans>
