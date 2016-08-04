@@ -40,7 +40,7 @@
 		
 		<!-- common projects -->
 		<fcc-commons.version>1.0-SNAPSHOT</fcc-commons.version>
-		<fcc-commons-config.version>1.2-SNAPSHOT</fcc-commons-config.version>
+		<fcc-commons-config.version>1.0-SNAPSHOT</fcc-commons-config.version>
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
 
