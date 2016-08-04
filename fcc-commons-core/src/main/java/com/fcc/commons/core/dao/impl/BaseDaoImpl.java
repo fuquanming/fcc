@@ -117,8 +117,7 @@ public abstract class BaseDaoImpl<T> extends SqlSessionDaoSupport implements Bas
 		
 		App app = new App();
 		app.toString();
-		app.toString();
-		app.toString();
+		App.main(null);
 		
 		String name = this.getClass().getName();
 		StringBuffer sb = new StringBuffer();
