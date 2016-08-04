@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fcc.commons.core.dao.BaseDao;
+import com.fcc.commons.fcc_commons.App;
 
 
 /**
@@ -113,6 +114,10 @@ public abstract class BaseDaoImpl<T> extends SqlSessionDaoSupport implements Bas
 	 * @return
 	 */
 	public String getStatement(String sqlId) {
+		
+		App app = new App();
+		app.toString();
+		
 		String name = this.getClass().getName();
 		StringBuffer sb = new StringBuffer();
 		sb.append(name).append(".").append(sqlId);
@@ -121,4 +126,7 @@ public abstract class BaseDaoImpl<T> extends SqlSessionDaoSupport implements Bas
 		return statement;
 	}
 
+	public static void main(String[] args) {
+		System.out.println("112");
+	}
 }
