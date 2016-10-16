@@ -11,12 +11,34 @@ public class RefusedException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * 异常信息
+	 */
+	private String msg;
+	/**
+	 * 异常代码
+	 */
+	private int code;
 
-	public RefusedException() {
+    public RefusedException() {
 		super("拒绝操作");
 	}
 	
 	public RefusedException(String message) {
 		super(message);
 	}
+	
+	public RefusedException(int code, String msgFormat, Object... args) {
+        super(String.format(msgFormat, args));
+        this.code = code;
+        this.msg = String.format(msgFormat, args);
+    }
+	
+	public String getMsg() {
+        return msg;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }
