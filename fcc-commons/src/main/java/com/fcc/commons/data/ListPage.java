@@ -5,6 +5,7 @@ import java.util.List;
  * 
  * 基于List的数据页对象
  */
+@SuppressWarnings("rawtypes")
 public class ListPage {
 
     public static final ListPage EMPTY_PAGE = new ListPage();
@@ -16,7 +17,7 @@ public class ListPage {
     //当前页页码
     private int currentPageNo;
     //当前页记录列表
-    private List<?> dataList;
+    private List dataList;
     //当前记录总数
     private int dataSize;
     
@@ -49,13 +50,13 @@ public class ListPage {
     /**
      * @return 返回 dataList。
      */
-    public List<?> getDataList() {
+    public List getDataList() {
         return dataList;
     }
     /**
      * @param dataList 要设置的 dataList。
      */
-    public void setDataList(List<?> dataList) {
+    public void setDataList(List dataList) {
         this.dataList = dataList;
         if (dataList != null) {
         	this.dataSize = dataList.size();
