@@ -9,11 +9,9 @@
 		<relativePath>../fcc-commons-parent</relativePath>
 	</parent>
 
-	<groupId>com.fcc.commons</groupId>
 	<artifactId>fcc-commons</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
 	<name>fcc-commons</name>
 	<url>http://maven.apache.org</url>
 
