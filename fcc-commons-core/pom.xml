@@ -101,6 +101,25 @@
 		</dependency>
 		<!-- Spring Dependency End -->
 
+		<!-- hibernate begin -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-proxool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.common</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+		</dependency>
+		<!-- hibernate end -->
+
 		<!-- MyBatis Dependency Begin -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
