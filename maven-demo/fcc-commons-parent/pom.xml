@@ -1,72 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.fcc.commons</groupId>
-  <artifactId>fcc-commons-parent</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+	<groupId>com.fcc.commons</groupId>
+	<artifactId>fcc-commons-parent</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-  <name>fcc-commons-parent</name>
-  <url>http://maven.apache.org</url>
+	<name>fcc-commons-parent</name>
+	<url>http://maven.apache.org</url>
 
-  <profiles>
-  	<profile>
-		<id>dev</id>
-		<properties>
-			<env>development</env>
-		</properties>
-		<!-- 默认激活 -->
-    	<activation>
-      		<activeByDefault>true</activeByDefault>
-    	</activation>
-	</profile>
-  	<profile> 
-    	<id>prod</id> <!-- ID 标识符 -->
-    	<properties>
-      		<env>production</env> <!-- properties 定义 key-value, 这里 key 是 env, value 是 PROD -->
-    	</properties>
-  	</profile>
-  	<profile> <!-- 可以通过 -P ID 来激活 -->
-    	<id>test</id> <!-- ID 标识符 -->
-    	<properties>
-      		<env>test</env> <!-- properties 定义 key-value, 这里 key 是 env, value 是 TEST -->
-    	</properties>
-  	</profile>
-  </profiles>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>development</env>
+			</properties>
+			<!-- 默认激活 -->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>prod</id> <!-- ID 标识符 -->
+			<properties>
+				<env>production</env> <!-- properties 定义 key-value, 这里 key 是 env, value 是 PROD -->
+			</properties>
+		</profile>
+		<profile> <!-- 可以通过 -P ID 来激活 -->
+			<id>test</id> <!-- ID 标识符 -->
+			<properties>
+				<env>test</env> <!-- properties 定义 key-value, 这里 key 是 env, value 是 TEST -->
+			</properties>
+		</profile>
+	</profiles>
 
-  <properties>
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<!-- common projects -->
 		<fcc-commons.version>1.0-SNAPSHOT</fcc-commons.version>
 		<fcc-commons-config.version>1.1-SNAPSHOT</fcc-commons-config.version>
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
+		<fcc-web.version>1.0-SNAPSHOT</fcc-web.version>
 
 		<fcc-demo.version>1.0-SNAPSHOT</fcc-demo.version>
-		
+
 		<!-- facade projects -->
 		<fcc-facade-user.version>1.0-SNAPSHOT</fcc-facade-user.version>
-		
+
 		<!-- service projects -->
 		<fcc-service-user.version>1.0-SNAPSHOT</fcc-service-user.version>
-		
+
 		<!-- web projects -->
 		<fcc-web-boss.version>1.0-SNAPSHOT</fcc-web-boss.version>
-		
+
 		<!-- app projects -->
-		
+
 		<!-- timer projects -->
 
 		<!-- frameworks -->
-		<org.springframework.version>3.2.4.RELEASE</org.springframework.version>
-		<org.apache.struts.version>2.3.15.1</org.apache.struts.version>
-        
-        <com.google.zxing.version>3.3.0</com.google.zxing.version>
+		<org.springframework.version>4.3.3.RELEASE</org.springframework.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
+		<hibernate-common-annotations.version>4.0.5.Final</hibernate-common-annotations.version>
+
+		<com.google.zxing.version>3.3.0</com.google.zxing.version>
+
+		<!-- apache.shiro -->
+		<shiro.version>1.3.2</shiro.version>
+		<!-- swagger api 接口 -->
+		<swagger.version>2.6.0</swagger.version>
+		<fastjson.version>1.2.17</fastjson.version>
+		<!-- poi -->
+		<org.apache.poi.version>3.9</org.apache.poi.version>
 	</properties>
 
-  	<dependencies>
+	<dependencies>
 		<!-- Test Dependency Begin -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -75,7 +86,7 @@
 		</dependency>
 		<!-- Test Dependency End -->
 	</dependencies>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- Common Dependency Begin -->
@@ -260,41 +271,71 @@
 				<version>2.9.0</version>
 			</dependency>
 			<dependency>
-			  <groupId>com.alisoft.xplatform</groupId>
-			  <artifactId>alisoft-xplatform-asf-cache</artifactId>
-			  <version>2.5.1</version>
+				<groupId>com.alisoft.xplatform</groupId>
+				<artifactId>alisoft-xplatform-asf-cache</artifactId>
+				<version>2.5.1</version>
 			</dependency>
 			<!-- Common Dependency End -->
 
 			<!-- 二维码、条形码 begin -->
 			<dependency>
-			    <groupId>com.google.zxing</groupId>
-			    <artifactId>core</artifactId>
-			    <version>${com.google.zxing.version}</version>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>core</artifactId>
+				<version>${com.google.zxing.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>com.google.zxing</groupId>
-			    <artifactId>javase</artifactId>
-			    <version>${com.google.zxing.version}</version>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>javase</artifactId>
+				<version>${com.google.zxing.version}</version>
 			</dependency>
-            <!-- 二维码、条形码 begin -->
-            
-            <!-- 缩略图 begin -->
-            <dependency>
-			    <groupId>net.coobird</groupId>
-			    <artifactId>thumbnailator</artifactId>
-			    <version>0.4.8</version>
+			<!-- 二维码、条形码 begin -->
+
+			<!-- 缩略图 begin -->
+			<dependency>
+				<groupId>net.coobird</groupId>
+				<artifactId>thumbnailator</artifactId>
+				<version>0.4.8</version>
 			</dependency>
-            <!-- 缩略图 end -->
-            <!-- zip压缩、解压 begin -->
-            <dependency>
-			    <groupId>org.apache.ant</groupId>
-			    <artifactId>ant</artifactId>
-			    <version>1.9.7</version>
+			<!-- 缩略图 end -->
+			<!-- zip压缩、解压 begin -->
+			<dependency>
+				<groupId>org.apache.ant</groupId>
+				<artifactId>ant</artifactId>
+				<version>1.9.7</version>
 			</dependency>
 			<!-- zip压缩、解压 end -->
-            
-			<!-- Zookeeper 用于分布式服务管�?-->
+			<!-- 验证码 begin -->
+			<dependency>
+				<groupId>com.octo.captcha</groupId>
+				<artifactId>jcaptcha-all</artifactId>
+				<version>1.0-RC6</version>
+			</dependency>
+			<!-- 验证码 end -->
+
+			<!-- excel begin -->
+			<dependency>
+				<groupId>net.sourceforge.jexcelapi</groupId>
+				<artifactId>jxl</artifactId>
+				<version>2.6.12</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>${org.apache.poi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${org.apache.poi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml-schemas</artifactId>
+				<version>${org.apache.poi.version}</version>
+			</dependency>
+			<!-- excel end -->
+
+			<!-- Zookeeper 用于分布式服务管�? -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>
 				<artifactId>zookeeper</artifactId>
@@ -376,11 +417,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-struts</artifactId>
-				<version>${org.springframework.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
 				<version>${org.springframework.version}</version>
 				<scope>test</scope>
@@ -407,6 +443,31 @@
 			</dependency>
 			<!-- Spring Dependency End -->
 
+			<!-- hibernate begin -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-ehcache</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-proxool</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate.common</groupId>
+				<artifactId>hibernate-commons-annotations</artifactId>
+				<version>${hibernate-common-annotations.version}</version>
+			</dependency>
+			<!-- <dependency> <groupId>org.hibernate.javax.persistence</groupId> <artifactId>hibernate-jpa-2.0-api</artifactId> 
+				<version>${hibernate-jpa.version}</version> </dependency> -->
+			<!-- hibernate end -->
+
 			<!-- MyBatis Dependency Begin -->
 			<dependency>
 				<groupId>org.mybatis</groupId>
@@ -428,35 +489,40 @@
 			</dependency>
 			<!-- Mysql Driver End -->
 
-			<!-- Struts2 Dependency Begin -->
+			<!-- apache shiro begin -->
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-json-plugin</artifactId>
-				<version>${org.apache.struts.version}</version>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-convention-plugin</artifactId>
-				<version>${org.apache.struts.version}</version>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-web</artifactId>
+				<version>${shiro.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-core</artifactId>
-				<version>${org.apache.struts.version}</version>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-aspectj</artifactId>
+				<version>${shiro.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts</groupId>
-				<artifactId>struts2-spring-plugin</artifactId>
-				<version>${org.apache.struts.version}</version>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-ehcache</artifactId>
+				<version>${shiro.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.struts.xwork</groupId>
-				<artifactId>xwork-core</artifactId>
-				<version>${org.apache.struts.version}</version>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-spring</artifactId>
+				<version>${shiro.version}</version>
 			</dependency>
-			<!-- Struts2 Dependency End -->
+			<!-- apache shiro end -->
 
 			<!-- Others Begin -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>google.code</groupId>
 				<artifactId>kaptcha</artifactId>
@@ -507,6 +573,40 @@
 				<artifactId>activemq-pool</artifactId>
 				<version>5.8.0</version>
 			</dependency>
+			<!-- 显示sql语句内参数 https://code.google.com/archive/p/rapid-framework/wikis/log4jdbc.wiki -->
+			<dependency>
+				<groupId>net.sf.log4jdbc</groupId>
+				<artifactId>log4jdbc4</artifactId>
+				<version>1.2.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>2.7.4</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.7.4</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.7.4</version>
+			</dependency>
+
+			<!-- el 表达式 -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>taglibs</groupId>
+				<artifactId>standard</artifactId>
+				<version>1.1.2</version>
+			</dependency>
 			<!-- Others End -->
 
 
@@ -516,11 +616,21 @@
 				<version>1.7.3</version>
 			</dependency>
 
-
+			<!-- swagger api -->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
-	
+
+
 	<build>
 		<plugins>
 			<plugin>
@@ -591,9 +701,9 @@
 					</execution>
 				</executions>
 			</plugin>
-					
-		    
-		    
+
+
+
 		</plugins>
 	</build>
 </project>
