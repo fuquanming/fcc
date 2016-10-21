@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StopWatch;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,10 +33,7 @@ public class LogInterceptor implements HandlerInterceptor {
 	@Autowired
 	private RequestIpService requestIpService;
 	
-	private ThreadLocal<StopWatch> threadLocal = new ThreadLocal<StopWatch>();
-	
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
-	    System.out.println("afterCompletion");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -94,17 +90,6 @@ public class LogInterceptor implements HandlerInterceptor {
 	}
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-	    
-	    System.out.println("preHandle" + this.toString() + ";" + Thread.currentThread().getId());
-	    StopWatch stopWatch = threadLocal.get();
-	    if (stopWatch == null) {
-	        StringBuilder sb = new StringBuilder();
-	        sb.append(request.getRequestURL()).append(System.currentTimeMillis());
-	        stopWatch = new StopWatch(sb.toString());
-	        stopWatch.start();
-	        threadLocal.set(stopWatch);
-	    }
-	    
 		return true;
 	}
 }
