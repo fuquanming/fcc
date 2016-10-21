@@ -8,14 +8,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StopWatch;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.web.common.Constanst;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.cache.QueueUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
@@ -29,18 +30,19 @@ import com.fcc.web.sys.model.SysUser;
  * @version v1.0
  */
 public class LogInterceptor implements HandlerInterceptor {
-	private static final Logger logger = Logger.getLogger(LogInterceptor.class);
-	@Autowired
-	private BaseService baseService;
+	private Logger logger = Logger.getLogger(LogInterceptor.class);
 	@Autowired
 	private RequestIpService requestIpService;
 	
+	private ThreadLocal<StopWatch> threadLocal = new ThreadLocal<StopWatch>();
+	
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
-
+	    System.out.println("afterCompletion");
 	}
 
 	@SuppressWarnings("unchecked")
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
+	    System.out.println("postHandle");
 		if (modelAndView == null) return;
 		String messageKey = "message";
 		Message message = (Message) modelAndView.getModelMap().get(messageKey);
@@ -84,7 +86,7 @@ public class LogInterceptor implements HandlerInterceptor {
 			sysLog.setEventParam(sbStr);
 			sysLog.setEventResult(status);
 			sysLog.setLogTime(new Date());
-			baseService.create(sysLog);
+			QueueUtil.getCreateQueue().offer(sysLog);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
@@ -92,6 +94,17 @@ public class LogInterceptor implements HandlerInterceptor {
 	}
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+	    
+	    System.out.println("preHandle" + this.toString() + ";" + Thread.currentThread().getId());
+	    StopWatch stopWatch = threadLocal.get();
+	    if (stopWatch == null) {
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(request.getRequestURL()).append(System.currentTimeMillis());
+	        stopWatch = new StopWatch(sb.toString());
+	        stopWatch.start();
+	        threadLocal.set(stopWatch);
+	    }
+	    
 		return true;
 	}
 }
