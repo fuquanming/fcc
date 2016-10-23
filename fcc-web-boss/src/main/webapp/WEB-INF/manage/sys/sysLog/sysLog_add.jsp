@@ -1,4 +1,4 @@
-<%@page import="com.fcc.app.sys.model.*" %>
+<%@page import="com.fcc.web.sys.model.*" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>

@@ -308,6 +308,7 @@ CREATE TABLE sys_rbac_user (
   USER_ID varchar(32) NOT NULL,
   USER_NAME varchar(255) DEFAULT NULL,
   USER_PASS varchar(255) DEFAULT NULL,
+  USER_SALT varchar(255) DEFAULT NULL,
   USER_CODE varchar(255) DEFAULT NULL,
   USER_DEPT_ID varchar(255) DEFAULT NULL,
   USER_DUTY varchar(255) DEFAULT NULL,
@@ -348,3 +349,19 @@ CREATE TABLE sys_rbac_usertorole (
 -- Records of sys_rbac_usertorole
 -- ----------------------------
 INSERT INTO sys_rbac_usertorole VALUES ('admin', 'AXQcpi7n3kW');
+
+
+create table SYS_RBAC_USER_ONLINE(
+  ID         varchar(50) not null,
+  USER_ID    varchar(32),
+  USER_NAME    varchar(100),
+  HOST  varchar(100),
+  SYSTEM_HOST  varchar(100),
+  USER_AGENT varchar(200),
+  STATUS  varchar(50),
+  START_TIMESTAMP    DATETIME default 0 ,
+  LAST_ACCESS_TIME    DATETIME default 0 ,
+  TIMEOUT    bigint ,
+  SESSION mediumtext,
+  constraint PK_SYS_RBAC_USER_ONLINE primary key(ID)
+) charset=utf8 ENGINE=InnoDB;;

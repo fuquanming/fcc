@@ -66,6 +66,12 @@ public interface SysUserDao {
     public List<SysUser> getUserByRoleIds(List<String> roleIdList);
     
     /**
+     * 
+     * @param userName
+     * @return
+     */
+    public SysUser findByUsername(String userName);
+    /**
      * 分页查询
      * @param pageNo
      * @param pageSize

@@ -149,7 +149,7 @@ public class CacheUtil {
 		}
 		logger.info("系统任务停止完成。。。");
 		
-		while (QueueUtil.getQueue().size() != 0) {
+		while (QueueUtil.getCreateQueue().size() != 0) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

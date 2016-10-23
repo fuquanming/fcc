@@ -55,7 +55,10 @@ public class RoleModuleRightDaoImpl implements RoleModuleRightDao {
     
     @Override
     public Integer deleteByNoModuleId(List<String> moduleIdList, String roleId) {
-        return baseDao.executeHql("delete RoleModuleRight where moduleId not in(?) and roleId=?", moduleIdList, roleId);
+        Map<String, Object> param = new HashMap<String, Object>(2);
+        param.put("moduleId", moduleIdList);
+        param.put("roleId", roleId);
+        return baseDao.executeHql("delete RoleModuleRight where moduleId not in(:moduleId) and roleId=:roleId", param);
     }
     
     @Override

@@ -2,6 +2,7 @@ package com.fcc.web.sys.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
@@ -90,6 +91,19 @@ public interface SysUserService {
      */
     public List<SysUser> getUserByRoleIds(List<String> roleIdList);
 
+    /**
+     * 
+     * @param userName
+     * @return
+     */
+    public SysUser findByUsername(String userName);
+
+    /**
+     * 查找用户角色ID
+     * @param user
+     * @return
+     */
+    public Set<String> findStringRoles(SysUser user);
     /**
      * 分页查询用户
      * @param pageNo

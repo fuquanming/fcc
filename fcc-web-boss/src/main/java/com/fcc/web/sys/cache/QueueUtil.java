@@ -12,10 +12,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class QueueUtil {
 	
-	private static Queue<Object> queue = new ConcurrentLinkedQueue<Object>();
+	private static Queue<Object> createQueue = new ConcurrentLinkedQueue<Object>();
 
-	public static Queue<Object> getQueue() {
-		return queue;
+	public static Queue<Object> getCreateQueue() {
+		return createQueue;
 	}
 
 }

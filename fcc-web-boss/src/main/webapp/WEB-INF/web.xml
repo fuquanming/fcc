@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_1476766818164">
     <description>springMvc+hibernate4+easyui</description>
@@ -49,6 +49,11 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+    <filter-mapping>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- 设置servlet编码开始 -->
     <filter>
         <filter-name>Set Character Encoding</filter-name>
@@ -69,10 +74,26 @@
     </filter-mapping>
     <!-- 设置servlet编码结束 -->
     
-    <filter-mapping>
-        <filter-name>openSessionInViewFilter</filter-name>
-        <url-pattern>*.do</url-pattern>
-    </filter-mapping>
+    <!-- shiro 安全过滤器 -->
+    <!-- The filter-name matches name of a 'shiroFilter' bean inside applicationContext.xml -->
+    <!-- <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter> -->
+
+    <!-- Make sure any request you want accessible to Shiro is filtered. /* catches all -->
+    <!-- requests.  Usually this filter mapping is defined first (before all others) to -->
+    <!-- ensure that Shiro works in subsequent filters in the filter chain:             -->
+    <!-- <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping> -->
     
     <listener>
         <description>spring监听器</description>
@@ -106,19 +127,76 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+	<!-- swagger begin -->
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/swagger-ui.html</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/webjars/**</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/swagger-resources</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/swagger-resources/configuration/security</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/swagger-resources/configuration/ui</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>springMvc</servlet-name>
+        <url-pattern>/v2/api-docs</url-pattern>
+    </servlet-mapping>
+    <!-- swagger end -->
+    
     <!-- 验证码 -->
     <servlet>
         <servlet-name>RandCodeServlet</servlet-name>
         <servlet-class>com.fcc.commons.web.servlet.RandCodeServlet</servlet-class>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>springMvc</servlet-name>
-        <url-pattern>*.do</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RandCodeServlet</servlet-name>
         <url-pattern>/randCode</url-pattern>
+    </servlet-mapping>
+    
+    
+    <!--druid 监控-->
+    <filter>
+        <filter-name>DruidWebStatFilter</filter-name>
+        <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>/css/*,/images/*,/js/*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>principalSessionName</param-name>
+            <param-value>username</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>DruidWebStatFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- druid监控 -->
+    <servlet>
+        <servlet-name>DruidStatView</servlet-name>
+        <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DruidStatView</servlet-name>
+        <url-pattern>/manage/monitor/druid/*</url-pattern>
     </servlet-mapping>
     
     <!-- 

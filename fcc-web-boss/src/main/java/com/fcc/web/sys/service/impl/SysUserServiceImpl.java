@@ -2,6 +2,7 @@ package com.fcc.web.sys.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -14,14 +15,19 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.web.sys.dao.RoleDao;
 import com.fcc.web.sys.dao.SysUserDao;
+import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysUserService;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 /**
  * 
  * @author 傅泉明
  *
  * 2010-7-23
  */
+@Transactional
 @Service
 public class SysUserServiceImpl implements SysUserService {
 	
@@ -34,7 +40,7 @@ public class SysUserServiceImpl implements SysUserService {
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void create(SysUser data, String[] roleIds) {
-		baseService.create(data);
+	    baseService.create(data);
 		createRole(data.getUserId(), roleIds);
 	}
 	
@@ -106,6 +112,27 @@ public class SysUserServiceImpl implements SysUserService {
 	@Transactional(readOnly = true)//只查事务申明
 	public List<SysUser> getUserByRoleIds(List<String> roleIdList) {
 		return sysUserDao.getUserByRoleIds(roleIdList);
+	}
+	
+	@Transactional(readOnly = true)//只查事务申明
+	@Override
+	public SysUser findByUsername(String userName) {
+	    return sysUserDao.findByUsername(userName);
+	}
+	
+	@Override
+	public Set<String> findStringRoles(SysUser user) {
+	    Set<String> roleIds = user.getRoleIds();
+	    if (roleIds == null) {
+	        Set<Role> roles = user.getRoles();
+	        roleIds = Sets.newHashSet(Collections2.transform(roles, new Function<Role, String>() {
+	            @Override
+	            public String apply(Role input) {
+	                return input.getRoleId();
+	            }
+	        }));
+	    }
+	    return roleIds;
 	}
 
 	@Transactional(readOnly = true)//只查事务申明
