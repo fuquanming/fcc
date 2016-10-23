@@ -44,9 +44,9 @@ import com.fcc.web.sys.service.RoleModuleRightService;
  */
 @Controller
 @RequestMapping("/manage/sys/module")
-public class ModuleAction extends AppWebController {
+public class ModuleController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(ModuleAction.class);
+	private static Logger logger = Logger.getLogger(ModuleController.class);
 	@Resource
 	private ModuleService moduleService;
 	@Resource

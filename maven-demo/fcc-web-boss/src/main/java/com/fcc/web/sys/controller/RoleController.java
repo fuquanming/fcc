@@ -43,9 +43,9 @@ import com.fcc.web.sys.service.SysUserService;
  */
 @Controller
 @RequestMapping("/manage/sys/role")
-public class RoleAction extends AppWebController {
+public class RoleController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(RoleAction.class);
+	private static Logger logger = Logger.getLogger(RoleController.class);
 	@Resource
 	private RoleService roleService;
 	@Resource

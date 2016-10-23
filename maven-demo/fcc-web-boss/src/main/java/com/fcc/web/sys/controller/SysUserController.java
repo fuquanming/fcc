@@ -50,9 +50,9 @@ import com.fcc.web.sys.view.SysUserView;
 @SuppressWarnings("unchecked")
 @Controller
 @RequestMapping("/manage/sys/user")
-public class SysUserAction extends AppWebController {
+public class SysUserController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(SysUserAction.class);
+	private static Logger logger = Logger.getLogger(SysUserController.class);
 	@Resource
     private BaseService baseService;
 	@Resource

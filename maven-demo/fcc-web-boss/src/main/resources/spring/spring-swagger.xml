@@ -8,13 +8,13 @@
     http://www.springframework.org/schema/context/spring-context.xsd
     http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
+    <!-- swagger api -->
     <!-- 扫描controller包 -->
     <context:component-scan base-package="com.fcc.**.controller" />
     
     <!-- 支持jackson转换 -->
     <!-- Standard xml based mvc config enable-matrix-variables="true" -->
-    <mvc:annotation-driven />
+    <mvc:annotation-driven enable-matrix-variables="true"/>
     
     <!-- Enables swgger ui-->
     <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
@@ -22,5 +22,4 @@
     
     <!-- Include a swagger configuration-->
     <bean class="com.fcc.commons.web.support.swagger.SwaggerConfig" />
-
 </beans>

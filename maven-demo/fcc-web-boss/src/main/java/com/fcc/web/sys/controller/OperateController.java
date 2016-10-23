@@ -29,9 +29,9 @@ import com.fcc.web.sys.service.OperateService;
  */
 @Controller
 @RequestMapping("/manage/sys/operate")
-public class OperateAction {
+public class OperateController {
 
-	private static Logger logger = Logger.getLogger(OperateAction.class);
+	private static Logger logger = Logger.getLogger(OperateController.class);
 	@Resource
 	private OperateService operateService;
 	

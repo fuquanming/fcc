@@ -2,7 +2,6 @@ package com.fcc.web.sys.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -15,24 +14,24 @@ import springfox.documentation.annotations.ApiIgnore;
 @Controller
 @RequestMapping("/manage/layout.do")
 @ApiIgnore
-public class LayoutAction {
+public class LayoutController {
 	
-	@RequestMapping(params = "north", method = RequestMethod.GET)
+	@RequestMapping(params = "north")
 	public String north() {
 		return "/WEB-INF/manage/layout/north";
 	}
 
-	@RequestMapping(params = "west", method = RequestMethod.GET)
+	@RequestMapping(params = "west")
 	public String west() {
 		return "/WEB-INF/manage/layout/west";
 	}
 
-	@RequestMapping(params = "center", method = RequestMethod.GET)
+	@RequestMapping(params = "center")
 	public String center() {
 		return "/WEB-INF/manage/layout/center";
 	}
 
-	@RequestMapping(params = "south", method = RequestMethod.GET)
+	@RequestMapping(params = "south")
 	public String south() {
 		return "/WEB-INF/manage/layout/south";
 	}
@@ -42,7 +41,7 @@ public class LayoutAction {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "home", method = RequestMethod.GET)
+	@RequestMapping(params = "home")
 	public String home() {
 		return "/WEB-INF/manage/layout/home";
 	}

@@ -61,9 +61,9 @@ import com.fcc.web.sys.service.SysLockService;
  */
 @Controller
 @RequestMapping(value={"/manage/sys/sysLock"} )
-public class SysLockAction {
+public class SysLockController {
 	
-	private static Logger logger = Logger.getLogger(SysLockAction.class);
+	private static Logger logger = Logger.getLogger(SysLockController.class);
 	
 	private static String exportDataPath;
 	private static String importDataPath;
@@ -83,7 +83,7 @@ public class SysLockAction {
 	@Resource
 	private SysLockService sysLockService;
 	
-	public SysLockAction() {
+	public SysLockController() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CacheUtil.realPath).append(Constanst.EXPORT_DATA_FILENAME)
 		.append(File.separatorChar).append("sysLockExport").append(File.separatorChar);

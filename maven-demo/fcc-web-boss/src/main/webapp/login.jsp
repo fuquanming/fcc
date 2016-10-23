@@ -45,7 +45,7 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 <body>
 	<div class="center" align="center">
 	<div id="login" align="center" >
-        <form action="/admin/login" method="post" name="loginInputForm" id="loginInputForm">
+        <form action="/login.do" method="post" name="loginInputForm" id="loginInputForm">
         <div id="loginTitle" align="center" style="">${APP_NAME}</div>
 	    <table>
 	    	<tr>

@@ -1,6 +1,5 @@
 package com.fcc.web.sys.tag;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
@@ -50,6 +49,9 @@ public class RbacPermissionTag extends BodyTagSupport {
 	                .getBean(RbacPermissionService.class);
 	    }
 		SysUser user = CacheUtil.getSysUser((HttpServletRequest)pageContext.getRequest());
+		if (moduleId == null || "".equals(moduleId)) {
+		    moduleId = (String) pageContext.getRequest().getAttribute("rightModuleId");
+		}
 		if (rbacPermissionService.checkPermissionCache(user.getRoles(), moduleId, operateId)) {
 			return EVAL_BODY_INCLUDE;
 		}

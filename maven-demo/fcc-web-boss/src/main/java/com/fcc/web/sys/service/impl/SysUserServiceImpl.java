@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.dao.RoleDao;
 import com.fcc.web.sys.dao.SysUserDao;
 import com.fcc.web.sys.model.Role;
@@ -85,10 +86,10 @@ public class SysUserServiceImpl implements SysUserService {
 	public SysUser getLoninUser(String userId, String password) throws RefusedException {
 		SysUser sysUser = (SysUser) baseService.get(SysUser.class, userId);
 		if (sysUser == null) {
-			throw new RefusedException("用户不存在！");
+			throw new RefusedException(Constants.StatusCode.Login.errorUserName);
 		} else {
 			if (!sysUser.getPassword().equals(password)) {
-				throw new RefusedException("用户或密码错误！");
+				throw new RefusedException(Constants.StatusCode.Login.errorPassword);
 			}
 			sysUser.getRoles().size();
 		}
