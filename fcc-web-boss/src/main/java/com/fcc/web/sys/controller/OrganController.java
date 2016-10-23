@@ -42,9 +42,9 @@ import com.fcc.web.sys.util.OrganUtil;
  */
 @Controller
 @RequestMapping("/manage/sys/organ")
-public class OrganAction extends AppWebController {
+public class OrganController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(OrganAction.class);
+	private static Logger logger = Logger.getLogger(OrganController.class);
 	@Resource
 	private OrganizationService organService;
 	@Resource

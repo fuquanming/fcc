@@ -22,9 +22,9 @@ import com.fcc.web.sys.service.SysUserService;
  */
 @Controller
 @RequestMapping("/manage/sys/userPassword")
-public class UserPasswordAction extends AppWebController {
+public class UserPasswordController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(UserPasswordAction.class);
+	private static Logger logger = Logger.getLogger(UserPasswordController.class);
 	@Resource
 	private SysUserService sysUserService;
 	

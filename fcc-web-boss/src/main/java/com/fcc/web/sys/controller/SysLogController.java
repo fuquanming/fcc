@@ -64,9 +64,9 @@ import com.fcc.web.sys.service.SysLogService;
  */
 @Controller
 @RequestMapping(value={"/manage/sys/sysLog"} )
-public class SysLogAction extends AppWebController {
+public class SysLogController extends AppWebController {
 	
-	private static Logger logger = Logger.getLogger(SysLogAction.class);
+	private static Logger logger = Logger.getLogger(SysLogController.class);
 	
 	private static String exportDataPath;
 	private static String importDataPath;
@@ -86,7 +86,7 @@ public class SysLogAction extends AppWebController {
 	@Resource
 	private SysLogService sysLogService;
 	
-	public SysLogAction() {
+	public SysLogController() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CacheUtil.realPath).append(Constanst.EXPORT_DATA_FILENAME)
 		.append(File.separatorChar).append("sysLogExport").append(File.separatorChar);

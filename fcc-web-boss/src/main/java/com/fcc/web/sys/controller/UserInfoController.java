@@ -25,9 +25,9 @@ import com.fcc.web.sys.service.SysUserService;
  */
 @Controller
 @RequestMapping("/manage/sys/userInfo")
-public class UserInfoAction extends AppWebController {
+public class UserInfoController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(UserInfoAction.class);
+	private static Logger logger = Logger.getLogger(UserInfoController.class);
 	@Autowired
 	private SysUserService sysUserService;
 	

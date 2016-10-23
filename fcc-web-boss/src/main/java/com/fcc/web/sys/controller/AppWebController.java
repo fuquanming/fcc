@@ -16,7 +16,11 @@ public class AppWebController extends BaseController {
     
     /** 是否是Admin用户 */
     public boolean isAdmin(HttpServletRequest request) {
-        String organId = getSysUser(request).getDept();
+        SysUser sysUser = getSysUser(request);
+        if (sysUser == null) {
+            return false;
+        }
+        String organId = sysUser.getDept();
         if (StringUtils.isEmpty(organId)) {// 管理员无组织机构
             return true;
         }

@@ -81,11 +81,11 @@ public class Constanst {
 	/** 自定义访问操作 */
 	public interface OPERATE {
 		/** 登陆 */
-		public final static String LOGIN = "login";
+		public String LOGIN = "login";
 		/** 退出 */
-		public final static String LOGOUT = "logout";
+		public String LOGOUT = "logout";
 		
-		public static class Text {
+		public class Text {
 			public static Map<String, String> TEXT_MAP = new HashMap<String, String>();
 			static {
 				TEXT_MAP.put(LOGIN, "登录");
