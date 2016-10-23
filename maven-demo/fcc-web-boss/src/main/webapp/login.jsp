@@ -45,12 +45,12 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 <body>
 	<div class="center" align="center">
 	<div id="login" align="center" >
-        <form action="login.do?login" method="post" name="loginInputForm" id="loginInputForm">
+        <form action="/admin/login" method="post" name="loginInputForm" id="loginInputForm">
         <div id="loginTitle" align="center" style="">${APP_NAME}</div>
 	    <table>
 	    	<tr>
 	    		<td><span>用户名:</span></td>
-	    		<td colspan="2" align="left"><input name="name" type="text" class="easyui-validatebox" required="true" value="" size="20" maxlength="50"/></td>
+	    		<td colspan="2" align="left"><input name="username" type="text" class="easyui-validatebox" required="true" value="" size="20" maxlength="50"/></td>
 	    	</tr>
 	    	<tr>
 	    		<td><span>密&nbsp;&nbsp;&nbsp;&nbsp;码:</span></td>

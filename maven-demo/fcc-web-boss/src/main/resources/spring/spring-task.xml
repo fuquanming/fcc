@@ -25,10 +25,15 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<!-- 每隔1秒取队列数据保存 
+    <!-- 如下实现是通过线程池执行的 -->
+    <task:executor id="executor" pool-size="10"/>
+    <task:scheduler id="scheduler" pool-size="10"/>
+    <task:annotation-driven scheduler="scheduler" executor="executor" proxy-target-class="true"/>
+
+	<!-- 每隔5秒取队列数据保存 -->
 	<task:scheduled-tasks>
-		<task:scheduled ref="appTaskService"
-			method="executeQueue" cron="0/1 * * * * ?" />
+		<task:scheduled ref="taskServiceImpl"
+			method="executeQueue" cron="0/5 * * * * ?" />
 	</task:scheduled-tasks>
-	-->
+	
 </beans>

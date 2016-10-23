@@ -98,6 +98,16 @@ public class SysUserDaoImpl implements SysUserDao {
     
     @SuppressWarnings("unchecked")
     @Override
+    public SysUser findByUsername(String userName) {
+        List<SysUser> list = baseDao.find("from SysUser where userId=?", userName);
+        if (list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
         StringBuilder cHql = new StringBuilder();
         StringBuilder bHql = new StringBuilder();

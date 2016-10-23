@@ -117,7 +117,7 @@ public class SysLockDaoImpl implements SysLockDao {
     public ListPage report(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
         String groupBy = "t.LockKey";
         StringBuilder cHql = new StringBuilder("select count(t) from SysLock t where 1=1  ");
-        StringBuilder bHql = new StringBuilder("select new com.fcc.app.view.ReportInfo(count(t), ");
+        StringBuilder bHql = new StringBuilder("select new com.fcc.commons.web.view.ReportInfo(count(t), ");
         if (param != null) {
             if(param.get("reportGroupName") != null) {
                 groupBy = (String) param.get("reportGroupName");

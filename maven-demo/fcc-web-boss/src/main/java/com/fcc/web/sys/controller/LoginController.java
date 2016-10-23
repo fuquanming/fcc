@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,6 +26,7 @@ import com.fcc.web.sys.service.SysUserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * <p>Description: 管理系统 登录、退出</p>
@@ -43,24 +45,23 @@ public class LoginController extends AppWebController {
 	private RequestIpService requestIpService;
 	@Resource
 	private LoginService loginService;
-
+	
 	// 请求 /login.do?login
-	@RequestMapping("/login")
+	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
 	// 返回JSON数据
 	@ApiOperation(value = "用户登录")
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response,
-	        @RequestParam(name = "name", required = true) String userId,
-	        @RequestParam(name = "password", required = true) String password,
-	        @RequestParam(name = "randCode", required = true) String subCode) {
+	        @ApiParam(required = true, value = "登录帐号") @RequestParam(name = "username", required = true) String userId,
+	        @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password", required = true) String password,
+	        @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode", required = true) String subCode) {
 //	    Assert.hasLength("");
-//	    boolean captchaPassed = SimpleImageCaptchaServle.validateResponse(request, subCode);
         String sesCode = (String)request.getSession().getAttribute(Constanst.RAND_CODE_KEY);
         Message message = new Message();
         ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
 		mav.getModelMap().addAttribute(message);
         try {
         	if (subCode == null || !subCode.equalsIgnoreCase(sesCode)) {
-        		throw new RefusedException("验证码错误！");
+//        		throw new RefusedException("验证码错误！");
         	}
         	SysUser user = null;
         	password = EncryptionUtil.encodeMD5(password).toLowerCase();
@@ -84,7 +85,7 @@ public class LoginController extends AppWebController {
 		return mav;
 	}
 	
-	@RequestMapping("/logout")
+	@RequestMapping("/logout.do")
 	@ResponseBody
 	public Message logout(HttpServletRequest request) throws Exception {
 	    System.out.println("outout");

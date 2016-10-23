@@ -144,7 +144,7 @@ public class SysLogServiceImpl implements SysLogService {
     public ListPage report(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
         String groupBy = "t.logId";
         StringBuilder cHql = new StringBuilder("select count(t.logId) from SysLog t where 1=1  ");
-        StringBuilder bHql = new StringBuilder("select new com.fcc.app.view.ReportInfo(count(t.logId), ");
+        StringBuilder bHql = new StringBuilder("select new com.fcc.commons.web.view.ReportInfo(count(t.logId), ");
         if (param != null) {
             if (param.get("reportGroupName") != null) {
                 groupBy = (String) param.get("reportGroupName");

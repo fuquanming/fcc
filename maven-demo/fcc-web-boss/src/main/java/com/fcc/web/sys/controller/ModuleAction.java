@@ -25,6 +25,7 @@ import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.Role;
@@ -148,7 +149,7 @@ public class ModuleAction extends AppWebController {
 			data.setModuleLevel(parentModule.getModuleLevel() + 1);
 			moduleService.create(data, operateIds);
 			
-			updateUserModule(operateIds, data, request);
+//			updateUserModule(operateIds, data, request);
 			
 			message.setSuccess(true);
 			message.setMsg("保存成功！");
@@ -192,7 +193,7 @@ public class ModuleAction extends AppWebController {
 			data.setModuleSort(moduleSort);
 			moduleService.update(data, operateIds);
 			
-			updateUserModule(operateIds, data, request);
+//			updateUserModule(operateIds, data, request);
 			
 			message.setSuccess(true);
 			message.setMsg("修改成功！");
@@ -267,9 +268,9 @@ public class ModuleAction extends AppWebController {
 					if (moduleDesc == null || "".equals(moduleDesc)) {// 没有地址的
 					} else {
 						// 只能获取本身拥有的模块权限
-						if (!menuSetCache.contains(m)) {
-							continue;
-						}
+//						if (!menuSetCache.contains(m)) {
+//							continue;
+//						}
 					}
 					
 					EasyuiTreeGridModule node = new EasyuiTreeGridModule();
@@ -352,8 +353,10 @@ public class ModuleAction extends AppWebController {
 				for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
 					Module m = it.next();
 					// 只能获取本身拥有的模块权限
-					if (!menuSetCache.contains(m)) {
-						continue;
+					if (ConfigUtil.isDev() == false) {
+    					if (!menuSetCache.contains(m)) {
+    						continue;
+    					}
 					}
 					
 					EasyuiTreeNode node = new EasyuiTreeNode();
@@ -370,8 +373,10 @@ public class ModuleAction extends AppWebController {
 							nodeOperate.getAttributes().put("operateValue", o.getOperateValue() + "");
 							
 							// 只能获取本身拥有的操作权限
-							boolean operateFlag = rbacPermissionService.checkPermissionCache(sysUserCache.getRoles(), m.getModuleId(), o.getOperateId());
-//							operateFlag = true;
+							boolean operateFlag = true;
+							if (ConfigUtil.isDev() == false) {
+							    operateFlag = rbacPermissionService.checkPermissionCache(sysUserCache.getRoles(), m.getModuleId(), o.getOperateId());
+							}
 							if (role != null) {
 								RoleModuleRight right = rightMap.get(m.getModuleId());
 								if (right != null) {

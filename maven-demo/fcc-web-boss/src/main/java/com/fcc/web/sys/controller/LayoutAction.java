@@ -2,6 +2,9 @@ package com.fcc.web.sys.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * <p>Description: 管理系统 登录后首页布局</p>
@@ -10,25 +13,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version v1.0
  */
 @Controller
-@RequestMapping("/manage/layout")
+@RequestMapping("/manage/layout.do")
+@ApiIgnore
 public class LayoutAction {
 	
-	@RequestMapping(params = "north")
+	@RequestMapping(params = "north", method = RequestMethod.GET)
 	public String north() {
 		return "/WEB-INF/manage/layout/north";
 	}
 
-	@RequestMapping(params = "west")
+	@RequestMapping(params = "west", method = RequestMethod.GET)
 	public String west() {
 		return "/WEB-INF/manage/layout/west";
 	}
 
-	@RequestMapping(params = "center")
+	@RequestMapping(params = "center", method = RequestMethod.GET)
 	public String center() {
 		return "/WEB-INF/manage/layout/center";
 	}
 
-	@RequestMapping(params = "south")
+	@RequestMapping(params = "south", method = RequestMethod.GET)
 	public String south() {
 		return "/WEB-INF/manage/layout/south";
 	}
@@ -38,7 +42,7 @@ public class LayoutAction {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "home")
+	@RequestMapping(params = "home", method = RequestMethod.GET)
 	public String home() {
 		return "/WEB-INF/manage/layout/home";
 	}

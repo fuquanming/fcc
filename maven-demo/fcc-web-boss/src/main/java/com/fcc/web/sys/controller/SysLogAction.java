@@ -309,7 +309,8 @@ public class SysLogAction extends AppWebController {
 	}
 	
 	/** 报表 */
-	@RequestMapping("/report/datagrid")
+	@SuppressWarnings("unchecked")
+    @RequestMapping("/report/datagrid")
 	@ResponseBody
 	public EasyuiDataGridJson reportDatagrid(EasyuiDataGrid dg, HttpServletRequest request) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
@@ -319,7 +320,7 @@ public class SysLogAction extends AppWebController {
 	        if (StringUtils.isNotEmpty(reportGroupName)) {
 	        	param.put("reportGroupName", reportGroupName);
 	        	ListPage listPage = sysLogService.report(dg.getPage(), dg.getRows(), param, false);
-	        	List dataList = listPage.getDataList();
+	        	List<ReportInfo> dataList = listPage.getDataList();
 	        	if (dataList != null) {
 	        		int size = dataList.size();
 	        		for (int i = 0; i < size; i++) {
@@ -483,7 +484,6 @@ public class SysLogAction extends AppWebController {
 		return em;
 	}
 	
-	@SuppressWarnings("unchecked")
 	class SysLogExport implements Runnable {
 		
 		private Map<String, Object> param;
