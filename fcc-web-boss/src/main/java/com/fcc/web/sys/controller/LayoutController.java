@@ -18,22 +18,22 @@ public class LayoutController {
 	
 	@RequestMapping(params = "north")
 	public String north() {
-		return "/WEB-INF/manage/layout/north";
+		return "manage/layout/north";
 	}
 
 	@RequestMapping(params = "west")
 	public String west() {
-		return "/WEB-INF/manage/layout/west";
+		return "manage/layout/west";
 	}
 
 	@RequestMapping(params = "center")
 	public String center() {
-		return "/WEB-INF/manage/layout/center";
+		return "manage/layout/center";
 	}
 
 	@RequestMapping(params = "south")
 	public String south() {
-		return "/WEB-INF/manage/layout/south";
+		return "manage/layout/south";
 	}
 
 	/**
@@ -43,6 +43,6 @@ public class LayoutController {
 	 */
 	@RequestMapping(params = "home")
 	public String home() {
-		return "/WEB-INF/manage/layout/home";
+		return "/manage/layout/home";
 	}
 }

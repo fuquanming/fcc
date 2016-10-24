@@ -23,7 +23,7 @@ public class IndexController {
 	 */
 	@RequestMapping(value = {"/manage/index.do"})
 	public String index(HttpServletRequest request) {
-		return "/WEB-INF/manage/index";
+		return "manage/index";
 	}
 	
 }
