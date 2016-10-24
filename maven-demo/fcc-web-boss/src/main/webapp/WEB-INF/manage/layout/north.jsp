@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <script type="text/javascript" charset="UTF-8">
 	function logout(b) {
-		$.post('login.do?logout', function() {
+		$.get('logout.do', function() {
 			location.replace(loginUrl);
 		});
 	}

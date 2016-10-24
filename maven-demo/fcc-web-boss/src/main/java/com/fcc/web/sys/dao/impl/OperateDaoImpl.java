@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.commons.data.ListPage;
 import com.fcc.web.sys.dao.OperateDao;
+import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.view.OperateValueCount;
 
 /**
@@ -33,11 +34,11 @@ public class OperateDaoImpl implements OperateDao {
     private BaseDao baseDao;
 
     @Override
-    public void delete(String[] ids) {
+    public Integer delete(String[] ids) {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("operateId", ids);
         baseDao.executeSql("delete from sys_rbac_mod2op where operate_id in (:operateId)", param);
-        baseDao.executeHql("delete Operate where operateId in(:operateId)", param);
+        return baseDao.executeHql("delete Operate where operateId in(:operateId)", param);
     }
 
     @Override

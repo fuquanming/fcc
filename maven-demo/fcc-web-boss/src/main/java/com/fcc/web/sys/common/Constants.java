@@ -24,10 +24,14 @@ public interface Constants {
     public interface StatusCode {
         /** 系统 */
         public interface Sys {
-            /** 成功 */
+            /** 成功 sys_000 */
             String success = "sys_000";
-            /** 失败 */
+            /** 失败 sys_001 */
             String fail = "sys_001";
+            /** 修改记录时，ID为空 sys_002 */
+            String emptyUpdateId = "sys_002";
+            /** 删除记录时，ID为空 sys_003 */
+            String emptyDeleteId = "sys_003";
         }
         /** 用户登录 */
         public interface Login {
@@ -45,6 +49,42 @@ public interface Constants {
             String errorPassword = "login_005";
             /** 用户锁定 login_006 */
             String lockUserName = "login_006";
+        }
+        
+        public interface Module {
+            /** 模块名称为空 module_000 */
+            String emptyModuleName = "module_000";
+            /** 父模块为空 module_001 */
+            String emptyParentModule = "module_001";
+            /** 不能修改根节点 module_002 */
+            String errorRootModuleId = "module_002";
+            /** 修改的模块不存在 module_003 */
+            String errorModuleId = "module_003";
+        }
+        
+        public interface Operate {
+            /** 操作ID为空 operate_000 */
+            String emptyOperateId = "operate_000";
+            /** 操作名称为空 operate_001 */
+            String emptyOperateName = "operate_001";
+            /** 操作ID已存在 operate_002 */
+            String exitsOperateId = "operate_002";
+            /** 超过最大操作个数 operate_003 */
+            String maxOperateValue = "operate_003";
+        }
+        
+        /** 用户密码 */
+        public interface UserPassword {
+            /** 旧密码为空 userPassword_000 */
+            String emptyOldPassword = "userPassword_000";
+            /** 新密码为空 userPassword_001 */
+            String emptyNewPassword = "userPassword_001";
+            /** 确认码为空 userPassword_002 */
+            String emptyConfirmPassword = "userPassword_002";
+            /** 旧密码错误 userPassword_003 */
+            String errorOldPassword = "userPassword_003";
+            /** 新密码和确认码不一致 userPassword_004 */
+            String errorPasswordConsistent = "userPassword_004";
         }
     }
 }
