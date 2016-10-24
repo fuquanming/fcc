@@ -8,14 +8,20 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysUserService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * <p>Description: 管理系统 用户修改资料</p>
@@ -23,6 +29,7 @@ import com.fcc.web.sys.service.SysUserService;
  * @author 傅泉明
  * @version v1.0
  */
+@Api(value = "登录用户信息修改")
 @Controller
 @RequestMapping("/manage/sys/userInfo")
 public class UserInfoController extends AppWebController {
@@ -32,17 +39,19 @@ public class UserInfoController extends AppWebController {
 	private SysUserService sysUserService;
 	
 	/** 显示修改基本信息页面 */
-	@RequestMapping("/view")
+	@ApiOperation(value = "显示登录用户信息")
+	@GetMapping(value = "/view.do")
 	public String view(HttpServletRequest request) {
 		SysUser user = getSysUser(request);
 		request.setAttribute("data", user);
-		return "/WEB-INF/manage/sys/user_info";
+		return "manage/sys/user_info";
 	}
 	
 	/** 修改用户基本信息 */
-	@RequestMapping("/edit")
+	@ApiOperation(value = "修改登录用户信息")
+	@PostMapping(value = "/edit.do")
 	@ResponseBody
-	public Message edit(SysUser sysUser, HttpServletRequest request) {
+	public Message edit(HttpServletRequest request, SysUser sysUser) {
 		Message message = new Message();
 		try {
 			SysUser user = getSysUser(request);
@@ -52,11 +61,11 @@ public class UserInfoController extends AppWebController {
 			user.setRoles(roles);
 			CacheUtil.setSysUser(request, user);
 			message.setSuccess(true);
-			message.setMsg("修改成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("修改失败！");
+			logger.error("修改登录用户信息失败！", e.getCause());
+			message.setMsg(Constants.StatusCode.Sys.fail);
 		}
 		return message;
 	}

@@ -28,7 +28,7 @@ public interface OperateService {
 	 * 删除操作
 	 * @param ids
 	 */
-	public void delete(String[] ids);
+	public Integer delete(String[] ids);
 	/**
 	 * 分页查询操作
 	 * @param pageNo

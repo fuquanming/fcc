@@ -135,3 +135,34 @@ Tool.isFlash = function() {
     }
     return iFlash;
 }
+Tool.message = function() {}
+/** 显示进度条 */
+Tool.message.progress = function(param) {
+	var info = param.text;
+	if (info) {
+	} else {
+		info = "数据处理中，请稍后....";
+	}
+	$.messager.progress({text : info});
+}
+/** 关闭进度条 */
+Tool.message.progressClose = function(param) {
+	$.messager.progress('close');
+}
+/** 增、删、改后显示信息 */
+Tool.message.show = function(param) {
+	$.messager.show({
+	    msg : param.msg,
+	    title : param.title
+	});
+}
+/** 显示提示框 */
+Tool.message.alert = function(param) {
+	// icon:error、question、info、warning
+	$.messager.alert(param.title, param.msg, param.icon, param.fn);
+}
+/** 显示确认消息窗口 */
+Tool.message.confirm = function(title, msg, fn) {
+	$.messager.confirm(title, msg, fn);
+}
+

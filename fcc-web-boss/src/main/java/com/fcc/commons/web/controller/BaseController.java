@@ -68,7 +68,7 @@ public abstract class BaseController {
             setModelMap(modelMap, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         ex.printStackTrace();
-        request.setAttribute("msg", ex.getMessage());
+        request.setAttribute("msg", ex.getCause());
         response.setContentType("application/json;charset=UTF-8");
         byte[] bytes = JSON.toJSONBytes(modelMap, SerializerFeature.DisableCircularReferenceDetect);
         response.getOutputStream().write(bytes);

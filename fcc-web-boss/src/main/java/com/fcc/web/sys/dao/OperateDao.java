@@ -12,6 +12,7 @@ package com.fcc.web.sys.dao;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.view.OperateValueCount;
 
 /**
@@ -21,7 +22,7 @@ import com.fcc.web.sys.view.OperateValueCount;
  */
 public interface OperateDao {
     
-    public void delete(String[] ids);
+    public Integer delete(String[] ids);
     
     public OperateValueCount getMaxOperateValueAndCount();
 

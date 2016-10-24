@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.dao.OperateDao;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.service.OperateService;
@@ -45,7 +46,7 @@ public class OperateServiceImpl implements OperateService {
 		synchronized (factorialPop) {
 		    Operate oldOperate = (Operate) baseService.get(Operate.class, o.getOperateId());
 			if (oldOperate != null) {
-				throw new RefusedException("操作ID重复！");
+				throw new RefusedException(Constants.StatusCode.Operate.exitsOperateId);
 			}
 			OperateValueCount ov = operateDao.getMaxOperateValueAndCount();
 			long count = ov.getCount();
@@ -55,7 +56,7 @@ public class OperateServiceImpl implements OperateService {
 			}
 			int maxCount = 63;
 			if (count >= maxCount) {
-				throw new RefusedException("操作值超过最大值！");
+				throw new RefusedException(Constants.StatusCode.Operate.maxOperateValue);
 			} else if ((value > Long.MAX_VALUE && count < maxCount)) {
 				List<Operate> list = baseService.getAll(Operate.class);
 				Long o_value = null;
@@ -80,12 +81,16 @@ public class OperateServiceImpl implements OperateService {
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void update(Operate o) {
-		baseService.update(o);
+	    if (o.getOperateId() != null) {
+	        Operate old = (Operate) baseService.get(Operate.class, o.getOperateId());
+	        old.setOperateName(o.getOperateName());
+	        baseService.update(old);
+	    }
 	}
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void delete(String[] ids) {
-		operateDao.delete(ids);
+	public Integer delete(String[] ids) {
+		return operateDao.delete(ids);
 	}
 	
 	@Transactional(readOnly = true)//只查事务申明

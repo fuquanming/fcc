@@ -36,7 +36,6 @@ public class LogInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
 	}
 
-	@SuppressWarnings("unchecked")
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
 		if (modelAndView == null) return;
 		String messageKey = "message";

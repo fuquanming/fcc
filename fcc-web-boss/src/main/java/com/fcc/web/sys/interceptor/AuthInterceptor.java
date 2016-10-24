@@ -44,7 +44,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 	 */
 	
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-//		HttpSession session = request.getSession();
 	    SysUser user = CacheUtil.getSysUser(request);
 		// 对没有配置URL-MODULEID的请求不进行鉴权
 		String servletPath = request.getServletPath();
@@ -72,6 +71,41 @@ public class AuthInterceptor implements HandlerInterceptor {
 				} 
 			}
 		}
+	    
+//	    SysUser user = CacheUtil.getSysUser(request);
+//        // 对没有配置URL-MODULEID的请求不进行鉴权
+//	    String queryString = request.getQueryString();
+//        String servletPath = request.getServletPath() + "?" + queryString;
+//        if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
+//        int separatorCharIndex = servletPath.indexOf("?") + 1;
+//        String tempServletPath = servletPath.substring(0, separatorCharIndex);
+//        tempServletPath += "view";
+//        Module module = CacheUtil.moduleUrlMap.get(tempServletPath);
+//        if (module != null) {
+//            request.setAttribute(Constanst.REQUEST.MODULE, module);
+//            request.setAttribute("rightModuleId", module.getModuleId());
+//            String operateStr = "";
+//            // 获取执行的方法
+//            int paramIndex = servletPath.indexOf("&");
+//            if (paramIndex == -1) {// 无&
+//                operateStr = servletPath.substring(separatorCharIndex);
+//            } else {
+//                operateStr = servletPath.substring(separatorCharIndex, paramIndex);
+//            }
+//            Operate operate = CacheUtil.operateMap.get(operateStr);
+//            String operateId = null;
+//            if (operate != null) {
+//                request.setAttribute(Constanst.REQUEST.OPERATE, operate);
+//                operateId = operate.getOperateId();
+//                // 鉴权
+//                if (!rbacPermissionService.checkPermission(user.getRoles(), module.getModuleId(), operateId)) {
+//                    request.getSession().setAttribute("filterMsg", "right");
+//                    logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + module.getModuleName() + "，" + operate.getOperateName());
+//                    request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+//                    return false;
+//                } 
+//            }
+//        }
 		return true;
 	}
 
