@@ -75,23 +75,18 @@
                             url : '${basePath}manage/sys/operate/edit.do',
                             success : function(data) {
                                 try {
-                                	Tool.message.progressClose({});
-                                    var d = $.parseJSON(data);
-                                    Tool.message.show({
-                                        msg : StatusCode.msg(d.msg),
-                                        title : '提示'
-                                    });
-                                    if (d.success) {
+                                	Tool.message.progress('close');
                                         // 动态添加datagrid
-                                        /* var selectedRow = datagrid.datagrid('getSelected');
+                                       /*  var selectedRow = datagrid.datagrid('getSelected');
                                         var rowIndex = datagrid.datagrid('getRowIndex', selectedRow);
                                         datagrid.datagrid('updateRow',{
                                             index: rowIndex,
                                             row: {
                                                 operateName : userForm.find('[name=operateName]').val()
                                             }
-                                        }); */
-                                        userDialog.dialog('close');
+                                        });  */
+                                    if (Tool.operate.check(data, true)) {
+                                    	userDialog.dialog('close');
                                         searchFun();
                                     }
                                 } catch(e) {
@@ -101,7 +96,7 @@
                             },
                             onSubmit : function() {
                                 var isValid = $(this).form('validate');
-                                if (isValid) Tool.message.progress({});
+                                if (isValid) Tool.message.progress();
                                 return isValid;
                             }
                         });
@@ -110,32 +105,18 @@
                             url : '${basePath}manage/sys/operate/add.do',
                             success : function(data) {
                                 try {
-                                	Tool.message.progressClose({});
-                                    var d = $.parseJSON(data);
-                                    var msg = d.msg;
-                                    Tool.message.show({
-                                        msg : msg,
-                                        title : '提示'
-                                    });
-                                    if (d.success) {
-                                        msg = "保存成功！";
-                                        // 动态修改datagrid
-                                        /* datagrid.datagrid('appendRow',{
-                                            operateId : userForm.find('[name=operateId]').val(),
-                                            operateName : userForm.find('[name=operateName]').val(),
-                                            operateValue : d.msg
-                                        }); */
-                                        searchFun();
+                                	Tool.message.progress('close');
+                                    if (Tool.operate.check(data, true)) {
+                                    	searchFun();
                                     }
-                                    
                                 } catch(e) {
                                 	console.log(e);
-                                    //window.location.href = overUrl;
+                                    window.location.href = overUrl;
                                 }
                             },
                             onSubmit : function() {
                                 var isValid = $(this).form('validate');
-                                if (isValid) Tool.message.progress({});
+                                if (isValid) Tool.message.progress();
                                 return isValid;
                             }
                         });
@@ -191,10 +172,13 @@
             },
             onLoadSuccess : function(data) {
                 if (data.msg && data.msg != '') {
-                    Tool.messager.show({
-                        msg : '数据库异常！',
-                        title : '提示'
-                    });
+                    Tool.message.alert('错误', data.msg, 'error'); 
+                }
+            },
+            loadFilter : function(data) {
+                var flag = Tool.operate.check(data);
+                if (flag != true || flag != false) {
+                    return data;                                            
                 }
             }
         });
@@ -246,25 +230,13 @@
                     userForm.form('submit', {
                         url : '${basePath}manage/sys/operate/delete.do',
                         onSubmit : function() {
-                        	Tool.message.progress({});
+                        	Tool.message.progress();
                             return true;
                         },
                         success : function(data) {
                             try {
-                            	Tool.message.progressClose({});
-                                var d = $.parseJSON(data);
-                                Tool.message.show({
-                                    msg : d.msg,
-                                    title : '提示'
-                                });
-                                if (d.success) {
-                                    // 动态删除datagrid
-                                    /* var rows = datagrid.datagrid('getSelections');
-                                    while (rows.length > 0) {
-                                        var rowIndex = datagrid.datagrid('getRowIndex', rows[0]);
-                                        datagrid.datagrid('deleteRow',rowIndex);
-                                        rows = datagrid.datagrid('getSelections');
-                                    } */
+                            	Tool.message.progress('close');
+                                if (Tool.operate.check(data, true)) {
                                     userDialog.dialog('close');
                                     searchFun();
                                 }

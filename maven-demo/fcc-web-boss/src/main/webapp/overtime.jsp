@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html>
 <%@ include file="/head/base.jsp" %>
-<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.2/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.2/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/icon.css">
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-easyui-1.3.2/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="js/jquery-easyui-1.3.2/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/jquery-easyui-1.3.4/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/jquery-easyui-1.3.4/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>访问受限</title>
 	 <script>

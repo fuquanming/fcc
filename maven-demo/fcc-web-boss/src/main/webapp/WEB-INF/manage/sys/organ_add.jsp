@@ -6,51 +6,6 @@
 <%@ include file="/head/base.jsp" %>
 <%@ include file="/head/meta.jsp" %>
 <%@ include file="/head/easyui.jsp" %>
-<script type="text/javascript" charset="UTF-8">
-	var userForm;
-	$(function() {
-	
-		userForm = $('#userForm').form();
-		
-	});
-	
-	function add() {
-		// 获取模块操作
-		userForm.form('submit', {
-			url : '<%=basePath%>manage/sys/organ/add.do',
-			success : function(data) {
-				try {
-					$.messager.progress('close');
-					var d = $.parseJSON(data);
-					if (d.success) {
-						$.messager.show({
-							msg : d.msg,
-							title : '提示'
-						});
-						setTimeout(function(){toBack();},3000);
-					} else {
-						$.messager.alert('错误', d.msg, 'error');
-					}
-				} catch(e) {
-					window.location.href = overUrl;
-				}
-			},
-			onSubmit : function() {
-				var isValid = $(this).form('validate');
-				if (isValid) {
-					$.messager.progress({
-						text : '数据处理中，请稍后....'
-					});
-				}
-				return isValid;
-			}
-		});
-	}
-
-	function toBack() {
-		window.location.href = '<%=basePath%>manage/sys/organ/view.do';
-	}
-</script>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false" style="overflow: hidden;">
@@ -89,3 +44,37 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" charset="UTF-8">
+    var userForm;
+    $(function() {
+    
+        userForm = $('#userForm').form();
+        
+    });
+    
+    function add() {
+        // 获取模块操作
+        userForm.form('submit', {
+            url : '${basePath}manage/sys/organ/add.do',
+            success : function(data) {
+                try {
+                    Tool.message.progress('close');
+                    Tool.operate.check(data, true);
+                } catch(e) {
+                    window.location.href = overUrl;
+                }
+            },
+            onSubmit : function() {
+                var isValid = $(this).form('validate');
+                if (isValid) {
+                    Tool.message.progress();
+                }
+                return isValid;
+            }
+        });
+    }
+
+    function toBack() {
+        window.location.href = '${basePath}manage/sys/organ/view.do';
+    }
+</script>

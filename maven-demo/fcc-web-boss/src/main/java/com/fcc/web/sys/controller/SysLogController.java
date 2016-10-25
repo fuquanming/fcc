@@ -103,7 +103,7 @@ public class SysLogController extends AppWebController {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
 		request.setAttribute("operateList", operateSet);
-		return "/WEB-INF/manage/sys/sysLog/sysLog_list";
+		return "manage/sys/sysLog/sysLog_list";
 	}
 	
 	/** 显示统计报表 */
@@ -112,7 +112,7 @@ public class SysLogController extends AppWebController {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
 		request.setAttribute("operateList", operateSet);
-		return "/WEB-INF/manage/sys/sysLog/sysLog_report_list";
+		return "manage/sys/sysLog/sysLog_report_list";
 	}
 	
 	/** 跳转到查看页面 */
@@ -152,13 +152,13 @@ public class SysLogController extends AppWebController {
 				logger.error(e);
 			}
 		}
-		return "/WEB-INF/manage/sys/sysLog/sysLog_view";
+		return "manage/sys/sysLog/sysLog_view";
 	}
 	
 	/** 跳转到新增页面 */
 	@RequestMapping(value = {"/toAdd"})
 	public String toAdd(HttpServletRequest request, HttpServletResponse response) {
-		return "/WEB-INF/manage/sys/sysLog/sysLog_add";
+		return "manage/sys/sysLog/sysLog_add";
 	}
 	
 	/** 跳转到修改页面 */
@@ -174,7 +174,7 @@ public class SysLogController extends AppWebController {
 				logger.error(e);
 			}
 		}
-		return "/WEB-INF/manage/sys/sysLog/sysLog_edit";
+		return "manage/sys/sysLog/sysLog_edit";
 	}
 	
 	/** 新增 */

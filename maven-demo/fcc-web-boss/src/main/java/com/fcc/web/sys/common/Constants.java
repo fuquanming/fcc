@@ -32,6 +32,8 @@ public interface Constants {
             String emptyUpdateId = "sys_002";
             /** 删除记录时，ID为空 sys_003 */
             String emptyDeleteId = "sys_003";
+            /** session过期 */
+            String sessionTimeout = "sys_004";
         }
         /** 用户登录 */
         public interface Login {
@@ -71,6 +73,24 @@ public interface Constants {
             String exitsOperateId = "operate_002";
             /** 超过最大操作个数 operate_003 */
             String maxOperateValue = "operate_003";
+        }
+        
+        public interface Role {
+            /** 角色名称为空 role_000 */
+            String emptyRoleName = "role_000";
+        }
+        
+        public interface Organization {
+            /** 机构名称为空 organization_000 */
+            String emptyOrganizationName = "organization_000";
+            /** 父机构为空 organization_001 */
+            String emptyParentOrganization = "organization_001";
+            /** 不能修改根节点 organization_002 */
+            String errorRootOrganizationId = "organization_002";
+            /** 修改的机构不存在 organization_003 */
+            String errorOrganizationId = "organization_003";
+            /** 该组织机构下有人员！ organization_004 */
+            String hasUser = "organization_004";
         }
         
         /** 用户密码 */

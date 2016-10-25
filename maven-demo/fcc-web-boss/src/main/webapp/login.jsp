@@ -28,15 +28,17 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 #login table {margin-left: -35px; margin-top: 30px;}
 #login table tr{height: 30px;}
 #login table span{font-size:18px; display:inline-block; height:21px;line-height:21px; color:#0285c2;}
-#login table input{width:160px; height:21px; line-height:21px; border:#0285c2 1px solid;font:12px arial,"宋体"; }
+#login table input{width:160px; height:25px; line-height:21px; border:#0285c2 1px solid;font:12px arial,"宋体"; }
 #login #but01{ background:url(images/login/but.jpg) no-repeat; width:77px; height:22px; color:#FFF;font:13px; font-weight:700; border:0;cursor:pointer;}
 </style>
 
-<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.5/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.5/themes/icon.css">
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-easyui-1.3.4/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="js/jquery-easyui-1.3.4/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/tool.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/status.code.js" charset="UTF-8"></script>
 
 <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
 
@@ -50,7 +52,7 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 	    <table>
 	    	<tr>
 	    		<td><span>用户名:</span></td>
-	    		<td colspan="2" align="left"><input name="username" type="text" class="easyui-validatebox" required="true" value="" size="20" maxlength="50"/></td>
+	    		<td colspan="2" align="left"><input name="username" type="text" class="easyui-validatebox" required="true" value="" size="20" maxlength="50" /></td>
 	    	</tr>
 	    	<tr>
 	    		<td><span>密&nbsp;&nbsp;&nbsp;&nbsp;码:</span></td>
@@ -59,7 +61,7 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 	    	<tr>
 	    		<td><span>验证码:</span></td>
 	    		<td><input name="randCode" type="text" class="easyui-validatebox" required="true" value="1" size="9" maxlength="4" style="width:90px;"/></td>
-	    		<td><img src="randCode?rand=Math.random()" border="1" id="codeImg" alt="验证码" style="width: 71px; height: 23px;" onclick="getCode();"/></td>
+	    		<td><img src="randCode?rand=Math.random()" border="1" id="codeImg" alt="验证码" style="width: 64px; height: 25px;" onclick="getCode();"/></td>
 	    	</tr>
 	    	<tr>
 	    		<td>&nbsp;</td>
@@ -80,16 +82,16 @@ $(function(){
 		url : 'login.do?login',
 		success : function(data) {
 			var d = $.parseJSON(data);
+			Tool.message.show({
+                msg : StatusCode.msg(d.msg),
+                title : '提示'
+            });
 			if (d.success) {
 				window.location.href="manage/index.do";
 			} else {
 				loginInputForm.find('input[name=password]').focus();
 				getCode();
 			}
-			$.messager.show({
-				msg : d.msg,
-				title : '提示'
-			});
 		}
 	});
 	loginInputForm.find('input').on('keyup', function(event) {/* 增加回车提交功能 */

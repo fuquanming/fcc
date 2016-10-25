@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +52,7 @@ public class LoginController extends AppWebController {
     //	@RequestMapping(value = "/login.do" , method = RequestMethod.POST)
     @PostMapping(value = "/login.do")
     @ResponseBody
-    public Message login(ModelMap modelMap, HttpServletRequest request,
+    public Message login(HttpServletRequest request,
             @ApiParam(required = true, value = "登录帐号") @RequestParam(name = "username") String userId,
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
             @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode") String subCode) {
