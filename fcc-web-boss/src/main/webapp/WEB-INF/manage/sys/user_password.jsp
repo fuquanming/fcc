@@ -55,25 +55,15 @@
             url : '${basePath}manage/sys/userPassword/edit.do',
             success : function(data) {
                 try {
-                	Tool.message.progressClose({});
-                    var d = $.parseJSON(data);
-                    if (d.success) {
-                        Tool.messager.show({
-                            msg : StatusCode.msg(d.msg),
-                            title : '提示'
-                        });
-                    } else {
-                        Tool.messager.alert('错误', d.msg, 'error');
-                    }
+                	Tool.message.progress('close');
+                	Tool.operate.check(data, true);
                 } catch(e) {
                     window.location.href = overUrl;
                 }
             },
             onSubmit : function() {
                 var isValid = $(this).form('validate');
-                if (isValid) {
-                	Tool.message.progress({});
-                }
+                if (isValid) Tool.message.progress();
                 return isValid;
             }
         });

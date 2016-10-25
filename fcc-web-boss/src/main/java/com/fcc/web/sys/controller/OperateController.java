@@ -45,7 +45,7 @@ public class OperateController {
 	private OperateService operateService;
 	
 	/** 显示模块操作列表 */
-	@ApiOperation(value = "操作列表页面")
+	@ApiOperation(value = "显示操作列表页面")
 	@GetMapping(value = "/view.do")
 	public String view() {
 		return "manage/sys/operate_list";
@@ -66,9 +66,9 @@ public class OperateController {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("新增操作失败！", e.getCause());
+			logger.error("新增操作失败！", e);
 			message.setMsg(Constants.StatusCode.Sys.fail);
-			message.setObj(e.getCause());
+			message.setObj(e.getMessage());
 		}
 		return message;
 	}
@@ -97,10 +97,10 @@ public class OperateController {
 	@PostMapping(value = "/delete.do")
 	@ResponseBody
 	public Message delete(HttpServletRequest request,
-	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids") String id) {
+	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
 			String[] ids = id.split(",");
 			operateService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);

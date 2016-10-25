@@ -138,16 +138,14 @@ Tool.isFlash = function() {
 Tool.message = function() {}
 /** 显示进度条 */
 Tool.message.progress = function(param) {
-	var info = param.text;
-	if (info) {
-	} else {
-		info = "数据处理中，请稍后....";
+	if ('close' == param) {
+		$.messager.progress('close');
+		return;
 	}
+	var info;
+	if (param) info = param.text;
+	if (!info) info = "数据处理中，请稍后....";
 	$.messager.progress({text : info});
-}
-/** 关闭进度条 */
-Tool.message.progressClose = function(param) {
-	$.messager.progress('close');
 }
 /** 增、删、改后显示信息 */
 Tool.message.show = function(param) {
@@ -157,12 +155,48 @@ Tool.message.show = function(param) {
 	});
 }
 /** 显示提示框 */
-Tool.message.alert = function(param) {
+Tool.message.alert = function(title, msg, icon, autoClose, fn) {
 	// icon:error、question、info、warning
-	$.messager.alert(param.title, param.msg, param.icon, param.fn);
+	$.messager.alert(title, msg, icon, fn);
+	var interval;  
+	var time = 1000;  
+	var x = 3;    //设置时间3s
+	if (autoClose) {
+		interval = setInterval(fun,time);  
+		function fun() {  
+			--x;  
+			if(x == 0) {  
+		       clearInterval(interval);  
+		       $(".messager-body").window('close');    
+		    }  
+		};
+	}
 }
 /** 显示确认消息窗口 */
 Tool.message.confirm = function(title, msg, fn) {
 	$.messager.confirm(title, msg, fn);
+}
+
+Tool.operate = function() {}
+/** session检查、操作权限检查 */
+Tool.operate.check = function(data, autoClose) {
+	var d = $.parseJSON(data);
+	if (!d) {// 转化成功为json对象、form提交返回需要转化
+		d = data;// 已经转化过
+	}
+	var msg = StatusCode.msg(d.msg);
+	if (d.success == true) {
+    	Tool.message.alert('操作信息', msg, 'info', autoClose);
+    	return true;
+    } else if (d.success == false) {
+        if (d.obj == 'sys:login') {
+        	window.location.href = overUrl;
+        	return false;
+        } else if (d.obj) {
+        	msg = d.obj;
+        }
+        Tool.message.alert('错误', msg, 'error');
+        return false;
+    }
 }
 

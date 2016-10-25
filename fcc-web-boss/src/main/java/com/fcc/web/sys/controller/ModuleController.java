@@ -10,11 +10,13 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +27,7 @@ import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
@@ -36,12 +39,17 @@ import com.fcc.web.sys.service.OperateService;
 import com.fcc.web.sys.service.RbacPermissionService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * <p>Description: 管理系统 模块</p>
  * <p>Copyright:Copyright (c) 2009 </p>
  * @author 傅泉明
  * @version v1.0
  */
+@Api(value = "系统模块")
 @Controller
 @RequestMapping("/manage/sys/module")
 public class ModuleController extends AppWebController {
@@ -56,42 +64,47 @@ public class ModuleController extends AppWebController {
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
 	
-	@RequestMapping("/view")
+	@ApiOperation(value = "显示模块列表页面")
+	@GetMapping(value = "/view.do")
 	public String view(HttpServletRequest request) {
-		return "/WEB-INF/manage/sys/module_list";
+	    request.setAttribute("module_root", Module.ROOT.getModuleId());
+		return "manage/sys/module_list";
 	}
 	
 	/** 显示角色新增页面 */
-	@RequestMapping("/toAdd")
-	public String toAdd(HttpServletRequest request) {
+	@ApiOperation(value = "显示新增模块页面")
+	@GetMapping(value = "/toAdd.do")
+	public String toAdd(HttpServletRequest request,
+	        @ApiParam(required = true, value = "父模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
 		try {
-			String parentId = request.getParameter("parentId");
 			Module parentModule = moduleService.getModuleById(parentId);
 			Map<String, Object> param = null;
 			request.setAttribute("operateList", operateService.queryPage(1, 0, param).getDataList());
 			request.setAttribute("parentModule", parentModule);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("初始化新增模块数据失败！", e);
 		}
-		return "/WEB-INF/manage/sys/module_add";
+		return "manage/sys/module_add";
 	}
 	
-	/** 显示角色新增页面 */
-	@RequestMapping("/toEdit")
-	public String toEdit(HttpServletRequest request) {
+	/** 显示模块修改页面 */
+	@ApiOperation(value = "显示修改模块页面")
+	@GetMapping(value = "/toEdit.do")
+	public String toEdit(HttpServletRequest request,
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
-			String id = request.getParameter("id");
 			Module data = moduleService.loadModuleWithOperate(id);
 			request.setAttribute("data", data);
 			Map<String, Object> param = null;
 			request.setAttribute("operateList", operateService.queryPage(1, 0, param).getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("初始化修改模块数据失败！", e);
 		}
-		return "/WEB-INF/manage/sys/module_edit";
+		return "manage/sys/module_edit";
 	}
+	
 	/** 为当前用户添加该模块权限 */
 	private void updateUserModule(String[] operateIds, Module data, HttpServletRequest request) {
 		// 为当前用户添加该模块权限
@@ -114,28 +127,25 @@ public class ModuleController extends AppWebController {
 		}
 	}
 	
-	@RequestMapping("/add")
+	@ApiOperation(value = "新增模块")
+	@PostMapping(value = "/add.do")
 	@ResponseBody
 	public Message add(HttpServletRequest request,
-	        @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
+	        @ApiParam(required = false, value = "上级模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
+	        @ApiParam(required = true, value = "模块名称") @RequestParam(name = "moduleName", defaultValue = "") String moduleName,
+	        @ApiParam(required = false, value = "模块描述") @RequestParam(name = "moduleDesc", defaultValue = "") String moduleDesc,
+	        @ApiParam(required = false, value = "模块操作") @RequestParam(name = "operateValue", defaultValue = "") String operateValue,
+	        @ApiParam(required = false, value = "模块排序") @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
 		Message message = new Message();
 		try {
-			String parentId = request.getParameter("parentId");
-			String moduleName = request.getParameter("moduleName");
-			String moduleDesc = request.getParameter("moduleDesc");
-			String operateValue = request.getParameter("operateValue");
-			if (moduleName == null || "".equals(moduleName)) {
-				throw new RefusedException("请输入模块名称！");
-			}
-			if (parentId == null || "".equals(parentId)) {
-				parentId = Module.ROOT.getModuleId();
-			}
+			if (StringUtils.isEmpty(moduleName)) throw new RefusedException(Constants.StatusCode.Module.emptyModuleName);
+			if (StringUtils.isEmpty(parentId)) parentId = Module.ROOT.getModuleId();
 			String[] operateIds = null;
-			if (operateValue != null && !"".equals(operateValue)) {
+			if (!StringUtils.isEmpty(operateValue)) {
 				operateIds = operateValue.split(",");
 			}
 			Module parentModule = moduleService.getModuleById(parentId);
-			if (parentModule == null) throw new RefusedException("请选择父模块");
+			if (parentModule == null) throw new RefusedException(Constants.StatusCode.Module.emptyParentModule);
 			
 			Module data = new Module();
 			if (Module.ROOT.getModuleId().equals(parentId)) {
@@ -150,44 +160,37 @@ public class ModuleController extends AppWebController {
 			moduleService.create(data, operateIds);
 			
 //			updateUserModule(operateIds, data, request);
-			
 			message.setSuccess(true);
-			message.setMsg("保存成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("保存失败！");
+			logger.error("新增模块失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setObj(e.getMessage());
 		}
 		return message;
 	}
 	
-	@RequestMapping("/edit")
+	@ApiOperation(value = "修改模块")
+	@PostMapping(value = "/edit.do")
 	@ResponseBody
 	public Message edit(HttpServletRequest request,
-	        @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String moduleId,
+            @ApiParam(required = true, value = "模块名称") @RequestParam(name = "moduleName") String moduleName,
+            @ApiParam(required = false, value = "模块描述") @RequestParam(name = "moduleDesc") String moduleDesc,
+            @ApiParam(required = false, value = "模块操作") @RequestParam(name = "operateValue") String operateValue,
+	        @ApiParam(required = false, value = "模块排序") @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
 		Message message = new Message();
 		try {
-			String moduleId = request.getParameter("id");
-			String moduleName = request.getParameter("moduleName");
-			String moduleDesc = request.getParameter("moduleDesc");
-			String operateValue = request.getParameter("operateValue");
-			if (moduleId == null || "".equals(moduleId)) {
-				throw new RefusedException("请选择要修改的记录！");
-			} else if (moduleName == null || "".equals(moduleName)) {
-				throw new RefusedException("请输入模块名称！");
-			} else if (Module.ROOT.getModuleId().equals(moduleId)) {
-				throw new RefusedException("不能修改根节点！");
-			}
+			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (moduleName == null || "".equals(moduleName)) throw new RefusedException(Constants.StatusCode.Module.emptyModuleName);
+			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
 			Module data = moduleService.getModuleById(moduleId);
-			if (data == null) {
-				throw new RefusedException("修改的记录不存在！");
-			}
+			if (data == null) throw new RefusedException(Constants.StatusCode.Module.errorModuleId);
 			String[] operateIds = null;
-			if (operateValue != null && !"".equals(operateValue)) {
-				operateIds = operateValue.split(",");
-			}
+			if (!StringUtils.isEmpty(operateValue)) operateIds = operateValue.split(",");
 			data.setModuleDesc(moduleDesc);
 			data.setModuleName(moduleName);
 			data.setModuleSort(moduleSort);
@@ -196,37 +199,37 @@ public class ModuleController extends AppWebController {
 //			updateUserModule(operateIds, data, request);
 			
 			message.setSuccess(true);
-			message.setMsg("修改成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("修改失败！");
+			logger.error("修改模块失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setObj(e.getMessage());
 		}
 		return message;
 	}
 	
-	@RequestMapping("/delete")
+	@ApiOperation(value = "删除模块")
+	@PostMapping(value = "/delete.do")
 	@ResponseBody
-	public Message delete(HttpServletRequest request) {
+	public Message delete(HttpServletRequest request,
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String moduleId) {
 		Message message = new Message();
-		String moduleId = request.getParameter("id");
 		try {
-			if (moduleId == null || "".equals(moduleId)) {
-				throw new RefusedException("请选择要删除的模块！");
-			} else if (Module.ROOT.getModuleId().equals(moduleId)) {
-				throw new RefusedException("无法删除根结点！");
-			}
+			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
 			moduleService.delete(moduleId);
-			message.setMsg("删除成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("删除失败！");
+			logger.error("删除模块失败！", e.getCause());
+			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setObj(e.getMessage());
 		}
 		return message;
 	}
@@ -235,10 +238,10 @@ public class ModuleController extends AppWebController {
 	 * 模块 列表 返回json 给 easyUI 
 	 * @return
 	 */
-	@RequestMapping("/treegrid")
+	@ApiOperation(value = "所有模块树形列表结构")
+	@PostMapping(value = "/treegrid.do")
 	@ResponseBody
-	@SuppressWarnings("unchecked")
-	public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request, HttpServletResponse response) {
+	public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request) {
 		List<EasyuiTreeGridModule> nodeList = new ArrayList<EasyuiTreeGridModule>();
 		try {
 			List<Module> moduleList = moduleService.getModuleWithOperate();
@@ -322,10 +325,11 @@ public class ModuleController extends AppWebController {
 	 * 模块 Tree 返回json 给 easyUI
 	 * @return
 	 */
-	@RequestMapping("/tree")
+	@ApiOperation(value = "所有模块树形数据")
+	@PostMapping(value = "/tree.do")
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public List<EasyuiTreeNode> tree(HttpServletRequest request, HttpServletResponse response) {
+	public List<EasyuiTreeNode> tree(HttpServletRequest request) {
 		// 是否角色
 		Role role = (Role) request.getSession().getAttribute(Constanst.SysUserSession.SESSION_ROLE);
 		Map<String, RoleModuleRight> rightMap = (Map<String, RoleModuleRight>) request.getSession().getAttribute(Constanst.SysUserSession.SESSION_ROLE_RIGHT_MAP);
@@ -408,7 +412,7 @@ public class ModuleController extends AppWebController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("获取模块树形数据失败！", e.getCause());
 			nodeList.clear();
 			EasyuiTreeNode node = new EasyuiTreeNode();
 			node.setMsg(e.getMessage());

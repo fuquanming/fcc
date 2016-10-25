@@ -4,11 +4,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcc.commons.web.common.Constanst;
+import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysUser;
 
 /**
@@ -53,10 +59,26 @@ public class SessionInterceptor implements HandlerInterceptor {
 //		user = null;
 		//未验证
 		if (user == null) {
-//			response.sendRedirect(basePath + "/overtime.jsp");
-			request.getSession().setAttribute("filterMsg", "login");// 表示重新登录系统
-			request.getRequestDispatcher("/overtime.jsp").forward(request, response);
-			return false;
+	        if (object instanceof HandlerMethod) {
+                HandlerMethod handlerMethod = (HandlerMethod) object;
+                if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)) {// json
+                    response.setContentType("application/json;charset=UTF-8");
+                    Message message = new Message();
+                    message.setMsg(Constants.StatusCode.Sys.sessionTimeout);
+                    message.setObj("sys:login");
+                    byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
+                    response.getOutputStream().write(bytes);
+                    return false;
+                } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
+                    request.getSession().setAttribute("filterMsg", "login");// 表示重新登录系统
+                    request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+                    return false;
+                }
+            }
+//	        response.sendRedirect(basePath + "/overtime.jsp");
+	        request.getSession().setAttribute("filterMsg", "login");// 表示重新登录系统
+            request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+            return false;
 		}
 		return true;
 	}

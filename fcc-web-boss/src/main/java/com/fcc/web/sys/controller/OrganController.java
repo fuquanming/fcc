@@ -2,11 +2,9 @@ package com.fcc.web.sys.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
@@ -14,25 +12,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.web.util.ModelAndViewUtil;
 import com.fcc.commons.web.view.EasyuiTreeGridOrgan;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Organization;
-import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.SysUserService;
-import com.fcc.web.sys.util.OrganUtil;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * <p>Description: 管理系统 组织机构</p>
@@ -50,66 +49,65 @@ public class OrganController extends AppWebController {
 	@Resource
 	private SysUserService sysUserService;
 	
-	@RequestMapping("/view")
+	@ApiOperation(value = "显示机构列表页面")
+	@GetMapping(value = "/view.do")
 	public String view(HttpServletRequest request) {
 		request.setAttribute("organId", getSysUser(request).getDept());
-		return "/WEB-INF/manage/sys/organ_list";
+		return "manage/sys/organ_list";
 	}
 	
 	/** 显示组织机构新增页面 */
-	@RequestMapping("/toAdd")
-	public String toAdd(HttpServletRequest request) {
+	@ApiOperation(value = "显示新增机构页面")
+	@GetMapping("/toAdd.do")
+	public String toAdd(HttpServletRequest request,
+	        @ApiParam(required = true, value = "父模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
 		try {
-			String parentId = request.getParameter("parentId");
 			Organization data = organService.getOrganById(parentId);
 			request.setAttribute("parent", data);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("初始化新增机构数据失败！", e);
 		}
-		return "/WEB-INF/manage/sys/organ_add";
+		return "manage/sys/organ_add";
 	}
 	
 	/** 显示组织机构新增页面 */
-	@RequestMapping("/toEdit")
-	public String toEdit(HttpServletRequest request) {
+	@ApiOperation(value = "显示修改机构页面")
+	@GetMapping("/toEdit.do")
+	public String toEdit(HttpServletRequest request,
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
-			String id = request.getParameter("id");
 			Organization data = organService.getOrganById(id);
 			request.setAttribute("data", data);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("初始化修改机构数据失败！", e);
 		}
-		return "/WEB-INF/manage/sys/organ_edit";
+		return "manage/sys/organ_edit";
 	}
 	
-	@RequestMapping("/add")
-	public ModelAndView add(HttpServletRequest request,
-	        @RequestParam(name = "organSort", defaultValue = "1") int moduleSort) {
+	@ApiOperation(value = "显示修改机构页面")
+	@PostMapping("/add.do")
+	@ResponseBody
+	public Message add(HttpServletRequest request,
+	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
+            @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
+            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
+            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
 		try {
-			String parentId = request.getParameter("parentId");
-			String organName = request.getParameter("organName");
-			String organDesc = request.getParameter("organDesc");
-			if (organName == null || "".equals(organName)) {
-				throw new RefusedException("请输入组织机构名称！");
-			}
-			if (parentId == null || "".equals(parentId)) {
-				parentId = Organization.ROOT.getOrganId();
-			}
+			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
+			if (parentId == null || "".equals(parentId)) parentId = Organization.ROOT.getOrganId();
 			Organization parent = organService.getOrganById(parentId);
-			if (parent == null) throw new RefusedException("请选择父组织机构");
+			if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
 			
-			String organId = getSysUser(request).getDept();
-			if (StringUtils.isNotEmpty(organId)) {// 非管理员
-				int indexOf = parentId.indexOf(organId);
-				if (indexOf != 0) {
-					throw new RefusedException("不能添加上级机构！");
-				}
-			}
+//			String organId = getSysUser(request).getDept();
+//			if (StringUtils.isNotEmpty(organId)) {// 非管理员
+//				int indexOf = parentId.indexOf(organId);
+//				if (indexOf != 0) {
+//					throw new RefusedException("不能添加上级机构！");
+//				}
+//			}
 			
 			Organization data = new Organization();
 			if (Organization.ROOT.getOrganId().equals(parentId)) {
@@ -119,131 +117,123 @@ public class OrganController extends AppWebController {
 			}
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
-			data.setOrganSort(moduleSort);
+			data.setOrganSort(organSort);
 			data.setOrganLevel(parent.getOrganLevel() + 1);
 			organService.create(data);
 			message.setSuccess(true);
-			message.setMsg("保存成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
-			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("保存失败！");
+			logger.error("新增机构失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return message;
 	}
 	
-	@RequestMapping("/edit")
-	public ModelAndView edit(HttpServletRequest request,
-	        @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
+	@ApiOperation(value = "修改机构")
+	@PostMapping("/edit.do")
+	@ResponseBody
+	public Message edit(HttpServletRequest request,
+	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "id") String organId,
+	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
+            @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
+            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
+            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
-		String organId = request.getParameter("id");
 		try {
-			String organName = request.getParameter("organName");
-			String organDesc = request.getParameter("organDesc");
-			if (organId == null || "".equals(organId)) {
-				throw new RefusedException("请选择要修改的记录！");
-			} else if (organName == null || "".equals(organName)) {
-				throw new RefusedException("请输入组织机构名称！");
-			} else if (Organization.ROOT.getOrganId().equals(organId)) {
-				throw new RefusedException("不能修改根节点！");
-			} else if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否修改上级组织机构
-				throw new RefusedException("不能修改上级机构！");
-			}
+			if (organId == null || "".equals(organId)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
+			if (Organization.ROOT.getOrganId().equals(organId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
+//			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否修改上级组织机构
+//				throw new RefusedException("不能修改上级机构！");
+//			}
 			Organization data = organService.getOrganById(organId);
-			if (data == null) {
-				throw new RefusedException("修改的记录不存在！");
-			}
+			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);
 			organService.update(data);
 			message.setSuccess(true);
-			message.setMsg("修改成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
-			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("修改失败！");
+			logger.error("修改机构失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return message;
 	}
 	
-	@RequestMapping("/delete")
-	public ModelAndView delete(HttpServletRequest request) {
+	@ApiOperation(value = "删除机构")
+    @PostMapping(value = "/delete.do")
+    @ResponseBody
+	public Message delete(HttpServletRequest request,
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String organId) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
-		String id = request.getParameter("id");
 		try {
-			if (id == null || "".equals(id)) {
-				throw new RefusedException("请选择要删除的组织机构！");
-			} else if (Organization.ROOT.getOrganId().equals(id)) {
-				throw new RefusedException("无法删除根结点！");
-			} if (OrganUtil.checkParent(getSysUser(request), id)) {// 判断是否删除上级组织机构
-				throw new RefusedException("不能删除上级机构！");
-			}
+			if (organId == null || "".equals(organId)) new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (Organization.ROOT.getOrganId().equals(organId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
+//			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否删除上级组织机构
+//				throw new RefusedException("不能删除上级机构！");
+//			}
 			// 判断是否有归属人员
 			Map<String, Object> param = new HashMap<String, Object>();
-			param.put("dept", id);
+			param.put("dept", organId);
 			ListPage listPage = sysUserService.queryPage(1, 10, param);
-			if (listPage.getTotalSize() > 0) throw new RefusedException("该组织机构下有人员！");
+			if (listPage.getTotalSize() > 0) throw new RefusedException(Constants.StatusCode.Organization.hasUser);
 			
-			organService.delete(id);
-			message.setMsg("删除成功！");
+			organService.delete(organId);
+			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
-			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("删除失败！");
+			logger.error("删除机构失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return message;
 	}
 	
 	/**
 	 * 组织机构 列表 返回json 给 easyUI 
 	 * @return
 	 */
-	@RequestMapping("/treegrid")
-	@ResponseBody
+	@ApiOperation(value = "所有机构树形列表结构")
+    @PostMapping(value = "/treegrid.do")
+    @ResponseBody
 	public List<EasyuiTreeGridOrgan> treegrid(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeGridOrgan> nodeList = new ArrayList<EasyuiTreeGridOrgan>();
 		try {
 			List<Organization> dataList = null;
 			
 			// 系统管理员没有组织机构
-			Set<String> parentOrganIdSet = new HashSet<String>();
-			String organId = getSysUser(request).getDept();
-			if (isAdmin(request)) {// 管理员无组织机构
+//			Set<String> parentOrganIdSet = new HashSet<String>();
+//			String organId = getSysUser(request).getDept();
+//			if (isAdmin(request)) {// 管理员无组织机构
 				dataList = organService.getOrgans();
-			} else {
-				String tempOrganId = organId;
-				while (true) {
-					String parentId = Organization.getParentOrganId(tempOrganId);
-					if (Organization.ROOT.getOrganId().equals(parentId)) {
-						break;
-					} else {
-						parentOrganIdSet.add(parentId);
-						tempOrganId = parentId;
-					}
-				}
-				// 制定ID查询
-				dataList = organService.findChildOrgans(organId);
-				parentOrganIdSet.add(organId);
-				dataList.addAll(organService.findOrgans(parentOrganIdSet));
-			}
+//			} else {
+//				String tempOrganId = organId;
+//				while (true) {
+//					String parentId = Organization.getParentOrganId(tempOrganId);
+//					if (Organization.ROOT.getOrganId().equals(parentId)) {
+//						break;
+//					} else {
+//						parentOrganIdSet.add(parentId);
+//						tempOrganId = parentId;
+//					}
+//				}
+//				// 制定ID查询
+//				dataList = organService.findChildOrgans(organId);
+//				parentOrganIdSet.add(organId);
+//				dataList.addAll(organService.findOrgans(parentOrganIdSet));
+//			}
 			if (dataList != null) {
 				TreeSet<Organization> dataSet = new TreeSet<Organization>();
 				dataSet.addAll(dataList);
@@ -294,7 +284,7 @@ public class OrganController extends AppWebController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("所有机构树形列表结构失败！", e);
 			nodeList.clear();
 			EasyuiTreeGridOrgan node = new EasyuiTreeGridOrgan();
 			node.setMsg(e.getMessage());
@@ -307,34 +297,35 @@ public class OrganController extends AppWebController {
 	 * 组织机构 Tree 返回json 给 easyUI
 	 * @return
 	 */
-	@RequestMapping("/tree")
-	@ResponseBody
+	@ApiOperation(value = "所有机构树形数据")
+    @PostMapping(value = "/tree.do")
+    @ResponseBody
 	public List<EasyuiTreeNode> tree(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
 		try {
 			List<Organization> dataList = null;
 			// 系统管理员没有组织机构
-			SysUser sysUser = getSysUser(request);
-			String organId = sysUser.getDept();
-			Set<String> parentOrganIdSet = new HashSet<String>();
-			if (StringUtils.isEmpty(organId)) {// 管理员无组织机构
+//			SysUser sysUser = getSysUser(request);
+//			String organId = sysUser.getDept();
+//			Set<String> parentOrganIdSet = new HashSet<String>();
+//			if (StringUtils.isEmpty(organId)) {// 管理员无组织机构
 				dataList = organService.getOrgans();
-			} else {
-				String tempOrganId = organId;
-				while (true) {
-					String parentId = Organization.getParentOrganId(tempOrganId);
-					if (Organization.ROOT.getOrganId().equals(parentId)) {
-						break;
-					} else {
-						parentOrganIdSet.add(parentId);
-						tempOrganId = parentId;
-					}
-				}
-				// 制定ID查询
-				dataList = organService.findChildOrgans(organId);
-				parentOrganIdSet.add(organId);
-				dataList.addAll(organService.findOrgans(parentOrganIdSet));
-			}
+//			} else {
+//				String tempOrganId = organId;
+//				while (true) {
+//					String parentId = Organization.getParentOrganId(tempOrganId);
+//					if (Organization.ROOT.getOrganId().equals(parentId)) {
+//						break;
+//					} else {
+//						parentOrganIdSet.add(parentId);
+//						tempOrganId = parentId;
+//					}
+//				}
+//				// 制定ID查询
+//				dataList = organService.findChildOrgans(organId);
+//				parentOrganIdSet.add(organId);
+//				dataList.addAll(organService.findOrgans(parentOrganIdSet));
+//			}
 			
 			if (dataList != null) {
 				TreeSet<Organization> menuSet = new TreeSet<Organization>();

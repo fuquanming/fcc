@@ -13,6 +13,7 @@ var codeMap = {
 	'sys_001':'操作失败',
 	'sys_002':'请选择需要修改的记录',
 	'sys_003':'请选择需要删除的记录',
+	'sys_004':'未登录用户或用户访问已超时，您可以重新登陆',
 		
 	'login_000':'用户名为空',
 	'login_001':'密码为空',
@@ -31,6 +32,15 @@ var codeMap = {
 	'operate_001':'操作名称为空',
 	'operate_002':'操作ID已存在',
 	'operate_003':'超过最大操作个数',
+	
+	'role_000':'角色名称为空',
+	
+	'organization_000':'机构名称为空',
+	'organization_001':'父机构为空',
+	'organization_002':'不能修改根节点',
+	'organization_003':'修改的机构不存在',
+	'organization_004':'该组织机构下有人员',
+	
       
 	'userPassword_000':'旧密码为空',
 	'userPassword_001':'新密码为空',

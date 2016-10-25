@@ -17,7 +17,7 @@
 		<info>A Tag for RBAC permission check</info>
 		<attribute>
 			<name>moduleId</name>
-			<required>true</required>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>

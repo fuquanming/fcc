@@ -24,7 +24,7 @@ public class SysInfoController {
 	 */
 	@RequestMapping("/manage/sys/sysInfo/view")
 	public String infoView() {
-		return "/WEB-INF/manage/sysinfo/sys_info";
+		return "manage/sysinfo/sys_info";
 	}
 	
 	/**
@@ -33,7 +33,7 @@ public class SysInfoController {
 	 */
 	@RequestMapping("/manage/sys/sysCache/view")
 	public String cacheView() {
-		return "/WEB-INF/manage/sysinfo/sys_cache";
+		return "manage/sysinfo/sys_cache";
 	}
 	
 	/**
