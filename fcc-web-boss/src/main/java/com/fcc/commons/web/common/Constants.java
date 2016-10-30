@@ -10,7 +10,7 @@ import java.util.Map;
  * @author 傅泉明
  * @version v1.0
  */
-public class Constanst {
+public class Constants {
 	
 	public static final String ENCODING = "UTF-8";
 	

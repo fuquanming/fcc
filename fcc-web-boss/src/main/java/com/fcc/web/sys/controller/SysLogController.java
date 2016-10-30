@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,30 +28,40 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.WebUtils;
 
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.web.common.Constanst;
-import com.fcc.commons.web.util.ModelAndViewUtil;
+import com.fcc.commons.web.service.ExportService;
+import com.fcc.commons.web.service.ImportService;
+import com.fcc.commons.web.task.ExportTask;
+import com.fcc.commons.web.task.ImportTask;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.web.view.ReportInfo;
-import com.fcc.commons.zip.Zip;
 import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
 import com.fcc.web.sys.service.SysLogService;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * <p>Description:</p>
@@ -68,14 +76,15 @@ public class SysLogController extends AppWebController {
 	
 	private static Logger logger = Logger.getLogger(SysLogController.class);
 	
+	private ExportTask exportTask;
+	private ImportTask importTask;
+	
 	private static String exportDataPath;
 	private static String importDataPath;
 	
 	// 标识导出文件
-	private String exportDataFile = "exportDataFile_sysLog";
 	private String importDataFile = "importDataFile_sysLog";
 	
-	private static Boolean exportDataFlag = false;
 	private static Boolean importDataFlag = false;
 	
 	private static ReentrantLock lockExportData = new ReentrantLock();
@@ -87,18 +96,15 @@ public class SysLogController extends AppWebController {
 	private SysLogService sysLogService;
 	
 	public SysLogController() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(CacheUtil.realPath).append(Constanst.EXPORT_DATA_FILENAME)
-		.append(File.separatorChar).append("sysLogExport").append(File.separatorChar);
-		exportDataPath = sb.toString();
-		sb.delete(0, sb.length());
-		sb.append(CacheUtil.realPath).append(Constanst.IMPORT_DATA_FILENAME)
-		.append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
-		importDataPath = sb.toString();
+//		sb.delete(0, sb.length());
+//		sb.append(CacheUtil.realPath).append(Constanst.IMPORT_DATA_FILENAME)
+//		.append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
+//		importDataPath = sb.toString();
 	}
 
 	/** 显示列表 */
-	@RequestMapping(value = {"/view"})
+	@ApiOperation(value = "显示日志列表页面")
+	@GetMapping(value = {"/view.do"})
 	public String view(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -107,7 +113,8 @@ public class SysLogController extends AppWebController {
 	}
 	
 	/** 显示统计报表 */
-	@RequestMapping(value = {"/report/view"})
+	@ApiOperation(value = "显示日志统计列表页面")
+	@GetMapping(value = {"/report/view.do"})
 	public String reportView(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -116,26 +123,27 @@ public class SysLogController extends AppWebController {
 	}
 	
 	/** 跳转到查看页面 */
-	@RequestMapping(value = {"/toView"})
-	public String toView(HttpServletRequest request) {
-		String id = request.getParameter("id");
+	@ApiOperation(value = "显示日志查看页面")
+	@GetMapping(value = {"/toView.do"})
+	public String toView(HttpServletRequest request, 
+	        @ApiParam(required = true, value = "日志ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		if (StringUtils.isNotEmpty(id)) {
 			try {
 				SysLog data = (SysLog) baseService.get(SysLog.class, java.lang.Long.valueOf(id));
 				request.setAttribute("sysLog", data);
 				if (data != null) {
 					String moduleId = data.getModuleName();
-					if (Constanst.MODULE.REQUEST_APP.equals(moduleId)) {
-						data.setModuleName(Constanst.MODULE.Text.TEXT_MAP.get(Constanst.MODULE.REQUEST_APP));
+					if (Constants.Module.requestApp.equals(moduleId)) {
+						data.setModuleName(Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp));
 					} else if (moduleId != null) {
 						Module m = CacheUtil.moduleMap.get(moduleId);
 						if (m != null) data.setModuleName(m.getModuleName());
 					}
 					String operateId = data.getOperateName();
-					if (Constanst.OPERATE.LOGIN.equals(operateId)) {
-						data.setOperateName(Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGIN));
-					} else if (Constanst.OPERATE.LOGOUT.equals(operateId)) {
-						data.setOperateName(Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGOUT));
+					if (Constants.Operate.login.equals(operateId)) {
+						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.login));
+					} else if (Constants.Operate.logout.equals(operateId)) {
+						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout));
 					} else if (operateId != null) {
 						Operate o = CacheUtil.operateMap.get(operateId);
 						if (o != null) data.setOperateName(o.getOperateName());
@@ -156,13 +164,15 @@ public class SysLogController extends AppWebController {
 	}
 	
 	/** 跳转到新增页面 */
-	@RequestMapping(value = {"/toAdd"})
+	@ApiOperation(value = "显示日志新增页面")
+	@GetMapping(value = {"/toAdd.do"})
 	public String toAdd(HttpServletRequest request, HttpServletResponse response) {
 		return "manage/sys/sysLog/sysLog_add";
 	}
 	
 	/** 跳转到修改页面 */
-	@RequestMapping(value = {"/toEdit"})
+	@ApiOperation(value = "显示日志修改页面")
+	@GetMapping(value = {"/toEdit.do"})
 	public String toEdit(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		if (StringUtils.isNotEmpty(id)) {
@@ -178,11 +188,10 @@ public class SysLogController extends AppWebController {
 	}
 	
 	/** 新增 */
-	@RequestMapping(value = {"/add"})
+	@ApiOperation(value = "新增日志")
+	@PostMapping(value = {"/add.do"})
 	public ModelAndView add(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
 		try {
 			String logTimeString = request.getParameter("logTimeString");
 			sysLog.setLogTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(logTimeString));
@@ -195,15 +204,14 @@ public class SysLogController extends AppWebController {
 			message.setMsg("保存失败！");
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	/** 修改 */
-	@RequestMapping(value = {"/edit"})
+	@ApiOperation(value = "修改日志")
+	@PostMapping(value = {"/edit"})
 	public ModelAndView edit(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
 		try {
 			SysLog dbSysLog = null;
 			String logId = request.getParameter("logId");
@@ -217,7 +225,7 @@ public class SysLogController extends AppWebController {
 				baseService.update(dbSysLog);
 				// 更新
 				message.setSuccess(true);
-				message.setMsg("修改成功！");
+				message.setMsg(Constants.StatusCode.Sys.success);
 			} else {
 				// 修改的不存在
 				message.setSuccess(false);
@@ -226,22 +234,21 @@ public class SysLogController extends AppWebController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("修改失败！");
+			logger.error("修改日志失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	/**
 	 * 删除
 	 * @return
 	 */
-	@RequestMapping(value = {"/delete"})
+	@ApiOperation("删除日志")
+	@PostMapping(value = {"/delete"})
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
 		String id = request.getParameter("ids");
 		try {
 			if (id == null || "".equals(id)) {
@@ -250,24 +257,24 @@ public class SysLogController extends AppWebController {
 			String[] ids = id.split(",");
 			baseService.deleteById(SysLog.class, DataFormater.getLong(ids), "logId");
 			message.setSuccess(true);
-			message.setMsg("删除成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
-			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("删除失败！");
+			logger.error("删除日志失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	/**
 	 * 列表 返回json 给 easyUI 
 	 * @return
 	 */
-	@RequestMapping("/datagrid")
+	@ApiOperation(value = "查询日志")
+	@PostMapping("/datagrid.do")
 	@ResponseBody
 	@SuppressWarnings("unchecked")
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
@@ -279,17 +286,17 @@ public class SysLogController extends AppWebController {
 			if (list != null) {
 				for (SysLog data : list) {
 					String moduleId = data.getModuleName();
-					if (Constanst.MODULE.REQUEST_APP.equals(moduleId)) {
-						data.setModuleName(Constanst.MODULE.Text.TEXT_MAP.get(Constanst.MODULE.REQUEST_APP));
+					if (Constants.Module.requestApp.equals(moduleId)) {
+						data.setModuleName(Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp));
 					} else if (moduleId != null) {
 						Module m = CacheUtil.moduleMap.get(moduleId);
 						if (m != null) data.setModuleName(m.getModuleName());
 					}
 					String operateId = data.getOperateName();
-					if (Constanst.OPERATE.LOGIN.equals(operateId)) {
-						data.setOperateName(Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGIN));
-					} else if (Constanst.OPERATE.LOGOUT.equals(operateId)) {
-						data.setOperateName(Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGOUT));
+					if (Constants.Operate.login.equals(operateId)) {
+						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.login));
+					} else if (Constants.Operate.logout.equals(operateId)) {
+						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout));
 					} else if (operateId != null) {
 						Operate o = CacheUtil.operateMap.get(operateId);
 						if (o != null) data.setOperateName(o.getOperateName());
@@ -310,7 +317,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 报表 */
 	@SuppressWarnings("unchecked")
-    @RequestMapping("/report/datagrid")
+    @PostMapping("/report/datagrid.do")
 	@ResponseBody
 	public EasyuiDataGridJson reportDatagrid(EasyuiDataGrid dg, HttpServletRequest request) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
@@ -331,18 +338,18 @@ public class SysLogController extends AppWebController {
 		        			Module module = CacheUtil.moduleMap.get(groupNameVal);
 		        			if (module != null) {
 		        				groupName = module.getModuleName();
-		        			} else if (Constanst.MODULE.REQUEST_APP.equals(groupNameVal)) {
-		        				groupName = Constanst.MODULE.Text.TEXT_MAP.get(groupNameVal);
+		        			} else if (Constants.Module.requestApp.equals(groupNameVal)) {
+		        				groupName = Constants.Module.Text.TEXT_MAP.get(groupNameVal);
 		        			} 
 		        		} else if ("operateName".equals(reportGroupName)) {// 操作名称
 		        			String groupNameVal = info.getGroupName();
 		        			Operate operate = CacheUtil.operateMap.get(groupNameVal);
 		        			if (operate != null) {
 		        				groupName = operate.getOperateName();
-		        			} else if (Constanst.OPERATE.LOGIN.equals(groupNameVal)) {
-		        				groupName = Constanst.OPERATE.Text.TEXT_MAP.get(groupNameVal);
-		        			} else if (Constanst.OPERATE.LOGOUT.equals(groupNameVal)) {
-		        				groupName = Constanst.OPERATE.Text.TEXT_MAP.get(groupNameVal);
+		        			} else if (Constants.Operate.login.equals(groupNameVal)) {
+		        				groupName = Constants.Operate.Text.TEXT_MAP.get(groupNameVal);
+		        			} else if (Constants.Operate.logout.equals(groupNameVal)) {
+		        				groupName = Constants.Operate.Text.TEXT_MAP.get(groupNameVal);
 		        			}
 		        		} else if ("eventResult".equals(reportGroupName)) {// 事件结果
 		        			String groupNameVal = info.getGroupName();
@@ -363,7 +370,7 @@ public class SysLogController extends AppWebController {
 	        }
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("查询日志失败！", e);
 			json.setTotal(0L);
 			json.setRows(new ArrayList<ReportInfo>());
 			json.setMsg(e.getMessage());
@@ -438,218 +445,75 @@ public class SysLogController extends AppWebController {
 	}
 	
 	/** 导出数据 */
-	@RequestMapping("/export")
+	@ApiIgnore
+	@PostMapping("/export")
 	public ModelAndView export(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
-		if (CacheUtil.isAppDestroy() == true) {
-			message.setMsg("系统停止中，请稍后！");
-			return mav;
-		}
 		lockExportData.lock();
 		try {
-			if (exportDataFlag == false) {
-				exportDataFlag = true;
-				ExportMessage em = new ExportMessage();
-				request.getSession().setAttribute(exportDataFile, em);// 标识导出的文件
-				message.setSuccess(true);
-				message.setMsg("系统正在导出数据。。。");
-				CacheUtil.getPool().execute(new SysLogExport(getParams(request), em));
-			} else {
-				message.setMsg("系统正在执行上次导出数据，请稍后。。。");
-			}
+		    if (exportTask == null || exportTask.isExportDataFlag() == false) {
+		        if (exportDataPath == null) {
+		            StringBuilder sb = new StringBuilder();
+	                sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.EXPORT_DATA_FILENAME)
+	                .append(File.separatorChar).append("sysLogExport").append(File.separatorChar);
+	                exportDataPath = sb.toString();
+		        }
+		        List<String> titleList = new ArrayList<String>();
+                titleList.add(SysLog.ALIAS_LOG_ID);
+                titleList.add(SysLog.ALIAS_USER_ID);
+                titleList.add(SysLog.ALIAS_USER_NAME);
+                titleList.add(SysLog.ALIAS_IP_ADDRESS);
+                titleList.add(SysLog.ALIAS_LOG_TIME);
+                titleList.add(SysLog.ALIAS_MODULE_NAME);
+                titleList.add(SysLog.ALIAS_OPERATE_NAME);
+                titleList.add(SysLog.ALIAS_EVENT_PARAM);
+                titleList.add(SysLog.ALIAS_EVENT_OBJECT);
+                titleList.add(SysLog.ALIAS_EVENT_RESULT);
+                Object[] paramObject = new Object[]{1, Constants.EXPORT_DATA_PAGE_SIZE, getParams(request), false};
+                exportTask = new ExportTask("sysLog", titleList, exportDataPath, sysLogService, 
+                        "query", 0, paramObject, (ExportService) sysLogService);
+		        CacheUtil.getPool().execute(exportTask);
+		        message.setSuccess(true);
+                message.setMsg(Constants.StatusCode.Export.exportNow);
+		    } else {
+		        message.setMsg(Constants.StatusCode.Export.exportBusy);
+		    }
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			exportDataFlag = false;
-			message.setMsg("系统异常");
+			logger.error("导出日志失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		} finally {
 			lockExportData.unlock();
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
-	@RequestMapping("/queryExport")
+	@ApiIgnore
+	@PostMapping("/queryExport.do")
 	@ResponseBody
 	public ExportMessage queryExport(HttpServletRequest request, HttpServletResponse response) {
-		ExportMessage em = (ExportMessage) request.getSession().getAttribute(exportDataFile);
-		if (em == null) {
-			em = new ExportMessage();
-			em.setEmpty(true);
-		} else {
-			if (em.getFileName() != null) request.getSession().removeAttribute(exportDataFile);
-		}
+	    ExportMessage em = null;
+	    if (exportTask != null) {
+	        em = exportTask.getExportMessage();
+	    }
+	    if (em == null) {
+            em = new ExportMessage();
+            em.setEmpty(true);
+        }
 		return em;
 	}
 	
-	class SysLogExport implements Runnable {
-		
-		private Map<String, Object> param;
-		private ExportMessage message;
-		
-		public SysLogExport(Map<String, Object> param, ExportMessage message) {
-			this.param = param;
-			this.message = message;
-		}
-		
-		public void run() {
-			long startTime = System.currentTimeMillis();
-			String key = CacheUtil.getRunningAppKey("sysLogExportTasker_");
-			FileOutputStream fos = null;
-			try {
-				if (CacheUtil.isAppDestroy() == true) {
-					logger.info("系统停止中，sysLogExport任务停止！");
-					message.setDestroy(true);
-					return;
-				}
-				CacheUtil.addRunningApp(key);
-	            File exportDataPathFile = new File(exportDataPath);
-	            if (exportDataPathFile.exists() == false) exportDataPathFile.mkdirs();
-	            
-				List<String> filePaths = new ArrayList<String>();
-				SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-				String fileNo = format.format(new Date()) + "_sysLogExport";
-				int fileFlag = 1;
-				int xlsSize = 0;
-				int totalSize = 0;
-				Workbook workbook = null;
-				Sheet sheet = null;
-				List<SysLog> list = null;
-				int pageNo = 1;
-			
-				while (true) {
-					xlsSize = 0;
-					int rowNum = 1;
-					boolean endFlag = false;
-					int flag = 10;// 轮询10次,一个xls总数5W数据量
-					String saveFile = new StringBuilder().append(exportDataPath).append(fileNo)
-					.append(fileFlag).append(".xls").toString();
-					workbook = new HSSFWorkbook();
-					sheet = workbook.createSheet("报表");
-					//添加表头、列头
-					Row row = sheet.createRow(0);
-					row.createCell(0).setCellValue(SysLog.ALIAS_LOG_ID);
-					row.createCell(1).setCellValue(SysLog.ALIAS_USER_ID);
-					row.createCell(2).setCellValue(SysLog.ALIAS_USER_NAME);
-					row.createCell(3).setCellValue(SysLog.ALIAS_IP_ADDRESS);
-					row.createCell(4).setCellValue(SysLog.ALIAS_LOG_TIME);
-					row.createCell(5).setCellValue(SysLog.ALIAS_MODULE_NAME);
-					row.createCell(6).setCellValue(SysLog.ALIAS_OPERATE_NAME);
-					row.createCell(7).setCellValue(SysLog.ALIAS_EVENT_PARAM);
-					row.createCell(8).setCellValue(SysLog.ALIAS_EVENT_OBJECT);
-					row.createCell(9).setCellValue(SysLog.ALIAS_EVENT_RESULT);
-					for (int i = 0; i < flag; i++) {
-						Map<String, Object> tempParam = new HashMap<String, Object>();
-						tempParam.putAll(param);
-						list = sysLogService.query(pageNo, Constanst.EXPORT_DATA_PAGE_SIZE, tempParam, false);
-						pageNo++;
-						int dataSize = (list == null) ? 0 : list.size();
-						totalSize += dataSize;
-						xlsSize += dataSize;
-						message.setCurrentSize(totalSize);
-						if (totalSize == 0) {
-							message.setEmpty(true);
-							workbook = null;
-							File tempFile = new File(saveFile);
-							if (tempFile.exists()) tempFile.delete();
-							return;
-						} else if (dataSize == 0) {
-							endFlag = true;
-							break;
-						} else {
-							for (SysLog data : list) {
-								row = sheet.createRow(rowNum);
-								row.createCell(0).setCellValue(DataFormater.noNullValue(data.getLogId()));
-								row.createCell(1).setCellValue(DataFormater.noNullValue(data.getUserId()));
-								row.createCell(2).setCellValue(DataFormater.noNullValue(data.getUserName()));
-								row.createCell(3).setCellValue(DataFormater.noNullValue(data.getIpAddress()));
-								row.createCell(4).setCellValue(DataFormater.noNullValue(data.getLogTime(), "yyyy-MM-dd HH:mm:ss"));
-						        String moduleVal = DataFormater.noNullValue(data.getModuleName());
-						        Module module = CacheUtil.moduleMap.get(moduleVal);
-						        String moduleName = moduleVal;
-						        if (module != null) {
-						        	moduleName = module.getModuleName();
-						        } else if (Constanst.MODULE.REQUEST_APP.equals(moduleVal)) {
-						        	moduleName = Constanst.MODULE.Text.TEXT_MAP.get(moduleVal);
-						        }
-						        row.createCell(5).setCellValue(moduleName);
-						        
-						        String operateVal = DataFormater.noNullValue(data.getOperateName());
-						        Operate operate = CacheUtil.operateMap.get(operateVal);
-						        String operateName = operateVal;
-						        if (operate != null) {
-						        	operateName = operate.getOperateName();
-						        } else if (Constanst.OPERATE.LOGIN.equals(operateVal)) {
-						        	operateName = Constanst.OPERATE.Text.TEXT_MAP.get(operateVal);
-						        } else if (Constanst.OPERATE.LOGOUT.equals(operateVal)) {
-						        	operateName = Constanst.OPERATE.Text.TEXT_MAP.get(operateVal);
-						        }
-						        row.createCell(6).setCellValue(operateName);
-						        row.createCell(7).setCellValue(DataFormater.noNullValue(data.getEventParam()));
-						        row.createCell(8).setCellValue(DataFormater.noNullValue(data.getEventObject()));
-						        String eventResult = DataFormater.noNullValue(data.getEventResult());
-						        row.createCell(9).setCellValue(SysLog.EVENT_RESULT_OK.equals(eventResult) ? "成功" : "失败");
-								rowNum++;
-							}
-						}
-						list.clear();
-						list = null;
-					}
-					if (xlsSize > 0) {
-						File file = new File(saveFile);
-						fos = new FileOutputStream(file);
-						workbook.write(fos);
-						IOUtils.closeQuietly(fos);
-						workbook = null;
-						filePaths.add(saveFile);
-						workbook = null;
-						fileFlag++;
-					}
-					if (endFlag || totalSize >= CacheUtil.getExportDataTotalSize()) {
-						break;
-					}
-				}
-				String fileName = fileNo + ".zip";
-				new Zip().zipFile(fileName, exportDataPath, filePaths);
-				for(String filePath : filePaths){//删除文件
-					File file = new File(filePath);
-					if (file.exists()) {
-						file.delete();
-					}
-				}
-				message.setFileName(fileName);
-			} catch (Exception e) {
-				message.setError(true);
-				logger.error(e);
-				e.printStackTrace();
-			} finally {
-				IOUtils.closeQuietly(fos);
-				long endTime = System.currentTimeMillis();
-				logger.info("time=" + (endTime - startTime) + ",fileName=" + message.getFileName());
-				exportDataFlag = false;
-				CacheUtil.removeRunningApp(key);
-			}
-		}
-	}
-	
 	/** 导入数据 */
-	@RequestMapping("/import")
+	@ApiIgnore
+	@PostMapping("/import.do")
 	public ModelAndView importSysLog(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
-		if (CacheUtil.isAppDestroy() == true) {
-			message.setMsg("系统停止中，请稍后！");
-			return mav;
-		}
 		lockImportData.lock();
 		FileOutputStream fos = null;
 		MultipartFile file = null;
 		try {
-			if (importDataFlag == false) {
-				importDataFlag = true;
+			if (importTask == null || importTask.getImportDataFlag() == false) {
 				// 接收上传文件
 				file = ((MultipartHttpServletRequest) request).getFile("upload");
 				if (file != null && file.isEmpty() == false) {
@@ -658,38 +522,17 @@ public class SysLogController extends AppWebController {
 					logger.info("上传文件的名称：" + file.getOriginalFilename());
 					logger.info("上传表单的名称：" + file.getName());
 					
-					File importDataPathFile = new File(importDataPath);
-		            if (importDataPathFile.exists() == false) importDataPathFile.mkdirs();
-		            
-					SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-					String fileNo = format.format(new Date()) + "_sysLogImport";
-					// 文件名
-					String fileName = file.getOriginalFilename();
-					// 文件后缀
-					String fileSuffix = fileName.substring(fileName.indexOf(".")).toLowerCase();
-					// 保存文件
-					String saveFilePath = new StringBuilder().append(importDataPath).append(fileNo)
-					.append(fileSuffix).toString();
-					File saveFile = new File(saveFilePath);
-					fos = new FileOutputStream(saveFile);
-					IOUtils.copy(file.getInputStream(), fos);
-					
-					ImportMessage im = new ImportMessage();
-					// uploadify-3.2.1 使用flash上传文件 没有携带cookie 代码绑定 原来sessionId
-					String jsessionId = request.getParameter("JSESSIONID");
-					if (jsessionId != null) {
-				    	HttpSession session = (HttpSession) request.getSession().getServletContext().getAttribute(jsessionId);
-				    	if (session != null) {
-				    		session.setAttribute(importDataFile, im);// 标识导入的文件
-				    	} else {
-				    		request.getSession().setAttribute(importDataFile, im);
-				    	}
-					} else {
-			    		request.getSession().setAttribute(importDataFile, im);
-			    	}
+					if (importDataPath == null) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.EXPORT_DATA_FILENAME)
+                                .append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
+                        importDataPath = sb.toString();
+	                }
+					importTask = new ImportTask(importDataPath, file.getOriginalFilename(), file.getInputStream(), 
+					        (ImportService)sysLogService, 9);
+					CacheUtil.getPool().execute(importTask);
 					message.setSuccess(true);
 					message.setMsg("已上传成功！系统正在导入数据。。。");
-					CacheUtil.getPool().execute(new SysLogImport(im, saveFile));
 				} else {
 					message.setMsg("请选择文件！");
 				}
@@ -697,10 +540,10 @@ public class SysLogController extends AppWebController {
 				message.setMsg("系统正在执行上次导入数据，请稍后。。。");
 			}
 		} catch (Exception e) {
-			message.setMsg("上传失败！");
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
+			logger.error("上传日志失败！", e);
 			e.printStackTrace();
-			importDataFlag = false;
 		} finally {
 			try {
 				IOUtils.closeQuietly(file.getInputStream());
@@ -710,20 +553,29 @@ public class SysLogController extends AppWebController {
 			IOUtils.closeQuietly(fos);
 			lockImportData.unlock();
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	@RequestMapping("/queryImport")
 	@ResponseBody
 	public ImportMessage queryImport(HttpServletRequest request, HttpServletResponse response) {
-		ImportMessage im = (ImportMessage) request.getSession().getAttribute(importDataFile);
-		if (im == null) {
-			im = new ImportMessage();
-			im.setImportFlag(true);
-		} else {
-			if (im.isImportFlag()) request.getSession().removeAttribute(importDataFile);
-		}
-		return im;
+//		ImportMessage im = (ImportMessage) request.getSession().getAttribute(importDataFile);
+//		if (im == null) {
+//			im = new ImportMessage();
+//			im.setImportFlag(true);
+//		} else {
+//			if (im.isImportFlag()) request.getSession().removeAttribute(importDataFile);
+//		}
+//		return im;
+	    ImportMessage im = null;
+        if (importTask != null) {
+            im = importTask.getImportMessage();
+        }
+        if (im == null) {
+            im = new ImportMessage();
+            im.setImportFlag(true);
+        }
+        return im;
 	}
 	
 	class SysLogImport implements Runnable {
@@ -796,8 +648,8 @@ public class SysLogController extends AppWebController {
 					cell.setCellType(Cell.CELL_TYPE_STRING);
 					String ModuleNameValue = cell.getStringCellValue();
 					
-					if (Constanst.MODULE.Text.TEXT_MAP.get(Constanst.MODULE.REQUEST_APP).equals(ModuleNameValue)) {
-						ModuleNameValue = Constanst.MODULE.REQUEST_APP;
+					if (Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp).equals(ModuleNameValue)) {
+						ModuleNameValue = Constants.Module.requestApp;
 					} else {
 						Iterator<Module> mIt = CacheUtil.moduleMap.values().iterator();
 						while (mIt.hasNext()) {
@@ -813,10 +665,10 @@ public class SysLogController extends AppWebController {
 					cell = row.getCell(5);
 					cell.setCellType(Cell.CELL_TYPE_STRING);
 					String OperateNameValue = cell.getStringCellValue();
-					if (Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGIN).equals(OperateNameValue)) {
-						OperateNameValue = Constanst.OPERATE.LOGIN;
-					} else if (Constanst.OPERATE.Text.TEXT_MAP.get(Constanst.OPERATE.LOGOUT).equals(OperateNameValue)) {
-						OperateNameValue = Constanst.OPERATE.LOGOUT;
+					if (Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.login).equals(OperateNameValue)) {
+						OperateNameValue = Constants.Operate.login;
+					} else if (Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout).equals(OperateNameValue)) {
+						OperateNameValue = Constants.Operate.logout;
 					} else {
 						Iterator<Operate> opIt = CacheUtil.operateMap.values().iterator();
 						while (opIt.hasNext()) {

@@ -8,12 +8,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
-import com.fcc.commons.web.common.Constanst;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
@@ -51,19 +50,18 @@ public class LoginController extends AppWebController {
     // 请求 /login.do?login
     //	@RequestMapping(value = "/login.do" , method = RequestMethod.POST)
     @PostMapping(value = "/login.do")
-    @ResponseBody
-    public Message login(HttpServletRequest request,
+    public ModelAndView login(HttpServletRequest request,
             @ApiParam(required = true, value = "登录帐号") @RequestParam(name = "username") String userId,
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
             @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode") String subCode) {
         //	    Assert.notNull(userId, LoginErrorEnums.usernameIsNull.getInfo());
-        String sesCode = (String) request.getSession().getAttribute(Constanst.RAND_CODE_KEY);
+        String sesCode = (String) request.getSession().getAttribute(Constants.RAND_CODE_KEY);
         Message message = new Message();
         try {
             if (StringUtils.isEmpty(userId)) throw new RefusedException(Constants.StatusCode.Login.emptyUserName);
             if (StringUtils.isEmpty(password)) throw new RefusedException(Constants.StatusCode.Login.emptyPassword);
             if (StringUtils.isEmpty(sesCode))  throw new RefusedException(Constants.StatusCode.Login.emptyRandCode);
-            if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
+//            if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
             SysUser user = null;
             password = EncryptionUtil.encodeMD5(password).toLowerCase();
             user = sysUserService.getLoninUser(userId, password);
@@ -81,15 +79,14 @@ public class LoginController extends AppWebController {
             message.setMsg("登录失败！原因：" + e.getMessage());
             message.setObj(e.getMessage());
         }
-        message.setModule(Constanst.MODULE.REQUEST_APP);
-        message.setOperate(Constanst.OPERATE.LOGIN);
-        return message;
+        message.setModule(Constants.Module.requestApp);
+        message.setOperate(Constants.Operate.login);
+        return getModelAndView(message);
     }
 
     @ApiOperation(value = "用户退出")
     @GetMapping("/logout.do")
-    @ResponseBody
-    public Message logout(HttpServletRequest request) throws Exception {
+    public ModelAndView logout(HttpServletRequest request) throws Exception {
         SysUser user = getSysUser(request);
         String userId = null;
         Message message = new Message();
@@ -100,6 +97,6 @@ public class LoginController extends AppWebController {
             message.setMsg(Constants.StatusCode.Sys.success);
         }
         request.getSession().invalidate();
-        return message;
+        return getModelAndView(message);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
@@ -50,8 +50,7 @@ public class UserInfoController extends AppWebController {
 	/** 修改用户基本信息 */
 	@ApiOperation(value = "修改登录用户信息")
 	@PostMapping(value = "/edit.do")
-	@ResponseBody
-	public Message edit(HttpServletRequest request, SysUser sysUser) {
+	public ModelAndView edit(HttpServletRequest request, SysUser sysUser) {
 		Message message = new Message();
 		try {
 			SysUser user = getSysUser(request);
@@ -64,9 +63,10 @@ public class UserInfoController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("修改登录用户信息失败！", e.getCause());
+			logger.error("修改登录用户信息失败！", e);
 			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 }

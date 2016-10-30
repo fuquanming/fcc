@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @version v1.0
  * @Email fuquanming@gmail.com
  */
-public class ImportMessage implements Serializable {
+public class ImportMessage extends Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private boolean uploadFlag = false;// 是否上次成功

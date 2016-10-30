@@ -64,7 +64,10 @@ public class SysUserDaoImpl implements SysUserDao {
     
     @Override
     public Integer resetPassword(String[] userIds, String userPass) {
-        return baseDao.executeHql("update SysUser set password=? where userId in(?)", userPass, userIds);
+        Map<String, Object> param = new HashMap<String, Object>(2);
+        param.put("userId", userIds);
+        param.put("userPass", userPass);
+        return baseDao.executeHql("update SysUser set password=:userPass where userId in(:userId)", param);
     }
     
     @Override

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
@@ -86,10 +87,9 @@ public class OrganController extends AppWebController {
 		return "manage/sys/organ_edit";
 	}
 	
-	@ApiOperation(value = "显示修改机构页面")
+	@ApiOperation(value = "新增机构")
 	@PostMapping("/add.do")
-	@ResponseBody
-	public Message add(HttpServletRequest request,
+	public ModelAndView add(HttpServletRequest request,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
             @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
@@ -130,13 +130,12 @@ public class OrganController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "修改机构")
 	@PostMapping("/edit.do")
-	@ResponseBody
-	public Message edit(HttpServletRequest request,
+	public ModelAndView edit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "id") String organId,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
@@ -166,13 +165,12 @@ public class OrganController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "删除机构")
     @PostMapping(value = "/delete.do")
-    @ResponseBody
-	public Message delete(HttpServletRequest request,
+	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String organId) {
 		Message message = new Message();
 		try {
@@ -198,7 +196,7 @@ public class OrganController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	/**

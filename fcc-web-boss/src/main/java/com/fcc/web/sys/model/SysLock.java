@@ -28,10 +28,10 @@ public class SysLock implements java.io.Serializable{
 	public static final String STATUS_LOCK = "lock";
 	
 	//alias
-	public static final String TABLE_ALIAS = "系统锁";
-	public static final String ALIAS_LOCK_KEY = "锁的key";
-	public static final String ALIAS_LOCK_STATUS = "当前锁状态";
-	public static final String ALIAS_CREATE_TIME = "创建时间";
+//	public static final String TABLE_ALIAS = "系统锁";
+//	public static final String ALIAS_LOCK_KEY = "锁的key";
+//	public static final String ALIAS_LOCK_STATUS = "当前锁状态";
+//	public static final String ALIAS_CREATE_TIME = "创建时间";
 	
 
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息

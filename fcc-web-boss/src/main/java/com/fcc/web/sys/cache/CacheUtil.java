@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fcc.commons.locks.Lock;
-import com.fcc.commons.web.common.Constanst;
+import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
@@ -250,7 +250,7 @@ public class CacheUtil {
 				}
 			}
 		}
-		session.setAttribute(Constanst.SysUserSession.USER_MENU, menuSet);
+		session.setAttribute(Constants.SysUserSession.USER_MENU, menuSet);
 		return menuSet;
 	}
 	
@@ -303,19 +303,19 @@ public class CacheUtil {
 				nodeList.add(node);
 			}
 		}
-		session.setAttribute(Constanst.SysUserSession.USER_MENU_UI, nodeList);
+		session.setAttribute(Constants.SysUserSession.USER_MENU_UI, nodeList);
 		nodeMap.clear();
 		nodeMap = null;
 		return nodeList;
 	}
 	/** 获取登录系统的用户信息 */
 	public static SysUser getSysUser(HttpServletRequest request) {
-		return (SysUser)request.getSession().getAttribute(Constanst.SysUserSession.USER_LOGIN);
+		return (SysUser)request.getSession().getAttribute(Constants.SysUserSession.USER_LOGIN);
 	}
 	
 	/** 设置登录系统的用户信息 */
 	public static void setSysUser(HttpServletRequest request, SysUser user) {
-		request.getSession().setAttribute(Constanst.SysUserSession.USER_LOGIN, user);
+		request.getSession().setAttribute(Constants.SysUserSession.USER_LOGIN, user);
 	}
 	
 	/** 初始化登录系统的用户信息 */

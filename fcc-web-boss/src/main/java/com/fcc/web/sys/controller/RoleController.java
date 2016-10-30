@@ -23,8 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.web.common.Constanst;
-import com.fcc.commons.web.util.ModelAndViewUtil;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -117,8 +115,7 @@ public class RoleController extends AppWebController {
 	
 	@ApiOperation(value = "新增角色")
 	@PostMapping(value = "/add.do")
-	@ResponseBody
-	public Message add(HttpServletRequest request, 
+	public ModelAndView add(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "角色名称") @RequestParam(name = "roleName", defaultValue = "") String roleName,
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
 	        @ApiParam(required = false, value = "角色备注") @RequestParam(name = "roleDesc", defaultValue = "") String roleDesc) {
@@ -147,18 +144,15 @@ public class RoleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "修改角色")
     @PostMapping(value = "/edit.do")
-    @ResponseBody
 	public ModelAndView edit(HttpServletRequest request, 
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
             Role role) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.addObject(message);
 		try {
 			String roleName = role.getRoleName();
 			if (roleName == null || "".equals(roleName)) throw new RefusedException(Constants.StatusCode.Role.emptyRoleName);
@@ -197,17 +191,14 @@ public class RoleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "删除角色")
 	@PostMapping(value = "/delete.do")
-	@ResponseBody
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "角色ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
-		ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
-		mav.getModelMap().addAttribute(message);
 		try {
 		    if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
 			String[] ids = id.split(",");
@@ -222,7 +213,7 @@ public class RoleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return mav;
+		return getModelAndView(message);
 	}
 	
 	/**
@@ -263,7 +254,7 @@ public class RoleController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询角色权限")
-	@RequestMapping("/roleModuleRight")
+	@PostMapping("/roleModuleRight")
 	@ResponseBody
 	public Role roleModuleRight(HttpServletRequest request,
 	        @ApiParam(required = true, value = "角色ID") @RequestParam(name = "id", defaultValue = "") String roleId) {
@@ -291,8 +282,8 @@ public class RoleController extends AppWebController {
 					RoleModuleRight right = it.next();
 					rightMap.put(right.getModuleId(), right);
 				}
-				request.getSession().setAttribute(Constanst.SysUserSession.SESSION_ROLE, role);
-				request.getSession().setAttribute(Constanst.SysUserSession.SESSION_ROLE_RIGHT_MAP, rightMap);
+				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
+				request.getSession().setAttribute(Constants.SysUserSession.sessionRoleRightMap, rightMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
@@ -48,8 +48,7 @@ public class UserPasswordController extends AppWebController {
 	/** 修改登录用户密码 */
 	@ApiOperation(value = "修改密码", notes = "")
 	@PostMapping(value = "/edit.do")
-	@ResponseBody
-	public Message edit(HttpServletRequest request,
+	public ModelAndView edit(HttpServletRequest request,
             @ApiParam(required = true, value = "旧密码") @RequestParam(name = "oldPassword") String oldPassword,
             @ApiParam(required = true, value = "新密码") @RequestParam(name = "newPassword") String newPassword,
             @ApiParam(required = true, value = "确认码") @RequestParam(name = "confirmPassword") String confirmPassword) {
@@ -73,8 +72,8 @@ public class UserPasswordController extends AppWebController {
 			e.printStackTrace();
 			logger.error("修改密码失败！", e.getCause());
 			message.setMsg(Constants.StatusCode.Sys.fail);
-			message.setObj(e.getCause());
+			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 }

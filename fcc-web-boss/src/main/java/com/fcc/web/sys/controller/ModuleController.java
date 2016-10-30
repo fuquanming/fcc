@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.web.common.Constanst;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
@@ -129,8 +129,7 @@ public class ModuleController extends AppWebController {
 	
 	@ApiOperation(value = "新增模块")
 	@PostMapping(value = "/add.do")
-	@ResponseBody
-	public Message add(HttpServletRequest request,
+	public ModelAndView add(HttpServletRequest request,
 	        @ApiParam(required = false, value = "上级模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
 	        @ApiParam(required = true, value = "模块名称") @RequestParam(name = "moduleName", defaultValue = "") String moduleName,
 	        @ApiParam(required = false, value = "模块描述") @RequestParam(name = "moduleDesc", defaultValue = "") String moduleDesc,
@@ -170,13 +169,13 @@ public class ModuleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "修改模块")
 	@PostMapping(value = "/edit.do")
 	@ResponseBody
-	public Message edit(HttpServletRequest request,
+	public ModelAndView edit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String moduleId,
             @ApiParam(required = true, value = "模块名称") @RequestParam(name = "moduleName") String moduleName,
             @ApiParam(required = false, value = "模块描述") @RequestParam(name = "moduleDesc") String moduleDesc,
@@ -208,13 +207,12 @@ public class ModuleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "删除模块")
 	@PostMapping(value = "/delete.do")
-	@ResponseBody
-	public Message delete(HttpServletRequest request,
+	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String moduleId) {
 		Message message = new Message();
 		try {
@@ -231,14 +229,14 @@ public class ModuleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	/**
 	 * 模块 列表 返回json 给 easyUI 
 	 * @return
 	 */
-	@ApiOperation(value = "所有模块树形列表结构")
+	@ApiOperation(value = "查询模块树形列表")
 	@PostMapping(value = "/treegrid.do")
 	@ResponseBody
 	public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request) {
@@ -261,7 +259,7 @@ public class ModuleController extends AppWebController {
 				nodeMap.put(rootModule.getId(), rootModule);
 				
 				// 该用户权限
-				TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constanst.SysUserSession.USER_MENU);
+				TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constants.SysUserSession.menu);
 //				SysUser sysUserCache = getSysUser();
 				
 				for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
@@ -312,7 +310,7 @@ public class ModuleController extends AppWebController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("查询模块树形列表失败", e);
 			nodeList.clear();
 			EasyuiTreeGridModule node = new EasyuiTreeGridModule();
 			node.setMsg(e.getMessage());
@@ -325,14 +323,14 @@ public class ModuleController extends AppWebController {
 	 * 模块 Tree 返回json 给 easyUI
 	 * @return
 	 */
-	@ApiOperation(value = "所有模块树形数据")
+	@ApiOperation(value = "查询模块树形数据")
 	@PostMapping(value = "/tree.do")
 	@ResponseBody
 	@SuppressWarnings("unchecked")
 	public List<EasyuiTreeNode> tree(HttpServletRequest request) {
 		// 是否角色
-		Role role = (Role) request.getSession().getAttribute(Constanst.SysUserSession.SESSION_ROLE);
-		Map<String, RoleModuleRight> rightMap = (Map<String, RoleModuleRight>) request.getSession().getAttribute(Constanst.SysUserSession.SESSION_ROLE_RIGHT_MAP);
+		Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
+		Map<String, RoleModuleRight> rightMap = (Map<String, RoleModuleRight>) request.getSession().getAttribute(Constants.SysUserSession.sessionRoleRightMap);
 		
 		List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
 		try {
@@ -351,7 +349,7 @@ public class ModuleController extends AppWebController {
 				Map<String, EasyuiTreeNode> nodeMap = new HashMap<String, EasyuiTreeNode>();
 				nodeMap.put(rootModule.getId(), rootModule);
 				// 该用户权限
-				TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constanst.SysUserSession.USER_MENU);
+				TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constants.SysUserSession.menu);
 				SysUser sysUserCache = getSysUser(request);
 
 				for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
@@ -418,8 +416,8 @@ public class ModuleController extends AppWebController {
 			node.setMsg(e.getMessage());
 			nodeList.add(node);
 		}
-		request.getSession().removeAttribute(Constanst.SysUserSession.SESSION_ROLE);
-		request.getSession().removeAttribute(Constanst.SysUserSession.SESSION_ROLE_RIGHT_MAP);
+		request.getSession().removeAttribute(Constants.SysUserSession.sessionRole);
+		request.getSession().removeAttribute(Constants.SysUserSession.sessionRoleRightMap);
 		return nodeList;
 	}
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.commons.data.ListPage;
 import com.fcc.web.sys.dao.OperateDao;
-import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.view.OperateValueCount;
 
 /**

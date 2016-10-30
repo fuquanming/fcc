@@ -12,7 +12,6 @@ package com.fcc.web.sys.dao;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
-import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.view.OperateValueCount;
 
 /**
