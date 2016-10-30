@@ -167,7 +167,7 @@ Tool.message.alert = function(title, msg, icon, autoClose, fn) {
 			--x;  
 			if(x == 0) {  
 		       clearInterval(interval);  
-		       $(".messager-body").window('close');    
+		       $(".messager-body").window('close');
 		    }  
 		};
 	}
@@ -186,7 +186,7 @@ Tool.operate.check = function(data, autoClose) {
 	}
 	var msg = StatusCode.msg(d.msg);
 	if (d.success == true) {
-    	Tool.message.alert('操作信息', msg, 'info', autoClose);
+		Tool.message.alert('操作信息', msg, 'info', autoClose);
     	return true;
     } else if (d.success == false) {
         if (d.obj == 'sys:login') {
@@ -199,4 +199,25 @@ Tool.operate.check = function(data, autoClose) {
         return false;
     }
 }
-
+Tool.upload = function() {}
+/** 上传 */
+Tool.upload.check = function(data, autoClose) {
+	var d = $.parseJSON(data);
+	if (!d) {// 转化成功为json对象、form提交返回需要转化
+		d = data;// 已经转化过
+	}
+	var msg = StatusCode.msg(d.msg);
+	if (d.success == true) {
+		Tool.message.alert('操作信息', msg, 'info', autoClose);
+    	return true;
+    } else if (d.success == false) {
+        if (d.obj == 'sys:login') {
+        	window.location.href = overUrl;
+        	return false;
+        } else if (d.obj) {
+        	msg = d.obj;
+        }
+        Tool.message.alert('错误', msg, 'error');
+        return false;
+    }
+}
