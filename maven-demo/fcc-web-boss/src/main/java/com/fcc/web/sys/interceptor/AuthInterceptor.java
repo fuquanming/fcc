@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fcc.commons.web.common.Constanst;
+import com.fcc.commons.web.common.Constants;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
@@ -53,14 +53,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 		tempServletPath += "view.do";
 		Module module = CacheUtil.moduleUrlMap.get(tempServletPath);
 		if (module != null) {
-			request.setAttribute(Constanst.REQUEST.MODULE, module);
+			request.setAttribute(Constants.REQUEST.MODULE, module);
 			request.setAttribute("rightModuleId", module.getModuleId());
 			// 获取执行的方法
 			String operateStr = servletPath.substring(separatorCharIndex, servletPath.lastIndexOf("."));
 			Operate operate = CacheUtil.operateMap.get(operateStr);
 			String operateId = null;
 			if (operate != null) {
-				request.setAttribute(Constanst.REQUEST.OPERATE, operate);
+				request.setAttribute(Constants.REQUEST.OPERATE, operate);
 				operateId = operate.getOperateId();
 				// 鉴权
 				if (!rbacPermissionService.checkPermission(user.getRoles(), module.getModuleId(), operateId)) {

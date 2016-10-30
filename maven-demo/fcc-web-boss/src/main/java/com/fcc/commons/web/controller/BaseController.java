@@ -17,9 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fcc.commons.web.util.ModelAndViewUtil;
+import com.fcc.commons.web.view.Message;
 
 /**
  * 控制器基类
@@ -27,6 +30,16 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  * @author 傅泉明
  */
 public abstract class BaseController {
+    
+    /**
+     * 获取JacksonJsonView
+     * @return
+     */
+    protected ModelAndView getModelAndView(Message message) {
+        ModelAndView mav = new ModelAndView(ModelAndViewUtil.getMappingJacksonJsonView());
+        mav.getModelMap().addAttribute(message);
+        return mav;
+    }
 
     /** 设置成功响应代码 */
     protected ResponseEntity<ModelMap> setSuccessModelMap(ModelMap modelMap) {

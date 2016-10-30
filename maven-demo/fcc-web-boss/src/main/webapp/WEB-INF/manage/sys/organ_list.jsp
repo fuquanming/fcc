@@ -150,6 +150,7 @@
             nowrap : true,
             animate : false,
             border : false,
+            striped:true,
             idField : 'id',
             treeField : 'text',
             frozenColumns : [ [ {

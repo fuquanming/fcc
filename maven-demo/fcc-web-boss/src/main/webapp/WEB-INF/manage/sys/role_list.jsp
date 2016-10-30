@@ -75,6 +75,7 @@
             fitColumns : true,
             nowrap : false,
             border : false,
+            striped:true,
             idField : 'roleId',
             frozenColumns : [ [ {
                 field : 'id',

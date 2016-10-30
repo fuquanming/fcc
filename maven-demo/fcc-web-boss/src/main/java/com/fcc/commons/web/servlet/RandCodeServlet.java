@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fcc.commons.image.CodeImage;
-import com.fcc.commons.web.common.Constanst;
+import com.fcc.commons.web.common.Constants;
 
 /**
  * <p>Description:随机码
@@ -78,7 +78,7 @@ public class RandCodeServlet extends HttpServlet {
         //        responseOutputStream.flush();
         //        responseOutputStream.close();
         CodeImage instance = new CodeImage(120, 40, 4, 50, CodeImage.FONT_FILLING_SOLID, Color.BLACK);
-        request.getSession().setAttribute(Constanst.RAND_CODE_KEY, instance.getCode());
+        request.getSession().setAttribute(Constants.RAND_CODE_KEY, instance.getCode());
         instance.write(response.getOutputStream());
     }
 

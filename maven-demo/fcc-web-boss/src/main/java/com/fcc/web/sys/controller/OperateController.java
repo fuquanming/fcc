@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
@@ -38,7 +39,7 @@ import io.swagger.annotations.ApiParam;
 @Api(value = "模块操作")
 @Controller
 @RequestMapping("/manage/sys/operate")
-public class OperateController {
+public class OperateController extends AppWebController {
 
 	private static Logger logger = Logger.getLogger(OperateController.class);
 	@Resource
@@ -53,8 +54,7 @@ public class OperateController {
 	
 	@ApiOperation(value = "新增操作")
 	@PostMapping(value = "/add.do")
-	@ResponseBody
-	public Message add(HttpServletRequest request, Operate operate) {
+	public ModelAndView add(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateId);
@@ -70,13 +70,12 @@ public class OperateController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "修改操作")
 	@PostMapping(value = "/edit.do")
-	@ResponseBody
-	public Message edit(HttpServletRequest request, Operate operate) {
+	public ModelAndView edit(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
@@ -90,13 +89,12 @@ public class OperateController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getCause());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	@ApiOperation(value = "删除操作")
 	@PostMapping(value = "/delete.do")
-	@ResponseBody
-	public Message delete(HttpServletRequest request,
+	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
@@ -113,7 +111,7 @@ public class OperateController {
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getCause());
 		}
-		return message;
+		return getModelAndView(message);
 	}
 	
 	/**

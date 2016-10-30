@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @version v1.0
  * @Email fuquanming@gmail.com
  */
-public class ExportMessage implements Serializable {
+public class ExportMessage extends Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private boolean empty = false;// 是否空数据
