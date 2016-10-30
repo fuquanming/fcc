@@ -1,5 +1,9 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/head/upload_js.jsp"%>
+<%-- 
+<jsp:param name="initImportUrl" value="${basePath}manage/sys/sysLog/import.do" />
+<jsp:param name="initQueryImportUrl" value="${basePath}manage/sys/sysLog/queryImport.do" /> 
+--%>
 <%-- 导入数据 --%>
 <style type="text/css">
 .fileuploadTable tr {
@@ -55,7 +59,7 @@ $(function() {
 
 function importData() {
     if (importDataFlag == true) {
-        Tool.message.alert('提示', '正在导入请稍后...', 'info', true);
+        Tool.message.alert(Lang.tip, Lang.importNow, Tool.icon.info, true);
         return;
     }
     cleanFileuploadTable();
@@ -73,10 +77,10 @@ function queryImportDataSize() {
                 if (d.importFlag == true) {
                 	$('#importWatiImgTd').addClass('messager-icon messager-info');
                 	$('#importWaitImg').hide();
-                    $('#importDataTd').html('导入完成！已导入：' + d.currentSize + '条');
+                    $('#importDataTd').html(Lang.importEnd.format(d.currentSize));
                     importDataFlag = false;
                 } else {
-                    $('#importDataTd').html('已导入：' + d.currentSize + '条');
+                    $('#importDataTd').html(Lang.importGoing.format(d.currentSize));
                     window.setTimeout("queryImportDataSize()", 2000);
                 }
             } catch(e) {

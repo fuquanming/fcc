@@ -138,14 +138,14 @@ public class ImportTask implements Runnable {
 			totalSize++;
 			dataList.add(dataObj);
 			if (i % 500 == 0) {
-//				importService.saveData(dataList);
+				importService.saveData(dataList);
 				dataList.clear();
 			}
 			importMessage.setCurrentSize(totalSize);
-			Thread.sleep(2000);
+//			Thread.sleep(1000);
 		}
 		if (dataList.size() > 0) {
-//			importService.saveData(dataList);
+			importService.saveData(dataList);
 			dataList.clear();
 		}
 		importMessage.setCurrentSize(totalSize);

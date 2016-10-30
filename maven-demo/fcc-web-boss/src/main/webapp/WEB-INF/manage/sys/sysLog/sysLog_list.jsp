@@ -132,77 +132,6 @@
 
     });
     
-    function view() {
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length != 1 && rows.length != 0) {
-            var names = [];
-            for ( var i = 0; i < rows.length; i++) {
-                names.push(rows[i].userName);
-            }
-            Tool.message.show({
-                msg : '只能择一条记录进行查看！您已经选择了【' + names.join(',') + '】' + rows.length + '条记录',
-                title : '提示'
-            });
-        } else if (rows.length == 1) {
-            window.location.href = "${basePath}manage/sys/sysLog/toView.do?id=" + rows[0].logId;
-        }
-    }
-
-    function add() {
-        window.location.href = "${basePath}manage/sys/sysLog/toAdd.do";
-    }
-
-    function edit() {
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length != 1 && rows.length != 0) {
-            var names = [];
-            for ( var i = 0; i < rows.length; i++) {
-                names.push(rows[i].userName);
-            }
-            Tool.message.show({
-                msg : '只能择一条记录进行编辑！您已经选择了【' + names.join(',') + '】' + rows.length + '条记录',
-                title : '提示'
-            });
-        } else if (rows.length == 1) {
-            window.location.href = "${basePath}manage/sys/sysLog/toEdit.do?id=" + rows[0].logId;
-        }
-    }
-
-    function del() {
-        var ids = [];
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length > 0) {
-            Tool.message.confirm('请确认', '您要删除当前所选记录？', function(r) {
-                if (r) {
-                    for ( var i = 0; i < rows.length; i++) {
-                        ids.push(rows[i].logId);
-                    }
-                    var idsVal = ids.join(',');
-                    userForm.find('[name=ids]').val(idsVal);
-                    userForm.form('submit', {
-                        url : '${basePath}manage/sys/sysLog/delete.do',
-                        onSubmit : function() {
-                        	Tool.message.progress();
-                            return true;
-                        },
-                        success : function(data) {
-                            try {
-                                Tool.message.progress('close');
-	                            if (Tool.operate.check(data, true)) {
-	                                searchFun();
-	                            }
-                            } catch(e) {
-                                window.location.href = overUrl;
-                            }
-                        }
-                    });
-                }
-            });
-        } else {
-            Tool.message.alert('提示', '请选择要删除的记录！', 'error');
-        }
-    }
-
     function searchFun() {
         <c:if test="${not empty param.lazy}">datagrid = $('#datagrid').datagrid({url : '${basePath}manage/sys/sysLog/datagrid.do?random=' + Math.random()});</c:if>
         datagrid.datagrid('load', {
@@ -217,6 +146,7 @@
         });
         datagrid.datagrid('clearSelections');
     }
+    
     function clearFun() {
         $('#toolbar input').val('');
         $('#moduleName').val('');
@@ -299,36 +229,22 @@
     </table>
     </form>
     </fieldset>
-    <%-- <%@ include file="/head/init_operate.jsp" %> --%>
-    <div> 
-	    <a class="easyui-linkbutton" iconCls="icon-search" onClick="view();" plain="true" href="javascript:void(0);">查看</a>
-	    <a class="easyui-linkbutton" iconCls="icon-add" onClick="refresh();" plain="true" href="javascript:void(0);" >刷新</a> 
-	    <fcc:permission operateId="add">
-	    <a class="easyui-linkbutton" iconCls="icon-add" onClick="add();" plain="true" href="javascript:void(0);">新增</a> 
-	    </fcc:permission>
-	    <fcc:permission operateId="edit">
-	    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="edit();" plain="true" href="javascript:void(0);">修改</a>
-	    </fcc:permission>
-	    <fcc:permission operateId="delete">
-	    <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>  
-	    </fcc:permission>
-	    <fcc:permission operateId="export">
-	    <a class="easyui-linkbutton" iconCls="icon-download" onClick="exportData();" plain="true" href="javascript:void(0);">导出</a>
-	    </fcc:permission> 
-	    <fcc:permission operateId="import">
-	    <a class="easyui-linkbutton" iconCls="icon-upload" onClick="importData();" plain="true" href="javascript:void(0);">导入</a>
-	    </fcc:permission>
-	    <fcc:permission operateId="report">
-	    <a class="easyui-linkbutton" iconCls="icon-search" onClick="report();" plain="true" href="javascript:void(0);">报表</a>
-	    </fcc:permission>
-	    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> 
-	</div> 
-  </div>
+    <%@ include file="/head/init_operate.jsp" %>
+  </div> 
   <table id="datagrid">
   </table>
 </div>
 </body>
 </html>
+<jsp:include page="/head/init_list.jsp">
+<jsp:param name="initDataGrid" value="datagrid" />
+<jsp:param name="initDataId" value="logId" />
+<jsp:param name="initDataName" value="userName" />
+<jsp:param name="initViewUrl" value="${basePath}manage/sys/sysLog/toView.do"/>
+<jsp:param name="initAddUrl" value="${basePath}manage/sys/sysLog/toAdd.do"/>
+<jsp:param name="initEditUrl" value="${basePath}manage/sys/sysLog/toEdit.do"/>
+<jsp:param name="initDelUrl" value="${basePath}manage/sys/sysLog/delete.do"/>
+</jsp:include>
 <jsp:include page="/head/init_export.jsp">
 <jsp:param name="initExportUrl" value="${basePath}manage/sys/sysLog/export.do" />
 <jsp:param name="initQueryExportUrl" value="${basePath}manage/sys/sysLog/queryExport.do" />

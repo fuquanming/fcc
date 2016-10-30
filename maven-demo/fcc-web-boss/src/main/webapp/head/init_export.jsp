@@ -1,10 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%-- 导出文件 --%>
+<%-- 
+<jsp:param name="initExportUrl" value="${basePath}manage/sys/sysLog/export.do" />
+<jsp:param name="initQueryExportUrl" value="${basePath}manage/sys/sysLog/queryExport.do" />
+<jsp:param name="initModel" value="sysLog" /> 
+--%>
 <script type="text/javascript">
 var exportDataFlag = false;
 function exportData() {
     if (exportDataFlag == true) {
-        Tool.message.alert('提示', '正在导出请稍后...', 'error', true);
+        Tool.message.alert(Lang.tip, Lang.exportNow, Tool.icon.error, true);
         return;
     }
     exportDataFlag = true;
@@ -44,20 +49,20 @@ function queryExportDataSize() {
             	var exportInfo = $(".messager-body").children().eq(1);
                 exportInfo.css({'color': 'red', 'font-size' : '15px;'})
                 if (d.empty == true) {
-                    exportInfo.html("无数据导出！");
+                    exportInfo.html(Lang.exportEmpty);
                     exportDataFlag = false;
                 } else if (d.fileName != null) {
-                    exportInfo.html("已导出：" + d.currentSize + "条，导出完成！<br/>若没有提示下载，请点击<br/> <a href='" + '${basePath}exportData/sysLogExport/' + d.fileName + "'>" + d.fileName + "</a>");
+                    exportInfo.html(Lang.exportEnd.format(d.currentSize, '${basePath}exportData/${param.initModel}Export/' + d.fileName, d.fileName))
                     exportDataFlag = false;
                     window.location.href = '${basePath}exportData/${param.initModel}Export/' + d.fileName;
                 } else if (d.error == true) {
-                    exportInfo.html("导出异常！");
+                    exportInfo.html(Lang.exportError);
                     exportDataFlag = false;
                 } else if (d.detroy == true) {
-                    exportInfo.html("系统停止中！");
+                    exportInfo.html(Lang.exportStop);
                     exportDataFlag = false;
                 } else {
-                    exportInfo.html("已导出：" + d.currentSize + "条，继续导出中！");
+                    exportInfo.html(Lang.exportGoing.format(d.currentSize));
                     window.setTimeout("queryExportDataSize()", 2000);
                 }
                 if (exportDataFlag == false) {
