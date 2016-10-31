@@ -1,4 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%-- 按钮操作 --%>
 <div> 
     <a class="easyui-linkbutton" iconCls="icon-search" onClick="view();" plain="true" href="javascript:void(0);">查看</a>
     <a class="easyui-linkbutton" iconCls="icon-reload" onClick="refresh();" plain="true" href="javascript:void(0);" >刷新</a> 

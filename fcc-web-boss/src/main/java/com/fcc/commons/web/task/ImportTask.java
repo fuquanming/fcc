@@ -56,8 +56,9 @@ public class ImportTask implements Runnable {
 	public ImportTask() {
 	}
 	
-	public ImportTask(String importDataPath, String fileName, InputStream fileInputStream, ImportService importService, int cellNum) {
+	public ImportTask(String runningKey, String importDataPath, String fileName, InputStream fileInputStream, ImportService importService, int cellNum) {
         super();
+        this.runningKey = runningKey;
         this.importDataPath = importDataPath;
         this.fileName = fileName;
         this.fileInputStream = fileInputStream;

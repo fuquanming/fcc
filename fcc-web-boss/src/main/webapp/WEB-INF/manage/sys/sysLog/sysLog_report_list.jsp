@@ -8,100 +8,7 @@
 <%@ include file="/head/easyui.jsp" %>
 <%@ include file="/head/highcharts.jsp" %>
 <%@ include file="/head/fusionCharts.jsp" %>
-<script src="js/report.js" charset="UTF-8" type="text/javascript"></script>
-<script type="text/javascript" charset="UTF-8">
-	var datagrid;
-	var userForm;
-	var dataList;
-	var dataTitle;
-	$(function() {
-		userForm = $('#userForm').form();
-		
-		datagrid = $('#datagrid').datagrid({
-			url : '<%=basePath%>manage/sys/sysLog/report/datagrid.do?random=' + Math.random(),
-			toolbar : '#toolbar',
-			title : '',
-			iconCls : 'icon-save',
-			pagination : true,
-			rownumbers:true,
-			striped:true,
-			pageSize : 10,
-			pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
-			fit : true,
-			fitColumns : true,
-			nowrap : false,
-			border : false,
-			idField : 'groupName',
-			frozenColumns : [ [ 
-			 ] ],
-			columns : [ [ 
-				{
-					field : 'groupName',
-					title : '',
-					sortable:true,
-					width : 100
-				} ,
-				{
-					field : 'count',
-					title : '总数',
-					sortable:true,
-					width : 100
-				} 
-			] ],
-			onRowContextMenu : function(e, rowIndex, rowData) {
-				e.preventDefault();
-				$(this).datagrid('unselectAll');
-				$(this).datagrid('selectRow', rowIndex);
-				$('#menu').menu('show', {
-					left : e.pageX,
-					top : e.pageY
-				});
-			},
-			onLoadError : function(e) {
-				window.location.href = overUrl;
-			},
-			onLoadSuccess : function(data) {
-				if (data.msg && data.msg != '') {
-					$.messager.show({
-						msg : '数据库异常！',
-						title : '提示'
-					});
-				} else {
-					dataList = data.rows;
-					dataTitle = $('.datagrid-view td[field="groupName"] div span:first-child');
-				}
-			}
-		});
-
-	});
-	
-	function searchFun() {
-		datagrid.datagrid('load', {
-				userId : $('#toolbar input[name=userId]').val(),
-				userName : $('#toolbar input[name=userName]').val(),
-				ipAddress : $('#toolbar input[name=ipAddress]').val(),
-				logTimeBegin : $('#toolbar input[name=logTimeBegin]').val(),
-				logTimeEnd : $('#toolbar input[name=logTimeEnd]').val(),
-				moduleName : $('#moduleName').val(),
-				operateName : $('#operateName').val(),
-				eventResult : $('#eventResult').val(),
-				reportGroupName : $('#reportGroupName').val()
-		});
-		var groupName = $('#reportGroupName').val();
-		if (groupName != '') {
-			dataTitle.html($('#reportGroupName').find("option:selected").text());	
-		}
-	}
-	function clearFun() {
-		$('#toolbar input').val('');
-		$('#reportGroupName').val('');
-		datagrid.datagrid('load', {});
-	}
-	function toBack() {
-		window.location.href = "<%=basePath%>manage/sys/sysLog/view.do";
-	}
-	
-</script>
+<script src="js/my/report.js" charset="UTF-8" type="text/javascript"></script>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -199,3 +106,99 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" charset="UTF-8">
+    var datagrid;
+    var userForm;
+    var dataList;
+    var dataTitle;
+    $(function() {
+        userForm = $('#userForm').form();
+        
+        datagrid = $('#datagrid').datagrid({
+            url : '${basePath}manage/sys/sysLog/report/datagrid.do?random=' + Math.random(),
+            toolbar : '#toolbar',
+            title : '',
+            iconCls : 'icon-save',
+            pagination : true,
+            rownumbers:true,
+            striped:true,
+            pageSize : 10,
+            pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
+            fit : true,
+            fitColumns : true,
+            nowrap : false,
+            border : false,
+            idField : 'groupName',
+            frozenColumns : [ [ 
+             ] ],
+            columns : [ [ 
+                {
+                    field : 'groupName',
+                    title : '',
+                    sortable:true,
+                    width : 100
+                } ,
+                {
+                    field : 'count',
+                    title : '总数',
+                    sortable:true,
+                    width : 100
+                } 
+            ] ],
+            onRowContextMenu : function(e, rowIndex, rowData) {
+                e.preventDefault();
+                $(this).datagrid('unselectAll');
+                $(this).datagrid('selectRow', rowIndex);
+                $('#menu').menu('show', {
+                    left : e.pageX,
+                    top : e.pageY
+                });
+            },
+            onLoadError : function(e) {
+                window.location.href = overUrl;
+            },
+            onLoadSuccess : function(data) {
+                if (data.msg && data.msg != '') {
+                    Tool.message.alert(Lang.tip, Lang.dataError, Tool.icon.error);
+                } else {
+                    dataList = data.rows;
+                    dataTitle = $('.datagrid-view td[field="groupName"] div span:first-child');
+                }
+            },
+            loadFilter : function(data) {
+                var flag = Tool.operate.check(data);
+                if (flag != true || flag != false) {
+                    return data;                                            
+                }
+            }
+        });
+
+    });
+    
+    function searchFun() {
+        datagrid.datagrid('load', {
+                userId : $('#toolbar input[name=userId]').val(),
+                userName : $('#toolbar input[name=userName]').val(),
+                ipAddress : $('#toolbar input[name=ipAddress]').val(),
+                logTimeBegin : $('#toolbar input[name=logTimeBegin]').val(),
+                logTimeEnd : $('#toolbar input[name=logTimeEnd]').val(),
+                moduleName : $('#moduleName').val(),
+                operateName : $('#operateName').val(),
+                eventResult : $('#eventResult').val(),
+                reportGroupName : $('#reportGroupName').val()
+        });
+        var groupName = $('#reportGroupName').val();
+        if (groupName != '') {
+            dataTitle.html($('#reportGroupName').find("option:selected").text());   
+        }
+    }
+    function clearFun() {
+        $('#toolbar input').val('');
+        $('#reportGroupName').val('');
+        datagrid.datagrid('load', {});
+    }
+    function toBack() {
+        window.location.href = "${basePath}manage/sys/sysLog/view.do";
+    }
+    
+</script>

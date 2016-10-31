@@ -40,7 +40,7 @@
         </tr>
         <tr>
 			<th>组织机构</th>
-			<td><select name="organId" style="width: 200px;"></select></td>
+			<td><select id="organId" name="organId" style="width: 200px;"></select></td>
 		</tr>
         <tr>
           <th>备注</th>
@@ -75,7 +75,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="add();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
+          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
         </tr>
       </table>
     </form>
@@ -84,68 +84,23 @@
 </div>
 </body>
 </html>
+<%@ include file="/head/init_save.jsp" %>
+<script type="text/javascript" src="js/my/init_combotree.js"></script>
 <script type="text/javascript" charset="UTF-8">
-    var userForm;
-    $(function() {
-
-        userForm = $('#userForm').form();
-
-        $('[name=organId]').combotree({
-            url : 'manage/sys/organ/tree.do',
-            animate : false,
-            lines : !Tool.isLessThanIe8(),
-            checkbox : true,
-            multiple : false,
-            onLoadSuccess : function(node, data) {
-                var t = $(this);
-                if (data) {
-                    $(data).each(function(index, d) {
-                        if (this.state == 'closed') {
-                            t.tree('expandAll');
-                        }
-                    });
-                }
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-
+var organTree;
+saveParam.saveUrl = '${basePath}manage/sys/user/add.do';
+saveParam.toBack = false;
+saveParam.backUrl = '${basePath}manage/sys/user/view.do';
+saveParam.beforeSaveFun = function() {
+	// 获取角色
+    var roleIds = [];
+    $('#selecetRole').children().each(function(){
+        roleIds.push($(this).val());
     });
-
-    function add() {
-        // 获取角色
-        var roleIds = [];
-        $('#selecetRole').children().each(function(){
-            roleIds.push($(this).val());
-        });
-        var idsVal = roleIds.join(',');
-        userForm.find('[name=roleValue]').val(idsVal);
-        userForm.form('submit', {
-            url : '${basePath}manage/sys/user/add.do',
-            success : function(data) {
-                try {
-                    Tool.message.progress('close');
-                    Tool.operate.check(data, true);
-                } catch(e) {
-                    window.location.href = overUrl;
-                }
-            },
-            onSubmit : function() {
-                var isValid = $(this).form('validate');
-                if (isValid) {
-                    Tool.message.progress();
-                }
-                return isValid;
-            }
-        });
-    }
-
-    function toBack() {
-        window.location.href = '${basePath}manage/sys/user/view.do';
-    }
-
+    var idsVal = roleIds.join(',');
+    userForm.find('[name=roleValue]').val(idsVal);
+}
+$(function() {
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'organId',closed:false});
+})
 </script>
