@@ -110,15 +110,20 @@ public interface Constants {
         }
         
         /** 上传文件 */
-        public interface Upload {
-            
+        public interface Import {
+            /** 已上传成功！系统正在导入数据... import_000 */
+            String importNow = "import_000";
+            /** 系统正在执行上次导入数据，请稍后... import_001 */
+            String importBusy = "import_001";
+            /** 请选择上传文件 import_002 */
+            String emptyFile = "import_002";
         }
         
         /** 导出文件 */
         public interface Export {
-            /** 系统正在导出数据 export_000 */
+            /** 系统正在导出数据... export_000 */
             String exportNow = "export_000";
-            /** 系统正在执行上次导出数据，请稍后。。。 export_001 */
+            /** 系统正在执行上次导出数据，请稍后... export_001 */
             String exportBusy = "export_001";
         }
         

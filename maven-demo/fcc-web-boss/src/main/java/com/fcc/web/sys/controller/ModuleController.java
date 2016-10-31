@@ -364,6 +364,7 @@ public class ModuleController extends AppWebController {
 					EasyuiTreeNode node = new EasyuiTreeNode();
 					node.setId(m.getModuleId());
 					node.setText(m.getModuleName());
+					node.setState("closed");
 					node.setAttributes(new HashMap<String, Object>());
 					Set<Operate> operateSet = m.getOperates();
 					if (operateSet != null && operateSet.size() > 0) {

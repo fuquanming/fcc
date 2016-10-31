@@ -30,7 +30,7 @@
           <td><input name="organDesc" type="text" value="${data.organDesc }" maxlength="100"/></td>
         </tr>
         <tr>
-          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="edit();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
+          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
         </tr>
       </table>
     </form>
@@ -39,39 +39,9 @@
 </div>
 </body>
 </html>
-<script type="text/javascript" charset="UTF-8">
-    var userForm;
-    $(function() {
-    
-        userForm = $('#userForm').form();
-        
-    });
-    
-    function edit() {
-        
-        userForm.form('submit', {
-            url : '${basePath}manage/sys/organ/edit.do',
-            success : function(data) {
-                try {
-                    Tool.message.progress('close');
-                    if (Tool.operate.check(data, true)) {
-                        setTimeout(function() {toBack();}, 3000);
-                    };
-                } catch(e) {
-                    window.location.href = overUrl;
-                }
-            },
-            onSubmit : function() {
-                var isValid = $(this).form('validate');
-                if (isValid) {
-                    Tool.message.progress();
-                }
-                return isValid;
-            }
-        });
-    }
-    
-    function toBack() {
-        window.location.href = '${basePath}manage/sys/organ/view.do';
-    }
+<%@ include file="/head/init_save.jsp" %>
+<script type="text/javascript">
+saveParam.saveUrl = '${basePath}manage/sys/organ/edit.do';
+saveParam.toBack = true;
+saveParam.backUrl = '${basePath}manage/sys/organ/view.do';
 </script>

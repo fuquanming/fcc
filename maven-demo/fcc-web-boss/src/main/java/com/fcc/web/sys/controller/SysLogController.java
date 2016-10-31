@@ -1,13 +1,11 @@
 package com.fcc.web.sys.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -20,12 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,29 +71,17 @@ public class SysLogController extends AppWebController {
 	private ExportTask exportTask;
 	private ImportTask importTask;
 	
-	private static String exportDataPath;
-	private static String importDataPath;
+	private String exportDataPath;
+	private String importDataPath;
 	
-	// 标识导出文件
-	private String importDataFile = "importDataFile_sysLog";
-	
-	private static Boolean importDataFlag = false;
-	
-	private static ReentrantLock lockExportData = new ReentrantLock();
-	private static ReentrantLock lockImportData = new ReentrantLock();
+	private ReentrantLock lockExportData = new ReentrantLock();
+	private ReentrantLock lockImportData = new ReentrantLock();
 	@Resource
 	private BaseService baseService;
 	//默认多列排序,example: username desc,createTime asc
 	@Resource
 	private SysLogService sysLogService;
 	
-	public SysLogController() {
-//		sb.delete(0, sb.length());
-//		sb.append(CacheUtil.realPath).append(Constanst.IMPORT_DATA_FILENAME)
-//		.append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
-//		importDataPath = sb.toString();
-	}
-
 	/** 显示列表 */
 	@ApiOperation(value = "显示日志列表页面")
 	@GetMapping(value = {"/view.do"})
@@ -197,11 +177,11 @@ public class SysLogController extends AppWebController {
 			sysLog.setLogTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(logTimeString));
 			baseService.create(sysLog);
 			message.setSuccess(true);
-			message.setMsg("保存成功！");
+			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("保存失败！");
+			logger.error("保持日志失败！", e);
+			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -209,7 +189,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 修改 */
 	@ApiOperation(value = "修改日志")
-	@PostMapping(value = {"/edit"})
+	@PostMapping(value = {"/edit.do"})
 	public ModelAndView edit(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		try {
@@ -229,8 +209,7 @@ public class SysLogController extends AppWebController {
 			} else {
 				// 修改的不存在
 				message.setSuccess(false);
-				message.setMsg("修改对象已不存在！");
-				message.setObj("修改对象已不存在！");
+				message.setMsg(Constants.StatusCode.Sys.emptyUpdateId);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,7 +225,7 @@ public class SysLogController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation("删除日志")
-	@PostMapping(value = {"/delete"})
+	@PostMapping(value = {"/delete.do"})
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		String id = request.getParameter("ids");
@@ -446,7 +425,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 导出数据 */
 	@ApiIgnore
-	@PostMapping("/export")
+	@PostMapping("/export.do")
 	public ModelAndView export(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockExportData.lock();
@@ -528,16 +507,16 @@ public class SysLogController extends AppWebController {
                                 .append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
                         importDataPath = sb.toString();
 	                }
-					importTask = new ImportTask(importDataPath, file.getOriginalFilename(), file.getInputStream(), 
+					importTask = new ImportTask("sysLog", importDataPath, file.getOriginalFilename(), file.getInputStream(), 
 					        (ImportService)sysLogService, 9);
 					CacheUtil.getPool().execute(importTask);
 					message.setSuccess(true);
-					message.setMsg("已上传成功！系统正在导入数据。。。");
+					message.setMsg(Constants.StatusCode.Import.importNow);
 				} else {
-					message.setMsg("请选择文件！");
+					message.setMsg(Constants.StatusCode.Import.emptyFile);
 				}
 			} else {
-				message.setMsg("系统正在执行上次导入数据，请稍后。。。");
+				message.setMsg(Constants.StatusCode.Import.importBusy);
 			}
 		} catch (Exception e) {
 			message.setMsg(Constants.StatusCode.Sys.fail);
@@ -556,17 +535,9 @@ public class SysLogController extends AppWebController {
 		return getModelAndView(message);
 	}
 	
-	@RequestMapping("/queryImport")
+	@RequestMapping("/queryImport.do")
 	@ResponseBody
 	public ImportMessage queryImport(HttpServletRequest request, HttpServletResponse response) {
-//		ImportMessage im = (ImportMessage) request.getSession().getAttribute(importDataFile);
-//		if (im == null) {
-//			im = new ImportMessage();
-//			im.setImportFlag(true);
-//		} else {
-//			if (im.isImportFlag()) request.getSession().removeAttribute(importDataFile);
-//		}
-//		return im;
 	    ImportMessage im = null;
         if (importTask != null) {
             im = importTask.getImportMessage();
@@ -576,154 +547,5 @@ public class SysLogController extends AppWebController {
             im.setImportFlag(true);
         }
         return im;
-	}
-	
-	class SysLogImport implements Runnable {
-		private ImportMessage message;
-		private File saveFile;
-		public SysLogImport(ImportMessage message, File saveFile) {
-			this.message = message;
-			this.saveFile = saveFile;
-		}
-		public void run() {
-			long startTime = System.currentTimeMillis();
-			int totalSize = 0;
-			String key = CacheUtil.getRunningAppKey("sysLogImportTasker_");
-			FileInputStream fis = null;
-			try {
-				if (CacheUtil.isAppDestroy() == true) {
-					logger.info("系统停止中，SysLogImport任务停止！");
-					message.setDestroy(true);
-					return;
-				}
-				CacheUtil.addRunningApp(key);
-				List<SysLog> sysLogList = new ArrayList<SysLog>();
-				// 读取Execle
-				Workbook rwb = null;
-				try {
-					fis = new FileInputStream(saveFile);
-					String fileName = saveFile.getName().toLowerCase();
-					fileName = fileName.substring(fileName.lastIndexOf("."));
-					if (fileName.contains(".xlsx")) { // 2007
-						rwb = new XSSFWorkbook(fis);
-					} else if (fileName.contains(".xls")) { // 97-03
-						rwb = new HSSFWorkbook(fis);
-					}
-				} catch (Exception e) {
-					logger.error("打开文件出错：" + e);
-					return;
-				} finally {
-					IOUtils.closeQuietly(fis);
-				}
-				Sheet sheet = rwb.getSheetAt(0);
-				int rows = sheet.getPhysicalNumberOfRows();
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				for (int i = 1; i < rows; i++) {
-					SysLog sysLog = new SysLog();
-					
-					Row row = sheet.getRow(i); 
-					if (row == null) break;
-					Cell cell = row.getCell(0);
-					if (cell == null) break;
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String UserIdValue = cell.getStringCellValue();
-					sysLog.setUserId(java.lang.String.valueOf(UserIdValue));
-					
-					cell = row.getCell(1);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String UserNameValue = cell.getStringCellValue();
-					sysLog.setUserName(java.lang.String.valueOf(UserNameValue));
-					
-					cell = row.getCell(2);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String IpAddressValue = cell.getStringCellValue();
-					sysLog.setIpAddress(java.lang.String.valueOf(IpAddressValue));
-					
-					cell = row.getCell(3);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String LogTimeValue = cell.getStringCellValue();
-					sysLog.setLogTime(format.parse(LogTimeValue));
-					
-					cell = row.getCell(4);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String ModuleNameValue = cell.getStringCellValue();
-					
-					if (Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp).equals(ModuleNameValue)) {
-						ModuleNameValue = Constants.Module.requestApp;
-					} else {
-						Iterator<Module> mIt = CacheUtil.moduleMap.values().iterator();
-						while (mIt.hasNext()) {
-							Module o = mIt.next();
-							if (o.getModuleName().equals(ModuleNameValue)) {
-								ModuleNameValue = o.getModuleId();
-								break;
-							}
-						}
-					}
-					sysLog.setModuleName(java.lang.String.valueOf(ModuleNameValue));
-					
-					cell = row.getCell(5);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String OperateNameValue = cell.getStringCellValue();
-					if (Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.login).equals(OperateNameValue)) {
-						OperateNameValue = Constants.Operate.login;
-					} else if (Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout).equals(OperateNameValue)) {
-						OperateNameValue = Constants.Operate.logout;
-					} else {
-						Iterator<Operate> opIt = CacheUtil.operateMap.values().iterator();
-						while (opIt.hasNext()) {
-							Operate o = opIt.next();
-							if (o.getOperateName().equals(OperateNameValue)) {
-								OperateNameValue = o.getOperateId();
-								break;
-							}
-						}
-					}
-					sysLog.setOperateName(java.lang.String.valueOf(OperateNameValue));
-					
-					cell = row.getCell(6);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String EventParamValue = cell.getStringCellValue();
-					sysLog.setEventParam(java.lang.String.valueOf(EventParamValue));
-					
-					cell = row.getCell(7);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String EventObjectValue = cell.getStringCellValue();
-					sysLog.setEventObject(java.lang.String.valueOf(EventObjectValue));
-					
-					cell = row.getCell(8);
-					cell.setCellType(Cell.CELL_TYPE_STRING);
-					String EventResultValue = cell.getStringCellValue();
-					if ("成功".equals(EventResultValue)) {
-						EventResultValue = SysLog.EVENT_RESULT_OK;
-					} else if ("失败".equals(EventResultValue)) {
-						EventResultValue = SysLog.EVENT_RESULT_FAIL;
-					}
-					sysLog.setEventResult(java.lang.String.valueOf(EventResultValue));
-					
-					totalSize++;
-					sysLogList.add(sysLog);
-					if (i % 500 == 0) {
-						baseService.createList(sysLogList);
-						sysLogList.clear();
-					}
-					message.setCurrentSize(totalSize);
-				}
-				if (sysLogList.size() > 0) {
-					baseService.createList(sysLogList);
-					sysLogList.clear();
-				}
-				message.setCurrentSize(totalSize);
-			} catch (Exception e) {
-				logger.error(e);
-				e.printStackTrace();
-			} finally {
-				message.setImportFlag(true);
-				long endTime = System.currentTimeMillis();
-				logger.info("time=" + (endTime - startTime) + ",totalSize=" + totalSize);
-				importDataFlag = false;
-				CacheUtil.removeRunningApp(key);
-			}
-		}
 	}
 }

@@ -58,7 +58,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="edit();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
+          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
         </tr>
       </table>
     </form>
@@ -67,57 +67,30 @@
 </div>
 </body>
 </html>
+<%@ include file="/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-    var userForm;
-    $(function() {
-    
-        userForm = $('#userForm').form();
-        
-        var operateIdMap = [];
-        <c:forEach items="${data.operates}" var="operate">
-            operateIdMap['${operate.operateId}'] = '${operate.operateId}';
-        </c:forEach>
-        
-        // 显示已有的操作
-        $('#unSelectOperate').children().each(function(){
-            if (operateIdMap[$(this).val()]) {
-                $(this).attr("selected", "selected");
-            } 
-        });
-        Tool.removeSelect({'sourceId':'unSelectOperate','targetId':'selecetOperate'})
-
+saveParam.saveUrl = '${basePath}manage/sys/module/edit.do';
+saveParam.toBack = true;
+saveParam.backUrl = '${basePath}manage/sys/module/view.do';
+saveParam.beforeSaveFun = function() {
+	var operateIds = [];
+    $('#selecetOperate').children().each(function(){
+        operateIds.push($(this).val());
     });
-    
-    function edit() {
-        
-        var operateIds = [];
-        $('#selecetOperate').children().each(function(){
-            operateIds.push($(this).val());
-        });
-        var idsVal = operateIds.join(',');
-        userForm.find('[name=operateValue]').val(idsVal);
-        userForm.form('submit', {
-            url : '${basePath}manage/sys/module/edit.do',
-            success : function(data) {
-                try {
-                    Tool.message.progress('close');
-                    if (Tool.operate.check(data, true)) {
-                    	setTimeout(function() {toBack();}, 3000);
-                    };
-                } catch(e) {
-                	console.log(e);
-                    window.location.href = overUrl;
-                }
-            },
-            onSubmit : function() {
-                var isValid = $(this).form('validate');
-                if (isValid) Tool.message.progress();
-                return isValid;
-            }
-        });
-    }
-    
-    function toBack() {
-        window.location.href = '${basePath}manage/sys/module/view.do';
-    }
+    var idsVal = operateIds.join(',');
+    userForm.find('[name=operateValue]').val(idsVal);
+}
+$(function() {
+	var operateIdMap = [];
+    <c:forEach items="${data.operates}" var="operate">
+        operateIdMap['${operate.operateId}'] = '${operate.operateId}';
+    </c:forEach>
+    // 显示已有的操作
+    $('#unSelectOperate').children().each(function(){
+        if (operateIdMap[$(this).val()]) {
+            $(this).attr("selected", "selected");
+        } 
+    });
+    Tool.removeSelect({'sourceId':'unSelectOperate','targetId':'selecetOperate'})
+})
 </script>

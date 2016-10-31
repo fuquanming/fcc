@@ -56,6 +56,7 @@
 </div>
 </body>
 </html>
+<%@ include file="/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
     var datagrid;
     var userDialog;
@@ -71,55 +72,20 @@
                 text : '确定',
                 handler : function() {
                     if (userForm.find('[name=operateValue]').val() != '') {
-                        userForm.form('submit', {
-                            url : '${basePath}manage/sys/operate/edit.do',
-                            success : function(data) {
-                                try {
-                                	Tool.message.progress('close');
-                                        // 动态添加datagrid
-                                       /*  var selectedRow = datagrid.datagrid('getSelected');
-                                        var rowIndex = datagrid.datagrid('getRowIndex', selectedRow);
-                                        datagrid.datagrid('updateRow',{
-                                            index: rowIndex,
-                                            row: {
-                                                operateName : userForm.find('[name=operateName]').val()
-                                            }
-                                        });  */
-                                    if (Tool.operate.check(data, true)) {
-                                    	userDialog.dialog('close');
-                                        searchFun();
-                                    }
-                                } catch(e) {
-                                	console.log(e);
-                                    window.location.href = overUrl;
-                                }
-                            },
-                            onSubmit : function() {
-                                var isValid = $(this).form('validate');
-                                if (isValid) Tool.message.progress();
-                                return isValid;
-                            }
-                        });
+                    	saveParam.saveUrl = '${basePath}manage/sys/operate/edit.do';
+                    	saveParam.toBack = false;
+                    	saveParam.afterSaveFun = function() {
+                    		userDialog.dialog('close');
+                            searchFun();
+                    	}
+                    	save();
                     } else {
-                        userForm.form('submit', {
-                            url : '${basePath}manage/sys/operate/add.do',
-                            success : function(data) {
-                                try {
-                                	Tool.message.progress('close');
-                                    if (Tool.operate.check(data, true)) {
-                                    	searchFun();
-                                    }
-                                } catch(e) {
-                                	console.log(e);
-                                    window.location.href = overUrl;
-                                }
-                            },
-                            onSubmit : function() {
-                                var isValid = $(this).form('validate');
-                                if (isValid) Tool.message.progress();
-                                return isValid;
-                            }
-                        });
+                    	saveParam.saveUrl = '${basePath}manage/sys/operate/add.do';
+                        saveParam.toBack = false;
+                        saveParam.afterSaveFun = function() {
+                            searchFun();
+                        }
+                        save();
                     }
                 }
             } ]

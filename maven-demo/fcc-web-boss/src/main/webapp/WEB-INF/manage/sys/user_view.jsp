@@ -6,19 +6,6 @@
 <%@ include file="/head/base.jsp" %>
 <%@ include file="/head/meta.jsp" %>
 <%@ include file="/head/easyui.jsp" %>
-<script type="text/javascript" charset="UTF-8">
-	var userForm;
-	$(function() {
-
-		userForm = $('#userForm').form();
-
-	});
-
-	function toBack() {
-		window.location.href = '<%=basePath%>manage/sys/user/view.do';
-	}
-
-</script>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -81,3 +68,8 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" charset="UTF-8">
+function toBack() {
+    window.location.href = '${basePath}manage/sys/user/view.do';
+}
+</script>

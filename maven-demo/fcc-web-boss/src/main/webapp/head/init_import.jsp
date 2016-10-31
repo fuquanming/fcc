@@ -1,10 +1,10 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/head/upload_js.jsp"%>
+<%-- 导入数据 --%>
 <%-- 
 <jsp:param name="initImportUrl" value="${basePath}manage/sys/sysLog/import.do" />
 <jsp:param name="initQueryImportUrl" value="${basePath}manage/sys/sysLog/queryImport.do" /> 
 --%>
-<%-- 导入数据 --%>
 <style type="text/css">
 .fileuploadTable tr {
     background-color: #F9F9F9;

@@ -37,8 +37,8 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
-<script type="text/javascript" src="js/tool.js" charset="UTF-8"></script>
-<script type="text/javascript" src="js/status.code.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/my/tool.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/my/status.code.js" charset="UTF-8"></script>
 
 <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
 

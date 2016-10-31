@@ -10,13 +10,6 @@
 <%@ include file="/head/easyui.jsp" %>
 <script language="javascript" type="text/javascript" src="js/datepicker/WdatePicker.js" defer="defer"></script>
 <link rel="stylesheet" type="text/css" href="js/datepicker/skin/WdatePicker.css" />
-<script type="text/javascript" charset="UTF-8">
-
-	function toBack() {
-		window.location.href = '<%=basePath%>manage/sys/sysLog/view.do';
-	}
-
-</script>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -79,3 +72,8 @@
 </div>
 </body>
 </html>
+<script type="text/javascript" charset="UTF-8">
+function toBack() {
+    window.location.href = '${basePath}manage/sys/sysLog/view.do';
+}
+</script>

@@ -30,7 +30,7 @@
         </tr>
         <fcc:permission operateId="edit">
         <tr>
-          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="edit();" href="javascript:void(0);">保存</a> </td>
+          <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> </td>
         </tr>
         </fcc:permission>
         <tr>
@@ -43,29 +43,8 @@
 </div>
 </body>
 </html>
+<%@ include file="/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-    var userForm;
-    $(function() {
-        userForm = $('#userForm').form();
-    });
-
-    function edit() {
-        // 获取角色
-        userForm.form('submit', {
-            url : '${basePath}manage/sys/userPassword/edit.do',
-            success : function(data) {
-                try {
-                	Tool.message.progress('close');
-                	Tool.operate.check(data, true);
-                } catch(e) {
-                    window.location.href = overUrl;
-                }
-            },
-            onSubmit : function() {
-                var isValid = $(this).form('validate');
-                if (isValid) Tool.message.progress();
-                return isValid;
-            }
-        });
-    }
+saveParam.saveUrl = '${basePath}manage/sys/userPassword/edit.do';
+saveParam.toBack = false;
 </script>
