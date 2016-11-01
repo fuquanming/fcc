@@ -1,10 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/head/upload_js.jsp"%>
 <%-- 导入数据 --%>
-<%-- 
-<jsp:param name="initImportUrl" value="${basePath}manage/sys/sysLog/import.do" />
-<jsp:param name="initQueryImportUrl" value="${basePath}manage/sys/sysLog/queryImport.do" /> 
---%>
 <style type="text/css">
 .fileuploadTable tr {
     background-color: #F9F9F9;
@@ -15,11 +11,16 @@
 }
 </style>
 <script type="text/javascript">
+var importParam = {}
+importParam.importUrl;// 导入数据URL
+importParam.queryImportUrl;// 查询导入数据URL
+
 var userDialog;
 var importDataFlag = false;
 var fileuploadTable;
 $(function() {
 	fileuploadTable = $('#fileuploadTable');
+	$('#fileupload').attr('data-url', importParam.importUrl);
 	$('#fileupload').fileupload({
         dataType: 'json',
         acceptFileTypes:  /(\.|\/)(xls|xlsx)$/i,// 文件类型
@@ -29,7 +30,6 @@ $(function() {
             // 文件名
             var fileSize = data.fileInput.context.files[0].size;
             var fileName = data.fileInput.context.files[0].name;
-            console.log(fileSize)
             fileSize = fileSize / 1024; // Kb
             cleanFileuploadTable();
             $('<tr><td width="50%">' + fileName + '</td>' + 
@@ -45,7 +45,7 @@ $(function() {
         done: function (e, data) {
             Tool.message.progress('close');
             cleanFileuploadTable();
-            $('<tr><td id="importWatiImgTd"><img id="importWaitImg" src="${basePath}images/wait.gif"/></td><td id="importDataTd" style="color:red;"></td></tr>').appendTo(fileuploadTable)
+            $('<tr><td id="importWatiImgTd"><img id="importWaitImg" src="images/wait.gif"/></td><td id="importDataTd" style="color:red;"></td></tr>').appendTo(fileuploadTable)
             queryImportDataSize();
         }
     });
@@ -67,9 +67,9 @@ function importData() {
 }
 
 function queryImportDataSize() {
-	<%-- ${basePath}manage/sys/sysLog/queryImport.do --%>
+	/* ${basePath}manage/sys/sysLog/queryImport.do */
     $.ajax({
-        url : '${param.initQueryImportUrl}?random=' + Math.random(),
+        url : importParam.queryImportUrl + '?random=' + Math.random(),
         cache : false,
         dataType : "json",
         success : function(d) {
@@ -98,7 +98,7 @@ function cleanFileuploadTable() {
 <div id="importDialog"
 	style="width: 500px; height: 350px; margin: 0 auto; overflow: hidden;">
 	<input id="fileupload" type="file" name="upload"
-		data-url="${param.initImportUrl}"
+		data-url=""
 		accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 		multiple />
 	<div>

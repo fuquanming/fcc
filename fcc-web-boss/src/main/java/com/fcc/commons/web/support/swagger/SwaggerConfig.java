@@ -1,3 +1,12 @@
+/*
+ * @(#)ApplicationInitializer.java
+ * 
+ * Copyright (c) 2015 , All Rights Reserved
+ * 项目名称 : fcc-web
+ * 创建日期 : 2016年10月23日
+ * 修改历史 : 
+ *     1. [2016年10月23日]创建文件 by 傅泉明
+ */
 package com.fcc.commons.web.support.swagger;
 
 import org.springframework.context.annotation.Bean;
@@ -25,7 +34,7 @@ public class SwaggerConfig {
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title("Api Documents")
-				.contact(new Contact("fcc", "", "fcc@gmail.com"))
+				.contact(new Contact("fcc", "", "fuquanming@gmail.com"))
 				.build();
 	}
 
