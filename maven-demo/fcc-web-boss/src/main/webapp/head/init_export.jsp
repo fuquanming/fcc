@@ -1,11 +1,11 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%-- 导出文件 --%>
-<%-- 
-<jsp:param name="initExportUrl" value="${basePath}manage/sys/sysLog/export.do" />
-<jsp:param name="initQueryExportUrl" value="${basePath}manage/sys/sysLog/queryExport.do" />
-<jsp:param name="initModel" value="sysLog" /> 
---%>
 <script type="text/javascript">
+var exportParam = {}
+exportParam.exportUrl;// 导出数据URL
+exportParam.queryExportUrl;// 查询导出数据URL
+exportParam.model;// 模块
+
 var exportDataFlag = false;
 function exportData() {
     if (exportDataFlag == true) {
@@ -14,9 +14,9 @@ function exportData() {
     }
     exportDataFlag = true;
     
-    <%-- ${basePath}manage/sys/sysLog/export.do --%>
+    /*${basePath}manage/sys/sysLog/export.do*/
     userForm.form('submit', {
-        url : '${param.initExportUrl}?random=' + Math.random(),
+        url : exportParam.exportUrl + '?random=' + Math.random(),
         onSubmit : function() {
             Tool.message.progress();
             return true;
@@ -25,8 +25,8 @@ function exportData() {
             try {
                 Tool.message.progress('close');
                 if (Tool.operate.check(data, false)) {
-                	var exportInfo = $(".messager-body").children().eq(1);
-                	exportInfo.append('<img id="exportWaitImg" src="${basePath}/images/wait.gif"/>')
+                    var exportInfo = $(".messager-body").children().eq(1);
+                    exportInfo.append('<img id="exportWaitImg" src="${basePath}/images/wait.gif"/>')
                     window.setTimeout("queryExportDataSize()", 2000);
                 } else {
                     exportDataFlag = false;
@@ -39,22 +39,22 @@ function exportData() {
 }
 
 function queryExportDataSize() {
-	<%-- ${basePath}manage/sys/sysLog/queryExport.do --%>
-	$.ajax({
-        url : '${param.initQueryExportUrl}?random=' + Math.random(),
+    /*${basePath}manage/sys/sysLog/queryExport.do*/
+    $.ajax({
+        url : exportParam.queryExportUrl + '?random=' + Math.random(),
         cache : false,
         dataType : "json",
         success : function(d) {
             try {
-            	var exportInfo = $(".messager-body").children().eq(1);
+                var exportInfo = $(".messager-body").children().eq(1);
                 exportInfo.css({'color': 'red', 'font-size' : '15px;'})
                 if (d.empty == true) {
                     exportInfo.html(Lang.exportEmpty);
                     exportDataFlag = false;
                 } else if (d.fileName != null) {
-                    exportInfo.html(Lang.exportEnd.format(d.currentSize, '${basePath}exportData/${param.initModel}Export/' + d.fileName, d.fileName))
+                    exportInfo.html(Lang.exportEnd.format(d.currentSize, 'exportData/' + exportParam.model + 'Export/' + d.fileName, d.fileName))
                     exportDataFlag = false;
-                    window.location.href = '${basePath}exportData/${param.initModel}Export/' + d.fileName;
+                    window.location.href = 'exportData/' + exportParam.model + 'Export/' + d.fileName;
                 } else if (d.error == true) {
                     exportInfo.html(Lang.exportError);
                     exportDataFlag = false;
@@ -69,7 +69,7 @@ function queryExportDataSize() {
                     $('#exportWaitImg').hide();
                 }
             } catch(e) {
-            	console.log(e)
+                console.log(e)
                 exportDataFlag = false;
                 $('#exportWaitImg').hide();
                 window.location.href = overUrl;

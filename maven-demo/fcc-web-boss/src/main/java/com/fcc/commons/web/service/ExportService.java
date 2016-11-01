@@ -1,7 +1,7 @@
 /*
  * @(#)ExportService.java
  * 
- * Copyright (c) 2015 www.ssit-xm.com.cn, All Rights Reserved
+ * Copyright (c) 2015 , All Rights Reserved
  * 项目名称 : fcc-web
  * 创建日期 : 2016年10月27日
  * 修改历史 : 
