@@ -53,14 +53,14 @@ public class LoginController extends AppWebController {
     public ModelAndView login(HttpServletRequest request,
             @ApiParam(required = true, value = "登录帐号") @RequestParam(name = "username") String userId,
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
-            @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode") String subCode) {
+            @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode", defaultValue = "") String subCode) {
         //	    Assert.notNull(userId, LoginErrorEnums.usernameIsNull.getInfo());
         String sesCode = (String) request.getSession().getAttribute(Constants.RAND_CODE_KEY);
         Message message = new Message();
         try {
             if (StringUtils.isEmpty(userId)) throw new RefusedException(Constants.StatusCode.Login.emptyUserName);
             if (StringUtils.isEmpty(password)) throw new RefusedException(Constants.StatusCode.Login.emptyPassword);
-            if (StringUtils.isEmpty(sesCode))  throw new RefusedException(Constants.StatusCode.Login.emptyRandCode);
+            if (StringUtils.isEmpty(subCode))  throw new RefusedException(Constants.StatusCode.Login.emptyRandCode);
 //            if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
             SysUser user = null;
             password = EncryptionUtil.encodeMD5(password).toLowerCase();

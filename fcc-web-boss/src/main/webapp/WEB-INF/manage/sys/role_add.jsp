@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 
@@ -42,14 +42,14 @@
 </div>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
-<script type="text/javascript" src="js/my/init_tree.js"></script>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_tree.jsp" %>
 <script type="text/javascript">
 var moduleTree;
-saveParam.saveUrl = '${basePath}manage/sys/role/add.do';
-saveParam.toBack = false;
-saveParam.backUrl = '${basePath}manage/sys/role/view.do';
-saveParam.beforeSaveFun = function() {
+saveParam_form = 'userForm';
+saveParam_saveUrl = '${basePath}manage/sys/role/add.do';
+saveParam_backUrl = '${basePath}manage/sys/role/view.do';
+saveParam_beforeCallback = function() {
 	var node = moduleTree.tree('getChecked');
     if (node) {
         var rightValue = '';
@@ -69,94 +69,13 @@ saveParam.beforeSaveFun = function() {
             rightValue += i + ":" + moduleRight[i] + ",";
         }
         if (rightValue.length > 0) rightValue = rightValue.substr(0, rightValue.length - 1);
-        userForm.find('[name=rightValue]').val(rightValue);
+        $('#' + saveParam_form).form().find('[name=rightValue]').val(rightValue);
     }
+}
+saveParam_afterCallback = function(data, success) {
+    return false;// 不执行自动跳转
 }
 $(function() {
 	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do',id:'moduleTree',closed:true});
 })
 </script>
-<!-- <script type="text/javascript" charset="UTF-8">
-    var userForm;
-    var moduleTree;
-    $(function() {
-
-        userForm = $('#userForm').form();
-        
-        moduleTree = $('#moduleTree').tree({
-            checkbox: true,
-            url : 'manage/sys/module/tree.do?random=' + Math.random(),
-            animate : true,
-            lines : !Tool.isLessThanIe8(),
-            onClick : function(node) {
-            },
-            onLoadSuccess : function(node, data) {
-                var t = $(this);
-                if (data) {
-                    $(data).each(function(index, d) {
-                        if (this.state == 'closed') {
-                            t.tree('expandAll');
-                        }
-                    });
-                }
-                if (data[0] && data[0].msg && data[0].msg != '') {
-                    Tool.message.alert(Lang.tip, data.msg, Tool.icon.error); 
-                }
-            },
-            onLoadError : function() {
-                window.location.href = overUrl;
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-        
-    });
-
-    function add() {
-        var node = moduleTree.tree('getChecked');
-        if (node) {
-            var rightValue = '';
-            var moduleRight = [];
-            for (var i in node) {
-                var id = node[i].id;
-                if (id.indexOf(":") != -1) {
-                    var moduleId = id.split(":")[0];
-                    if (moduleRight[moduleId] == null) {
-                        moduleRight[moduleId] = node[i].attributes.operateValue;
-                    } else {
-                        moduleRight[moduleId] = parseInt(parseInt(moduleRight[moduleId]) + parseInt(node[i].attributes.operateValue));
-                    }
-                }
-            }
-            for (var i in moduleRight) {
-                rightValue += i + ":" + moduleRight[i] + ",";
-            }
-            if (rightValue.length > 0) rightValue = rightValue.substr(0, rightValue.length - 1);
-            userForm.find('[name=rightValue]').val(rightValue);
-        }
-        userForm.form('submit', {
-            url : '${basePath}manage/sys/role/add.do',
-            success : function(data) {
-                try {
-                    Tool.message.progress('close');
-                    Tool.operate.check(data, true);
-                } catch(e) {
-                    window.location.href = overUrl;
-                }
-            },
-            onSubmit : function() {
-                var isValid = $(this).form('validate');
-                if (isValid) Tool.message.progress();
-                return isValid;
-            }
-        });
-    }
-    
-    function toBack() {
-        window.location.href = '${basePath}manage/sys/role/view.do';
-    }
-</script> -->

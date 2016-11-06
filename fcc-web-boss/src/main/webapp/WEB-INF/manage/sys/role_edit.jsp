@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 
@@ -46,14 +46,14 @@
 
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
-<script type="text/javascript" src="js/my/init_tree.js"></script>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_tree.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 var moduleTree;
-saveParam.saveUrl = '${basePath}manage/sys/role/add.do';
-saveParam.toBack = true;
-saveParam.backUrl = '${basePath}manage/sys/role/view.do';
-saveParam.beforeSaveFun = function() {
+saveParam_form = 'userForm';
+saveParam_saveUrl = '${basePath}manage/sys/role/edit.do';
+saveParam_backUrl = '${basePath}manage/sys/role/view.do';
+saveParam_beforeCallback = function() {
 	var node = moduleTree.tree('getChecked');
     if (node) {
         var rightValue = '';
@@ -73,8 +73,11 @@ saveParam.beforeSaveFun = function() {
             rightValue += i + ":" + moduleRight[i] + ",";
         }
         if (rightValue.length > 0) rightValue = rightValue.substr(0, rightValue.length - 1);
-        userForm.find('[name=rightValue]').val(rightValue);
+        $('#' + saveParam_form).form().find('[name=rightValue]').val(rightValue);
     }
+}
+saveParam_afterCallback = function(data, success) {
+    if (success == false) return false;// 失败，不执行自动跳转
 }
 $(function() {
     moduleTree = getTree({queryUrl:'manage/sys/module/tree.do?id=${param.id}',id:'moduleTree',closed:true});

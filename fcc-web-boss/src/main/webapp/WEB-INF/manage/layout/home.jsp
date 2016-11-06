@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
-<%@ include file="/head/easyui-portal.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/easyui-portal.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 	var portal;
 	var col;

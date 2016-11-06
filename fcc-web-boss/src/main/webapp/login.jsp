@@ -8,7 +8,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
 <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache"/>
@@ -37,8 +37,8 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-easyui-1.5/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
-<script type="text/javascript" src="js/my/tool.js" charset="UTF-8"></script>
-<script type="text/javascript" src="js/my/status.code.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/support/tool.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/support/status.code.js" charset="UTF-8"></script>
 
 <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
 

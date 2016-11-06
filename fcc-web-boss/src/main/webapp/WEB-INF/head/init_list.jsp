@@ -113,4 +113,7 @@ function report()　{
     window.location.href = "${param.initReportUrl}";
 }
 </c:if>
+$(function() {
+	$(document.body).append('<div id="appendDiv">111<div>')
+})
 </script>

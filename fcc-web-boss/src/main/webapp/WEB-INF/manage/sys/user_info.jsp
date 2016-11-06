@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -55,8 +55,8 @@
 </div>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-saveParam.saveUrl = '${basePath}manage/sys/userInfo/edit.do';
-saveParam.toBack = false;
+saveParam_form = 'userForm';
+saveParam_saveUrl = '${basePath}manage/sys/userInfo/edit.do';
 </script>

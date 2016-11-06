@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 
@@ -45,11 +45,10 @@
 
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
-<script type="text/javascript" src="js/my/init_tree.js"></script>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<script type="text/javascript" src="js/support/init_tree.js"></script>
 <script type="text/javascript" charset="UTF-8">
 var moduleTree;
-saveParam.toBack = false;
 saveParam.backUrl = '${basePath}manage/sys/role/view.do';
 $(function() {
 	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do',id:'moduleTree',closed:false});

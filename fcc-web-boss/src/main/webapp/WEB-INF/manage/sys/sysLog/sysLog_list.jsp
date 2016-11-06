@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -76,7 +76,7 @@
     </table>
     </form>
     </fieldset>
-    <%@ include file="/head/init_operate.jsp" %>
+    <div id="operateDiv"></div>
   </div> 
   <table id="datagrid">
   </table>
@@ -205,7 +205,7 @@ $(function() {
 });
 </script>
 
-<jsp:include page="/head/init_list.jsp">
+<%-- <jsp:include page="/WEB-INF/head/init_list.jsp">
 <jsp:param name="initDataId" value="logId" />
 <jsp:param name="initDataName" value="userName" />
 <jsp:param name="initViewUrl" value="${basePath}manage/sys/sysLog/toView.do"/>
@@ -222,13 +222,36 @@ $(function() {
 <jsp:param name="queryParamId" value="moduleName"/>
 <jsp:param name="queryParamId" value="operateName"/>
 <jsp:param name="queryParamId" value="eventResult"/>
+</jsp:include> --%>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%-- <%@ include file="/WEB-INF/head/init_operate.jsp" %> --%>
+<jsp:include page="/WEB-INF/head/init_operate.jsp" >
+<jsp:param name="queryParamId" value="userId"/>
+<jsp:param name="queryParamId" value="userName"/>
+<jsp:param name="queryParamId" value="ipAddress"/>
+<jsp:param name="queryParamId" value="logTimeBegin"/>
+<jsp:param name="queryParamId" value="logTimeEnd"/>
+<jsp:param name="queryParamId" value="moduleName"/>
+<jsp:param name="queryParamId" value="operateName"/>
+<jsp:param name="queryParamId" value="eventResult"/>
 </jsp:include>
-<jsp:include page="/head/init_export.jsp">
-<jsp:param name="initExportUrl" value="${basePath}manage/sys/sysLog/export.do" />
-<jsp:param name="initQueryExportUrl" value="${basePath}manage/sys/sysLog/queryExport.do" />
-<jsp:param name="initModel" value="sysLog" />
-</jsp:include>
-<jsp:include page="/head/init_import.jsp">
-<jsp:param name="initImportUrl" value="${basePath}manage/sys/sysLog/import.do" />
-<jsp:param name="initQueryImportUrl" value="${basePath}manage/sys/sysLog/queryImport.do" />
-</jsp:include>
+<%@ include file="/WEB-INF/head/init_export.jsp" %>
+<%@ include file="/WEB-INF/head/init_import.jsp" %>
+<script type="text/javascript">
+operateParam_operateDiv = 'operateDiv';
+operateParam_dataId = 'logId';
+operateParam_dataName = 'userName';
+operateParam_viewUrl = '${basePath}manage/sys/sysLog/toView.do';
+operateParam_addUrl = '${basePath}manage/sys/sysLog/toAdd.do';
+operateParam_editUrl = '${basePath}manage/sys/sysLog/toEdit.do';
+operateParam_delUrl = '${basePath}manage/sys/sysLog/delete.do';
+operateParam_reportUrl = '${basePath}manage/sys/sysLog/report/view.do';
+
+exportParam_form = 'userForm';
+exportParam_exportUrl = "${basePath}manage/sys/sysLog/export.do";// 导出数据URL
+exportParam_queryExportUrl = "${basePath}manage/sys/sysLog/queryExport.do";// 查询导出数据URL
+exportParam_model = "sysLog";// 模块
+
+importParam_importUrl = "${basePath}manage/sys/sysLog/import.do";// 导入数据URL
+importParam_queryImportUrl = "${basePath}manage/sys/sysLog/queryImport.do";// 查询导入数据URL
+</script>

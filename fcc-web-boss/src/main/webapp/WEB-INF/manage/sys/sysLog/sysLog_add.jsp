@@ -4,9 +4,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -78,11 +78,14 @@
     </fieldset>
   </div>
 </div>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<script type="text/javascript" charset="UTF-8">
+saveParam_form = 'userForm';// 提交的Form
+saveParam_saveUrl = '${basePath}manage/sys/sysLog/add.do';// 保存URL地址
+saveParam_backUrl = '${basePath}manage/sys/sysLog/view.do';// 跳转地址
+saveParam_afterCallback = function(data, success) {
+	return false;// 不执行自动跳转
+}
+</script>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
-<script type="text/javascript" charset="UTF-8">
-saveParam.saveUrl = '${basePath}manage/sys/sysLog/add.do';
-saveParam.toBack = false;
-saveParam.backUrl = '${basePath}manage/sys/sysLog/view.do';
-</script>
