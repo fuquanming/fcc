@@ -3,9 +3,9 @@
 <html>
 <head>
 <title>${APP_NAME}</title>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body id="indexLayout" class="easyui-layout" fit="true">
 	<div region="north" href="manage/layout.do?north" style="height:54px; overflow: hidden; background: url('images/manage/top_01.gif') repeat-x;"></div>

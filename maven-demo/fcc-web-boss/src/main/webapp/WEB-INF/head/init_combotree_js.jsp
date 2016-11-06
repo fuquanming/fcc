@@ -1,7 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%-- 添加、修改数据 --%>
 <script type="text/javascript">
-<!--
 var saveParam = {}
 saveParam.saveUrl;// 保存URL地址
 saveParam.toBack;// 是否保存成功后跳转 true、false
@@ -45,5 +44,4 @@ function save() {
 function toBack() {
     if (saveParam.backUrl) window.location.href = saveParam.backUrl;
 }
-//-->
 </script>

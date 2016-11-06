@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
-<%@ include file="/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
 <link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/default/easyui.css">
 <link rel="stylesheet" type="text/css" href="js/jquery-easyui-1.3.4/themes/icon.css">
 <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>

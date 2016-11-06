@@ -2,9 +2,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false" style="overflow: hidden;">
@@ -56,7 +56,7 @@
 </div>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
     var datagrid;
     var userDialog;
@@ -72,18 +72,20 @@
                 text : '确定',
                 handler : function() {
                     if (userForm.find('[name=operateValue]').val() != '') {
-                    	saveParam.saveUrl = '${basePath}manage/sys/operate/edit.do';
-                    	saveParam.toBack = false;
-                    	saveParam.afterSaveFun = function() {
+                    	saveParam_form = 'userForm';
+                    	saveParam_saveUrl = '${basePath}manage/sys/operate/edit.do';
+                    	saveParam_afterCallback = function() {
                     		userDialog.dialog('close');
                             searchFun();
                     	}
                     	save();
                     } else {
-                    	saveParam.saveUrl = '${basePath}manage/sys/operate/add.do';
-                        saveParam.toBack = false;
-                        saveParam.afterSaveFun = function() {
-                            searchFun();
+                    	saveParam_form = 'userForm';
+                    	saveParam_saveUrl = '${basePath}manage/sys/operate/add.do';
+                        saveParam_afterCallback = function(data, success) {
+                        	if (success == true) {
+                        		searchFun();
+                        	}
                         }
                         save();
                     }

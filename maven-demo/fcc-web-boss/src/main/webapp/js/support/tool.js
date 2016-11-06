@@ -136,6 +136,15 @@ Tool.isFlash = function() {
     return iFlash;
 }
 
+Tool.urlAddParam = function(url, param) {
+	if (url.indexOf("?") == -1) {
+		url = url + "?";
+	} else {
+		url = url + "&";
+	}
+	return url + param;
+}
+
 Tool.icon = {}
 Tool.icon.info = "info";
 Tool.icon.error = "error";

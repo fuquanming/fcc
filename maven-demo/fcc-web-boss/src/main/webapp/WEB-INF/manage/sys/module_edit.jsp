@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false" style="overflow: hidden;">
@@ -67,18 +67,21 @@
 </div>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-saveParam.saveUrl = '${basePath}manage/sys/module/edit.do';
-saveParam.toBack = true;
-saveParam.backUrl = '${basePath}manage/sys/module/view.do';
-saveParam.beforeSaveFun = function() {
+saveParam_form = 'userForm';
+saveParam_saveUrl = '${basePath}manage/sys/module/edit.do';
+saveParam_backUrl = '${basePath}manage/sys/module/view.do';
+saveParam_beforeSaveFun = function() {
 	var operateIds = [];
     $('#selecetOperate').children().each(function(){
         operateIds.push($(this).val());
     });
     var idsVal = operateIds.join(',');
-    userForm.find('[name=operateValue]').val(idsVal);
+    $('#' + saveParam_form).form().find('[name=operateValue]').val(idsVal);
+}
+saveParam_afterCallback = function(data, success) {
+    if (success == false) return false;// 失败，不执行自动跳转
 }
 $(function() {
 	var operateIdMap = [];

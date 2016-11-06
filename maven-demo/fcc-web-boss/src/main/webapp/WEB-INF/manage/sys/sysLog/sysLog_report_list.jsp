@@ -3,12 +3,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
-<%@ include file="/head/highcharts.jsp" %>
-<%@ include file="/head/fusionCharts.jsp" %>
-<script src="js/my/report.js" charset="UTF-8" type="text/javascript"></script>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/highcharts.jsp" %>
+<%@ include file="/WEB-INF/head/fusionCharts.jsp" %>
+<script src="js/support/report.js" charset="UTF-8" type="text/javascript"></script>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">

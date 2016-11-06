@@ -1,5 +1,5 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ include file="/head/upload_js.jsp"%>
+<%@ include file="/WEB-INF/head/upload_js.jsp"%>
 <%-- 导入数据 --%>
 <style type="text/css">
 .fileuploadTable tr {
@@ -11,16 +11,15 @@
 }
 </style>
 <script type="text/javascript">
-var importParam = {}
-importParam.importUrl;// 导入数据URL
-importParam.queryImportUrl;// 查询导入数据URL
+var importParam_importUrl;// 导入数据URL
+var importParam_queryImportUrl;// 查询导入数据URL
 
-var userDialog;
+var importDialog;
 var importDataFlag = false;
 var fileuploadTable;
 $(function() {
 	fileuploadTable = $('#fileuploadTable');
-	$('#fileupload').attr('data-url', importParam.importUrl);
+	$('#fileupload').attr('data-url', importParam_importUrl);
 	$('#fileupload').fileupload({
         dataType: 'json',
         acceptFileTypes:  /(\.|\/)(xls|xlsx)$/i,// 文件类型
@@ -51,7 +50,7 @@ $(function() {
     });
 	
 	// 上传文件
-    userDialog = $('#importDialog').dialog({
+    importDialog = $('#importDialog').dialog({
         modal : true,
         title : '数据导入'
     }).dialog('close');
@@ -63,13 +62,13 @@ function importData() {
         return;
     }
     cleanFileuploadTable();
-    userDialog.dialog('open');
+    importDialog.dialog('open');
 }
 
 function queryImportDataSize() {
 	/* ${basePath}manage/sys/sysLog/queryImport.do */
     $.ajax({
-        url : importParam.queryImportUrl + '?random=' + Math.random(),
+        url : Tool.urlAddParam(importParam_queryImportUrl, 'random=' + Math.random()),
         cache : false,
         dataType : "json",
         success : function(d) {

@@ -14,35 +14,35 @@
     <fieldset>
     <legend>筛选</legend>
     <form id="userForm" name="userForm" method="post">
-    <input name="ids" type="hidden" value=""/>
+  	<input name="ids" type="hidden" value=""/>
     <table class="tableForm">
-        <tr>    
-            <th>当前锁状态</th>  
-            <td colspan="2">
+		<tr>	
+			<th>当前锁状态</th>	
+			<td colspan="2">
                 <select id="lockStatus" name="lockStatus" class="easyui-combobox" maxlength="2"  style="width: 120px;">
                 <option value="lock">锁定</option>
                 <option value="unlock">解锁</option>
                 </select>
-            </td>
-            <th>创建时间</th>   
-            <td colspan="2">
-                <input value="" class="easyui-datebox" style="width: 120px;" id="createTimeBegin" name="createTimeBegin"   />
-                <input value="" class="easyui-datebox" style="width: 120px;" id="createTimeEnd" name="createTimeEnd"   />
-            </td>
-        </tr>   
-        <tr>
-            <td colspan="3" align="left">
-            <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
-            <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="clearFun();" href="javascript:void(0);">清空</a>
-            <span id="importDataSizeSpan" style="color: red; font-weight: bolder;"></span> 
-            </td>
-        </tr>
-    </table>
-    </form>
+			</td>
+			<th>创建时间</th>	
+			<td colspan="2">
+				<input value="" class="easyui-datebox" style="width: 120px;" id="createTimeBegin" name="createTimeBegin"   />
+				<input value="" class="easyui-datebox" style="width: 120px;" id="createTimeEnd" name="createTimeEnd"   />
+			</td>
+		</tr>	
+		<tr>
+	        <td colspan="3" align="left">
+	        <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
+	        <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="clearFun();" href="javascript:void(0);">清空</a>
+	        <span id="importDataSizeSpan" style="color: red; font-weight: bolder;"></span> 
+        	</td>
+      	</tr>
+	</table>
+	</form>
     </fieldset>
     <div id="userDialog" style="width: 500px; height: 350px; margin: 0 auto; overflow: hidden;">
-    <span name="file_upload" id="file_upload"></span>
-    </div>
+	<span name="file_upload" id="file_upload"></span>
+	</div>
     <div> 
     <fcc:permission operateId="delete">
     <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>  

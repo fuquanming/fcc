@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -84,21 +84,24 @@
 </div>
 </body>
 </html>
-<%@ include file="/head/init_save.jsp" %>
-<script type="text/javascript" src="js/my/init_combotree.js"></script>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 var organTree;
-saveParam.saveUrl = '${basePath}manage/sys/user/add.do';
-saveParam.toBack = false;
-saveParam.backUrl = '${basePath}manage/sys/user/view.do';
-saveParam.beforeSaveFun = function() {
+saveParam_form = 'userForm';
+saveParam_saveUrl = '${basePath}manage/sys/user/add.do';
+saveParam_backUrl = '${basePath}manage/sys/user/view.do';
+saveParam_beforeCallback = function() {
 	// 获取角色
     var roleIds = [];
     $('#selecetRole').children().each(function(){
         roleIds.push($(this).val());
     });
     var idsVal = roleIds.join(',');
-    userForm.find('[name=roleValue]').val(idsVal);
+    $('#' + saveParam_form).form().find('[name=roleValue]').val(idsVal);
+}
+saveParam_afterCallback = function(data, success) {
+    return false;// 不执行自动跳转
 }
 $(function() {
 	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'organId',closed:false});
