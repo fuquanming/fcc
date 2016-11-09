@@ -327,7 +327,9 @@ public class ModuleController extends AppWebController {
 	@PostMapping(value = "/tree.do")
 	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public List<EasyuiTreeNode> tree(HttpServletRequest request) {
+	public List<EasyuiTreeNode> tree(HttpServletRequest request,
+	        @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
+	    if (StringUtils.isEmpty(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;
 		// 是否角色
 		Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
 		Map<String, RoleModuleRight> rightMap = (Map<String, RoleModuleRight>) request.getSession().getAttribute(Constants.SysUserSession.sessionRoleRightMap);
@@ -364,7 +366,7 @@ public class ModuleController extends AppWebController {
 					EasyuiTreeNode node = new EasyuiTreeNode();
 					node.setId(m.getModuleId());
 					node.setText(m.getModuleName());
-					node.setState("closed");
+					node.setState(nodeStatus);
 					node.setAttributes(new HashMap<String, Object>());
 					Set<Operate> operateSet = m.getOperates();
 					if (operateSet != null && operateSet.size() > 0) {

@@ -14,6 +14,7 @@ function getTree(param) {
 	}
 	return $('#' + id).tree({
         checkbox: true,
+        multiple : false,
         url : queryUrl,
         animate : true,
         lines : !Tool.isLessThanIe8(),
@@ -22,11 +23,12 @@ function getTree(param) {
         onLoadSuccess : function(node, data) {
             var t = $(this);
             if (data) {
-            	console.log(data);
             	if (closed == false) {
-            		t.tree('expandAll');
+            		//console.log('open');
+            		//t.tree('expandAll');
             	} else if (closed == true) {
-            		t.tree('collapseAll');
+            		//console.log('closed');
+            		//t.tree('collapseAll');
             	}
             }
             if (data[0] && data[0].msg && data[0].msg != '') {

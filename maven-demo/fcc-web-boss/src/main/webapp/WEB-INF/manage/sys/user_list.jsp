@@ -13,11 +13,10 @@
     <legend>筛选</legend>
     <form id="userForm" name="userForm" method="post">
   	<input name="ids" type="hidden" value=""/>
-  	<input name="userStatus" type="hidden" value=""/>
     <table class="tableForm">
       <tr>
         <th>帐号</th>
-        <td><input name="userId" style="width: 305px;" /></td>
+        <td><input name="userId" style="width: 150px;" /></td>
 		<c:if test="${not empty userList}">
         <th>创建者</th>
         <td>
@@ -29,10 +28,8 @@
         </select>
         </td>
         </c:if>
-      </tr>
-      <tr>
         <th>组织机构</th>
-        <td ><input name="organId" style="width: 310px;" /></td>
+        <td ><input id="organId" name="organId" style="width: 150px;" /></td>
         <td colspan="2">
         <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
         <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="clearFun();" href="javascript:void(0);">清空</a>
@@ -41,23 +38,10 @@
     </table>
     </form>
     </fieldset>
-    <div> 
-    <a class="easyui-linkbutton" iconCls="icon-search" onClick="view();" plain="true" href="javascript:void(0);">查看</a> 
-    <fcc:permission operateId="add">
-    <a class="easyui-linkbutton" iconCls="icon-add" onClick="add();" plain="true" href="javascript:void(0);">新增</a> 
-    </fcc:permission>
-    <fcc:permission operateId="edit">
-    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="edit();" plain="true" href="javascript:void(0);">修改</a>
-    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="resetPassword();" plain="true" href="javascript:void(0);">重置密码</a>
-    </fcc:permission>
-    <fcc:permission operateId="delete">
-    <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>  
-    </fcc:permission>
-    <fcc:permission operateId="lock">
-    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="editStatus('${userStatusLock }');" plain="true" href="javascript:void(0);">锁定</a>  
-    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="editStatus('${userStatusActivation }');" plain="true" href="javascript:void(0);">解锁</a>  
-    </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> </div>
+    <div id="operateDiv"></div>
+    <a id="resetPassword_button" class="easyui-linkbutton operate_button" iconCls="icon-edit" onClick="resetPassword();" plain="true" href="javascript:void(0);">重置密码</a>
+    <a id="lock_button" class="easyui-linkbutton operate_button" iconCls="icon-lock" onClick="editStatus('${userStatusLock }');" plain="true" href="javascript:void(0);">锁定</a>  
+    <a id="unlock_button" class="easyui-linkbutton operate_button" iconCls="icon-unlock" onClick="editStatus('${userStatusActivation }');" plain="true" href="javascript:void(0);">解锁</a>  
   </div>
   <table id="datagrid">
   </table>
@@ -65,286 +49,102 @@
 </body>
 </html>
 <script type="text/javascript" charset="UTF-8">
-    var datagrid;
-    var userForm;
-    $(function() {
+</script>
 
-        userForm = $('#userForm').form();
-
-        $('[name=organId]').combotree({
-            url : 'manage/sys/organ/tree.do?random=' + Math.random(),
-            animate : false,
-            lines : !Tool.isLessThanIe8(),
-            checkbox : true,
-            multiple : false,
-            onLoadSuccess : function(node, data) {
-                var t = $(this);
-                if (data) {
-                    $(data).each(function(index, d) {
-                        if (this.state == 'closed') {
-                            t.tree('expandAll');
-                        }
-                    });
-                }
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-
-        datagrid = $('#datagrid').datagrid({
-            <c:if test="${empty param.lazy}">url : '${basePath}manage/sys/user/datagrid.do?random=' + Math.random(),</c:if>
-            toolbar : '#toolbar',
-            title : '',
-            iconCls : 'icon-save',
-            pagination : true,
-            pageSize : 10,
-            pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
-            fit : true,
-            fitColumns : true,
-            nowrap : false,
-            border : false,
-            striped:true,
-            idField : 'userId',
-            frozenColumns : [ [ {
-                field : 'id',
-                width : 50,
-                checkbox : true
-            }, {
-                field : 'userId',
-                title : '帐号',
-                width : 100
-            } ] ],
-            columns : [ [ {
-                field : 'userName',
-                title : '用户名称',
-                width : 100
-            } , {
-                field : 'mobile',
-                title : '手机',
-                width : 150
-            } , {
-                field : 'email',
-                title : 'Email',
-                width : 150
-            } , {
-                field : 'regDate',
-                title : '注册时间',
-                width : 150,
-                formatter : function(value, rowData, rowIndex) {
-                    var date = new Date(value);
-                    var month = date.getMonth() + 1;
-                    var day = date.getDate();
-                    var hour = date.getHours();
-                    var minute = date.getMinutes();
-                    var second = date.getSeconds();
-                    return date.getFullYear() + '-' + (month < 10 ? "0" : "") + month + '-' + (day < 10 ? "0" : "") + day 
-                    + " " + (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute + ":" + (second < 10 ? "0" : "") + second;
-                }
-            } ,{
-                field : 'userStatus',
-                title : '状态',
-                width : 150,
-                formatter : function(value, rowData, rowIndex) {
-                    var temp = value;
-                    if (value == '${userStatusLock}') {
-                        temp = '锁定';
-                    } else {
-                        temp = '正常'
-                    }
-                    return temp;
-                }
-            } , {
-                field : 'roleNames',
-                title : '角色',
-                width : 150
-            }] ],
-            onRowContextMenu : function(e, rowIndex, rowData) {
-                e.preventDefault();
-                $(this).datagrid('unselectAll');
-                $(this).datagrid('selectRow', rowIndex);
-                $('#menu').menu('show', {
-                    left : e.pageX,
-                    top : e.pageY
-                });
-            },
-            onLoadError : function() {
-                window.location.href = overUrl;
-            },
-            onLoadSuccess : function(data) {
-                if (data.msg && data.msg != '') {
-                    Tool.message.alert('错误', data.msg, 'error'); 
-                }
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
+<%@ include file="/WEB-INF/head/init_operate.jsp" %>
+<script type="text/javascript">
+$(function(){
+	organTree = getComboTree({queryUrl:'${basePath}manage/sys/organ/tree.do',id:'organId',closed:false});
+	<fcc:permission operateId="edit">
+	$("#resetPassword_button").removeClass('operate-button');
+	$('#edit_button').after($('#resetPassword_button'));
+	
+	$("#lock_button").removeClass('operate-button');
+    $('#edit_button').after($('#lock_button'));
+    
+    $("#unlock_button").removeClass('operate-button');
+    $('#edit_button').after($('#unlock_button'));
+    </fcc:permission>
+})
+<fcc:permission operateId="edit">
+function resetPassword() {
+	gridConfirm({
+        gridType : Tool.grid.data,
+        userFormId : 'userForm',
+        operateUrl : '${basePath}manage/sys/user/resetPassword.do',
+        fieldId : 'userId',
+        beforeCallback : function(rows) {
+        },
+        afterCallback : function(data, success) {
+        }
     });
-
-    function view() {
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length != 1 && rows.length != 0) {
-            var names = [];
-            for ( var i = 0; i < rows.length; i++) {
-                names.push(rows[i].userName);
-            }
-            Tool.message.show({
-                msg : '只能择一条记录进行查看！您已经选择了【' + names.join(',') + '】' + rows.length + '条记录',
-                title : '提示'
-            });
-        } else if (rows.length == 1) {
-            window.location.href = "${basePath}manage/sys/user/toView.do?id=" + rows[0].userId;
+}
+function editStatus(userStatus) {
+	gridConfirm({
+        gridType : Tool.grid.data,
+        userFormId : 'userForm',
+        operateUrl : '${basePath}manage/sys/user/lock.do?userStatus=' + userStatus,
+        fieldId : 'userId',
+        beforeCallback : function(rows) {
+        },
+        afterCallback : function(data, success) {
+        	if (success == true) searchFun();
         }
+    });
+}
+</fcc:permission>
+datagridParam_id = 'datagrid';// 用到的datagrid的ID
+datagridParam_url = '${basePath}manage/sys/user/datagrid.do';// 数据源url
+datagridParam_idField = 'userId';// datagrid表格的唯一标识
+datagridParam_idField_checkbox = true;// 是否显示多选框
+datagridParam_column_value = [ [ {
+    field : 'userName',
+    title : '用户名称',
+    width : 100
+} , {
+    field : 'mobile',
+    title : '手机',
+    width : 150
+} , {
+    field : 'email',
+    title : 'Email',
+    width : 150
+} , {
+    field : 'regDate',
+    title : '注册时间',
+    width : 150,
+    formatter : function(value, rowData, rowIndex) {
+    	return Tool.dateFormat({'value':value, 'format':'yyyy-MM-dd HH:mm:ss'});
     }
-
-    function add() {
-        window.location.href = "${basePath}manage/sys/user/toAdd.do";
-    }
-
-    function edit() {
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length != 1 && rows.length != 0) {
-            var names = [];
-            for ( var i = 0; i < rows.length; i++) {
-                names.push(rows[i].userName);
-            }
-            Tool.message.show({
-                msg : '只能择一条记录进行编辑！您已经选择了【' + names.join(',') + '】' + rows.length + '条记录',
-                title : '提示'
-            });
-        } else if (rows.length == 1) {
-            window.location.href = "${basePath}manage/sys/user/toEdit.do?id=" + rows[0].userId;
-        }
-    }
-    
-    function resetPassword() {
-        var ids = [];
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length > 0) {
-            Tool.message.confirm('请确认', '您要操作当前所选记录？', function(r) {
-                if (r) {
-                    for ( var i = 0; i < rows.length; i++) {
-                        ids.push(rows[i].userId);
-                    }
-                    var idsVal = ids.join(',');
-                    userForm.find('[name=ids]').val(idsVal);
-                    userForm.form('submit', {
-                        url : '${basePath}manage/sys/user/resetPassword.do',
-                        onSubmit : function() {
-                            Tool.message.progress();
-                            return true;
-                        },
-                        success : function(data) {
-                            try {
-                                Tool.message.progress('close');
-                                Tool.operate.check(data, true);
-                            } catch(e) {
-                                window.location.href = overUrl;
-                            }
-                        }
-                    });
-                }
-            });
+} ,{
+    field : 'userStatus',
+    title : '状态',
+    width : 150,
+    formatter : function(value, rowData, rowIndex) {
+        var temp = value;
+        if (value == '${userStatusLock}') {
+            temp = '锁定';
         } else {
-            Tool.message.alert('提示', '请选择要操作的记录！', 'error');
+            temp = '正常'
         }
+        return temp;
     }
+} , {
+    field : 'roleNames',
+    title : '角色',
+    width : 150
+}] ];// 表格的列
+datagridParam_queryParamName = ['userId', 'orgId'];
 
-    function del() {
-        var ids = [];
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length > 0) {
-            Tool.message.confirm('请确认', '您要删除当前所选记录？', function(r) {
-                if (r) {
-                    for ( var i = 0; i < rows.length; i++) {
-                        ids.push(rows[i].userId);
-                    }
-                    var idsVal = ids.join(',');
-                    userForm.find('[name=ids]').val(idsVal);
-                    userForm.form('submit', {
-                        url : '${basePath}manage/sys/user/delete.do',
-                        onSubmit : function() {
-                            Tool.message.progress();
-                            return true;
-                        },
-                        success : function(data) {
-                            try {
-                                Tool.message.progress('close');
-                                if (Tool.operate.check(data, true)) {
-                                    searchFun();
-                                }
-                            } catch(e) {
-                                window.location.href = overUrl;
-                            }
-                        }
-                    });
-                }
-            });
-        } else {
-            Tool.message.alert('提示', '请选择要删除的记录！', 'error');
-        }
-    }
-    
-    function editStatus(userStatus) {
-        var ids = [];
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length > 0) {
-            Tool.message.confirm('请确认', '您要操作当前所选记录？', function(r) {
-                if (r) {
-                    for ( var i = 0; i < rows.length; i++) {
-                        ids.push(rows[i].userId);
-                    }
-                    var idsVal = ids.join(',');
-                    userForm.find('[name=ids]').val(idsVal);
-                    userForm.find('[name=userStatus]').val(userStatus);
-                    userForm.form('submit', {
-                        url : '${basePath}manage/sys/user/lock.do',
-                        onSubmit : function() {
-                            Tool.message.progress();
-                            return true;
-                        },
-                        success : function(data) {
-                            try {
-                                Tool.message.progress('close');
-                                if (Tool.operate.check(data, true)) {
-                                    searchFun();
-                                }
-                            } catch(e) {
-                                window.location.href = overUrl;
-                            }
-                        }
-                    });
-                }
-            });
-        } else {
-            Tool.message.alert('提示', '请选择要操作的记录！', 'error');
-        }
-    }
-
-    function searchFun() {
-        <c:if test="${not empty param.lazy}">datagrid = $('#datagrid').datagrid({url : '${basePath}manage/sys/user/datagrid.do?random=' + Math.random()});</c:if>
-        datagrid.datagrid('load', {
-            userId : $('#toolbar input[name=userId]').val(),
-            organId : $('#toolbar input[name=organId]').val()
-            <c:if test="${not empty userList}">
-            ,createUser : $('#toolbar select[name=createUser]').val()
-            </c:if>
-        });
-        datagrid.datagrid('clearSelections');
-    }
-    function clearFun() {
-        $('#toolbar input').val('');
-        datagrid.datagrid('load', {});
-        <c:if test="${not empty userList}">
-        $('#toolbar select').val('');
-        </c:if>
-    }
+operateParam_form = 'userForm';
+operateParam_operateDiv = 'operateDiv';
+operateParam_dataId = 'userId';
+operateParam_dataName = 'userName';
+operateParam_viewUrl = '${basePath}manage/sys/user/toView.do';
+operateParam_addUrl = '${basePath}manage/sys/user/toAdd.do';
+operateParam_editUrl = '${basePath}manage/sys/user/toEdit.do';
+operateParam_delUrl = '${basePath}manage/sys/user/delete.do';
 </script>

@@ -46,11 +46,11 @@
 </body>
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
-<script type="text/javascript" src="js/support/init_tree.js"></script>
+<%@ include file="/WEB-INF/head/init_tree.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 var moduleTree;
-saveParam.backUrl = '${basePath}manage/sys/role/view.do';
+saveParam_backUrl = '${basePath}manage/sys/role/view.do';
 $(function() {
-	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do',id:'moduleTree',closed:false});
+	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do?nodeStatus=open',id:'moduleTree',closed:false});
 });
 </script>

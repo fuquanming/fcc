@@ -23,8 +23,8 @@
       </tr>
     </table>
     </fieldset>
-    <div>
-    <fcc:permission operateId="add">
+    <div id="operateDiv"></div>
+    <%-- <fcc:permission operateId="add">
     <a class="easyui-linkbutton" iconCls="icon-add" onClick="add();" plain="true" href="javascript:void(0);">新增</a> 
     </fcc:permission>
     <fcc:permission operateId="edit">
@@ -33,7 +33,7 @@
     <fcc:permission operateId="delete">
     <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>
     </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> </div>
+    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> </div> --%>
   </div>
   <table id="datagrid">
   </table>
@@ -56,9 +56,8 @@
 </div>
 </body>
 </html>
-<%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-    var datagrid;
+    /* var datagrid;
     var userDialog;
     var userForm;
     $(function() {
@@ -74,9 +73,11 @@
                     if (userForm.find('[name=operateValue]').val() != '') {
                     	saveParam_form = 'userForm';
                     	saveParam_saveUrl = '${basePath}manage/sys/operate/edit.do';
-                    	saveParam_afterCallback = function() {
-                    		userDialog.dialog('close');
-                            searchFun();
+                    	saveParam_afterCallback = function(data, success) {
+                    		if (success == true) {
+                    			userDialog.dialog('close');
+                                searchFun();	
+                    		}
                     	}
                     	save();
                     } else {
@@ -230,5 +231,86 @@
     function clearFun() {
         $('#toolbar input').val('');
         datagrid.datagrid('load', {});
-    }
+    } */
+</script><%@ include file="/WEB-INF/head/init_save.jsp" %>
+</script><%@ include file="/WEB-INF/head/init_dialog.jsp" %>
+<%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
+<%@ include file="/WEB-INF/head/init_operate.jsp" %>
+<script type="text/javascript">
+var userDialog;
+var userForm;
+$(function() {
+	userForm = $('#userForm').form();
+	userDialog = getDialog({
+		id : 'userDialog',
+		title : '模块操作',
+		modal :　true,
+		buttons : [ {
+            text : '确定',
+            handler : function() {
+                if (userForm.find('[name=operateValue]').val() != '') {
+                    saveParam_form = 'userForm';
+                    saveParam_saveUrl = '${basePath}manage/sys/operate/edit.do';
+                    saveParam_afterCallback = function(data, success) {
+                        if (success == true) {
+                            userDialog.dialog('close');
+                            searchFun();    
+                        }
+                    }
+                    save();
+                } else {
+                    saveParam_form = 'userForm';
+                    saveParam_saveUrl = '${basePath}manage/sys/operate/add.do';
+                    saveParam_afterCallback = function(data, success) {
+                        if (success == true) {
+                            searchFun();
+                        }
+                    }
+                    save();
+                }
+            }
+        } ]
+	});
+})
+
+
+datagridParam_id = 'datagrid';// 用到的datagrid的ID
+datagridParam_url = '${basePath}manage/sys/operate/datagrid.do';// 数据源url
+datagridParam_idField = 'operateId';// datagrid表格的唯一标识
+datagridParam_idField_checkbox = true;// 是否显示多选框
+datagridParam_column_value = [ [ {
+    field : 'operateId',
+    title : '操作ID',
+    width : 100
+} , {
+    field : 'operateName',
+    title : '操作名称',
+    width : 100
+} , {
+    field : 'operateValue',
+    title : '操作值',
+    width : 150
+}] ];// 表格的列
+datagridParam_queryParamName = ['searchName'];
+
+operateParam_form = 'userForm';
+operateParam_operateDiv = 'operateDiv';
+operateParam_dataId = 'operateId';
+operateParam_dataName = 'operateName';
+operateParam_add_beforeCallback = function() {
+	userDialog.dialog('open');
+    userForm.find('[name=operateId]').removeAttr('readonly');
+    userForm.form('clear');
+}// = '${basePath}manage/sys/operate/toAdd.do';
+operateParam_edit_beforeCallback = function(row) {
+	userForm.find('[name=operateId]').attr('readonly', 'readonly');
+    userDialog.dialog('open');
+    userForm.form('clear');
+    userForm.form('load', {
+        operateId : row.operateId,
+        operateName : row.operateName,
+        operateValue : row.operateValue
+    });
+}// = '${basePath}manage/sys/operate/toEdit.do';
+operateParam_delUrl = '${basePath}manage/sys/operate/delete.do';
 </script>

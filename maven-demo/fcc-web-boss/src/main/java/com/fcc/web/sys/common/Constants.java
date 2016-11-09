@@ -50,16 +50,16 @@ public interface Constants {
         String sessionRoleRightMap = "sessionRoleRightMap";
     }
     
-    public interface UserStatus {
-        /** 注册用户状态 未激活 0 */
-        String inactive = "0";
-        /** 注册用户状态 激活 1 */
-        String activation = "1";
-        /** 注册用户状态 注销 2 */
-        String off = "2";
-        /** 注册用户状态 锁定 3 */
-        String lock = "3";
-    }
+//    public interface UserStatus {
+//        /** 注册用户状态 未激活 0 */
+//        String inactive = "0";
+//        /** 注册用户状态 激活 1 */
+//        String activation = "1";
+//        /** 注册用户状态 注销 2 */
+//        String off = "2";
+//        /** 注册用户状态 锁定 3 */
+//        String lock = "3";
+//    }
     
     
     /** 自定义访问模块 */

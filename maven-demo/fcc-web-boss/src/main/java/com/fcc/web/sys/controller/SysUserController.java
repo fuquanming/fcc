@@ -32,6 +32,7 @@ import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.enums.UserStatus;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
@@ -97,9 +98,9 @@ public class SysUserController extends AppWebController {
 //			}
 //			request.setAttribute("isAdmin", true);
 //		}
-		request.setAttribute("userStatusLock", Constants.UserStatus.lock);
-		request.setAttribute("userStatusActivation", Constants.UserStatus.activation);
-		request.setAttribute("userStatusOff", Constants.UserStatus.off);
+		request.setAttribute("userStatusLock", UserStatus.locked.name());
+		request.setAttribute("userStatusActivation", UserStatus.normal.name());
+		request.setAttribute("userStatusOff", UserStatus.off.name());
 		request.setAttribute("sysUser", getSysUser(request));// 当前用户
 		return "manage/sys/user_list";
 	}
@@ -188,6 +189,7 @@ public class SysUserController extends AppWebController {
 			SysUser tempUser = (SysUser) baseService.get(SysUser.class, userId);
 			if (tempUser != null) throw new RefusedException(Constants.StatusCode.SysUser.exitsUserId);
 			
+			sysUser.setUserStatus(UserStatus.normal.name());
 			sysUser.setPassword(EncryptionUtil.encodeMD5("888888").toLowerCase());
 			sysUser.setDept(dept);
 			sysUser.setRegDate(new Timestamp(System.currentTimeMillis()));

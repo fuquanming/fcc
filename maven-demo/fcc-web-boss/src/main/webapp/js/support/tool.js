@@ -151,6 +151,10 @@ Tool.icon.error = "error";
 Tool.icon.question = "question";
 Tool.icon.warning = "warning";
 
+Tool.grid = {}
+Tool.grid.data = 'datagrid';
+Tool.grid.tree = 'treegrid';
+
 Tool.message = function() {}
 /** 显示进度条 */
 Tool.message.progress = function(param) {
