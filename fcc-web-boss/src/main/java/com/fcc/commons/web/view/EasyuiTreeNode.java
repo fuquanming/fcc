@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class EasyuiTreeNode implements java.io.Serializable {
 
+    public static final String STATE_OPEN = "open";
+    public static final String STATE_CLOSED = "closed";
 	/**
 	 * 
 	 */
@@ -20,7 +22,7 @@ public class EasyuiTreeNode implements java.io.Serializable {
 	private Boolean checked = false;// 是否勾选状态
 	private Map<String, Object> attributes;// 其他参数
 	private List<EasyuiTreeNode> children;// 子节点
-	private String state = "open";// 是否展开(open,closed)
+	private String state = STATE_OPEN;// 是否展开(open,closed)
 	
 	// 非必需
 	private String msg = "";// 提示信息

@@ -54,7 +54,10 @@ public class SysUserDaoImpl implements SysUserDao {
 
     @Override
     public Integer updateStatus(String[] userIds, String userStatus) {
-        return baseDao.executeHql("update from SysUser set userStatus=? where userId in(?)", userStatus, userIds);
+        Map<String, Object> param = new HashMap<String, Object>(2);
+        param.put("userStatus", userStatus);
+        param.put("userId", userIds);
+        return baseDao.executeHql("update from SysUser set userStatus=:userStatus where userId in(:userId)", param);
     }
     
     @Override

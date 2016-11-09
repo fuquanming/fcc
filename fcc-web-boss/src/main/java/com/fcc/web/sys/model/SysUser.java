@@ -62,8 +62,8 @@ public class SysUser implements java.io.Serializable {
     /**
      * 用户状态       db_column: USER_STATUS
      */
-    @Enumerated(EnumType.STRING)
-    private UserStatus userStatus = UserStatus.normal;
+//    @Enumerated(EnumType.STRING)
+    private String userStatus = UserStatus.normal.name();
 
     /**
      * 工号       db_column: USER_CODE 
@@ -198,11 +198,11 @@ public class SysUser implements java.io.Serializable {
     }
 
     @Column(name = "USER_STATUS", unique = false, nullable = true, insertable = true, updatable = true)
-    public UserStatus getUserStatus() {
+    public String getUserStatus() {
         return userStatus;
     }
 
-    public void setUserStatus(UserStatus userStatus) {
+    public void setUserStatus(String userStatus) {
         this.userStatus = userStatus;
     }
 

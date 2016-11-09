@@ -76,6 +76,6 @@ saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转
 }
 $(function() {
-	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do',id:'moduleTree',closed:true});
+	moduleTree = getTree({queryUrl:'manage/sys/module/tree.do?nodeStatus=closed',id:'moduleTree',closed:true});
 })
 </script>

@@ -23,6 +23,7 @@ Lang.cancelFileUpLoad = "取消文件";
 Lang.recordSelectedOne = "请选择要操作的记录！";
 Lang.recordSelectedMore = "只能择一条记录进行操作！您已经选择了【{0}】 共 {1}条记录!";
 Lang.confirmDel = "确定删除所选记录？";
+Lang.confirmOperate = "确定操作所选记录？";
 
 Lang.exportEmpty = "无数据导出!";
 Lang.exportError = "导出异常！";
