@@ -101,6 +101,10 @@ datagridParam_url = '${basePath}manage/sys/user/datagrid.do';// 数据源url
 datagridParam_idField = 'userId';// datagrid表格的唯一标识
 datagridParam_idField_checkbox = true;// 是否显示多选框
 datagridParam_column_value = [ [ {
+    field : 'userId',
+    title : '用户账户',
+    width : 100
+} , {
     field : 'userName',
     title : '用户名称',
     width : 100
@@ -137,7 +141,7 @@ datagridParam_column_value = [ [ {
     title : '角色',
     width : 150
 }] ];// 表格的列
-datagridParam_queryParamName = ['userId', 'orgId'];
+datagridParam_queryParamName = ['userId', 'organId'];
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';

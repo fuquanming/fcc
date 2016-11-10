@@ -113,15 +113,21 @@ function initDatagrid() {
     return datagrid;
 }
 
-function getGridSelected(gridType) {
-	if (Tool.grid.data == gridType) {
-		var rows = initDatagrid().datagrid('getSelections');
-	    return rows;
-	}
+function gridReload() {
+    initDatagrid().datagrid('reload');
 }
 
-function getGridSelectedId(gridType, field) {
-	var rows = getGridSelected(gridType);
+function gridUnselectAll() {
+	initDatagrid().datagrid('unselectAll');
+}
+
+function getGridSelected() {
+	var rows = initDatagrid().datagrid('getSelections');
+    return rows;
+}
+
+function getGridSelectedId( field) {
+	var rows = getGridSelected();
 	var ids = [];
 	if (!field) field = datagridParam_idField;
 	if (rows.length > 0) {
@@ -132,9 +138,9 @@ function getGridSelectedId(gridType, field) {
 	}
 	return null;
 }
-// gridType, userFormId, operateUrl, fieldId, beforeCallback, afterCallback
+// userFormId, operateUrl, fieldId, beforeCallback, afterCallback
 function gridConfirm(params) {
-    var rows = getGridSelected(params.gridType);
+    var rows = getGridSelected();
     if (rows.length > 0) {
         if (params.beforeCallback) {
             if (params.beforeCallback(rows) == false) return;
@@ -142,7 +148,7 @@ function gridConfirm(params) {
         Tool.message.confirm(Lang.confirm, Lang.confirmOperate, function(r) {
             if (r) {
                 var userForm = $('#' + params.userFormId).form();
-                var idsVal = getGridSelectedId(params.gridType, params.fieldId);
+                var idsVal = getGridSelectedId(params.fieldId);
                 userForm.find('[name=ids]').val(idsVal);
                 
                 saveParam_form = params.userFormId;
