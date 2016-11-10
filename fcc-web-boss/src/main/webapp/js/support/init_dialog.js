@@ -9,9 +9,18 @@ function getDialog(param) {
 	var modal = param.modal;// 模式 true
 	var title = param.title;// 显示标题
 	if (!modal) modal = true;
-	return $('#' + param.id).show().dialog({
+	var dialog = $('#' + param.id).dialog({
         modal : modal,
         title : title,
         buttons : param.buttons
-    }).dialog('close');
+    });
+	return closeDialog(dialog);
+}
+
+function openDialog(dialog) {
+	return dialog.dialog('open');
+}
+
+function closeDialog(dialog) {
+	return dialog.dialog('close');
 }

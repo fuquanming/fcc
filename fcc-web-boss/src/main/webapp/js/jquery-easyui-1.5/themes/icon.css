@@ -104,3 +104,27 @@
 .icon-large-chart{
 	background:url('icons/large_chart.png') no-repeat center center;
 }
+
+.icon-folder-close{
+    width: 16px;
+    background-position: -208px 0px;
+    background-image: url("icons/tree_icons.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    /* height: 14px; */
+    line-height: 14px;
+    /* margin-top: 1px; */
+    vertical-align: text-top;
+}
+
+.icon-folder-open{
+    width: 16px;
+    background-position: -224px 0px;
+    background-image: url("icons/tree_icons.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    /* height: 14px; */
+    line-height: 14px;
+    /* margin-top: 1px; */
+    vertical-align: text-top;
+}

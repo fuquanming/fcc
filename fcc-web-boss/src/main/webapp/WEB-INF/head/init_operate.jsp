@@ -16,7 +16,7 @@
     <fcc:permission operateId="view">
     <a id="view_button" class="easyui-linkbutton operate-button" iconCls="icon-search" onClick="view();" plain="true" href="javascript:void(0);">查看</a>
     </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-reload" onClick="refresh();" plain="true" href="javascript:void(0);" >刷新</a> 
+    <a id="refresh_button" class="easyui-linkbutton" iconCls="icon-reload" onClick="refresh();" plain="true" href="javascript:void(0);" >刷新</a> 
     <fcc:permission operateId="add">
     <a id="add_button" class="easyui-linkbutton operate-button" iconCls="icon-add" onClick="add();" plain="true" href="javascript:void(0);">新增</a> 
     </fcc:permission>
@@ -35,12 +35,11 @@
     <fcc:permission operateId="report">
     <a id="report_button" class="easyui-linkbutton operate-button" iconCls="icon-large-chart" onClick="report();" plain="true" href="javascript:void(0);">报表</a>
     </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> 
+    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="unselectAll()" plain="true" href="javascript:void(0);">取消选中</a> 
 </div>
 <script type="text/javascript">
 var operateParam_form;// 删除时用的表单
 var operateParam_operateDiv;// 在哪个Div中显示按钮
-var operateParam_gridType = Tool.grid.data;// datagrid、treegrid，默认datagrid
 var operateParam_dataId;// 表格中的ID
 var operateParam_dataName;// 表格中的ID
 var operateParam_viewUrl;// 查看记录的调用的URL
@@ -71,11 +70,16 @@ $(function() {
 })
 
 function refresh(){
-    datagrid.datagrid('reload');
+	gridReload();
 }
+
+function unselectAll() {
+	gridUnselectAll();
+}
+
 <fcc:permission operateId="view">
 function view() {
-	var rows = getGridSelected(operateParam_gridType);
+	var rows = getGridSelected();
     if (rows.length != 1 && rows.length != 0) {
         var names = [];
         for ( var i = 0; i < rows.length; i++) {
@@ -97,7 +101,12 @@ function view() {
 <fcc:permission operateId="add">
 function add() {
 	if (operateParam_add_beforeCallback) {
-		if (operateParam_add_beforeCallback() == false) return;
+		var rows = getGridSelected();
+		var row;
+		if (rows.length >= 1) {
+			row = rows[0];
+		}
+		if (operateParam_add_beforeCallback(row) == false) return;
 	}
 	if (operateParam_addUrl) {
 		window.location.href = operateParam_addUrl;
@@ -106,7 +115,7 @@ function add() {
 </fcc:permission>
 <fcc:permission operateId="edit">
 function edit() {
-    var rows = getGridSelected(operateParam_gridType);
+    var rows = getGridSelected();
     if (rows.length != 1 && rows.length != 0) {
         var names = [];
         for ( var i = 0; i < rows.length; i++) {
@@ -128,9 +137,8 @@ function edit() {
 <fcc:permission operateId="delete">
 function del() {
 	if (operateParam_delUrl) {
-	    <%-- init_datagrid gridType, userFormId, operateUrl, beforeCallback, afterCallback --%>
+	    <%-- init_datagrid userFormId, operateUrl, beforeCallback, afterCallback --%>
 	    gridConfirm({
-		    	gridType : operateParam_gridType,
 		    	userFormId : operateParam_form,
 		    	operateUrl : operateParam_delUrl,
 		    	beforeCallback : function(rows) {

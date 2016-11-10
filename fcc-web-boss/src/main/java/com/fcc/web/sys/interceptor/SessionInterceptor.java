@@ -3,6 +3,7 @@ package com.fcc.web.sys.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,16 +24,33 @@ import com.fcc.web.sys.model.SysUser;
  */
 public class SessionInterceptor implements HandlerInterceptor {
 
+    ThreadLocal<StopWatch> stopWatchLocal =  new ThreadLocal<StopWatch>();
+    ThreadLocal<Long> timeLocal =  new ThreadLocal<Long>();
 	/**
 	 * 完成页面的render后调用
 	 */
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
+	    StopWatch stopWatch = stopWatchLocal.get();
+        if (stopWatch != null) {
+            stopWatch.stop();
+            long time = stopWatch.getTotalTimeMillis();
+            System.out.println("耗时：" + time + ",page=" + request.getRequestURI());
+            stopWatch = null;
+            stopWatchLocal.set(null);
+        }
 	}
 
 	/**
 	 * 在调用controller具体方法后拦截
 	 */
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
+	    StopWatch stopWatch = stopWatchLocal.get();
+	    if (stopWatch != null) {
+	        stopWatch.stop();
+	        long time = stopWatch.getTotalTimeMillis();
+	        System.out.println("耗时：" + time + ",controller=" + request.getRequestURI());
+	        stopWatch.start();
+	    }
 	}
 
 	/**
@@ -40,6 +58,10 @@ public class SessionInterceptor implements HandlerInterceptor {
 	 */
 	
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+	    StopWatch stopWatch = new StopWatch(request.getRequestURI());
+        stopWatch.start();
+        stopWatchLocal.set(stopWatch);
+	    
 	    SysUser user = CacheUtil.getSysUser(request);
 //	    // uploadify-3.2.1 使用flash上传文件 没有携带cookie 代码绑定 原来sessionId
 //		HttpSession session = request.getSession();

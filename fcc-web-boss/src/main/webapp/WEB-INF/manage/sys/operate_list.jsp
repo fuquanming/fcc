@@ -24,16 +24,6 @@
     </table>
     </fieldset>
     <div id="operateDiv"></div>
-    <%-- <fcc:permission operateId="add">
-    <a class="easyui-linkbutton" iconCls="icon-add" onClick="add();" plain="true" href="javascript:void(0);">新增</a> 
-    </fcc:permission>
-    <fcc:permission operateId="edit">
-    <a class="easyui-linkbutton" iconCls="icon-edit" onClick="edit();" plain="true" href="javascript:void(0);">修改</a>
-    </fcc:permission>
-    <fcc:permission operateId="delete">
-    <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>
-    </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> </div> --%>
   </div>
   <table id="datagrid">
   </table>
@@ -56,184 +46,8 @@
 </div>
 </body>
 </html>
-<script type="text/javascript" charset="UTF-8">
-    /* var datagrid;
-    var userDialog;
-    var userForm;
-    $(function() {
-
-        userForm = $('#userForm').form();
-        
-        userDialog = $('#userDialog').show().dialog({
-            modal : true,
-            title : '模块操作',
-            buttons : [ {
-                text : '确定',
-                handler : function() {
-                    if (userForm.find('[name=operateValue]').val() != '') {
-                    	saveParam_form = 'userForm';
-                    	saveParam_saveUrl = '${basePath}manage/sys/operate/edit.do';
-                    	saveParam_afterCallback = function(data, success) {
-                    		if (success == true) {
-                    			userDialog.dialog('close');
-                                searchFun();	
-                    		}
-                    	}
-                    	save();
-                    } else {
-                    	saveParam_form = 'userForm';
-                    	saveParam_saveUrl = '${basePath}manage/sys/operate/add.do';
-                        saveParam_afterCallback = function(data, success) {
-                        	if (success == true) {
-                        		searchFun();
-                        	}
-                        }
-                        save();
-                    }
-                }
-            } ]
-        }).dialog('close');
-        
-        datagrid = $('#datagrid').datagrid({
-            url : '${basePath}manage/sys/operate/datagrid.do?random=' + Math.random(),
-            toolbar : '#toolbar',
-            title : '',
-            iconCls : 'icon-save',
-            pagination : true,
-            pageSize : 10,
-            pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
-            fit : true,
-            fitColumns : true,
-            nowrap : false,
-            border : false,
-            striped : true,
-            idField : 'operateId',
-            frozenColumns : [ [ {
-                field : 'id',
-                width : 50,
-                checkbox : true
-            }, {
-                field : 'operateId',
-                title : '操作ID',
-                width : 100
-            } ] ],
-            columns : [ [ {
-                field : 'operateName',
-                title : '操作名称',
-                width : 100
-            } , {
-                field : 'operateValue',
-                title : '操作值',
-                width : 150
-            }] ],
-            onRowContextMenu : function(e, rowIndex, rowData) {
-                e.preventDefault();
-                $(this).datagrid('unselectAll');
-                $(this).datagrid('selectRow', rowIndex);
-                $('#menu').menu('show', {
-                    left : e.pageX,
-                    top : e.pageY
-                });
-            },
-            onLoadError : function(e) {
-            	console.log(e);
-            	window.location.href = overUrl;
-            },
-            onLoadSuccess : function(data) {
-                if (data.msg && data.msg != '') {
-                    Tool.message.alert('错误', data.msg, 'error'); 
-                }
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-
-    });
-
-    function add() {
-        userDialog.dialog('open');
-        userForm.find('[name=operateId]').removeAttr('readonly');
-        userForm.form('clear');
-    }
-
-    function edit() {
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length != 1 && rows.length != 0) {
-            var names = [];
-            for ( var i = 0; i < rows.length; i++) {
-                names.push(rows[i].operateName);
-            }
-            Tool.message.show({
-                msg : '只能择一条记录进行编辑！您已经选择了【' + names.join(',') + '】' + rows.length + '条记录',
-                title : '提示'
-            });
-        } else if (rows.length == 1) {
-            userForm.find('[name=operateId]').attr('readonly', 'readonly');
-            userDialog.dialog('open');
-            userForm.form('clear');
-            userForm.form('load', {
-                operateId : rows[0].operateId,
-                operateName : rows[0].operateName,
-                operateValue : rows[0].operateValue
-            });
-        } else {
-        	Tool.message.alert({title:'提示', msg:'请选择要修改的记录！', icon:'warning'});
-        }
-    }
-
-    function del() {
-        var ids = [];
-        var rows = datagrid.datagrid('getSelections');
-        if (rows.length > 0) {
-        	Tool.message.confirm('请确认', '您要删除当前所选记录？', function(r) {
-                if (r) {
-                    for ( var i = 0; i < rows.length; i++) {
-                        ids.push(rows[i].operateId);
-                    }
-                    var idsVal = ids.join(',');
-                    userForm.find('[name=ids]').val(idsVal);
-                    userForm.form('submit', {
-                        url : '${basePath}manage/sys/operate/delete.do',
-                        onSubmit : function() {
-                        	Tool.message.progress();
-                            return true;
-                        },
-                        success : function(data) {
-                            try {
-                            	Tool.message.progress('close');
-                                if (Tool.operate.check(data, true)) {
-                                    userDialog.dialog('close');
-                                    searchFun();
-                                }
-                            } catch(e) {
-                                window.location.href = overUrl;
-                            }
-                        }
-                    });
-                }
-            });
-        } else {
-        	Tool.message.alert({title:'提示', msg:'请选择要删除的记录！', icon:'warning'});
-        }
-    }
-
-    function searchFun() {
-        datagrid.datagrid('load', {
-            searchName : $('#toolbar input[name=searchName]').val()
-        });
-        datagrid.datagrid('clearSelections');
-        // datagrid.datagrid('reload');
-    }
-    function clearFun() {
-        $('#toolbar input').val('');
-        datagrid.datagrid('load', {});
-    } */
-</script><%@ include file="/WEB-INF/head/init_save.jsp" %>
-</script><%@ include file="/WEB-INF/head/init_dialog.jsp" %>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_dialog.jsp" %>
 <%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
 <%@ include file="/WEB-INF/head/init_operate.jsp" %>
 <script type="text/javascript">
@@ -253,7 +67,7 @@ $(function() {
                     saveParam_saveUrl = '${basePath}manage/sys/operate/edit.do';
                     saveParam_afterCallback = function(data, success) {
                         if (success == true) {
-                            userDialog.dialog('close');
+                            closeDialog(userDialog);
                             searchFun();    
                         }
                     }
@@ -298,19 +112,19 @@ operateParam_operateDiv = 'operateDiv';
 operateParam_dataId = 'operateId';
 operateParam_dataName = 'operateName';
 operateParam_add_beforeCallback = function() {
-	userDialog.dialog('open');
+	openDialog(userDialog);
     userForm.find('[name=operateId]').removeAttr('readonly');
     userForm.form('clear');
-}// = '${basePath}manage/sys/operate/toAdd.do';
+}
 operateParam_edit_beforeCallback = function(row) {
 	userForm.find('[name=operateId]').attr('readonly', 'readonly');
-    userDialog.dialog('open');
+    openDialog(userDialog);
     userForm.form('clear');
     userForm.form('load', {
         operateId : row.operateId,
         operateName : row.operateName,
         operateValue : row.operateValue
     });
-}// = '${basePath}manage/sys/operate/toEdit.do';
+}
 operateParam_delUrl = '${basePath}manage/sys/operate/delete.do';
 </script>

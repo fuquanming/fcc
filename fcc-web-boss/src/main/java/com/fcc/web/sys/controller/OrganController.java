@@ -171,7 +171,7 @@ public class OrganController extends AppWebController {
 	@ApiOperation(value = "删除机构")
     @PostMapping(value = "/delete.do")
 	public ModelAndView delete(HttpServletRequest request,
-	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String organId) {
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "ids") String organId) {
 		Message message = new Message();
 		try {
 			if (organId == null || "".equals(organId)) new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
@@ -180,7 +180,7 @@ public class OrganController extends AppWebController {
 //				throw new RefusedException("不能删除上级机构！");
 //			}
 			// 判断是否有归属人员
-			Map<String, Object> param = new HashMap<String, Object>();
+			Map<String, Object> param = new HashMap<String, Object>(1);
 			param.put("dept", organId);
 			ListPage listPage = sysUserService.queryPage(1, 10, param);
 			if (listPage.getTotalSize() > 0) throw new RefusedException(Constants.StatusCode.Organization.hasUser);
