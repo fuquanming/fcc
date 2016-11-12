@@ -135,7 +135,7 @@ Tool.isFlash = function() {
     }
     return iFlash;
 }
-
+/** url添加参数 */
 Tool.urlAddParam = function(url, param) {
 	if (url.indexOf("?") == -1) {
 		url = url + "?";
@@ -143,6 +143,17 @@ Tool.urlAddParam = function(url, param) {
 		url = url + "&";
 	}
 	return url + param;
+}
+/** 控制iput easyui */
+Tool.input = {}
+/** 设置输入框为禁用 */
+Tool.input.disabled = function(id, flag) {
+	var disabled = (flag == true) ? 'disabled' : '';
+	if (disabled == '') {
+		$('#' + id).textbox('textbox').removeAttr('disabled');
+	} else {
+		$('#' + id).textbox('textbox').attr('disabled', 'disabled');
+	}
 }
 
 Tool.icon = {}
@@ -154,7 +165,7 @@ Tool.icon.warning = "warning";
 Tool.grid = {}
 Tool.grid.data = 'datagrid';
 Tool.grid.tree = 'treegrid';
-
+/** 消息提示 */
 Tool.message = function() {}
 /** 显示进度条 */
 Tool.message.progress = function(param) {

@@ -16,7 +16,8 @@
     <table class="tableForm">
       <tr>
         <th>帐号</th>
-        <td><input name="userId" style="width: 150px;" /></td>
+        <td>
+        <input name="userId" class="easyui-textbox" data-options="prompt:'请输入账号...'" style="width: 150px;" /></td>
 		<c:if test="${not empty userList}">
         <th>创建者</th>
         <td>

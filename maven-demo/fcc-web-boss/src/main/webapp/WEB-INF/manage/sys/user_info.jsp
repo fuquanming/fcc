@@ -22,25 +22,26 @@
         </tr>
         <tr>
           <th>姓名</th>
-          <td><input name="userName" type="text" value="${data.userName }" class="easyui-validatebox" required="true" maxlength="20"/></td>
+          <td><input name="userName" type="text" value="${data.userName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入姓名...'" required="true" maxlength="20"/></td>
         </tr>
         <tr>
           <th>Email</th>
-          <td><input name="email" type="text" value="${data.email }" maxlength="100" validType="email" required="true"/></td>
+          <td><input name="email" type="text" value="${data.email }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入邮箱...'"maxlength="100" validType="email" required="true"/></td>
         </tr>
         <tr>
           <th>手机</th>
-          <td><input name="mobile" type="text" value="${data.mobile }" class="easyui-validatebox" validType="mobile" required="true" />
+          <td><input name="mobile" type="text" value="${data.mobile }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入手机...'" validType="mobile" required="true" />
           </td>
         </tr>
         <tr>
           <th>电话</th>
-          <td><input name="tel" type="text" value="${data.tel }" class="easyui-validatebox" validType="telephone" />
+          <td><input name="tel" type="text" value="${data.tel }" class="easyui-validatebox easyui-textbox" validType="telephone" />
           </td>
         </tr>
         <tr>
           <th>备注</th>
-          <td colspan="3"><textarea rows="5" cols="40" name="remark" class="easyui-validatebox" validType="length[0, 200]">${data.remark }</textarea>
+          <td colspan="3">
+          <textarea rows="5" cols="40" name="remark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]">${data.remark }</textarea>
           </td>
         </tr>
         <fcc:permission operateId="edit">

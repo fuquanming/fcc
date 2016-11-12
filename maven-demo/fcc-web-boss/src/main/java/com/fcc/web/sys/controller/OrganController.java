@@ -92,8 +92,10 @@ public class OrganController extends AppWebController {
 	public ModelAndView add(HttpServletRequest request,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
-            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
-            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
+            @ApiParam(required = false, value = "机构编码") @RequestParam(name = "organCode", defaultValue = "") String organCode,
+            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort,
+            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc
+            ) {
 		Message message = new Message();
 		try {
 			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
@@ -115,6 +117,7 @@ public class OrganController extends AppWebController {
 			} else {
 				data.setOrganId(parentId + "-" + RandomStringUtils.random(4, true, false));
 			}
+			data.setOrganCode(organCode);
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);
@@ -139,6 +142,7 @@ public class OrganController extends AppWebController {
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "id") String organId,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
+            @ApiParam(required = false, value = "机构编码") @RequestParam(name = "organCode", defaultValue = "") String organCode,
             @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
             @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
 		Message message = new Message();
@@ -151,6 +155,7 @@ public class OrganController extends AppWebController {
 //			}
 			Organization data = organService.getOrganById(organId);
 			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
+			data.setOrganCode(organCode);
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);

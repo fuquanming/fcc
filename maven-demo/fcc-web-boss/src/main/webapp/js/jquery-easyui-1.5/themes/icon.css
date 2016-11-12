@@ -128,3 +128,10 @@
     /* margin-top: 1px; */
     vertical-align: text-top;
 }
+
+/** 扩展textarea 样式 */
+.eaayui-textarea {
+    white-space: pre-wrap;
+    *white-space: pre;
+    *word-wrap: break-word
+}

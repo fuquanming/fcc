@@ -18,15 +18,15 @@
       <table class="tableForm" align="center">
         <tr>
           <th>旧密码</th>
-          <td><input name="oldPassword" type="password" class="easyui-validatebox" required="true" maxlength="20"/></td>
+          <td><input name="oldPassword" type="password" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入旧密码...'" required="true" maxlength="20"/></td>
         </tr>
         <tr>
           <th>新密码</th>
-          <td><input name="newPassword" type="password" class="easyui-validatebox" required="true" maxlength="20"/></td>
+          <td><input name="newPassword" type="password" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入新密码...'" required="true" maxlength="20"/></td>
         </tr>
         <tr>
           <th>确认新密码</th>
-          <td><input name="confirmPassword" type="password" class="easyui-validatebox" required="true" validType="eqPassword['#userForm input[name=newPassword]']" maxlength="20" /></td>
+          <td><input name="confirmPassword" type="password" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入确认密码...'" required="true" validType="eqPassword['#userForm input[name=newPassword]']" maxlength="20" /></td>
         </tr>
         <fcc:permission operateId="edit">
         <tr>

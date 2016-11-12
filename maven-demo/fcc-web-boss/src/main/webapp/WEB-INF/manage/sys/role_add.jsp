@@ -18,11 +18,13 @@
     <table class="tableForm" align="center">
       <tr>
         <th>角色名称</th>
-        <td><input name="roleName" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td><input name="roleName" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入角色名称...'" required="true" maxlength="100"/></td>
       </tr>
       <tr>
         <th>角色描述</th>
-        <td><input name="roleDesc" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td>
+        <textarea rows="5" cols="40" name="roleDesc" class="easyui-validatebox textbox eaayui-textarea" data-options="prompt:'请输入角色描述...'" required="true" validType="length[1, 200]"></textarea>
+        </td>
       </tr>
       <tr>
       	<th>模块权限</th>

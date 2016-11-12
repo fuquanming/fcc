@@ -18,16 +18,23 @@
       <table class="tableForm" align="center">
         <tr>
           <th>组织机构名称</th>
-          <td><input name="organName" type="text" value="${data.organName }" class="easyui-validatebox" required="true" maxlength="100"/></td>
+          <td><input name="organName" type="text" value="${data.organName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
+        </tr>
+        <tr>
+          <th>组织机构编码</th>
+          <td><input name="organCode" type="text" value="${data.organCode }" class="easyui-validatebox easyui-textbox" maxlength="10"/>
+          </td>
         </tr>
         <tr>
           <th>组织机构排序</th>
-          <td><input name="organSort" type="text" value="${data.organSort }" class="easyui-validatebox" required="true" validType="integer" maxlength="5"/>
+          <td><input name="organSort" type="text" value="${data.organSort }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
           </td>
         </tr>
         <tr>
           <th>组织机构说明</th>
-          <td><input name="organDesc" type="text" value="${data.organDesc }" maxlength="100"/></td>
+          <td>
+          <textarea rows="5" cols="40" name="organDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]">${data.organDesc }</textarea>
+          </td>
         </tr>
         <tr>
           <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>

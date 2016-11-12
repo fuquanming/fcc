@@ -24,15 +24,15 @@
         </tr>
         <tr>
           <th>模块名称</th>
-          <td colspan="3"><input name="moduleName" type="text" class="easyui-validatebox" required="true" maxlength="100" style="width: 350px;"/></td>
+          <td colspan="3"><input name="moduleName" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入模块名称...'" required="true" maxlength="100" style="width: 350px;"/></td>
         </tr>
         <tr>
           <th>模块地址</th>
-          <td colspan="3"><input name="moduleDesc" type="text" maxlength="100" style="width: 350px;"/></td>
+          <td colspan="3"><input name="moduleDesc" type="text" class="easyui-textbox" maxlength="100" style="width: 350px;"/></td>
         </tr>
         <tr>
           <th>模块排序</th>
-          <td colspan="3"><input name="moduleSort" type="text" class="easyui-validatebox" required="true" style="width: 350px;"/>
+          <td colspan="3"><input name="moduleSort" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入模块排序...'" required="true" validType="integer" style="width: 350px;"/>
           </td>
         </tr>
         <tr>
@@ -43,7 +43,7 @@
         </tr>
         <tr>
           <th>模块操作</th>
-          <td><select id="unSelectOperate" name="unSelectOperate" multiple="multiple" size="10" style="width: 150px;">
+          <td><select id="unSelectOperate" name="unSelectOperate" multiple="multiple" size="10" style="width: 150px;" class="textbox">
               <c:forEach items="${operateList}" var="operate">
                 <option value="${operate.operateId }">${operate.operateName }</option>
               </c:forEach>
@@ -58,7 +58,7 @@
             <br/>
             <a class="easyui-linkbutton" plain="true" style="width: 35px; text-align: center; border: 1px solid #D0D0BF;" onClick="Tool.removeSelect({'sourceId':'selecetOperate','targetId':'unSelectOperate','isAll':true})" href="javascript:void(0);"> << </a>
           </td>
-          <td><select id="selecetOperate" name="selecetOperate" multiple="multiple" size="10" style="width: 150px;">
+          <td><select id="selecetOperate" name="selecetOperate" multiple="multiple" size="10" style="width: 150px;" class="textbox">
             </select>
           </td>
         </tr>

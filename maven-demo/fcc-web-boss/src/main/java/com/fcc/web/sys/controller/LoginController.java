@@ -17,6 +17,7 @@ import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.LoginService;
 import com.fcc.web.sys.service.SysUserService;
@@ -61,7 +62,9 @@ public class LoginController extends AppWebController {
             if (StringUtils.isEmpty(userId)) throw new RefusedException(Constants.StatusCode.Login.emptyUserName);
             if (StringUtils.isEmpty(password)) throw new RefusedException(Constants.StatusCode.Login.emptyPassword);
             if (StringUtils.isEmpty(subCode))  throw new RefusedException(Constants.StatusCode.Login.emptyRandCode);
-//            if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
+            if (!ConfigUtil.isDev()) {
+                if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
+            }
             SysUser user = null;
             password = EncryptionUtil.encodeMD5(password).toLowerCase();
             user = sysUserService.getLoninUser(userId, password);

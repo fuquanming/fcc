@@ -14,7 +14,7 @@
     <table class="tableForm">
       <tr>
         <th>操作名称</th>
-        <td><input name="searchName" style="width: 305px;" />
+        <td><input name="searchName" style="width: 305px;" class="easyui-textbox" data-options="prompt:'请输入操作名称...'"/>
         </td>
         <td>
         <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
@@ -35,11 +35,11 @@
     <table class="tableForm">
       <tr>
         <th>操作ID</th>
-        <td><input name="operateId" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td><input id="operateId" name="operateId" class="easyui-validatebox easyui-textbox" required="true" maxlength="100"/></td>
       </tr>
       <tr>
         <th>操作名称</th>
-        <td><input name="operateName" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td><input name="operateName" class="easyui-validatebox easyui-textbox" required="true" maxlength="100"/></td>
       </tr>
     </table>
   </form>
@@ -113,11 +113,12 @@ operateParam_dataId = 'operateId';
 operateParam_dataName = 'operateName';
 operateParam_add_beforeCallback = function() {
 	openDialog(userDialog);
-    userForm.find('[name=operateId]').removeAttr('readonly');
+    //userForm.find('[name=operateId]').removeAttr('readonly');
+    Tool.input.disabled('operateId', false);//设置输入框不为禁用
     userForm.form('clear');
 }
 operateParam_edit_beforeCallback = function(row) {
-	userForm.find('[name=operateId]').attr('readonly', 'readonly');
+	Tool.input.disabled('operateId', true);//设置输入框为禁用
     openDialog(userDialog);
     userForm.form('clear');
     userForm.form('load', {

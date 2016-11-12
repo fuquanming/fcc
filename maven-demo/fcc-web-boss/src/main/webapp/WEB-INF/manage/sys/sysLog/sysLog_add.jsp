@@ -19,7 +19,7 @@
 		<tr>	
 			<th><%=SysLog.ALIAS_USER_ID%>：</th>		
 			<td>
-			<input id="userId" name="userId" type="text" class="easyui-validatebox" maxlength="20" />
+			<input id="userId" name="userId" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入用户账号...'" required="true" maxlength="20" />
 			</td>
 		</tr>	
 		<tr>	
