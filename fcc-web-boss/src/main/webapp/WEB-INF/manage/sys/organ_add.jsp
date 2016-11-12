@@ -23,16 +23,23 @@
         </tr>
         <tr>
           <th>组织机构名称</th>
-          <td><input name="organName" type="text" class="easyui-validatebox" required="true" maxlength="100"/></td>
+          <td><input name="organName" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
+        </tr>
+        <tr>
+          <th>组织机构编码</th>
+          <td><input name="organCode" type="text" class="easyui-validatebox easyui-textbox" maxlength="10"/>
+          </td>
         </tr>
         <tr>
           <th>组织机构排序</th>
-          <td><input name="organSort" type="text" class="easyui-validatebox" required="true" validType="integer" maxlength="5"/>
+          <td><input name="organSort" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
           </td>
         </tr>
         <tr>
           <th>组织机构说明</th>
-          <td><input name="organDesc" type="text" maxlength="100"/></td>
+          <td>
+          <textarea rows="5" cols="40" name="organDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
+          </td>
         </tr>
         <tr>
           <td colspan="2" align="center">

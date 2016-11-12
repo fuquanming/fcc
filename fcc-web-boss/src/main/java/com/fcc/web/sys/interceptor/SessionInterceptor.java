@@ -3,6 +3,7 @@ package com.fcc.web.sys.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
@@ -14,6 +15,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 
 /**
@@ -24,32 +26,39 @@ import com.fcc.web.sys.model.SysUser;
  */
 public class SessionInterceptor implements HandlerInterceptor {
 
-    ThreadLocal<StopWatch> stopWatchLocal =  new ThreadLocal<StopWatch>();
-    ThreadLocal<Long> timeLocal =  new ThreadLocal<Long>();
+    private Logger logger = Logger.getLogger(SessionInterceptor.class);
+    ThreadLocal<StopWatch> stopWatchLocal = new ThreadLocal<StopWatch>();
+    ThreadLocal<Long> timeLocal = new ThreadLocal<Long>();
+    String timePageStr = "耗时毫秒：%d,page=%s";
+    String timeControllerStr = "耗时毫秒：%d,controller=%s";
 	/**
 	 * 完成页面的render后调用
 	 */
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
-	    StopWatch stopWatch = stopWatchLocal.get();
-        if (stopWatch != null) {
-            stopWatch.stop();
-            long time = stopWatch.getTotalTimeMillis();
-            System.out.println("耗时：" + time + ",page=" + request.getRequestURI());
-            stopWatch = null;
-            stopWatchLocal.set(null);
-        }
+	    if (ConfigUtil.isDev()) {
+	        StopWatch stopWatch = stopWatchLocal.get();
+	        if (stopWatch != null) {
+	            stopWatch.stop();
+	            long time = stopWatch.getTotalTimeMillis();
+	            logger.info(String.format(timePageStr, time, request.getRequestURI()));
+	            stopWatch = null;
+	            stopWatchLocal.set(null);
+	        }
+	    }
 	}
 
 	/**
 	 * 在调用controller具体方法后拦截
 	 */
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
-	    StopWatch stopWatch = stopWatchLocal.get();
-	    if (stopWatch != null) {
-	        stopWatch.stop();
-	        long time = stopWatch.getTotalTimeMillis();
-	        System.out.println("耗时：" + time + ",controller=" + request.getRequestURI());
-	        stopWatch.start();
+	    if (ConfigUtil.isDev()) {
+	        StopWatch stopWatch = stopWatchLocal.get();
+	        if (stopWatch != null) {
+	            stopWatch.stop();
+	            long time = stopWatch.getTotalTimeMillis();
+	            logger.info(String.format(timeControllerStr, time, request.getRequestURI()));
+	            stopWatch.start();
+	        }        
 	    }
 	}
 
@@ -58,9 +67,17 @@ public class SessionInterceptor implements HandlerInterceptor {
 	 */
 	
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-	    StopWatch stopWatch = new StopWatch(request.getRequestURI());
-        stopWatch.start();
-        stopWatchLocal.set(stopWatch);
+	    if (ConfigUtil.isDev()) {
+	        StopWatch stopWatch = stopWatchLocal.get();
+	        if (stopWatch == null) {
+	            stopWatch = new StopWatch(request.getRequestURI());
+	            stopWatchLocal.set(stopWatch);
+	        }
+	        if (stopWatch != null) {
+	            stopWatch.start();
+	        }
+	    }
+        
 	    
 	    SysUser user = CacheUtil.getSysUser(request);
 //	    // uploadify-3.2.1 使用flash上传文件 没有携带cookie 代码绑定 原来sessionId

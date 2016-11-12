@@ -47,7 +47,7 @@ public class SysLog implements java.io.Serializable{
     /**
      * 键主       db_column: LOG_ID 
      */ 	
-	private java.lang.Long logId;
+	private java.lang.String logId;
     /**
      * 用户ID       db_column: USER_ID 
      */ 	
@@ -92,25 +92,29 @@ public class SysLog implements java.io.Serializable{
 	}
 
 	public SysLog(
-		java.lang.Long logId
+		java.lang.String logId
 	){
 		this.logId = logId;
 	}
 
 	
 
-	public void setLogId(java.lang.Long value) {
+	public void setLogId(java.lang.String value) {
 		this.logId = value;
 	}
-	
-	@Id @GeneratedValue(generator="paymentableGenerator")
-	@GenericGenerator(name="paymentableGenerator", strategy = "identity")
-	@Column(name = "LOG_ID", unique = true, nullable = false, insertable = true, updatable = true, length = 100)
+    	
+     @Id
+     @GenericGenerator(name="systemUUID",strategy="uuid")
+     @GeneratedValue(generator="systemUUID")
+     @Column(name = "LOG_ID", insertable = true, updatable = true, nullable = false, length = 32)
+//	@Id @GeneratedValue(generator="paymentableGenerator")
+//	@GenericGenerator(name="paymentableGenerator", strategy = "identity")
+//	@Column(name = "LOG_ID", unique = true, nullable = false, insertable = true, updatable = true, length = 100)
 //	@Id
 //	@Column(name = "LOG_ID")
 //	@SequenceGenerator(name = "SEQ_SYS_LOG", allocationSize = 1, sequenceName = "SEQ_SYS_LOG")
 //	@GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "SEQ_SYS_LOG")
-	public java.lang.Long getLogId() {
+	public java.lang.String getLogId() {
 		return this.logId;
 	}
 	

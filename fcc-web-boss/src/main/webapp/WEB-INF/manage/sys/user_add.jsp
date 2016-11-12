@@ -18,33 +18,33 @@
       <table class="tableForm" align="center">
         <tr>
           <th>帐号</th>
-          <td><input name="userId" type="text" class="easyui-validatebox" required="true" maxlength="20"/></td>
+          <td><input name="userId" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入账号...'" required="true" maxlength="20"/></td>
         </tr>
         <tr>
           <th>姓名</th>
-          <td><input name="userName" type="text" class="easyui-validatebox" required="true" maxlength="20"/></td>
+          <td><input name="userName" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入姓名...'" required="true" maxlength="20"/></td>
         </tr>
         <tr>
           <th>Email</th>
-          <td><input name="email" type="text" class="easyui-validatebox" validType="email" maxlength="100" required="true"/></td>
+          <td><input name="email" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入邮箱...'" validType="email" maxlength="100" required="true"/></td>
         </tr>
         <tr>
           <th>手机</th>
-          <td><input name="mobile" type="text" class="easyui-validatebox" validType="mobile" required="true" />
+          <td><input name="mobile" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入手机...'" validType="mobile" required="true" />
           </td>
         </tr>
         <tr>
           <th>电话</th>
-          <td><input name="tel" type="text" class="easyui-validatebox" validType="telephone" maxlength="20"/>
+          <td><input name="tel" type="text" class="easyui-validatebox easyui-textbox" validType="telephone" maxlength="20"/>
           </td>
         </tr>
         <tr>
 			<th>组织机构</th>
-			<td><select id="organId" name="organId" style="width: 200px;"></select></td>
+			<td><select id="organId" name="organId" class="easyui-validatebox" required="true" style="width: 200px;"></select></td>
 		</tr>
         <tr>
           <th>备注</th>
-          <td colspan="3"><textarea rows="5" cols="40" name="remark" class="easyui-validatebox" validType="length[0, 200]"></textarea>
+          <td colspan="3"><textarea rows="5" cols="40" name="remark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
           </td>
         </tr>
         <tr>
@@ -55,7 +55,7 @@
         </tr>
         <tr>
           <th>角色列表</th>
-          <td><select id="unSelectRole" name="unSelectRole" multiple="multiple" size="10" style="width: 200px;">
+          <td><select id="unSelectRole" name="unSelectRole" multiple="multiple" size="10" style="width: 200px;" class="textbox">
               <c:forEach items="${roleList}" var="role">
                 <option value="${role.roleId }">${role.roleName }</option>
               </c:forEach>
@@ -70,7 +70,7 @@
             <br/>
             <a class="easyui-linkbutton" plain="true" style="width: 35px; text-align: center; border: 1px solid #D0D0BF;" onClick="Tool.removeSelect({'sourceId':'selecetRole','targetId':'unSelectRole','isAll':true})" href="javascript:void(0);"> << </a>
           </td>
-          <td><select id="selecetRole" name="selecetRole" multiple="multiple" size="10" style="width: 200px;">
+          <td><select id="selecetRole" name="selecetRole" multiple="multiple" size="10" style="width: 200px;" class="textbox">
             </select>
           </td>
         </tr>

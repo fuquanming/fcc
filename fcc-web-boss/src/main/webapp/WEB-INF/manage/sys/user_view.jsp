@@ -51,7 +51,7 @@
         </tr>
         <tr>
           <th>角色列表</th>
-          <td><select size="10" style="width: 200px;">
+          <td><select size="10" style="width: 200px;" class="textbox">
               <c:forEach items="${data.roles}" var="role">
                 <option value="${role.roleId }">${role.roleName }</option>
               </c:forEach>

@@ -213,7 +213,7 @@ public class ModuleController extends AppWebController {
 	@ApiOperation(value = "删除模块")
 	@PostMapping(value = "/delete.do")
 	public ModelAndView delete(HttpServletRequest request,
-	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id") String moduleId) {
+	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "ids") String moduleId) {
 		Message message = new Message();
 		try {
 			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
@@ -247,16 +247,17 @@ public class ModuleController extends AppWebController {
 				TreeSet<Module> menuSet = new TreeSet<Module>();
 				menuSet.addAll(moduleList);
 				
-				EasyuiTreeGridModule rootModule = new EasyuiTreeGridModule();
-				rootModule.setId(Module.ROOT.getModuleId());
-				rootModule.setText(Module.ROOT.getModuleName());
-				rootModule.setModuleSort(Module.ROOT.getModuleSort());
-				rootModule.setChildren(new ArrayList<EasyuiTreeNode>());
-				nodeList.add(rootModule);
+				// 移除根目录
+//				EasyuiTreeGridModule rootModule = new EasyuiTreeGridModule();
+//				rootModule.setId(Module.ROOT.getModuleId());
+//				rootModule.setText(Module.ROOT.getModuleName());
+//				rootModule.setModuleSort(Module.ROOT.getModuleSort());
+//				rootModule.setChildren(new ArrayList<EasyuiTreeNode>());
+//				nodeList.add(rootModule);
 				
 				
 				Map<String, EasyuiTreeGridModule> nodeMap = new HashMap<String, EasyuiTreeGridModule>();
-				nodeMap.put(rootModule.getId(), rootModule);
+//				nodeMap.put(rootModule.getId(), rootModule);// 移除根目录
 				
 				// 该用户权限
 				TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constants.SysUserSession.menu);
@@ -303,7 +304,9 @@ public class ModuleController extends AppWebController {
 						if (children == null) children = new ArrayList<EasyuiTreeNode>();
 						children.add(node);
 						cacheNode.setChildren(children);
-					}
+					} else {
+                        nodeList.add(node);// 移除根目录后，添加节点
+                    }
 				}
 				nodeMap.clear();
 				nodeMap = null;

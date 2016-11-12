@@ -16,7 +16,7 @@
     <table class="tableForm">
       <tr>
         <th>角色名称</th>
-        <td><input id="searchName" name="searchName" style="width: 305px;" />
+        <td><input id="searchName" name="searchName" class="easyui-textbox" data-options="prompt:'请输入角色名称...'" style="width: 305px;" />
         </td>
         <c:if test="${not empty userList}">
         <th>创建者</th>
