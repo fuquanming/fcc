@@ -4,11 +4,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiParam;
  * @version v1.0
  */
 @Api(value = "登录接口", produces = "登录接口")
-@RestController
+@Controller
 public class LoginController extends AppWebController {
 
     private static Logger logger = Logger.getLogger(LoginController.class);
@@ -49,8 +49,7 @@ public class LoginController extends AppWebController {
 
     @ApiOperation(value = "用户登录")
     // 请求 /login.do?login
-    //	@RequestMapping(value = "/login.do" , method = RequestMethod.POST)
-    @PostMapping(value = "/login.do")
+    @RequestMapping(value = {"/login.do"}, method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request,
             @ApiParam(required = true, value = "登录帐号") @RequestParam(name = "username") String userId,
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
@@ -88,7 +87,7 @@ public class LoginController extends AppWebController {
     }
 
     @ApiOperation(value = "用户退出")
-    @GetMapping("/logout.do")
+    @RequestMapping(value = {"/logout.do"}, method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest request) throws Exception {
         SysUser user = getSysUser(request);
         String userId = null;

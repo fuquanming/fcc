@@ -23,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "sys_rbac_operate")
-public class Operate implements Comparable<Operate>, Serializable {
+public class Operate implements Serializable {
 	private static final long serialVersionUID = 5454155825314635342L;
 	
 	//可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息

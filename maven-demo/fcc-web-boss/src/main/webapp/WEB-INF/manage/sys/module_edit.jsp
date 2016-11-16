@@ -18,6 +18,12 @@
       <input name="operateValue" type="hidden" value=""/>
       <table class="tableForm" align="center">
         <tr>
+          <th>上级模块</th>
+          <td><select id="parentId" name="parentId" class="easyui-validatebox" style="width: 200px;"></select>
+          <a class="easyui-linkbutton" iconCls="icon-clear" plain="true" onClick="clearModule();" href="javascript:void(0);">清空</a>
+          </td>
+        </tr>
+        <tr>
           <th>模块名称</th>
           <td colspan="3"><input name="moduleName" type="text" value="${data.moduleName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入模块名称...'" required="true" maxlength="100" style="width: 350px;"/></td>
         </tr>
@@ -68,7 +74,17 @@
 </body>
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <script type="text/javascript" charset="UTF-8">
+var moduleTree;
+$(function() {
+    var values = '${data.parentId }'
+    moduleTree = getComboTree({queryUrl:'manage/sys/module/tree.do',id:'parentId',closed:false});
+    setCombotreeValues(moduleTree, values);
+})
+function clearModule() {
+    setCombotreeValues(moduleTree, '');
+}
 saveParam_form = 'userForm';
 saveParam_saveUrl = '${basePath}manage/sys/module/edit.do';
 saveParam_backUrl = '${basePath}manage/sys/module/view.do';

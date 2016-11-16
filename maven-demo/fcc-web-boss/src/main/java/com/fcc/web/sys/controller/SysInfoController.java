@@ -22,7 +22,7 @@ public class SysInfoController {
 	 * 查询系统信息
 	 * @return
 	 */
-	@RequestMapping("/manage/sys/sysInfo/view")
+	@RequestMapping("/manage/sys/sysInfo/view.do")
 	public String infoView() {
 		return "manage/sysinfo/sys_info";
 	}
@@ -40,7 +40,7 @@ public class SysInfoController {
 	 * 更新系统缓存
 	 * @return
 	 */
-	@RequestMapping("/manage/sys/sysCache/reload")
+	@RequestMapping("/manage/sys/sysCache/reload.do")
 	@ResponseBody
 	public Message reloadCache() {
 		Message message = new Message();

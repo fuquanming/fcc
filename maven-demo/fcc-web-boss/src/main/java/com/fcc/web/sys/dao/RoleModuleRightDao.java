@@ -9,6 +9,7 @@
  */
 package com.fcc.web.sys.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.fcc.web.sys.model.RoleModuleRight;
@@ -52,7 +53,7 @@ public interface RoleModuleRightDao {
     
     public List<RoleModuleRight> getModuleRightByModuleIds(String[] moduleIds);
     
-    public List<RoleModuleRight> getModuleRightByRoleId(String[] roleIds);
+    public List<RoleModuleRight> getModuleRightByRoleId(Collection<String> roleIds);
     
     public RoleModuleRight getModuleRightByKey(String roleId, String moduleId);
     

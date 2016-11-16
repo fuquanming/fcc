@@ -5,13 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fcc.commons.web.model.Treeable;
 
 /**
  * <p>Description:组织机构</p>
@@ -22,12 +23,12 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "sys_organ")
-public class Organization implements Comparable<Organization>, java.io.Serializable{
+public class Organization extends Treeable implements Comparable<Organization>, java.io.Serializable{
 	private static final long serialVersionUID = 5454155825314635342L;
 	
 	public static final Organization ROOT = new Organization();
 	static{
-		ROOT.setOrganId("ORGANENTITY_ROOT");
+		ROOT.setOrganId("ROOT");
 		ROOT.setOrganCode("");
 		ROOT.setOrganDesc("");
 		ROOT.setOrganLevel(0);
@@ -62,6 +63,11 @@ public class Organization implements Comparable<Organization>, java.io.Serializa
      * organDesc       db_column: ORGAN_DESC 
      */ 	
 	private java.lang.String organDesc;
+	
+	/** 父ID */
+    private String parentId;
+    /** 所有父路径 如1-2-3 */
+    private String parentIds;
 	//columns END
 
 
@@ -73,20 +79,17 @@ public class Organization implements Comparable<Organization>, java.io.Serializa
 	){
 		this.organId = organId;
 	}
-
-	
-
-	public void setOrganId(java.lang.String value) {
-		this.organId = value;
-	}
 	
 	@Id @GeneratedValue(generator="paymentableGenerator")
-	@GenericGenerator(name="paymentableGenerator", strategy = "assigned")
-	@Column(name = "ORGAN_ID", unique = true, nullable = false, insertable = true, updatable = true, length = 255)
+    @GenericGenerator(name="paymentableGenerator", strategy = "assigned")
+    @Column(name = "ORGAN_ID", unique = true, nullable = false, insertable = true, updatable = true, length = 255)
 	public java.lang.String getOrganId() {
 		return this.organId;
 	}
 	
+	public void setOrganId(java.lang.String value) {
+        this.organId = value;
+    }
 			
 	@Column(name = "ORGAN_NAME", unique = false, nullable = true, insertable = true, updatable = true, length = 255)
 	public java.lang.String getOrganName() {
@@ -137,6 +140,22 @@ public class Organization implements Comparable<Organization>, java.io.Serializa
 		this.organDesc = value;
 	}
 	
+    @Column(name = "PARENT_ID")
+    public String getParentId() {
+        return parentId;
+    };
+    public void setParentId(String parentId) {
+        super.setParentId(parentId);
+        this.parentId = parentId;
+    }
+    @Column(name = "PARENT_IDS")
+    public String getParentIds() {
+        return parentIds;
+    }
+    public void setParentIds(String parentIds) {
+        super.setParentIds(parentIds);
+        this.parentIds = parentIds;
+    }
 
 	public String toString() {
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -164,30 +183,30 @@ public class Organization implements Comparable<Organization>, java.io.Serializa
 			.isEquals();
 	}
 	
-	/**
-	 * 获取父节点ID编号
-	 */
-	@Transient
-	public String getParentId(){
-		return Organization.getParentOrganId(this.organId);
-	}
-	
-	/**
-	 * 获取父机构ID编号
-	 * @param organId 子机构ID
-	 * @return
-	 */
-	@Transient
-	public static String getParentOrganId(String organId){
-		String parentOrganID = "";
-		int lastSplitPos = organId.lastIndexOf('-');
-		if(lastSplitPos >0){
-			parentOrganID = organId.substring(0,lastSplitPos);
-		}else{
-			parentOrganID = ROOT.getOrganId();
-		}
-		return parentOrganID;
-	}
+//	/**
+//	 * 获取父节点ID编号
+//	 */
+//	@Transient
+//	public String getParentIdTwo(){
+//		return Organization.getParentOrganId(this.organId);
+//	}
+//	
+//	/**
+//	 * 获取父机构ID编号
+//	 * @param organId 子机构ID
+//	 * @return
+//	 */
+//	@Transient
+//	public static String getParentOrganId(String organId){
+//		String parentOrganID = "";
+//		int lastSplitPos = organId.lastIndexOf('-');
+//		if(lastSplitPos >0){
+//			parentOrganID = organId.substring(0,lastSplitPos);
+//		}else{
+//			parentOrganID = ROOT.getOrganId();
+//		}
+//		return parentOrganID;
+//	}
 	
 	public int compareTo(Organization o) {
 		if(equals(o)){

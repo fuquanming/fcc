@@ -9,6 +9,7 @@
  */
 package com.fcc.web.sys.dao.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class RoleModuleRightDaoImpl implements RoleModuleRightDao {
     }
     
     @Override
-    public List<RoleModuleRight> getModuleRightByRoleId(String[] roleIds) {
+    public List<RoleModuleRight> getModuleRightByRoleId(Collection<String> roleIds) {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("roleId", roleIds);
         List<RoleModuleRight> list = baseDao.find("select rm from RoleModuleRight as rm where rm.roleId in(:roleId) and rm.rightValue>0 order by moduleId ", param);

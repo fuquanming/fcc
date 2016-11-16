@@ -12,9 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fcc.commons.web.model.Treeable;
 /**
  * <p>Description:系统模块</p>
  * <p>Copyright:Copyright (c) 2009 </p>
@@ -23,7 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
  */
 @Entity
 @Table(name = "sys_rbac_module")
-public class Module implements Comparable<Object>, Serializable {
+public class Module extends Treeable implements Comparable<Object>, Serializable {
 
 	/**
 	 * 
@@ -31,7 +32,7 @@ public class Module implements Comparable<Object>, Serializable {
 	private static final long serialVersionUID = -6965867174909283799L;
 	public static final Module ROOT = new Module();//数据库中没有对映记录
 	static{
-		ROOT.setModuleId("MODULE_ROOT");
+		ROOT.setModuleId("ROOT");
 		ROOT.setModuleName("系统模块");
 		ROOT.setModuleLevel(0);
 		ROOT.setModuleSort(0);
@@ -47,6 +48,11 @@ public class Module implements Comparable<Object>, Serializable {
 	
 	//  MODULE_DESC  VARCHAR2(100)
 	private String moduleDesc;
+	
+	/** 父ID */
+    private String parentId;
+    /** 所有父路径 如1-2-3 */
+    private String parentIds;
 	
 	private Set<Operate> operates = null;
 	
@@ -139,6 +145,24 @@ public class Module implements Comparable<Object>, Serializable {
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
+	
+	@Column(name = "PARENT_ID")
+    public String getParentId() {
+        return parentId;
+    };
+    public void setParentId(String parentId) {
+        super.setParentId(parentId);
+        this.parentId = parentId;
+    }
+    @Column(name = "PARENT_IDS")
+    public String getParentIds() {
+        return parentIds;
+    }
+    public void setParentIds(String parentIds) {
+        super.setParentIds(parentIds);
+        this.parentIds = parentIds;
+    }
+	
 	@ManyToMany(fetch = FetchType.LAZY)   
 	@JoinTable(name = "SYS_RBAC_MOD2OP",    
 	        joinColumns ={@JoinColumn(name = "module_id") },    
@@ -195,25 +219,4 @@ public class Module implements Comparable<Object>, Serializable {
 		return 0;
 	}		
 	
-	@Transient
-	public String getParentId() {
-		return getModuleParentId(this.moduleId);
-	}
-	
-	/**
-	 * 获取父模块ID编号
-	 * @param moduleId 子模块ID
-	 * @return
-	 */
-	public static String getModuleParentId(String moduleId){
-		String parentModuleId = "";
-		int lastSplitPos = moduleId.lastIndexOf('-');
-		if (lastSplitPos > 0) {
-			parentModuleId = moduleId.substring(0, lastSplitPos);
-		} else {
-			parentModuleId = Module.ROOT.getModuleId();
-		}
-		return parentModuleId;
-	}
-
 }

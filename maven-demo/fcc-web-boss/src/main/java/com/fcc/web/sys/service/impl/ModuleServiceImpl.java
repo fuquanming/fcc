@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,29 +29,30 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Resource
     private BaseService baseService;
-
     @Resource
     private ModuleDao moduleDao;
-
     @Resource
     private RoleModuleRightDao roleModuleRightDao;
 
+    @CachePut(value = "moduleCache", key = "#data.getModuleId()")
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void create(Module data, String[] operateIds) {
+    @Override
+    public void add(Module data, String[] operateIds) {
         baseService.create(data);
-        createOperate(data.getModuleId(), operateIds);
+        addOperate(data.getModuleId(), operateIds);
     }
 
+    @CacheEvict(value = "moduleCache", key = "#data.getModuleId()")
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void update(Module data, String[] operateIds) {
+    @Override
+    public void edit(Module data, String[] operateIds) {
         baseService.update(data);
-        createOperate(data.getModuleId(), operateIds);
+        addOperate(data.getModuleId(), operateIds);
     }
 
+    @CacheEvict(value = "moduleCache", key = "#data.getModuleId()")
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
+    @Override
     public void delete(String moduleId) {
         // 删除模块
         moduleDao.delete(moduleId, true);
@@ -59,14 +63,29 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void createOperate(String moduleId, String[] operateIds) {
+    @Override
+    public void addOperate(String moduleId, String[] operateIds) {
         // 删除所有操作
         moduleDao.deleteModuleOperate(moduleId, false);
         if (operateIds == null || operateIds.length == 0) {
         } else {// 更新操作
             moduleDao.createModuleOperate(moduleId, operateIds);
         }
+    }
+    
+    @Cacheable(value = "moduleCache", key = "#moduleId")
+    @Transactional(readOnly = true)
+    @Override
+    public Module getModuleById(String moduleId) {
+        Module module = null;
+        if (moduleId != null) {
+            if (Module.ROOT.getModuleId().equals(moduleId)) {
+                module = Module.ROOT;
+            } else {
+                module = (Module) baseService.get(Module.class, moduleId);
+            }
+        }
+        return module;
     }
 
     @Transactional(readOnly = true)
@@ -109,52 +128,39 @@ public class ModuleServiceImpl implements ModuleService {
         return map;
     }
 
-    @Transactional(readOnly = true)
-    //只查事务申明
-    public List<Module> findModules(List<String> moduleIdList) {
-       return moduleDao.findModules(moduleIdList);
-    }
+//    @Transactional(readOnly = true) //只查事务申明
+//    @Override
+//    public List<Module> findModules(Collection<String> moduleIdList) {
+//       return moduleDao.findModules(moduleIdList);
+//    }
+//
+//    @Transactional(readOnly = true) //只查事务申明
+//    @Override
+//    public List<Module> findChildModules(String parentModuleId, boolean allChildren) {
+//        return moduleDao.findChildModules(parentModuleId, allChildren);
+//    }
 
-    @Transactional(readOnly = true)
-    //只查事务申明
-    public List<Module> findChildModules(String parentModuleId, boolean allChildren) {
-        return moduleDao.findChildModules(parentModuleId, allChildren);
-    }
 
-    @Transactional(readOnly = true)
-    //只查事务申明
-    public Module getModuleById(String moduleId) {
-        Module module = null;
-        if (moduleId != null) {
-            if (Module.ROOT.getModuleId().equals(moduleId)) {
-                module = Module.ROOT;
-            } else {
-                module = (Module) baseService.get(Module.class, moduleId);
-            }
-        }
-        return module;
-    }
-
-    @Transactional(readOnly = true)
-    //只查事务申明
-    public Module getParentModule(Module module) {
-        Module parentModule = null;
-        if (module != null) {
-            parentModule = getParentModule(module.getModuleId());
-        }
-        return parentModule;
-    }
-
-    @Transactional(readOnly = true)
-    //只查事务申明
-    public Module getParentModule(String moduleId) {
-        Module parentModule = null;
-        if (moduleId != null) {
-            String parentModuleId = Module.getModuleParentId(moduleId);
-            parentModule = getModuleById(parentModuleId);
-        }
-        return parentModule;
-    }
+//    @Transactional(readOnly = true)
+//    //只查事务申明
+//    public Module getParentModule(Module module) {
+//        Module parentModule = null;
+//        if (module != null) {
+//            parentModule = getParentModule(module.getModuleId());
+//        }
+//        return parentModule;
+//    }
+//
+//    @Transactional(readOnly = true)
+//    //只查事务申明
+//    public Module getParentModule(String moduleId) {
+//        Module parentModule = null;
+//        if (moduleId != null) {
+//            String parentModuleId = Module.getModuleParentId(moduleId);
+//            parentModule = getModuleById(parentModuleId);
+//        }
+//        return parentModule;
+//    }
 
     @Transactional(readOnly = true)
     //只查事务申明

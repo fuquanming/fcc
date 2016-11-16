@@ -20,9 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +83,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 显示列表 */
 	@ApiOperation(value = "显示日志列表页面")
-	@GetMapping(value = {"/view.do"})
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -94,7 +93,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 显示统计报表 */
 	@ApiOperation(value = "显示日志统计列表页面")
-	@GetMapping(value = {"/report/view.do"})
+	@RequestMapping(value = "/report/view.do", method = RequestMethod.GET)
 	public String reportView(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -104,7 +103,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 跳转到查看页面 */
 	@ApiOperation(value = "显示日志查看页面")
-	@GetMapping(value = {"/toView.do"})
+	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
 	public String toView(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "日志ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		if (StringUtils.isNotEmpty(id)) {
@@ -145,14 +144,14 @@ public class SysLogController extends AppWebController {
 	
 	/** 跳转到新增页面 */
 	@ApiOperation(value = "显示日志新增页面")
-	@GetMapping(value = {"/toAdd.do"})
+	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
 	public String toAdd(HttpServletRequest request, HttpServletResponse response) {
 		return "manage/sys/sysLog/sysLog_add";
 	}
 	
 	/** 跳转到修改页面 */
 	@ApiOperation(value = "显示日志修改页面")
-	@GetMapping(value = {"/toEdit.do"})
+	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
 	public String toEdit(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		if (StringUtils.isNotEmpty(id)) {
@@ -169,7 +168,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 新增 */
 	@ApiOperation(value = "新增日志")
-	@PostMapping(value = {"/add.do"})
+	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
 	public ModelAndView add(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		try {
@@ -189,7 +188,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 修改 */
 	@ApiOperation(value = "修改日志")
-	@PostMapping(value = {"/edit.do"})
+	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
 	public ModelAndView edit(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		try {
@@ -225,7 +224,7 @@ public class SysLogController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation("删除日志")
-	@PostMapping(value = {"/delete.do"})
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		String id = request.getParameter("ids");
@@ -253,7 +252,7 @@ public class SysLogController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询日志")
-	@PostMapping("/datagrid.do")
+	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	@SuppressWarnings("unchecked")
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
@@ -296,7 +295,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 报表 */
 	@SuppressWarnings("unchecked")
-    @PostMapping("/report/datagrid.do")
+	@RequestMapping(value = "/report/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	public EasyuiDataGridJson reportDatagrid(EasyuiDataGrid dg, HttpServletRequest request) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
@@ -425,7 +424,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 导出数据 */
 	@ApiIgnore
-	@PostMapping("/export.do")
+	@RequestMapping(value = "/export.do", method = RequestMethod.POST)
 	public ModelAndView export(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockExportData.lock();
@@ -469,7 +468,7 @@ public class SysLogController extends AppWebController {
 	}
 	
 	@ApiIgnore
-	@PostMapping("/queryExport.do")
+	@RequestMapping(value = "/queryExport.do", method = RequestMethod.POST)
 	@ResponseBody
 	public ExportMessage queryExport(HttpServletRequest request, HttpServletResponse response) {
 	    ExportMessage em = null;
@@ -485,7 +484,7 @@ public class SysLogController extends AppWebController {
 	
 	/** 导入数据 */
 	@ApiIgnore
-	@PostMapping("/import.do")
+	@RequestMapping(value = "/import.do", method = RequestMethod.POST)
 	public ModelAndView importSysLog(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockImportData.lock();
@@ -535,7 +534,8 @@ public class SysLogController extends AppWebController {
 		return getModelAndView(message);
 	}
 	
-	@RequestMapping("/queryImport.do")
+	@ApiIgnore
+	@RequestMapping(value = "/queryImport.do")
 	@ResponseBody
 	public ImportMessage queryImport(HttpServletRequest request, HttpServletResponse response) {
 	    ImportMessage im = null;

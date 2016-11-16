@@ -17,6 +17,12 @@
       <input name="id" type="hidden" value="${data.organId }"/>
       <table class="tableForm" align="center">
         <tr>
+          <th>上级机构</th>
+          <td><select id="parentId" name="parentId" class="easyui-validatebox" style="width: 200px;"></select>
+          <a class="easyui-linkbutton" iconCls="icon-clear" plain="true" onClick="clearOrgan();" href="javascript:void(0);">清空</a>
+          </td>
+        </tr>
+        <tr>
           <th>组织机构名称</th>
           <td><input name="organName" type="text" value="${data.organName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
         </tr>
@@ -47,7 +53,17 @@
 </body>
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <script type="text/javascript">
+var organTree;
+$(function() {
+	var values = '${data.parentId }'
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'parentId',closed:false});
+	setCombotreeValues(organTree, values);
+})
+function clearOrgan() {
+	setCombotreeValues(organTree, '');
+}
 saveParam_form = 'userForm';
 saveParam_saveUrl = '${basePath}manage/sys/organ/edit.do';
 saveParam_backUrl = '${basePath}manage/sys/organ/view.do';

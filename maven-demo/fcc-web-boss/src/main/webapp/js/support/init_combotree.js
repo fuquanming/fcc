@@ -40,3 +40,7 @@ function getComboTree(param) {
         }
     });
 }
+
+function setCombotreeValues(combotree, values) {
+	combotree.combotree('setValues', values); 
+}

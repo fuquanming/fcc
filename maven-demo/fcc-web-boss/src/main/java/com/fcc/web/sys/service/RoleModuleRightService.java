@@ -1,5 +1,6 @@
 package com.fcc.web.sys.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.fcc.commons.execption.RefusedException;
@@ -17,7 +18,12 @@ public interface RoleModuleRightService {
 
     public List<RoleModuleRight> getModuleRightByModuleIds(String[] moduleIds);
 
-    public List<RoleModuleRight> getModuleRightByRoleId(String[] roleIds);
+    /**
+     * 通过角色ID获取角色模块操作权限
+     * @param roleIds
+     * @return
+     */
+    public List<RoleModuleRight> getModuleRightByRoleId(Collection<String> roleIds);
 
     /**
      * 根据角色ID和模块ID获取相应的操作权值
