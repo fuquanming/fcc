@@ -10,6 +10,7 @@
 package com.fcc.web.sys.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -147,7 +148,7 @@ public class ModuleDaoImpl implements ModuleDao {
     }
     
     @Override
-    public List<Module> findModules(List<String> moduleIdList) {
+    public List<Module> findModules(Collection<String> moduleIdList) {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("moduleId", moduleIdList);
         return baseDao.find("from Module where moduleId in(:moduleId)", param);

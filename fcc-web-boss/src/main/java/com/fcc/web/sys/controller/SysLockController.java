@@ -11,9 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,7 +54,7 @@ public class SysLockController extends AppWebController {
 
 	/** 显示列表 */
 	@ApiOperation(value = "显示系统锁列表页面")
-	@GetMapping(value = {"/view.do"})
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		return "manage/sys/sysLock/sysLock_list";
 	}
@@ -65,7 +64,7 @@ public class SysLockController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "删除系统锁")
-	@PostMapping(value = {"/delete.do"})
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -91,7 +90,7 @@ public class SysLockController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询系统锁")
-	@PostMapping("/datagrid.do")
+	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
 	        @ApiParam(required = false, value = "锁状态") @RequestParam(name = "lockStatus", defaultValue = "") String lockStatus) {

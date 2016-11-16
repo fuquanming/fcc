@@ -74,7 +74,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 	            stopWatchLocal.set(stopWatch);
 	        }
 	        if (stopWatch != null) {
-	            stopWatch.start();
+	            stopWatch.start(request.getRequestURI());
 	        }
 	    }
         

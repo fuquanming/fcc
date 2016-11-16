@@ -6,9 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,14 +39,14 @@ public class UserPasswordController extends AppWebController {
 	
 	/** 显示修改密码页面 */
 	@ApiOperation(value = "显示修改密码页面", notes = "")
-	@GetMapping(value = "/view.do")
+	@RequestMapping(value = {"/view.do"}, method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		return "manage/sys/user_password";
 	}
 	
 	/** 修改登录用户密码 */
 	@ApiOperation(value = "修改密码", notes = "")
-	@PostMapping(value = "/edit.do")
+	@RequestMapping(value = {"/edit.do"}, method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request,
             @ApiParam(required = true, value = "旧密码") @RequestParam(name = "oldPassword") String oldPassword,
             @ApiParam(required = true, value = "新密码") @RequestParam(name = "newPassword") String newPassword,

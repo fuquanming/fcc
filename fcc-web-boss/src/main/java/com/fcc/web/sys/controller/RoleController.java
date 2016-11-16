@@ -13,9 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -59,7 +58,7 @@ public class RoleController extends AppWebController {
 	private SysUserService sysUserService;
 	/** 显示角色列表 */
 	@ApiOperation(value = "显示角色列表")
-	@GetMapping(value = "/view.do")
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
 //		if (isAdmin(request)) {
@@ -92,7 +91,7 @@ public class RoleController extends AppWebController {
 	
 	/** 显示角色查询页面 */
 	@ApiOperation(value = "显示角色列表页面")
-	@GetMapping(value = "/toView.do")
+	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
 	public String toView(HttpServletRequest request) {
 		getRole(request);
 		return "manage/sys/role_view";
@@ -100,21 +99,21 @@ public class RoleController extends AppWebController {
 	
 	/** 显示角色新增页面 */
 	@ApiOperation(value = "显示新增角色页面")
-	@GetMapping(value = "/toAdd.do")
+	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
 	public String toAdd(HttpServletRequest request) {
 		return "manage/sys/role_add";
 	}
 	
 	/** 显示角色修改页面 */
 	@ApiOperation(value = "显示修改角色页面")
-	@GetMapping(value = "/toEdit.do")
+	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
 	public String toEdit(HttpServletRequest request) {
 		getRole(request);
 		return "manage/sys/role_edit";
 	}
 	
 	@ApiOperation(value = "新增角色")
-	@PostMapping(value = "/add.do")
+	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
 	public ModelAndView add(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "角色名称") @RequestParam(name = "roleName", defaultValue = "") String roleName,
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
@@ -148,7 +147,7 @@ public class RoleController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "修改角色")
-    @PostMapping(value = "/edit.do")
+	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request, 
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
             Role role) {
@@ -195,7 +194,7 @@ public class RoleController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "删除角色")
-	@PostMapping(value = "/delete.do")
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "角色ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -221,7 +220,7 @@ public class RoleController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询角色")
-	@PostMapping(value = "/datagrid.do")
+	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	public EasyuiDataGridJson datagrid(HttpServletRequest request, EasyuiDataGrid dg,
 	        @ApiParam(required = false, value = "角色名称") @RequestParam(name = "searchName", defaultValue = "") String roleName) {
@@ -254,7 +253,7 @@ public class RoleController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询角色权限")
-	@PostMapping("/roleModuleRight")
+	@RequestMapping(value = "/roleModuleRight.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Role roleModuleRight(HttpServletRequest request,
 	        @ApiParam(required = true, value = "角色ID") @RequestParam(name = "id", defaultValue = "") String roleId) {

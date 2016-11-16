@@ -8,9 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.web.view.Message;
@@ -40,7 +39,7 @@ public class UserInfoController extends AppWebController {
 	
 	/** 显示修改基本信息页面 */
 	@ApiOperation(value = "显示登录用户信息")
-	@GetMapping(value = "/view.do")
+	@RequestMapping(value = {"/view.do"}, method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		SysUser user = getSysUser(request);
 		request.setAttribute("data", user);
@@ -49,7 +48,7 @@ public class UserInfoController extends AppWebController {
 	
 	/** 修改用户基本信息 */
 	@ApiOperation(value = "修改登录用户信息")
-	@PostMapping(value = "/edit.do")
+	@RequestMapping(value = {"/edit.do"}, method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request, SysUser sysUser) {
 		Message message = new Message();
 		try {

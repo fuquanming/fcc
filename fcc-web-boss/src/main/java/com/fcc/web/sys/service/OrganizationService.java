@@ -61,18 +61,18 @@ public interface OrganizationService {
 	 */
 	public Organization getOrganById(String organId);
 
-	/**
-	 * 根据module对象获得父模块实体
-	 * @param module 
-	 * @return 父模块实体
-	 */
-	public Organization getParentOrgan(Organization organ);
-	
-	/**
-	 * 根据moduleId获得父模块实体
-	 * @param moduleId 
-	 * @return 父模块实体
-	 */
-	public Organization getParentOrgan(String organId);
+//	/**
+//	 * 根据module对象获得父模块实体
+//	 * @param module 
+//	 * @return 父模块实体
+//	 */
+//	public Organization getParentOrgan(Organization organ);
+//	
+//	/**
+//	 * 根据moduleId获得父模块实体
+//	 * @param moduleId 
+//	 * @return 父模块实体
+//	 */
+//	public Organization getParentOrgan(String organId);
 	
 }

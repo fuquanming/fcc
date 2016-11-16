@@ -15,9 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -70,7 +69,7 @@ public class SysUserController extends AppWebController {
 	
 	/** 显示系统用户列表 */
 	@ApiOperation(value = "显示用户列表页面")
-	@GetMapping("/view.do")
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
 //		if (isAdmin(request)) {
@@ -107,7 +106,7 @@ public class SysUserController extends AppWebController {
 	
 	/** 显示用户查看页面 */
 	@ApiOperation(value = "显示用户信息页面")
-    @GetMapping("/toView.do")
+	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
 	public String toView(HttpServletRequest request,
 	        @ApiParam(required = true, value = "用户ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
@@ -128,7 +127,7 @@ public class SysUserController extends AppWebController {
 	
 	/** 显示用户新增页面 */
 	@ApiOperation(value = "显示新增用户页面")
-    @GetMapping(value = "/toAdd.do")
+	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
 	public String toAdd(HttpServletRequest request) {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>();
@@ -143,7 +142,7 @@ public class SysUserController extends AppWebController {
 	
 	/** 显示用户修改页面 */
 	@ApiOperation(value = "显示修改用户页面")
-    @GetMapping(value = "/toEdit.do")
+	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
 	public String toEdit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
@@ -166,7 +165,7 @@ public class SysUserController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "新增用户")
-    @PostMapping(value = "/add.do")
+	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
 	public ModelAndView add(HttpServletRequest request, SysUser sysUser,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "organId", defaultValue = "") String dept,
 	        @ApiParam(required = true, value = "角色权限，模块ID:权值,模块ID:权值") @RequestParam(name = "roleValue", defaultValue = "") String roleValue) {
@@ -210,7 +209,7 @@ public class SysUserController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "修改用户")
-    @PostMapping(value = "/edit.do")
+	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request, SysUser sysUser,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "organId", defaultValue = "") String dept,
 	        @ApiParam(required = true, value = "角色权限，模块ID:权值,模块ID:权值") @RequestParam(name = "roleValue", defaultValue = "") String roleValue) {
@@ -243,7 +242,7 @@ public class SysUserController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "删除用户")
-    @PostMapping(value = "/delete.do")
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -265,7 +264,7 @@ public class SysUserController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "重置用户密码")
-    @PostMapping("/resetPassword.do")
+	@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
     public ModelAndView resetPassword(HttpServletRequest request,
             @ApiParam(required = true, value = "操作ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
         Message message = new Message();
@@ -287,7 +286,7 @@ public class SysUserController extends AppWebController {
     }
 	
 	@ApiOperation(value = "锁定用户")
-	@PostMapping("/lock.do")
+	@RequestMapping(value = "/lock.do", method = RequestMethod.POST)
 	public ModelAndView lock(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id,
 	        @ApiParam(required = true, value = "用户状态") @RequestParam(name = "userStatus", defaultValue = "") String userStatus) {
@@ -314,7 +313,7 @@ public class SysUserController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询用户")
-    @PostMapping(value = "/datagrid.do") 
+	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
     @ResponseBody
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
 	        @ApiParam(required = false, value = "用户账号") @RequestParam(name = "userId", defaultValue = "") String userId,
@@ -363,7 +362,7 @@ public class SysUserController extends AppWebController {
 	
 	/** 系统用户菜单 */
 	@ApiOperation(value = "查询用户菜单")
-	@PostMapping("/userMenu.do")
+	@RequestMapping(value = {"/userMenu.do"}, method = RequestMethod.POST)
 	@ResponseBody
 	public List<EasyuiTreeNode> userMenu(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession();
@@ -376,7 +375,7 @@ public class SysUserController extends AppWebController {
 				for (Module m : menuSet) {
 					if (m.getModuleId().equals(moduleId)) {
 						continue;
-					} else if (m.getModuleId().startsWith(moduleId)) {
+					} else if (m.getParentIds().startsWith(moduleId)) {
 						moduleSet.add(m);
 					}
 				}

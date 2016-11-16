@@ -7,12 +7,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -47,13 +46,13 @@ public class OperateController extends AppWebController {
 	
 	/** 显示模块操作列表 */
 	@ApiOperation(value = "显示操作列表页面")
-	@GetMapping(value = "/view.do")
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view() {
 		return "manage/sys/operate_list";
 	}
 	
 	@ApiOperation(value = "新增操作")
-	@PostMapping(value = "/add.do")
+	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
 	public ModelAndView add(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
@@ -74,7 +73,7 @@ public class OperateController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "修改操作")
-	@PostMapping(value = "/edit.do")
+	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
@@ -93,13 +92,13 @@ public class OperateController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "删除操作")
-	@PostMapping(value = "/delete.do")
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
 			if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ',');
 			operateService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
@@ -119,7 +118,7 @@ public class OperateController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "查询操作")
-	@PostMapping(value = "/datagrid.do") 
+	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	public EasyuiDataGridJson datagrid(HttpServletRequest request, EasyuiDataGrid dg,
 	        @ApiParam(required = false, value = "操作名称") @RequestParam(name = "searchName", defaultValue = "") String operateName) {

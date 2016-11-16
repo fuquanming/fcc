@@ -71,21 +71,21 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
         return module;
     }
-	@Transactional(readOnly = true)//只查事务申明
-    public Organization getParentOrgan(Organization organ) {
-		Organization parentOrgan = null;
-        if(organ != null){
-        	parentOrgan = getParentOrgan(organ.getOrganId());
-        }
-        return parentOrgan;
-    }
-	@Transactional(readOnly = true)//只查事务申明
-    public Organization getParentOrgan(String organId) {
-		Organization parentOrgan = null;
-        if(organId != null){
-        	String parentOrganId = Organization.getParentOrganId(organId);
-        	parentOrgan = getOrganById(parentOrganId);
-        }
-        return parentOrgan;
-    }
+//	@Transactional(readOnly = true)//只查事务申明
+//    public Organization getParentOrgan(Organization organ) {
+//		Organization parentOrgan = null;
+//        if(organ != null){
+//        	parentOrgan = getParentOrgan(organ.getOrganId());
+//        }
+//        return parentOrgan;
+//    }
+//	@Transactional(readOnly = true)//只查事务申明
+//    public Organization getParentOrgan(String organId) {
+//		Organization parentOrgan = null;
+//        if(organId != null){
+//        	String parentOrganId = Organization.getParentOrganId(organId);
+//        	parentOrgan = getOrganById(parentOrganId);
+//        }
+//        return parentOrgan;
+//    }
 }

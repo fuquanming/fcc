@@ -9,6 +9,7 @@
  */
 package com.fcc.web.sys.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.fcc.web.sys.model.Module;
@@ -57,7 +58,7 @@ public interface ModuleDao {
      */
     public List<Module> findChildModulesWithOperation(String moduleId);
     
-    public List<Module> findModules(List<String> moduleIdList);
+    public List<Module> findModules(Collection<String> moduleIdList);
     
     public List<Module> findChildModules(String parentModuleId, boolean allChildren);
     

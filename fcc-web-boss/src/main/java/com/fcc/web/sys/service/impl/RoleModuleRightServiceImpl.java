@@ -1,6 +1,7 @@
 package com.fcc.web.sys.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -29,6 +30,7 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 	private RoleModuleRightDao roleModuleRightDao;
 	
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
 	public List<RoleModuleRight> getModuleRightByModuleId(String moduleId) {
 		if (moduleId != null && !"".equals(moduleId)) {
 			return roleModuleRightDao.getModuleRightByModuleId(moduleId);
@@ -37,6 +39,7 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 	}
 	
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
 	public List<RoleModuleRight> getModuleRightByModuleIds(String[] moduleIds) {
 		if (moduleIds != null && moduleIds.length > 0) {
 			return roleModuleRightDao.getModuleRightByModuleIds(moduleIds);
@@ -45,18 +48,20 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 	}
 	
 	@Transactional(readOnly = true)//只查事务申明
-	public List<RoleModuleRight> getModuleRightByRoleId(String[] roleIds) {
+	@Override
+	public List<RoleModuleRight> getModuleRightByRoleId(Collection<String> roleIds) {
 //		if (roleIds != null && roleIds.length > 0) {
 //			return getBaseDao().getSession().createQuery("select rm.moduleId from RoleModuleRight as rm where rm.roleId in(:roleId) and rm.rightValue>0 order by moduleId ")
 //								.setParameterList("roleId", roleIds)
 //								.list();
 //		}
-		if (roleIds != null && roleIds.length > 0) {
+		if (roleIds != null && roleIds.isEmpty() == false) {
 			return roleModuleRightDao.getModuleRightByRoleId(roleIds);
 		}
 		return null;
 	}
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
 	public RoleModuleRight getModuleRightByKey(String roleId , String moduleId){
 		RoleModuleRight mr = null;
 		if(roleId != null && moduleId != null){
@@ -65,16 +70,19 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 		return mr;
 	}
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
 	public List<RoleModuleRight> getModuleRight(){
 		return baseService.getAll(RoleModuleRight.class);
 	}
 	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
 	public void deleteModuleRightByRole(String roleId){
 //		getBaseDao().delete(new String[]{roleId}, RoleModuleRight.class, "roleId");
 		roleModuleRightDao.deleteByRoleIds(new String[]{roleId});
 	}	
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
 	public void updateModuleRight(String roleId, String moduleId, Long rightValue) {
 		if (rightValue <= 0) {
 			roleModuleRightDao.deleteByModuleId(moduleId, roleId);
@@ -93,6 +101,7 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 		}
 	}
 	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
 	public void createRight(String roleId, String[] moduleRight) throws RefusedException {
 		int i = 0;
 		List<String> moduleIdList = new ArrayList<String>();
@@ -118,6 +127,7 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 		
 	}
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
 	public List<RoleModuleRight> getRoleModuleRight(String roleId) {
 		return roleModuleRightDao.getRoleModuleRight(roleId);
 	}

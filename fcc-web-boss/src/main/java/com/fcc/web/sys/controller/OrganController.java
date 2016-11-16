@@ -14,9 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,7 +50,7 @@ public class OrganController extends AppWebController {
 	private SysUserService sysUserService;
 	
 	@ApiOperation(value = "显示机构列表页面")
-	@GetMapping(value = "/view.do")
+	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
 	public String view(HttpServletRequest request) {
 		request.setAttribute("organId", getSysUser(request).getDept());
 		return "manage/sys/organ_list";
@@ -59,7 +58,7 @@ public class OrganController extends AppWebController {
 	
 	/** 显示组织机构新增页面 */
 	@ApiOperation(value = "显示新增机构页面")
-	@GetMapping("/toAdd.do")
+	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
 	public String toAdd(HttpServletRequest request,
 	        @ApiParam(required = true, value = "父模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
 		try {
@@ -74,7 +73,7 @@ public class OrganController extends AppWebController {
 	
 	/** 显示组织机构新增页面 */
 	@ApiOperation(value = "显示修改机构页面")
-	@GetMapping("/toEdit.do")
+	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
 	public String toEdit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
@@ -88,7 +87,7 @@ public class OrganController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "新增机构")
-	@PostMapping("/add.do")
+	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
 	public ModelAndView add(HttpServletRequest request,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
@@ -112,11 +111,16 @@ public class OrganController extends AppWebController {
 //			}
 			
 			Organization data = new Organization();
+			data.setOrganId(RandomStringUtils.random(6, true, false));
 			if (Organization.ROOT.getOrganId().equals(parentId)) {
-				data.setOrganId(RandomStringUtils.random(8, true, false));
+//				data.setOrganId(RandomStringUtils.random(4, true, false));
+//			    data.setParentId(Organization.ROOT.getOrganId());
 			} else {
-				data.setOrganId(parentId + "-" + RandomStringUtils.random(4, true, false));
+//				data.setOrganId(parentId + "-" + RandomStringUtils.random(4, true, false));
+			    data.setParentId(parentId);
 			}
+			data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
+			
 			data.setOrganCode(organCode);
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
@@ -137,7 +141,7 @@ public class OrganController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "修改机构")
-	@PostMapping("/edit.do")
+	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
 	public ModelAndView edit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "id") String organId,
 	        @ApiParam(required = false, value = "上级机构ID") @RequestParam(name = "parentId", defaultValue = "") String parentId,
@@ -153,12 +157,24 @@ public class OrganController extends AppWebController {
 //			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否修改上级组织机构
 //				throw new RefusedException("不能修改上级机构！");
 //			}
+			if (parentId == null || "".equals(parentId)) parentId = Organization.ROOT.getOrganId();
+            Organization parent = organService.getOrganById(parentId);
+            if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
+			
 			Organization data = organService.getOrganById(organId);
 			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
+			if (Organization.ROOT.getOrganId().equals(parentId)) {
+			    data.setParentId(null);
+            } else {
+                data.setParentId(parentId);
+            }
+            data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
+			
 			data.setOrganCode(organCode);
 			data.setOrganDesc(organDesc);
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);
+			data.setOrganLevel(parent.getOrganLevel() + 1);
 			organService.update(data);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
@@ -174,7 +190,7 @@ public class OrganController extends AppWebController {
 	}
 	
 	@ApiOperation(value = "删除机构")
-    @PostMapping(value = "/delete.do")
+	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "ids") String organId) {
 		Message message = new Message();
@@ -209,7 +225,7 @@ public class OrganController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "所有机构树形列表结构")
-    @PostMapping(value = "/treegrid.do")
+	@RequestMapping(value = "/treegrid.do", method = RequestMethod.POST)
     @ResponseBody
 	public List<EasyuiTreeGridOrgan> treegrid(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeGridOrgan> nodeList = new ArrayList<EasyuiTreeGridOrgan>();
@@ -301,7 +317,7 @@ public class OrganController extends AppWebController {
 	 * @return
 	 */
 	@ApiOperation(value = "所有机构树形数据")
-    @PostMapping(value = "/tree.do")
+	@RequestMapping(value = "/tree.do", method = RequestMethod.POST)
     @ResponseBody
 	public List<EasyuiTreeNode> tree(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
@@ -371,7 +387,6 @@ public class OrganController extends AppWebController {
 					} else {
 						nodeList.add(node);// 移除根目录后，添加节点
 					}
-					
 				}
 				nodeMap.clear();
 				nodeMap = null;
