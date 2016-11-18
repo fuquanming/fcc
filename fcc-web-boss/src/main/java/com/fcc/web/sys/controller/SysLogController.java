@@ -33,6 +33,7 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
 import com.fcc.commons.web.task.ExportTask;
@@ -84,6 +85,7 @@ public class SysLogController extends AppWebController {
 	/** 显示列表 */
 	@ApiOperation(value = "显示日志列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -94,6 +96,7 @@ public class SysLogController extends AppWebController {
 	/** 显示统计报表 */
 	@ApiOperation(value = "显示日志统计列表页面")
 	@RequestMapping(value = "/report/view.do", method = RequestMethod.GET)
+	@Permissions("report")
 	public String reportView(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(CacheUtil.operateMap.values());
@@ -104,6 +107,7 @@ public class SysLogController extends AppWebController {
 	/** 跳转到查看页面 */
 	@ApiOperation(value = "显示日志查看页面")
 	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String toView(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "日志ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		if (StringUtils.isNotEmpty(id)) {
@@ -145,6 +149,7 @@ public class SysLogController extends AppWebController {
 	/** 跳转到新增页面 */
 	@ApiOperation(value = "显示日志新增页面")
 	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
+	@Permissions("add")
 	public String toAdd(HttpServletRequest request, HttpServletResponse response) {
 		return "manage/sys/sysLog/sysLog_add";
 	}
@@ -152,6 +157,7 @@ public class SysLogController extends AppWebController {
 	/** 跳转到修改页面 */
 	@ApiOperation(value = "显示日志修改页面")
 	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
+	@Permissions("edit")
 	public String toEdit(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		if (StringUtils.isNotEmpty(id)) {
@@ -169,6 +175,7 @@ public class SysLogController extends AppWebController {
 	/** 新增 */
 	@ApiOperation(value = "新增日志")
 	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
+	@Permissions("add")
 	public ModelAndView add(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		try {
@@ -189,6 +196,7 @@ public class SysLogController extends AppWebController {
 	/** 修改 */
 	@ApiOperation(value = "修改日志")
 	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(SysLog sysLog, HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		try {
@@ -225,6 +233,7 @@ public class SysLogController extends AppWebController {
 	 */
 	@ApiOperation("删除日志")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
+	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		String id = request.getParameter("ids");
@@ -255,6 +264,7 @@ public class SysLogController extends AppWebController {
 	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
 	@SuppressWarnings("unchecked")
+	@Permissions("view")
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
@@ -297,6 +307,7 @@ public class SysLogController extends AppWebController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/report/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
+	@Permissions("report")
 	public EasyuiDataGridJson reportDatagrid(EasyuiDataGrid dg, HttpServletRequest request) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
@@ -425,6 +436,7 @@ public class SysLogController extends AppWebController {
 	/** 导出数据 */
 	@ApiIgnore
 	@RequestMapping(value = "/export.do", method = RequestMethod.POST)
+	@Permissions("export")
 	public ModelAndView export(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockExportData.lock();
@@ -450,7 +462,7 @@ public class SysLogController extends AppWebController {
                 Object[] paramObject = new Object[]{1, Constants.EXPORT_DATA_PAGE_SIZE, getParams(request), false};
                 exportTask = new ExportTask("sysLog", titleList, exportDataPath, sysLogService, 
                         "query", 0, paramObject, (ExportService) sysLogService);
-		        CacheUtil.getPool().execute(exportTask);
+		        execute(exportTask);
 		        message.setSuccess(true);
                 message.setMsg(Constants.StatusCode.Export.exportNow);
 		    } else {
@@ -485,6 +497,7 @@ public class SysLogController extends AppWebController {
 	/** 导入数据 */
 	@ApiIgnore
 	@RequestMapping(value = "/import.do", method = RequestMethod.POST)
+	@Permissions("import")
 	public ModelAndView importSysLog(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockImportData.lock();
@@ -508,7 +521,7 @@ public class SysLogController extends AppWebController {
 	                }
 					importTask = new ImportTask("sysLog", importDataPath, file.getOriginalFilename(), file.getInputStream(), 
 					        (ImportService)sysLogService, 9);
-					CacheUtil.getPool().execute(importTask);
+					execute(importTask);
 					message.setSuccess(true);
 					message.setMsg(Constants.StatusCode.Import.importNow);
 				} else {

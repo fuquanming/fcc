@@ -1,30 +1,47 @@
 package com.fcc.web.sys.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
 
 import com.fcc.commons.web.controller.BaseController;
-import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysUser;
+import com.fcc.web.sys.service.CacheService;
 
+@Controller
 public class AppWebController extends BaseController {
 
+    @Resource
+    private CacheService cacheService;
+    
     public SysUser getSysUser(HttpServletRequest request) {
-        return CacheUtil.getSysUser(request);
+        return (SysUser) request.getSession().getAttribute(Constants.SysUserSession.loginUser);
     }
     
-    /** 是否是Admin用户 */
-    public boolean isAdmin(HttpServletRequest request) {
-        SysUser sysUser = getSysUser(request);
-        if (sysUser == null) {
-            return false;
-        }
-        String organId = sysUser.getDept();
-        if (StringUtils.isEmpty(organId)) {// 管理员无组织机构
-            return true;
-        }
-        return false;
+    public void execute(Runnable runnable) {
+        cacheService.getThreadPool().execute(runnable);
+    }
+    /** 重载模块缓存 */
+    public void reloadModuleCache() {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                cacheService.cleanModuleMap();
+                cacheService.getModuleMap();
+            }
+        });
+    }
+    /** 重载角色模块权限缓存 */
+    public void reloadRoleModuleRightCache() {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                cacheService.cleanRoleModuleRightMap();
+                cacheService.getRoleModuleRightMap();
+            }
+        });
     }
     
 }

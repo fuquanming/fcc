@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -55,6 +56,7 @@ public class SysLockController extends AppWebController {
 	/** 显示列表 */
 	@ApiOperation(value = "显示系统锁列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		return "manage/sys/sysLock/sysLock_list";
 	}
@@ -65,6 +67,7 @@ public class SysLockController extends AppWebController {
 	 */
 	@ApiOperation(value = "删除系统锁")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
+	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -92,6 +95,7 @@ public class SysLockController extends AppWebController {
 	@ApiOperation(value = "查询系统锁")
 	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
+	@Permissions("view")
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
 	        @ApiParam(required = false, value = "锁状态") @RequestParam(name = "lockStatus", defaultValue = "") String lockStatus) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
@@ -143,6 +147,4 @@ public class SysLockController extends AppWebController {
 		}
 		return param;
 	}
-	
 }
-

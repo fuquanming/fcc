@@ -30,7 +30,7 @@ function getComboTree(param) {
         },
         onLoadError : function(e) {
         	console.log(e)
-            window.location.href = overUrl;
+            //window.location.href = overUrl;
         },
         loadFilter : function(data) {
             var flag = Tool.operate.check(data);
@@ -43,4 +43,8 @@ function getComboTree(param) {
 
 function setCombotreeValues(combotree, values) {
 	combotree.combotree('setValues', values); 
+}
+
+function getCombotreeValues(combotree, values) {
+	return combotree.combotree('getValues'); 
 }

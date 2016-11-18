@@ -40,26 +40,11 @@ public class OrganizationDaoImpl implements OrganizationDao {
     @Override
     public Integer delete(String organId) {
         // 删除组织机构
-        return baseDao.executeHql("delete from Organization where organId like ?", organId + "%");
-    }
-    
-    @Override
-    public List<Organization> getOrganByOrganId() {
-        Map<String, Object> param = null;
-        return baseDao.find("from Organization order by organId", param);
-    }
-
-    @Override
-    public List<Organization> findChildOrgans(String organId) {
-        Map<String, Object> param = new HashMap<String, Object>(1);
-        StringBuilder sb = new StringBuilder();
-        sb.append("from Organization where 1=1 ");
-        if (!Organization.ROOT.getOrganId().equals(organId)) {
-            sb.append(" and organId like:organId ");
-            param.put("organId", organId + "-%");
+        Organization organ = (Organization) baseDao.get(Organization.class, organId);
+        if (organ != null) {
+            return baseDao.executeHql("delete from Organization where parentIds like ?", organ.getParentIds() + "%");
         }
-        sb.append(" order by organLevel asc, organSort asc");
-        return baseDao.find(sb.toString(), param);
+        return 0; 
     }
     
     @Override
@@ -71,29 +56,27 @@ public class OrganizationDaoImpl implements OrganizationDao {
     
     @Override
     public List<Organization> findChildOrgans(String parentOrganId, boolean allChildren) {
-        if (parentOrganId != null) {
-            StringBuilder sb = new StringBuilder();
-            Map<String, Object> param = new HashMap<String, Object>();
-            sb.append("from Organization where 1=1 ");
-            if (Organization.ROOT.getOrganId().equals(parentOrganId)) {
-                if (allChildren) {
-                    // Do Nothing
-                } else {
-                    sb.append(" and organId not like:organId ");
-                    param.put("organId", "%-%");
-                }
-            } else {
-                if (allChildren) {
-                    sb.append(" and organId like:organId ");
-                    param.put("organId", parentOrganId + "-%");
-                } else {
-                    sb.append(" and organId like:organId ");
-                    param.put("organId", parentOrganId + "-____");
-                }
+        StringBuilder sb = new StringBuilder();
+        Map<String, Object> param = null;
+        sb.append("from Organization where 1=1 ");
+        if (allChildren) {
+            Organization organ = (Organization) baseDao.get(Organization.class, parentOrganId);
+            if (organ != null) {
+                param = new HashMap<String, Object>(1);
+                sb.append(" and parentIds like:organId ");
+                param.put("organId", organ.getParentIds() + "-%");
             }
-            sb.append(" order by organLevel asc, organSort asc");
-            return baseDao.find(sb.toString(), param);
+        } else {
+//            sb.append(" and organId like:organId ");
+//            param.put("organId", parentOrganId + "-____");
+            param = new HashMap<String, Object>(1);
+            sb.append(" and parentId=:organId");
+            if (parentOrganId == null || "".equals(parentOrganId)) {
+                param.put("organId", Organization.ROOT.getOrganId());
+            } else {
+                param.put("organId", parentOrganId);
+            }
         }
-        return null;
+        return baseDao.find(sb.toString(), param);
     }
 }

@@ -2,13 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="
-http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context-3.0.xsd
-">
-
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		">
     <!-- 引入属性文件
     <context:property-placeholder location="classpath:config/db.properties" />
      -->
@@ -31,9 +33,15 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
     <!-- component-scan自动搜索@Component , @Controller , @Service , @Repository等标注的类 -->
     <context:component-scan base-package="com.fcc.**.dao,com.fcc.**.service" />
     
-    
-
     <bean id="cacheUtil" class="com.fcc.web.sys.cache.CacheUtil"
+        init-method="init" destroy-method="destroy">
+        <property name="exportDataTotalSize" value="${export.data.totalsize}">
+        </property>
+        <property name="appName" value="${app.name}"></property>
+        <property name="threadPoolSize" value="${thread.pool.size}"></property>
+    </bean>
+    
+    <bean id="cacheService" class="com.fcc.web.sys.service.CacheService"
         init-method="init" destroy-method="destroy">
         <property name="exportDataTotalSize" value="${export.data.totalsize}">
         </property>
@@ -42,5 +50,5 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
     </bean>
 
     <bean id="lock" class="com.fcc.commons.web.locks.DbLock" />
-
+    <!-- <aop:aspectj-autoproxy proxy-target-class="true"/> -->
 </beans>

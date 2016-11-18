@@ -10,9 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,10 +23,7 @@ import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
-import com.fcc.web.sys.model.Role;
-import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.LoginService;
 import com.fcc.web.sys.service.ModuleService;
 import com.fcc.web.sys.service.OperateService;
 import com.fcc.web.sys.service.RoleModuleRightService;
@@ -75,7 +70,6 @@ public class CacheUtil {
 	/** 正在执行的功能 */
 	private static Set<String> runningApp = new HashSet<String>();
 	
-	private static LoginService loginService;
 	private static ModuleService moduleService;
 	private static OperateService operateService;
 	private static RoleModuleRightService roleModuleRightService;
@@ -322,7 +316,7 @@ public class CacheUtil {
 	public static void initLoginUser(HttpServletRequest request, SysUser user) {
 		CacheUtil.setSysUser(request, user);
 		CacheUtil.loadUserMenu(request);
-		loginService.postLogin(request);
+//		loginService.postLogin(request);
 	}
 	
 	public static ThreadPoolExecutor getPool() {
@@ -350,13 +344,6 @@ public class CacheUtil {
 		runningApp.remove(key);
 	}
 	
-	public static LoginService getLoginService() {
-		return loginService;
-	}
-	@Autowired
-	public void setLoginService(LoginService loginService) {
-		CacheUtil.loginService = loginService;
-	}
 	public static ModuleService getModuleService() {
 		return moduleService;
 	}

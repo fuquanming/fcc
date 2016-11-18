@@ -51,6 +51,7 @@
 	</bean>
 	
 	<!-- 拦截器 -->
+	<mvc:annotation-driven />
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />

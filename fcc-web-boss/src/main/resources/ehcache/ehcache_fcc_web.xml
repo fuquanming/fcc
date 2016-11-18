@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
-	monitoring="autodetect" dynamicConfig="true">
+<ehcache name="ehCacheManager">
+
+    <!-- <diskStore path="D:/tmpdir" /> -->
 	<!--timeToLiveSeconds 当缓存存活n秒后销毁 -->
 	<!-- 缓存配置 name:缓存名称。 maxElementsInMemory：缓存最大个数。 eternal:对象是否永久有效，一但设置了，timeout将不起作用。 
 		timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。 
@@ -17,6 +17,32 @@
 		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="true"
 		maxElementsOnDisk="10000000" diskPersistent="false"
 		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU" />
+	
+	<!-- <cache name="moduleCache" maxElementsInMemory="500" eternal="true"
+        overflowToDisk="false" memoryStoreEvictionPolicy="LFU"></cache> -->
+	
+    <!-- 系统模块缓存  不过期 -->
+    <cache name="moduleCache"
+           maxEntriesLocalHeap="10000"
+           overflowToDisk="false"
+           eternal="false"
+           diskPersistent="false"
+           timeToLiveSeconds="0"
+           timeToIdleSeconds="0"
+           statistics="true">
+    </cache> 
+    
+    <!-- 系统模块缓存  不过期 -->
+    <cache name="roleModuleRightCache"
+           maxEntriesLocalHeap="10000"
+           overflowToDisk="false"
+           eternal="false"
+           diskPersistent="false"
+           timeToLiveSeconds="0"
+           timeToIdleSeconds="0"
+           statistics="true">
+    </cache> 
+		 
     <!-- 登录记录缓存 锁定10分钟 -->
     <cache name="passwordRetryCache"
            maxEntriesLocalHeap="2000"

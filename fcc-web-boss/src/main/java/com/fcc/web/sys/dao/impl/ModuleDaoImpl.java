@@ -74,7 +74,7 @@ public class ModuleDaoImpl implements ModuleDao {
     @Override
     public List<Module> getModuleWithOperate() {
         List<Module> moduleList = new ArrayList<Module>();
-        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_id desc";
+        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,m.parent_id,m.parent_ids,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_level desc,module_sort desc,parent_ids";
         Map<String, Object> param = null;
         List<Object> list = baseDao.findSQL(bHql, param);
         if (list.size() > 0) {
@@ -93,7 +93,9 @@ public class ModuleDaoImpl implements ModuleDao {
                 Integer moduleLevel = Integer.valueOf(obj[2].toString());
                 Integer moduleSort = Integer.valueOf(obj[3].toString());
                 String moduleDesc = (String) obj[4];
-                String operateId = (String) obj[5];
+                String parentId = (String) obj[5];
+                String parentIds = (String) obj[6];
+                String operateId = (String) obj[7];
                 
                 Module module = null;
                 int moduleSize = moduleList.size();
@@ -111,6 +113,8 @@ public class ModuleDaoImpl implements ModuleDao {
                     module.setModuleLevel(moduleLevel);
                     module.setModuleSort(moduleSort);
                     module.setModuleDesc(moduleDesc);
+                    module.setParentId(parentId);
+                    module.setParentIds(parentIds);
                     if (module.getOperates() == null) module.setOperates(new TreeSet<Operate>());
                     moduleList.add(module);
                 }

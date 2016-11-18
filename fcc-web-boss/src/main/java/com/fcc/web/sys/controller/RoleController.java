@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -59,6 +60,7 @@ public class RoleController extends AppWebController {
 	/** 显示角色列表 */
 	@ApiOperation(value = "显示角色列表")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
 //		if (isAdmin(request)) {
@@ -92,6 +94,7 @@ public class RoleController extends AppWebController {
 	/** 显示角色查询页面 */
 	@ApiOperation(value = "显示角色列表页面")
 	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String toView(HttpServletRequest request) {
 		getRole(request);
 		return "manage/sys/role_view";
@@ -100,6 +103,7 @@ public class RoleController extends AppWebController {
 	/** 显示角色新增页面 */
 	@ApiOperation(value = "显示新增角色页面")
 	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
+	@Permissions("add")
 	public String toAdd(HttpServletRequest request) {
 		return "manage/sys/role_add";
 	}
@@ -107,6 +111,7 @@ public class RoleController extends AppWebController {
 	/** 显示角色修改页面 */
 	@ApiOperation(value = "显示修改角色页面")
 	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
+	@Permissions("edit")
 	public String toEdit(HttpServletRequest request) {
 		getRole(request);
 		return "manage/sys/role_edit";
@@ -114,6 +119,7 @@ public class RoleController extends AppWebController {
 	
 	@ApiOperation(value = "新增角色")
 	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
+	@Permissions("add")
 	public ModelAndView add(HttpServletRequest request, 
 	        @ApiParam(required = true, value = "角色名称") @RequestParam(name = "roleName", defaultValue = "") String roleName,
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
@@ -135,6 +141,7 @@ public class RoleController extends AppWebController {
 			}
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
+			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -148,6 +155,7 @@ public class RoleController extends AppWebController {
 	
 	@ApiOperation(value = "修改角色")
 	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(HttpServletRequest request, 
 	        @ApiParam(required = false, value = "角色权限值") @RequestParam(name = "rightValue", defaultValue = "") String rightValue,
             Role role) {
@@ -182,6 +190,7 @@ public class RoleController extends AppWebController {
 			}
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
+			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -195,6 +204,7 @@ public class RoleController extends AppWebController {
 	
 	@ApiOperation(value = "删除角色")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
+	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "角色ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -204,6 +214,7 @@ public class RoleController extends AppWebController {
 			roleService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
+			reloadModuleCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -222,6 +233,7 @@ public class RoleController extends AppWebController {
 	@ApiOperation(value = "查询角色")
 	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
+	@Permissions("view")
 	public EasyuiDataGridJson datagrid(HttpServletRequest request, EasyuiDataGrid dg,
 	        @ApiParam(required = false, value = "角色名称") @RequestParam(name = "searchName", defaultValue = "") String roleName) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();

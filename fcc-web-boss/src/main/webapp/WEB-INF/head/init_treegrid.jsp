@@ -63,10 +63,9 @@ $(function() {
             treegrid.treegrid('unselectAll');
         },
         onLoadError : function() {
-            window.location.href = overUrl;
+            //window.location.href = overUrl;
         },
         loadFilter : function(data) {
-        	//console.log(data);
             var flag = Tool.operate.check(data);
             if (flag != true || flag != false) {
                 return data;                                            

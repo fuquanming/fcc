@@ -222,8 +222,11 @@ Tool.operate.check = function(data, autoClose) {
 		Tool.message.alert(Lang.tip, msg, Tool.icon.info, autoClose);
     	return true;
     } else if (d.success == false) {
-        if (d.obj == 'sys:login') {
+        if (d.msg == 'sys_004') {
         	window.location.href = overUrl;
+        	return false;
+        } else if (d.msg == 'sys_005') {
+        	Tool.message.alert(Lang.tip, msg.format(d.obj), Tool.icon.error);
         	return false;
         } else if (d.obj) {
         	msg = d.obj;

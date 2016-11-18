@@ -27,6 +27,7 @@ import com.fcc.web.sys.model.SysUser;
 public class SessionInterceptor implements HandlerInterceptor {
 
     private Logger logger = Logger.getLogger(SessionInterceptor.class);
+    // TODO 耗时改造
     ThreadLocal<StopWatch> stopWatchLocal = new ThreadLocal<StopWatch>();
     ThreadLocal<Long> timeLocal = new ThreadLocal<Long>();
     String timePageStr = "耗时毫秒：%d,page=%s";
@@ -68,11 +69,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 	
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
 	    if (ConfigUtil.isDev()) {
-	        StopWatch stopWatch = stopWatchLocal.get();
-	        if (stopWatch == null) {
-	            stopWatch = new StopWatch(request.getRequestURI());
-	            stopWatchLocal.set(stopWatch);
-	        }
+	        StopWatch stopWatch = new StopWatch(request.getRequestURI());
 	        if (stopWatch != null) {
 	            stopWatch.start(request.getRequestURI());
 	        }
@@ -103,7 +100,7 @@ public class SessionInterceptor implements HandlerInterceptor {
                     response.setContentType("application/json;charset=UTF-8");
                     Message message = new Message();
                     message.setMsg(Constants.StatusCode.Sys.sessionTimeout);
-                    message.setObj("sys:login");
+                    message.setObj(Constants.StatusCode.Sys.sessionTimeout);
                     byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
                     response.getOutputStream().write(bytes);
                     return false;

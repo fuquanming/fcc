@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysUser;
@@ -40,6 +41,7 @@ public class UserPasswordController extends AppWebController {
 	/** 显示修改密码页面 */
 	@ApiOperation(value = "显示修改密码页面", notes = "")
 	@RequestMapping(value = {"/view.do"}, method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		return "manage/sys/user_password";
 	}
@@ -47,6 +49,7 @@ public class UserPasswordController extends AppWebController {
 	/** 修改登录用户密码 */
 	@ApiOperation(value = "修改密码", notes = "")
 	@RequestMapping(value = {"/edit.do"}, method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(HttpServletRequest request,
             @ApiParam(required = true, value = "旧密码") @RequestParam(name = "oldPassword") String oldPassword,
             @ApiParam(required = true, value = "新密码") @RequestParam(name = "newPassword") String newPassword,

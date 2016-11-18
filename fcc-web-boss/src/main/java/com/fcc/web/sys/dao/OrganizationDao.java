@@ -23,10 +23,6 @@ public interface OrganizationDao {
 
     public Integer delete(String organId);
     
-    public List<Organization> getOrganByOrganId();
-    
-    public List<Organization> findChildOrgans(String organId);
-    
     public List<Organization> findOrgans(Collection<String> organIdList);
     
     public List<Organization> findChildOrgans(String parentOrganId, boolean allChildren);
