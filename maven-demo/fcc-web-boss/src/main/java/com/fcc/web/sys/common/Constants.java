@@ -35,7 +35,7 @@ public interface Constants {
     /** 系统用户session中的变量 */
     public interface SysUserSession {
         /** 登陆系统的用户 */
-        String login = "USER_LOGIN_SYS";
+        String loginUser = "USER_LOGIN_SYS";
         /** 当前调用的action **/
         String action = "USER_ACTION_SYS";
         /** 当前用户选择的语言  **/
@@ -60,7 +60,15 @@ public interface Constants {
 //        /** 注册用户状态 锁定 3 */
 //        String lock = "3";
 //    }
-    
+    /** 请求对象 */
+    public interface Request {
+        /** 请求的模块 */
+        public String module = "reuestModule";
+        /** 请求的操作 */
+        public String operate = "requestOperate";
+        /** 请求的处理结果 */
+        public String message = "requestMessage";
+    }
     
     /** 自定义访问模块 */
     public interface Module {
@@ -105,8 +113,8 @@ public interface Constants {
             String emptyDeleteId = "sys_003";
             /** session过期 sys_004 */
             String sessionTimeout = "sys_004";
-            
-            
+            /** 无权限 sys_005 */
+            String noPermissions = "sys_005";
         }
         
         /** 上传文件 */
@@ -183,6 +191,8 @@ public interface Constants {
             String errorOrganizationId = "organization_003";
             /** 该组织机构下有人员！ organization_004 */
             String hasUser = "organization_004";
+            /** 上级机构不能是自己！ organization_005 */
+            String errorParentOneself = "organization_005";
         }
         
         public interface SysUser {

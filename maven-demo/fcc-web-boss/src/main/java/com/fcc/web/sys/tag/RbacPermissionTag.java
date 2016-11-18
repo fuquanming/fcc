@@ -9,6 +9,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.RbacPermissionService;
+import com.fcc.web.sys.service.RbacPermissionService;
 
 /**
  * <p>Description:鉴权Tag</p>

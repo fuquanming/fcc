@@ -50,8 +50,9 @@ $(function() {
                 top : e.pageY
             });
         },
-        onLoadError : function() {
-            window.location.href = overUrl;
+        onLoadError : function(data) {
+        	console.log(data);
+            //window.location.href = overUrl;
         },
         onLoadSuccess : function(data) {
             if (data.msg && data.msg != '') {
@@ -61,7 +62,7 @@ $(function() {
         loadFilter : function(data) {
             var flag = Tool.operate.check(data);
             if (flag != true || flag != false) {
-                return data;                                            
+                return data;                         
             }
         }
     });

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
@@ -40,6 +41,7 @@ public class UserInfoController extends AppWebController {
 	/** 显示修改基本信息页面 */
 	@ApiOperation(value = "显示登录用户信息")
 	@RequestMapping(value = {"/view.do"}, method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		SysUser user = getSysUser(request);
 		request.setAttribute("data", user);
@@ -49,6 +51,7 @@ public class UserInfoController extends AppWebController {
 	/** 修改用户基本信息 */
 	@ApiOperation(value = "修改登录用户信息")
 	@RequestMapping(value = {"/edit.do"}, method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(HttpServletRequest request, SysUser sysUser) {
 		Message message = new Message();
 		try {

@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
@@ -25,16 +22,16 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.enums.UserStatus;
-import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
+import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
@@ -66,10 +63,13 @@ public class SysUserController extends AppWebController {
 	private OrganizationService organService;
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
+	@Resource
+	private CacheService cacheService;
 	
 	/** 显示系统用户列表 */
 	@ApiOperation(value = "显示用户列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
 //		if (isAdmin(request)) {
@@ -107,6 +107,7 @@ public class SysUserController extends AppWebController {
 	/** 显示用户查看页面 */
 	@ApiOperation(value = "显示用户信息页面")
 	@RequestMapping(value = "/toView.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String toView(HttpServletRequest request,
 	        @ApiParam(required = true, value = "用户ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
@@ -128,6 +129,7 @@ public class SysUserController extends AppWebController {
 	/** 显示用户新增页面 */
 	@ApiOperation(value = "显示新增用户页面")
 	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
+	@Permissions("add")
 	public String toAdd(HttpServletRequest request) {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>();
@@ -143,6 +145,7 @@ public class SysUserController extends AppWebController {
 	/** 显示用户修改页面 */
 	@ApiOperation(value = "显示修改用户页面")
 	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
+	@Permissions("edit")
 	public String toEdit(HttpServletRequest request,
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
@@ -166,6 +169,7 @@ public class SysUserController extends AppWebController {
 	
 	@ApiOperation(value = "新增用户")
 	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
+	@Permissions("add")
 	public ModelAndView add(HttpServletRequest request, SysUser sysUser,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "organId", defaultValue = "") String dept,
 	        @ApiParam(required = true, value = "角色权限，模块ID:权值,模块ID:权值") @RequestParam(name = "roleValue", defaultValue = "") String roleValue) {
@@ -210,6 +214,7 @@ public class SysUserController extends AppWebController {
 	
 	@ApiOperation(value = "修改用户")
 	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(HttpServletRequest request, SysUser sysUser,
 	        @ApiParam(required = true, value = "机构ID") @RequestParam(name = "organId", defaultValue = "") String dept,
 	        @ApiParam(required = true, value = "角色权限，模块ID:权值,模块ID:权值") @RequestParam(name = "roleValue", defaultValue = "") String roleValue) {
@@ -243,6 +248,7 @@ public class SysUserController extends AppWebController {
 	
 	@ApiOperation(value = "删除用户")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
+	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -265,6 +271,7 @@ public class SysUserController extends AppWebController {
 	
 	@ApiOperation(value = "重置用户密码")
 	@RequestMapping(value = "/resetPassword.do", method = RequestMethod.POST)
+	@Permissions("edit")
     public ModelAndView resetPassword(HttpServletRequest request,
             @ApiParam(required = true, value = "操作ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
         Message message = new Message();
@@ -287,6 +294,7 @@ public class SysUserController extends AppWebController {
 	
 	@ApiOperation(value = "锁定用户")
 	@RequestMapping(value = "/lock.do", method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView lock(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id,
 	        @ApiParam(required = true, value = "用户状态") @RequestParam(name = "userStatus", defaultValue = "") String userStatus) {
@@ -315,6 +323,7 @@ public class SysUserController extends AppWebController {
 	@ApiOperation(value = "查询用户")
 	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
     @ResponseBody
+    @Permissions("view")
 	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
 	        @ApiParam(required = false, value = "用户账号") @RequestParam(name = "userId", defaultValue = "") String userId,
 	        @ApiParam(required = false, value = "机构ID") @RequestParam(name = "organId", defaultValue = "") String organId,
@@ -327,7 +336,7 @@ public class SysUserController extends AppWebController {
 			param.put("dept", organId);
 			param.put("userName", userName);
 //			param.put("createUser", (createUser == null || "".equals(createUser)) ? getSysUser(request).getUserId() : createUser);
-			if (isAdmin(request)) {
+			if (getSysUser(request).isAdmin()) {
 				param.put("isAdmin", "Y");
 			}
 			ListPage listPage = sysUserService.queryPage(dg.getPage(), dg.getRows(), param);
@@ -362,38 +371,21 @@ public class SysUserController extends AppWebController {
 	
 	/** 系统用户菜单 */
 	@ApiOperation(value = "查询用户菜单")
-	@RequestMapping(value = {"/userMenu.do"}, method = RequestMethod.POST)
+	@RequestMapping(value = {"/userMenu.do"}, method = {RequestMethod.POST, RequestMethod.GET})
 	@ResponseBody
 	public List<EasyuiTreeNode> userMenu(HttpServletRequest request) throws Exception {
-		HttpSession session = request.getSession();
-		List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
-		try {
-			TreeSet<Module> menuSet = (TreeSet<Module>) session.getAttribute(Constants.SysUserSession.menu);
-			String moduleId = request.getParameter("moduleId");// 获取该模块下所有模块
-			if (StringUtils.isNotEmpty(moduleId)) {
-				TreeSet<Module> moduleSet = new TreeSet<Module>();
-				for (Module m : menuSet) {
-					if (m.getModuleId().equals(moduleId)) {
-						continue;
-					} else if (m.getParentIds().startsWith(moduleId)) {
-						moduleSet.add(m);
-					}
-				}
-				menuSet = moduleSet;
-			}
-			if (menuSet == null) menuSet = CacheUtil.loadUserMenu(request);
-			nodeList = (List<EasyuiTreeNode>) session.getAttribute(Constants.SysUserSession.menuUi);
-			if (nodeList == null || StringUtils.isNotEmpty(moduleId)) nodeList = CacheUtil.loadUserMenuUI(request, menuSet);
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-			nodeList.clear();
-			EasyuiTreeNode node = new EasyuiTreeNode();
-			node.setMsg(e.getMessage());
-			nodeList.add(node);
-			session.removeAttribute(Constants.SysUserSession.menuUi);
-			session.removeAttribute(Constants.SysUserSession.menu);
-		}
+		SysUser sysUser = (SysUser) request.getSession().getAttribute(Constants.SysUserSession.loginUser);
+	    List<EasyuiTreeNode> nodeList = null;
+	    try {
+            nodeList = sysUserService.getSysUserMenu(sysUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("加载用户菜单失败！", e);
+            nodeList = new ArrayList<EasyuiTreeNode>(1);
+            EasyuiTreeNode node = new EasyuiTreeNode();
+            node.setMsg(e.getMessage());
+            nodeList.add(node);
+        }
 		return nodeList;
 	}
 }

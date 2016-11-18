@@ -19,7 +19,6 @@ import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.LoginService;
 import com.fcc.web.sys.service.SysUserService;
 
 import io.swagger.annotations.Api;
@@ -43,9 +42,6 @@ public class LoginController extends AppWebController {
 
     @Resource
     private RequestIpService requestIpService;
-
-    @Resource
-    private LoginService loginService;
 
     @ApiOperation(value = "用户登录")
     // 请求 /login.do?login

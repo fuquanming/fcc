@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -47,18 +48,20 @@ public class OperateController extends AppWebController {
 	/** 显示模块操作列表 */
 	@ApiOperation(value = "显示操作列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
+	@Permissions("view")
 	public String view() {
 		return "manage/sys/operate_list";
 	}
 	
 	@ApiOperation(value = "新增操作")
 	@RequestMapping(value = "/add.do", method = RequestMethod.POST)
+	@Permissions("add")
 	public ModelAndView add(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateId);
 		    if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
-			operateService.create(operate);
+			operateService.add(operate);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -74,12 +77,13 @@ public class OperateController extends AppWebController {
 	
 	@ApiOperation(value = "修改操作")
 	@RequestMapping(value = "/edit.do", method = RequestMethod.POST)
+	@Permissions("edit")
 	public ModelAndView edit(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
             if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
-            operateService.update(operate);
+            operateService.edit(operate);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
@@ -93,6 +97,7 @@ public class OperateController extends AppWebController {
 	
 	@ApiOperation(value = "删除操作")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
+	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request,
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
@@ -102,6 +107,7 @@ public class OperateController extends AppWebController {
 			operateService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
+			reloadModuleCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -120,6 +126,7 @@ public class OperateController extends AppWebController {
 	@ApiOperation(value = "查询操作")
 	@RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
 	@ResponseBody
+	@Permissions("view")
 	public EasyuiDataGridJson datagrid(HttpServletRequest request, EasyuiDataGrid dg,
 	        @ApiParam(required = false, value = "操作名称") @RequestParam(name = "searchName", defaultValue = "") String operateName) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
