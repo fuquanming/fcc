@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 
@@ -75,15 +76,24 @@ public class CacheService {
      */
     @Cacheable(value = {"moduleCache"}, key = "'moduleMap'")
     public Map<String, Module> getModuleMap() {
-        System.out.println("-----getModuleMap-----");
-        moduleUrlMap.clear();
-        List<Module> moduleList = moduleService.getModuleWithOperate();
-        Map<String, Module> moduleMap = new HashMap<String, Module>(moduleList.size());
-        for (Module module : moduleList) {
-            String moduleId = module.getModuleId();
-            String moduleUrl = module.getModuleDesc();
-            moduleMap.put(moduleId, module);
-            if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
+        ReentrantLock lock = new ReentrantLock();
+        lock.lock();
+        Map<String, Module> moduleMap = null;
+        try {
+            System.out.println("-----getModuleMap-----");
+            moduleUrlMap.clear();
+            List<Module> moduleList = moduleService.getModuleWithOperate();
+            moduleMap = new HashMap<String, Module>(moduleList.size());
+            for (Module module : moduleList) {
+                String moduleId = module.getModuleId();
+                String moduleUrl = module.getModuleDesc();
+                moduleMap.put(moduleId, module);
+                if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return moduleMap;
     }

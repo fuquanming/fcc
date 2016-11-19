@@ -241,7 +241,7 @@ public class SysLogController extends AppWebController {
 			if (id == null || "".equals(id)) {
 				throw new RefusedException("请选择要删除的记录！");
 			}
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ",");
 			baseService.deleteById(SysLog.class, DataFormater.getLong(ids), "logId");
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);

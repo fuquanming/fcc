@@ -1,20 +1,17 @@
 package com.fcc.web.sys.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +23,9 @@ import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
-import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.Module;
-import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.Role;
-import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.ModuleService;
@@ -100,6 +93,11 @@ public class ModuleController extends AppWebController {
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		try {
 			Module data = moduleService.loadModuleWithOperate(id);
+			if (data != null) {
+			    if (Module.ROOT.getModuleId().equals(data.getParentId())) {
+			        data.setParentId(null);
+			    }
+			}
 			request.setAttribute("data", data);
 			Map<String, Object> param = null;
 			request.setAttribute("operateList", operateService.queryPage(1, 0, param).getDataList());
@@ -113,20 +111,13 @@ public class ModuleController extends AppWebController {
 	/** 为当前用户添加该模块权限 */
 	private void updateUserModule(String[] operateIds, Module data, HttpServletRequest request) {
 		// 为当前用户添加该模块权限
-		long operateVal = 0;
-		if (operateIds != null) {
-			for (String oVal : operateIds) {
-				Operate o = CacheUtil.operateMap.get(oVal);
-				if (o != null) operateVal += o.getOperateValue();
-			}
-		}
 		SysUser sysUser = getSysUser(request);
 		Iterator<Role> it = sysUser.getRoles().iterator();
 		Role role = null;
 		if (it.hasNext()) {
 			role = it.next();
 			if (role != null && role.getRoleId() != null) {
-			    roleModuleRightService.updateModuleRight(role.getRoleId(), data.getModuleId(), operateVal);
+			    roleModuleRightService.updateModuleRight(role.getRoleId(), data.getModuleId(), Long.valueOf(Integer.MAX_VALUE));
 			    // 更新系统缓存角色
 			}
 		}
@@ -147,7 +138,7 @@ public class ModuleController extends AppWebController {
 			if (StringUtils.isEmpty(parentId)) parentId = Module.ROOT.getModuleId();
 			String[] operateIds = null;
 			if (!StringUtils.isEmpty(operateValue)) {
-				operateIds = operateValue.split(",");
+				operateIds = StringUtils.split(operateValue, ",");
 			}
 			Module parentModule = moduleService.getModuleById(parentId);
 			if (parentModule == null) throw new RefusedException(Constants.StatusCode.Module.emptyParentModule);
@@ -155,6 +146,7 @@ public class ModuleController extends AppWebController {
 			Module data = new Module();
 			if (Module.ROOT.getModuleId().equals(parentId)) {
 				data.setModuleId(RandomStringUtils.random(4, true, false));
+				data.setParentId(parentId);
 			} else {
 				data.setModuleId(parentId + "-" + RandomStringUtils.random(4, true, false));
 			    data.setParentId(parentId);
@@ -167,11 +159,12 @@ public class ModuleController extends AppWebController {
 			data.setModuleLevel(parentModule.getModuleLevel() + 1);
 			moduleService.add(data, operateIds);
 			
-//			updateUserModule(operateIds, data, request);
+			updateUserModule(operateIds, data, request);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			
 			reloadModuleCache();
+			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -207,25 +200,27 @@ public class ModuleController extends AppWebController {
 			if (data == null) throw new RefusedException(Constants.StatusCode.Module.errorModuleId);
 			
 			if (Module.ROOT.getModuleId().equals(parentId)) {
-			    data.setParentId(null);
+			    data.setParentId(Module.ROOT.getModuleId());
             } else {
                 data.setParentId(parentId);
             }
             data.setParentIds(data.buildParendIds(parentModule, data.getModuleId()));
 			
 			String[] operateIds = null;
-			if (!StringUtils.isEmpty(operateValue)) operateIds = operateValue.split(",");
+			if (!StringUtils.isEmpty(operateValue)) operateIds = StringUtils.split(operateValue, ",");
 			data.setModuleDesc(moduleDesc);
 			data.setModuleName(moduleName);
 			data.setModuleSort(moduleSort);
+			data.setModuleLevel(parentModule.getModuleLevel() + 1);
 			moduleService.edit(data, operateIds);
 			
-//			updateUserModule(operateIds, data, request);
+			updateUserModule(operateIds, data, request);
 			
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			
 			reloadModuleCache();
+			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -250,6 +245,7 @@ public class ModuleController extends AppWebController {
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
 			reloadModuleCache();
+			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
@@ -272,7 +268,7 @@ public class ModuleController extends AppWebController {
 	public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request) {
 		List<EasyuiTreeGridModule> nodeList = null;
 		try {
-		    nodeList = moduleService.getMenu(getSysUser(request));
+		    nodeList = moduleService.getModuleTreeGrid(getSysUser(request));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("查询模块树形列表失败", e);
@@ -291,92 +287,22 @@ public class ModuleController extends AppWebController {
 	@ApiOperation(value = "查询模块树形数据")
 	@RequestMapping(value = "/tree.do", method = RequestMethod.POST)
 	@ResponseBody
-	@SuppressWarnings("unchecked")
+	@Permissions("edit")
 	public List<EasyuiTreeNode> tree(HttpServletRequest request,
 	        @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
 	    if (StringUtils.isEmpty(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;
-		// 是否角色
-		Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
-		Map<String, RoleModuleRight> rightMap = (Map<String, RoleModuleRight>) request.getSession().getAttribute(Constants.SysUserSession.sessionRoleRightMap);
-		
 		List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
 		try {
-		    TreeSet<Module> menuSet = new TreeSet<Module>();
-            menuSet.addAll(cacheService.getModuleMap().values());
-            
-            Map<String, EasyuiTreeNode> nodeMap = new HashMap<String, EasyuiTreeNode>();
-            // 该用户权限
-            TreeSet<Module> menuSetCache = (TreeSet<Module>) request.getSession().getAttribute(Constants.SysUserSession.menu);
-            SysUser sysUserCache = getSysUser(request);
-
-            for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
-                Module m = it.next();
-                // 只能获取本身拥有的模块权限
-                if (ConfigUtil.isDev() == false) {
-                    if (!menuSetCache.contains(m)) {
-                        continue;
-                    }
-                }
-                
-                EasyuiTreeNode node = new EasyuiTreeNode();
-                node.setId(m.getModuleId());
-                node.setText(m.getModuleName());
-                node.setState(nodeStatus);
-                node.setAttributes(new HashMap<String, Object>());
-                Set<Operate> operateSet = m.getOperates();
-                if (operateSet != null && operateSet.size() > 0) {
-                    for (Operate o : operateSet) {
-                        EasyuiTreeNode nodeOperate = new EasyuiTreeNode();
-                        nodeOperate.setId(m.getModuleId() + ":" + o.getOperateId());
-                        nodeOperate.setText(o.getOperateName());
-                        nodeOperate.setAttributes(new HashMap<String, Object>());
-                        nodeOperate.getAttributes().put("operateValue", o.getOperateValue() + "");
-                        
-                        // 只能获取本身拥有的操作权限
-                        boolean operateFlag = true;
-                        if (ConfigUtil.isDev() == false) {
-                            operateFlag = rbacPermissionService.checkPermissionCache(sysUserCache.getRoles(), m.getModuleId(), o.getOperateId());
-                        }
-                        if (role != null) {
-                            RoleModuleRight right = rightMap.get(m.getModuleId());
-                            if (right != null) {
-                                if ((o.getOperateValue() & right.getRightValue()) > 0) {
-                                    nodeOperate.setChecked(true);
-                                }
-                            }
-                        }
-                        
-                        List<EasyuiTreeNode> children = node.getChildren();
-                        if (children == null) children = new ArrayList<EasyuiTreeNode>();
-                        if (operateFlag) children.add(nodeOperate);
-                        node.setChildren(children);
-                    }
-                }
-                nodeMap.put(node.getId(), node);
-                String parendId = m.getParentId();
-                EasyuiTreeNode cacheNode = nodeMap.get(parendId);
-                if (cacheNode != null) {
-                    List<EasyuiTreeNode> children = cacheNode.getChildren();
-                    if (children == null) children = new ArrayList<EasyuiTreeNode>();
-                    children.add(node);
-                    cacheNode.setChildren(children);
-                } else {
-                    nodeList.add(node);// 移除根目录后，添加节点
-                }
-                
-            }
-            nodeMap.clear();
-            nodeMap = null;
+		    // 查询所有模块
+		    nodeList = moduleService.getModuleTree(null, nodeStatus, false, null);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("获取模块树形数据失败！", e.getCause());
-			nodeList.clear();
-			EasyuiTreeNode node = new EasyuiTreeNode();
-			node.setMsg(e.getMessage());
-			nodeList.add(node);
-		}
-		request.getSession().removeAttribute(Constants.SysUserSession.sessionRole);
-		request.getSession().removeAttribute(Constants.SysUserSession.sessionRoleRightMap);
+		    e.printStackTrace();
+            logger.error("查询模块树形失败", e);
+            nodeList = new ArrayList<EasyuiTreeNode>();
+            EasyuiTreeGridModule node = new EasyuiTreeGridModule();
+            node.setMsg(e.getMessage());
+            nodeList.add(node);
+        }
 		return nodeList;
 	}
 }

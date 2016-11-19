@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,7 +148,7 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 			// 删除所有权限
 		} else {
 			for( ; i < moduleRight.length ; i+=1){
-				String[] tmp = moduleRight[i].split(":");
+				String[] tmp = StringUtils.split(moduleRight[i], ":");
 				if (tmp.length < 2) {
 					throw new RefusedException("参数不正确");
 				}

@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +21,13 @@ import com.fcc.web.sys.dao.ModuleDao;
 import com.fcc.web.sys.dao.RoleModuleRightDao;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
+import com.fcc.web.sys.model.Role;
+import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.ModuleService;
+import com.fcc.web.sys.service.RbacPermissionService;
+import com.fcc.web.sys.service.SysUserService;
 
 /**
  * <p>Description:系统模块</p>
@@ -42,6 +47,10 @@ public class ModuleServiceImpl implements ModuleService {
     private RoleModuleRightDao roleModuleRightDao;
     @Resource
     private CacheService cacheService;
+    @Resource
+    private SysUserService sysUserService;
+    @Resource
+    private RbacPermissionService rbacPermissionService;
 
     /**
      * //TODO 添加override说明
@@ -215,10 +224,10 @@ public class ModuleServiceImpl implements ModuleService {
     
     /**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.ModuleService#getMenu(com.fcc.web.sys.model.SysUser)
+     * @see com.fcc.web.sys.service.ModuleService#getModuleTreeGrid(com.fcc.web.sys.model.SysUser)
      **/
     @Override
-    public List<EasyuiTreeGridModule> getMenu(SysUser sysUser) {
+    public List<EasyuiTreeGridModule> getModuleTreeGrid(SysUser sysUser) {
         List<EasyuiTreeGridModule> nodeList = new ArrayList<EasyuiTreeGridModule>();
         TreeSet<Module> menuSet = new TreeSet<Module>();
         menuSet.addAll(cacheService.getModuleMap().values());
@@ -257,6 +266,85 @@ public class ModuleServiceImpl implements ModuleService {
             
             String parendId = m.getParentId();
             EasyuiTreeGridModule cacheNode = nodeMap.get(parendId);
+            if (cacheNode != null) {
+                List<EasyuiTreeNode> children = cacheNode.getChildren();
+                if (children == null) children = new ArrayList<EasyuiTreeNode>();
+                children.add(node);
+                cacheNode.setChildren(children);
+            } else {
+                nodeList.add(node);// 移除根目录后，添加节点
+            }
+        }
+        return nodeList;
+    }
+    
+    @Override
+    public List<EasyuiTreeNode> getModuleTree(SysUser sysUser, String nodeStatus, boolean isOperate, Role role) {
+        List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
+        TreeSet<Module> menuSet = new TreeSet<Module>();
+        menuSet.addAll(cacheService.getModuleMap().values());
+        
+        Map<String, EasyuiTreeNode> nodeMap = new HashMap<String, EasyuiTreeNode>();
+        // 该用户权限
+        // 是否过滤用户模块
+        boolean checkUser = false;
+        TreeSet<Module> moduleSet = null;
+        if (sysUser != null) {
+            checkUser = true;
+            moduleSet = sysUserService.getSysUserModule(sysUser);
+        }
+
+        for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
+            Module m = it.next();
+            // 只能获取本身拥有的模块权限
+            if (checkUser) {
+                if (!moduleSet.contains(m)) {
+                    continue;
+                }
+            }
+            
+            EasyuiTreeNode node = new EasyuiTreeNode();
+            node.setId(m.getModuleId());
+            node.setText(m.getModuleName());
+            node.setState(nodeStatus);
+            node.setAttributes(new HashMap<String, Object>());
+            if (isOperate) {
+                Set<Operate> operateSet = m.getOperates();
+                if (operateSet != null && operateSet.size() > 0) {
+                    for (Operate o : operateSet) {
+                        // 只能获取本身拥有的操作权限
+                        boolean operateFlag = true;
+                        if (checkUser) {
+                            operateFlag = rbacPermissionService.checkPermissionCache(sysUser.getRoles(), m.getModuleId(), o.getOperateId());
+                        }
+                        if (operateFlag) {
+                            EasyuiTreeNode nodeOperate = new EasyuiTreeNode();
+                            nodeOperate.setId(m.getModuleId() + ":" + o.getOperateId());
+                            nodeOperate.setText(o.getOperateName());
+                            nodeOperate.setAttributes(new HashMap<String, Object>());
+                            nodeOperate.getAttributes().put("operateValue", o.getOperateValue() + "");
+                            // 角色判断是否选择
+                            if (role != null) {
+                                RoleModuleRight right = cacheService.getRoleModuleRightMap().get(role.getRoleId()).get(m.getModuleId());
+                                if (right == null || (right.getRightValue() & o.getOperateValue()) <= 0) {
+                                    operateFlag = false; 
+                                }
+                            } else {
+                                operateFlag = false;
+                            }
+                            nodeOperate.setChecked(operateFlag);
+                            
+                            List<EasyuiTreeNode> children = node.getChildren();
+                            if (children == null) children = new ArrayList<EasyuiTreeNode>();
+                            children.add(nodeOperate);
+                            node.setChildren(children);
+                        }
+                    }
+                }
+            }
+            nodeMap.put(node.getId(), node);
+            String parendId = m.getParentId();
+            EasyuiTreeNode cacheNode = nodeMap.get(parendId);
             if (cacheNode != null) {
                 List<EasyuiTreeNode> children = cacheNode.getChildren();
                 if (children == null) children = new ArrayList<EasyuiTreeNode>();

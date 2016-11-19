@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
@@ -177,7 +178,7 @@ public class SysUserController extends AppWebController {
 		try {
 			String[] roleIds = null;
 			if (roleValue != null && !"".equals(roleValue)) {
-				roleIds = roleValue.split(",");
+				roleIds = StringUtils.split(roleValue, ",");
 			}
 			String userId = sysUser.getUserId();
 			if (userId == null || "".equals(userId)) throw new RefusedException(Constants.StatusCode.SysUser.emptyUserId);
@@ -223,7 +224,7 @@ public class SysUserController extends AppWebController {
 		    if (dept == null || "".equals(dept)) throw new RefusedException(Constants.StatusCode.SysUser.emptyOrganID);
 			String[] roleIds = null;
 			if (roleValue != null && !"".equals(roleValue)) {
-				roleIds = roleValue.split(",");
+				roleIds = StringUtils.split(roleValue, ",");
 			}
 //			// 组织机构
 //			SysUser user = getSysUser(request);
@@ -254,7 +255,7 @@ public class SysUserController extends AppWebController {
 		Message message = new Message();
 		try {
 			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ",");
 			sysUserService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
@@ -277,7 +278,7 @@ public class SysUserController extends AppWebController {
         Message message = new Message();
         try {
             if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
-            String[] ids = id.split(",");
+            String[] ids = StringUtils.split(id, ",");
             sysUserService.resetPassword(ids, EncryptionUtil.encodeMD5("888888").toLowerCase());
             message.setMsg(Constants.StatusCode.Sys.success);
             message.setSuccess(true);
@@ -301,7 +302,7 @@ public class SysUserController extends AppWebController {
 		Message message = new Message();
 		try {
 			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ",");
 			sysUserService.updateStatus(ids, userStatus);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);

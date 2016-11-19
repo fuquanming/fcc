@@ -82,6 +82,6 @@ saveParam_afterCallback = function(data, success) {
     if (success == false) return false;// 失败，不执行自动跳转
 }
 $(function() {
-    moduleTree = getTree({queryUrl:'manage/sys/module/tree.do?nodeStatus=open&id=${param.id}',id:'moduleTree',closed:false});
+    moduleTree = getTree({queryUrl:'manage/sys/role/tree.do?nodeStatus=open&id=${param.id}',id:'moduleTree',closed:false});
 })
 </script>
