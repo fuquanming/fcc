@@ -218,22 +218,34 @@ public class SysUserServiceImpl implements SysUserService {
 		return sysUserDao.queryPage(pageNo, pageSize, param);
 	}
 	
+	@Override
+	public TreeSet<Module> getSysUserModule(SysUser sysUser) {
+	    Set<Role> roleSet = sysUser.getRoles();// 角色集合
+	    TreeSet<Module> moduleSet = new TreeSet<Module>();// 模块集合
+        for (Role role : roleSet) {
+            String roleId = role.getRoleId();
+            Map<String, RoleModuleRight> rightMap = cacheService.getRoleModuleRightMap().get(roleId);
+            Set<String> moduleIdSet = rightMap.keySet();
+            for (String moduleId : moduleIdSet) {
+                Module module = cacheService.getModuleMap().get(moduleId);
+                boolean flag = moduleSet.add(module);
+                if (flag) System.out.println(module.getModuleName());
+                if (!Module.ROOT.getModuleId().equals(module.getParentId())) {
+                    flag = moduleSet.add(cacheService.getModuleMap().get(module.getParentId()));
+                    if (flag) System.out.println(cacheService.getModuleMap().get(module.getParentId()).getModuleName());
+                }
+            }
+        }
+	    return moduleSet;
+	}
+	
 	/**
      * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#getSysUserMenu(com.fcc.web.sys.model.SysUser)
      **/
 	@Override
     public List<EasyuiTreeNode> getSysUserMenu(SysUser sysUser) {
-	    Set<Role> roleSet = sysUser.getRoles();// 角色集合
-	    Set<Module> moduleSet = new TreeSet<Module>();// 模块集合
-	    for (Role role : roleSet) {
-            String roleId = role.getRoleId();
-            Map<String, RoleModuleRight> rightMap = cacheService.getRoleModuleRightMap().get(roleId);
-            Set<String> moduleIdSet = rightMap.keySet();
-            for (String moduleId : moduleIdSet) {
-                moduleSet.add(cacheService.getModuleMap().get(moduleId));
-            }
-        }
+	    Set<Module> moduleSet = getSysUserModule(sysUser);
 	    Map<String, EasyuiTreeNode> nodeMap = new HashMap<String, EasyuiTreeNode>(moduleSet.size());
 	    List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
 	    for (Module m : moduleSet) {
@@ -249,23 +261,6 @@ public class SysUserServiceImpl implements SysUserService {
             nodeMap.put(node.getId(), node);
             
             String parendId = m.getParentId();
-            Module parentModule = cacheService.getModuleMap().get(parendId);
-            if (parentModule != null) {
-                EasyuiTreeNode cacheNode = nodeMap.get(parendId);
-                if (cacheNode == null) {
-                    EasyuiTreeNode parentNode = new EasyuiTreeNode();
-                    parentNode.setId(parentModule.getModuleId());
-                    parentNode.setText(parentModule.getModuleName());
-                    desc = parentModule.getModuleDesc();
-                    if (desc != null && !"".equals(desc)) {
-                        Map<String, Object> attributes = new HashMap<String, Object>(1);
-                        attributes.put("src", desc);
-                        parentNode.setAttributes(attributes);
-                    }
-                    nodeMap.put(parentNode.getId(), parentNode);
-                    nodeList.add(parentNode);
-                }
-            }
             
             EasyuiTreeNode cacheNode = nodeMap.get(parendId);
             if (cacheNode != null) {

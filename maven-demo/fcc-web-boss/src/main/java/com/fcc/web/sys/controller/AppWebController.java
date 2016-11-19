@@ -28,7 +28,9 @@ public class AppWebController extends BaseController {
         execute(new Runnable() {
             @Override
             public void run() {
+                System.out.println("cleanModuleMap");
                 cacheService.cleanModuleMap();
+                System.out.println("reloadModuleCache");
                 cacheService.getModuleMap();
             }
         });

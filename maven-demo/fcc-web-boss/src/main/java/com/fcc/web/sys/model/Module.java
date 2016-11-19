@@ -213,7 +213,7 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
 			} else if (this.moduleSort < modSort){
 				return -1;
 			} else {
-				return this.moduleId.compareTo(mod.getModuleId());
+				return this.parentIds.compareTo(mod.getParentIds());
 			}
 		}
 		return 0;

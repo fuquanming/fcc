@@ -73,7 +73,7 @@ public class SysLockController extends AppWebController {
 		Message message = new Message();
 		try {
 			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ",");
 			baseService.deleteById(SysLock.class, ids, "lockKey");
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);

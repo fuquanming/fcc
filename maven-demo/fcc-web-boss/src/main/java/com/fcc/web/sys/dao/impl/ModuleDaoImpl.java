@@ -74,7 +74,7 @@ public class ModuleDaoImpl implements ModuleDao {
     @Override
     public List<Module> getModuleWithOperate() {
         List<Module> moduleList = new ArrayList<Module>();
-        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,m.parent_id,m.parent_ids,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_level desc,module_sort desc,parent_ids";
+        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,m.parent_id,m.parent_ids,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_level asc,module_sort asc,parent_Ids";
         Map<String, Object> param = null;
         List<Object> list = baseDao.findSQL(bHql, param);
         if (list.size() > 0) {

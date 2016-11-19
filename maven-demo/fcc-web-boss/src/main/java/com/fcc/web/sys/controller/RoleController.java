@@ -3,7 +3,7 @@ package com.fcc.web.sys.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,10 +25,13 @@ import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
+import com.fcc.commons.web.view.EasyuiTreeGridModule;
+import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.service.ModuleService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
 import com.fcc.web.sys.service.SysUserService;
@@ -57,6 +60,9 @@ public class RoleController extends AppWebController {
 	private RoleModuleRightService roleModuleRightService;
 	@Resource
 	private SysUserService sysUserService;
+	@Resource
+	private ModuleService moduleService;
+	
 	/** 显示角色列表 */
 	@ApiOperation(value = "显示角色列表")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
@@ -134,7 +140,7 @@ public class RoleController extends AppWebController {
 			role.setCreateTime(new Date());
 			role.setCreateUser(getSysUser(request).getUserId());
 			if (rightValue != null && !"".equals(rightValue)) {
-				String[] moduleRigth = rightValue.split(",");
+				String[] moduleRigth = StringUtils.split(rightValue, ",");
 				roleService.create(role, moduleRigth);
 			} else {
 				roleService.create(role);
@@ -185,7 +191,7 @@ public class RoleController extends AppWebController {
 				// 清空权限
 				roleService.update(dbRole, null);
 			} else {
-				String[] moduleRigth = rightValue.split(",");
+				String[] moduleRigth = StringUtils.split(rightValue, ",");
 				roleService.update(dbRole, moduleRigth);
 			}
 			message.setSuccess(true);
@@ -210,7 +216,7 @@ public class RoleController extends AppWebController {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
-			String[] ids = id.split(",");
+			String[] ids = StringUtils.split(id, ",");
 			roleService.delete(ids);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
@@ -286,19 +292,45 @@ public class RoleController extends AppWebController {
 		Map<String, RoleModuleRight> rightMap = null;
 		try {
 			if (StringUtils.isNotEmpty(roleId)) {
-				role = roleService.getRoleWithModuleRight(roleId);
-				rightMap = new HashMap<String, RoleModuleRight>();
-				Iterator<RoleModuleRight> it = role.getRoleModuleRights().iterator();
-				while (it.hasNext()) {
-					RoleModuleRight right = it.next();
-					rightMap.put(right.getModuleId(), right);
-				}
+//				role = roleService.getRoleWithModuleRight(roleId);
+//				rightMap = new HashMap<String, RoleModuleRight>();
+//				Iterator<RoleModuleRight> it = role.getRoleModuleRights().iterator();
+//				while (it.hasNext()) {
+//					RoleModuleRight right = it.next();
+//					rightMap.put(right.getModuleId(), right);
+//				}
+//				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
+//				request.getSession().setAttribute(Constants.SysUserSession.sessionRoleRightMap, rightMap);
+				
+				role = (Role) baseService.get(Role.class, roleId);
 				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
-				request.getSession().setAttribute(Constants.SysUserSession.sessionRoleRightMap, rightMap);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
 		}
 	}
+	
+	@ApiOperation(value = "查询模块树形数据")
+    @RequestMapping(value = "/tree.do", method = RequestMethod.POST)
+    @ResponseBody
+    @Permissions("edit")
+    public List<EasyuiTreeNode> tree(HttpServletRequest request,
+            @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
+        if (StringUtils.isEmpty(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;
+        List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
+        try {
+            Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
+            nodeList = moduleService.getModuleTree(getSysUser(request), nodeStatus, true, role);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("查询模块树形失败", e);
+            nodeList = new ArrayList<EasyuiTreeNode>();
+            EasyuiTreeGridModule node = new EasyuiTreeGridModule();
+            node.setMsg(e.getMessage());
+            nodeList.add(node);
+        }
+        request.getSession().removeAttribute(Constants.SysUserSession.sessionRole);
+        return nodeList;
+    }
 }
