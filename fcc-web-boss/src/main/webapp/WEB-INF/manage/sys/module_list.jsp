@@ -49,14 +49,20 @@ treegridParam_column_value = [ [ {
     title : '排序',
     width : 50
 }, {
-    field : 'operateNames',
+    field : 'attributes',
     title : '模块操作',
-    width : 200
-}, {
-    field : 'operateIds',
-    title : '模块操作ID',
     width : 200,
-    hidden : true
+    formatter : function(value, rowData, rowIndex) {
+    	if (value) {
+    		var str = [];
+    		var operates = value.operate
+    		for (var i in operates) {
+    			str.push(operates[i].operateName);
+    		}
+    		return str.join("，");
+    	}
+        return value;
+    }
 }] ];// 表格的列
 
 operateParam_form = 'userForm';

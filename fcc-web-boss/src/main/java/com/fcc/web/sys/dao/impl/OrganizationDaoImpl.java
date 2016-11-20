@@ -77,6 +77,7 @@ public class OrganizationDaoImpl implements OrganizationDao {
                 param.put("organId", parentOrganId);
             }
         }
+        sb.append(" order by organLevel, organSort, parentIds");
         return baseDao.find(sb.toString(), param);
     }
 }

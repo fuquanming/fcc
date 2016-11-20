@@ -14,7 +14,7 @@ import com.fcc.web.sys.service.CacheService;
 public class AppWebController extends BaseController {
 
     @Resource
-    private CacheService cacheService;
+    CacheService cacheService;
     
     public SysUser getSysUser(HttpServletRequest request) {
         return (SysUser) request.getSession().getAttribute(Constants.SysUserSession.loginUser);
@@ -28,9 +28,7 @@ public class AppWebController extends BaseController {
         execute(new Runnable() {
             @Override
             public void run() {
-                System.out.println("cleanModuleMap");
                 cacheService.cleanModuleMap();
-                System.out.println("reloadModuleCache");
                 cacheService.getModuleMap();
             }
         });

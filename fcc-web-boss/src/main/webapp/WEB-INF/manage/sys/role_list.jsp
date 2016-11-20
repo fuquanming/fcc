@@ -21,7 +21,7 @@
         <c:if test="${not empty userList}">
         <th>创建者</th>
         <td>
-        <select name="createUser" id="createUser" style="width: 305px;">
+        <select name="createUser" id="createUser" style="width: 305px;" class="easyui-combobox">
         <option value="">--请选择--</option>
         <c:forEach items="${userList}" var="user">
         <option value="${user.userId }">${user.userId }</option>
@@ -60,8 +60,12 @@ datagridParam_column_value = [ [ {
     field : 'roleDesc',
     title : '角色描述',
     width : 150
+} , {
+    field : 'createUser',
+    title : '创建者',
+    width : 150
 }] ];// 表格的列
-datagridParam_queryParamName = ['searchName'];
+datagridParam_queryParamName = ['searchName', 'createUser'];
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';

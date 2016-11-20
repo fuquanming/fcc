@@ -10,7 +10,6 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -279,10 +278,81 @@ public class ModuleServiceImpl implements ModuleService {
     }
     
     @Override
+    public List<EasyuiTreeGridModule> getModuleTreeGrid(SysUser sysUser, String nodeStatus, Role role) {
+        if (nodeStatus == null || "".equals(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;
+        List<EasyuiTreeGridModule> nodeList = new ArrayList<EasyuiTreeGridModule>();
+        TreeSet<Module> menuSet = null;
+        // 所有模块
+        if (sysUser == null) {
+            menuSet = new TreeSet<Module>();
+            menuSet.addAll(cacheService.getModuleMap().values());
+        } else {
+            // 用户拥有的模块
+            menuSet = sysUserService.getSysUserModule(sysUser);
+        }
+        Map<String, EasyuiTreeGridModule> nodeMap = new HashMap<String, EasyuiTreeGridModule>();
+        for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {
+            Module m = it.next();
+            String moduleDesc = m.getModuleDesc();
+            EasyuiTreeGridModule node = new EasyuiTreeGridModule();
+            node.setId(m.getModuleId());
+            node.setText(m.getModuleName());
+            node.setModuleDesc(moduleDesc);
+            node.setModuleSort(m.getModuleSort());
+            node.setState(nodeStatus);
+            
+            Map<String, Object> attributes = new HashMap<String, Object>(2);
+            node.setAttributes(attributes);
+            
+            attributes.put("parentIds", m.getParentIds());
+            
+            Set<Operate> operateSet = m.getOperates();
+            if (operateSet != null && operateSet.size() > 0) {
+                // 判断用户拥有的模块
+                if (sysUser != null) {
+                    Set<Operate> userOperateSet = new TreeSet<Operate>();
+                    for (Operate o : operateSet) {
+                        boolean flag = rbacPermissionService.checkPermissionCache(sysUser.getRoles(), m.getModuleId(), o.getOperateId());
+                        if (flag) {
+                            // 判断角色是否选中
+                            if (role != null) {
+                                Map<String, RoleModuleRight> rightMap = cacheService.getRoleModuleRightMap().get(role.getRoleId());
+                                if (rightMap != null) {
+                                    RoleModuleRight right = rightMap.get(m.getModuleId());
+                                    if (right != null && (right.getRightValue() & o.getOperateValue()) > 0) {
+                                        // 选中
+                                        attributes.put(o.getOperateId(), true);
+                                    }
+                                }
+                            }
+                            userOperateSet.add(o);
+                        }
+                    }
+                    attributes.put("operate", userOperateSet);
+                } else {
+                    attributes.put("operate", operateSet);
+                }
+            }
+            nodeMap.put(node.getId(), node);
+            
+            String parendId = m.getParentId();
+            EasyuiTreeGridModule cacheNode = nodeMap.get(parendId);
+            if (cacheNode != null) {
+                List<EasyuiTreeNode> children = cacheNode.getChildren();
+                if (children == null) children = new ArrayList<EasyuiTreeNode>();
+                children.add(node);
+                cacheNode.setChildren(children);
+            } else {
+                nodeList.add(node);// 移除根目录后，添加节点
+            }
+        }
+        return nodeList;
+    }
+    
+    @Override
     public List<EasyuiTreeNode> getModuleTree(SysUser sysUser, String nodeStatus, boolean isOperate, Role role) {
         List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
-        TreeSet<Module> menuSet = new TreeSet<Module>();
-        menuSet.addAll(cacheService.getModuleMap().values());
+        TreeSet<Module> menuSet = null;
         
         Map<String, EasyuiTreeNode> nodeMap = new HashMap<String, EasyuiTreeNode>();
         // 该用户权限
@@ -292,6 +362,9 @@ public class ModuleServiceImpl implements ModuleService {
         if (sysUser != null) {
             checkUser = true;
             moduleSet = sysUserService.getSysUserModule(sysUser);
+        } else {
+            menuSet = new TreeSet<Module>();
+            menuSet.addAll(cacheService.getModuleMap().values());
         }
 
         for (Iterator<Module> it = menuSet.iterator(); it.hasNext();) {

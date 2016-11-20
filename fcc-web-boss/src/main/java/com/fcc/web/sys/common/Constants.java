@@ -178,6 +178,8 @@ public interface Constants {
         public interface Role {
             /** 角色名称为空 role_000 */
             String emptyRoleName = "role_000";
+            /** 不是自己创建的角色 role_001 */
+            String errorMySelfRoleId = "role_001";
         }
         
         public interface Organization {

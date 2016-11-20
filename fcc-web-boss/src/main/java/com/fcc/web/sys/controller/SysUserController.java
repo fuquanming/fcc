@@ -30,9 +30,10 @@ import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.enums.UserStatus;
+import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
+import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
@@ -64,8 +65,6 @@ public class SysUserController extends AppWebController {
 	private OrganizationService organService;
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
-	@Resource
-	private CacheService cacheService;
 	
 	/** 显示系统用户列表 */
 	@ApiOperation(value = "显示用户列表页面")
@@ -73,31 +72,32 @@ public class SysUserController extends AppWebController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
-//		if (isAdmin(request)) {
-//			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的用户
-//			String servletPath = request.getServletPath();
-//			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
-//			Module module = CacheUtil.moduleUrlMap.get(servletPath);
-//			if (module != null) {
-//				try {
-//					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
-//					List<String> roleIdList = new ArrayList<String>();
-//					for (RoleModuleRight r : list) {
-//						roleIdList.add(r.getRoleId());
-//					}
-//					if (roleIdList.size() > 0) {
-//						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
-//						if (sysUserList != null && sysUserList.size() > 0) {
-//							request.setAttribute("userList", sysUserList);
-//						}
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					logger.error(e);
-//				}
-//			}
-//			request.setAttribute("isAdmin", true);
-//		}
+		if (getSysUser(request).isAdmin()) {
+			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的用户
+			String servletPath = request.getServletPath();
+			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
+			String moduleId = cacheService.getModuleUrlMap().get(servletPath);
+			Module module = cacheService.getModuleMap().get(moduleId);
+			if (module != null) {
+				try {
+					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
+					List<String> roleIdList = new ArrayList<String>();
+					for (RoleModuleRight r : list) {
+						roleIdList.add(r.getRoleId());
+					}
+					if (roleIdList.size() > 0) {
+						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
+						if (sysUserList != null && sysUserList.size() > 0) {
+							request.setAttribute("userList", sysUserList);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error(e);
+				}
+			}
+			request.setAttribute("isAdmin", true);
+		}
 		request.setAttribute("userStatusLock", UserStatus.locked.name());
 		request.setAttribute("userStatusActivation", UserStatus.normal.name());
 		request.setAttribute("userStatusOff", UserStatus.off.name());
@@ -134,7 +134,7 @@ public class SysUserController extends AppWebController {
 	public String toAdd(HttpServletRequest request) {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>();
-//			param.put("createUser", getSysUser(request).getUserId());
+			param.put("createUser", getSysUser(request).getUserId());
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,7 +159,7 @@ public class SysUserController extends AppWebController {
 				}
 			}
 			Map<String, Object> param = new HashMap<String, Object>();
-//			param.put("createUser", data.getCreateUser());
+			param.put("createUser", data.getCreateUser());
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -331,15 +331,16 @@ public class SysUserController extends AppWebController {
 	        @ApiParam(required = false, value = "用户名称") @RequestParam(name = "userName", defaultValue = "") String userName) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
-//			String createUser = request.getParameter("createUser");
+			String createUser = request.getParameter("createUser");
 			Map<String, Object> param = new HashMap<String, Object>();
 			param.put("userId", userId);
 			param.put("dept", organId);
 			param.put("userName", userName);
-//			param.put("createUser", (createUser == null || "".equals(createUser)) ? getSysUser(request).getUserId() : createUser);
 			if (getSysUser(request).isAdmin()) {
-				param.put("isAdmin", "Y");
-			}
+                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
+            } else {
+                param.put("createUser", getSysUser(request).getUserId());
+            }
 			ListPage listPage = sysUserService.queryPage(dg.getPage(), dg.getRows(), param);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			

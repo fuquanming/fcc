@@ -42,6 +42,7 @@ var codeMap = {
 	'operate_003':'超过最大操作个数',
 	
 	'role_000':'角色名称为空',
+	'role_001':'不能修改非自己创建的角色',
 	
 	'organization_000':'机构名称为空',
 	'organization_001':'父机构为空',
