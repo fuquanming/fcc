@@ -12,12 +12,24 @@ public class EasyuiTreeGridModule extends EasyuiTreeNode implements java.io.Seri
 	 * 
 	 */
 	private static final long serialVersionUID = 6804600865764178730L;
-
+	/** 模块地址 */
 	private String moduleDesc;
+	/** 模块排序 */
 	private Integer moduleSort;
+	/** 操作ID，分割符, */
 	private String operateIds;
+	/** 操作名称，分割符, */
 	private String operateNames;
-	public String getModuleDesc() {
+	/** 选择的操作ID，分割符, */
+	private String selectOperateIds;
+	
+	public String getSelectOperateIds() {
+        return selectOperateIds;
+    }
+    public void setSelectOperateIds(String selectOperateIds) {
+        this.selectOperateIds = selectOperateIds;
+    }
+    public String getModuleDesc() {
 		return moduleDesc;
 	}
 	public void setModuleDesc(String moduleDesc) {

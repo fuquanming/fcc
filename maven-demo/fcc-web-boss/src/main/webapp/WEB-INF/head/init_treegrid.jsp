@@ -25,7 +25,7 @@ $(function() {
         nowrap : true,
         animate : false,
         border : false,
-        striped:true,
+        striped : true,
         idField : treegridParam_idField,
         treeField : 'text',
         frozenColumns : [ [ {

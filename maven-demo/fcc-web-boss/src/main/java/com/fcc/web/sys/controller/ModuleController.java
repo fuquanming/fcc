@@ -57,8 +57,6 @@ public class ModuleController extends AppWebController {
 	private RbacPermissionService rbacPermissionService;
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
-	@Resource
-	private CacheService cacheService;
 	
 	@ApiOperation(value = "显示模块列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
@@ -75,9 +73,15 @@ public class ModuleController extends AppWebController {
 	        @ApiParam(required = true, value = "父模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
 		try {
 			Module parentModule = moduleService.getModuleById(parentId);
+			if (parentModule != null) {
+                if (Module.ROOT.getModuleId().equals(parentModule.getParentId())) {
+                    parentModule.setParentId(null);
+                }
+            }
+			request.setAttribute("parentModule", parentModule);
 			Map<String, Object> param = null;
 			request.setAttribute("operateList", operateService.queryPage(1, 0, param).getDataList());
-			request.setAttribute("parentModule", parentModule);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("初始化新增模块数据失败！", e);
@@ -117,7 +121,7 @@ public class ModuleController extends AppWebController {
 		if (it.hasNext()) {
 			role = it.next();
 			if (role != null && role.getRoleId() != null) {
-			    roleModuleRightService.updateModuleRight(role.getRoleId(), data.getModuleId(), Long.valueOf(Integer.MAX_VALUE));
+			    roleModuleRightService.updateModuleRight(role.getRoleId(), data.getModuleId(), Long.MAX_VALUE);
 			    // 更新系统缓存角色
 			}
 		}
@@ -148,7 +152,7 @@ public class ModuleController extends AppWebController {
 				data.setModuleId(RandomStringUtils.random(4, true, false));
 				data.setParentId(parentId);
 			} else {
-				data.setModuleId(parentId + "-" + RandomStringUtils.random(4, true, false));
+				data.setModuleId(RandomStringUtils.random(4, true, false));
 			    data.setParentId(parentId);
             }
             data.setParentIds(data.buildParendIds(parentModule, data.getModuleId()));
@@ -268,7 +272,7 @@ public class ModuleController extends AppWebController {
 	public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request) {
 		List<EasyuiTreeGridModule> nodeList = null;
 		try {
-		    nodeList = moduleService.getModuleTreeGrid(getSysUser(request));
+		    nodeList = moduleService.getModuleTreeGrid(null, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("查询模块树形列表失败", e);

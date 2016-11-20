@@ -29,8 +29,10 @@ import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.ModuleService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
@@ -69,31 +71,32 @@ public class RoleController extends AppWebController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
-//		if (isAdmin(request)) {
-//			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的角色
-//			String servletPath = request.getServletPath();
-//			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
-//			Module module = CacheUtil.moduleUrlMap.get(servletPath);
-//			if (module != null) {
-//				try {
-//					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
-//					List<String> roleIdList = new ArrayList<String>();
-//					for (RoleModuleRight r : list) {
-//						roleIdList.add(r.getRoleId());
-//					}
-//					if (roleIdList.size() > 0) {
-//						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
-//						if (sysUserList != null && sysUserList.size() > 0) {
-//							request.setAttribute("userList", sysUserList);
-//						}
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					logger.error(e);
-//				}
-//			}
-//		}
-//		request.setAttribute("sysUser", getSysUser(request));// 当前用户
+		if (getSysUser(request).isAdmin()) {
+			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的角色
+			String servletPath = request.getServletPath();
+			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
+			String moduleId = cacheService.getModuleUrlMap().get(servletPath);
+			Module module = cacheService.getModuleMap().get(moduleId);
+			if (module != null) {
+				try {
+					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
+					List<String> roleIdList = new ArrayList<String>();
+					for (RoleModuleRight r : list) {
+						roleIdList.add(r.getRoleId());
+					}
+					if (roleIdList.size() > 0) {
+						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
+						if (sysUserList != null && sysUserList.size() > 0) {
+							request.setAttribute("userList", sysUserList);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error(e);
+				}
+			}
+		}
+		request.setAttribute("sysUser", getSysUser(request));// 当前用户
 		return "manage/sys/role_list";
 	}
 	
@@ -179,13 +182,13 @@ public class RoleController extends AppWebController {
 				throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
 			}
 			
-//			SysUser user = getSysUser(request);
-//			if (!isAdmin(request)) {
-//				// 不能修改其他人创建的用户
-//				if (!user.getUserId().equals(dbRole.getCreateUser())) {
-//					throw new RefusedException("不能修改他人创建的角色！");
-//				}
-//			}
+			SysUser user = getSysUser(request);
+			if (!user.isAdmin()) {
+				// 不能修改其他人创建的用户
+				if (!user.getUserId().equals(dbRole.getCreateUser())) {
+					throw new RefusedException(Constants.StatusCode.Role.errorMySelfRoleId);
+				}
+			}
 			
 			if (rightValue == null || "".equals(rightValue)) {
 				// 清空权限
@@ -244,13 +247,16 @@ public class RoleController extends AppWebController {
 	        @ApiParam(required = false, value = "角色名称") @RequestParam(name = "searchName", defaultValue = "") String roleName) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
-//			String createUser = request.getParameter("createUser");
-			Map<String, Object> param = null;
+			String createUser = request.getParameter("createUser");
+			Map<String, Object> param = new HashMap<String, Object>(2);
             if (!StringUtils.isEmpty(roleName)) {
-                param = new HashMap<String, Object>();
                 param.put("roleName", roleName);
             }
-//			param.put("createUser", (createUser == null || "".equals(createUser)) ? getSysUser(request).getUserId() : createUser);
+            if (getSysUser(request).isAdmin()) {
+                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
+            } else {
+                param.put("createUser", getSysUser(request).getUserId());
+            }
 			ListPage listPage = roleService.queryPage(dg.getPage(), dg.getRows(), param);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			json.setRows(listPage.getDataList());
@@ -289,19 +295,8 @@ public class RoleController extends AppWebController {
 	private void getRole(HttpServletRequest request) {
 		Role role = null;
 		String roleId = request.getParameter("id");
-		Map<String, RoleModuleRight> rightMap = null;
 		try {
 			if (StringUtils.isNotEmpty(roleId)) {
-//				role = roleService.getRoleWithModuleRight(roleId);
-//				rightMap = new HashMap<String, RoleModuleRight>();
-//				Iterator<RoleModuleRight> it = role.getRoleModuleRights().iterator();
-//				while (it.hasNext()) {
-//					RoleModuleRight right = it.next();
-//					rightMap.put(right.getModuleId(), right);
-//				}
-//				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
-//				request.getSession().setAttribute(Constants.SysUserSession.sessionRoleRightMap, rightMap);
-				
 				role = (Role) baseService.get(Role.class, roleId);
 				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
 			}
@@ -326,6 +321,32 @@ public class RoleController extends AppWebController {
             e.printStackTrace();
             logger.error("查询模块树形失败", e);
             nodeList = new ArrayList<EasyuiTreeNode>();
+            EasyuiTreeGridModule node = new EasyuiTreeGridModule();
+            node.setMsg(e.getMessage());
+            nodeList.add(node);
+        }
+        request.getSession().removeAttribute(Constants.SysUserSession.sessionRole);
+        return nodeList;
+    }
+	
+	/**
+     * 模块 列表 返回json 给 easyUI 
+     * @return
+     */
+    @ApiOperation(value = "查询模块树形列表")
+    @RequestMapping(value = "/treegrid.do", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    @Permissions(value = {"edit"})
+    public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request,
+            @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
+        List<EasyuiTreeGridModule> nodeList = null;
+        try {
+            Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
+            nodeList = moduleService.getModuleTreeGrid(getSysUser(request), nodeStatus, role);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("查询模块树形列表失败", e);
+            nodeList = new ArrayList<EasyuiTreeGridModule>();
             EasyuiTreeGridModule node = new EasyuiTreeGridModule();
             node.setMsg(e.getMessage());
             nodeList.add(node);

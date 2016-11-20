@@ -39,6 +39,13 @@ public interface ModuleService {
     List<EasyuiTreeGridModule> getModuleTreeGrid(SysUser sysUser);
     
     /**
+     * 系统模块
+     * @param sysUser
+     * @return
+     */
+    List<EasyuiTreeGridModule> getModuleTreeGrid(SysUser sysUser, String nodeStatus, Role role);
+    
+    /**
      * 取得模块通过用户
      * @param sysUser       用户
      * @param nodeStatus    节点状态

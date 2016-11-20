@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -43,8 +44,7 @@ public class Operate implements Comparable<Operate>, Serializable {
 	private java.lang.Long operateValue;
 	//columns END
 
-
-	public Operate(){
+    public Operate(){
 	}
 
 	public Operate(
@@ -86,7 +86,6 @@ public class Operate implements Comparable<Operate>, Serializable {
 		this.operateValue = value;
 	}
 	
-
 	public String toString() {
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
 			.append("OperateId",getOperateId())

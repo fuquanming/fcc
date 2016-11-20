@@ -16,7 +16,8 @@ public class SysUserView {
 	private String userStatus;
 	private Timestamp regDate;//注册时间
 	
-	private String roleIds;
+	private String createUser;
+    private String roleIds;
 	private String roleNames;
 	
 	public String getUserId() {
@@ -67,5 +68,10 @@ public class SysUserView {
 	public void setUserStatus(String userStatus) {
 		this.userStatus = userStatus;
 	}
-	
+	public String getCreateUser() {
+        return createUser;
+    }
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 }

@@ -145,13 +145,13 @@ public class SysUserDaoImpl implements SysUserDao {
                 cHql.append(" and r.createUser =:createUser");
                 bHql.append(" and r.createUser =:createUser");
             }
-            String isAdmin = (String) param.get("isAdmin");
-            if (isAdmin != null && !"".equals(isAdmin) && createUser != null && !"".equals(createUser)) {
-                map.put("userIds", createUser);
-                cHql.append(" and r.userId <>:userIds");
-                bHql.append(" and r.userId <>:userIds");
-                map.remove("isAdmin");
-            }
+//            String isAdmin = (String) param.get("isAdmin");
+//            if (isAdmin != null && !"".equals(isAdmin) && createUser != null && !"".equals(createUser)) {
+//                map.put("userIds", createUser);
+//                cHql.append(" and r.userId <>:userIds");
+//                bHql.append(" and r.userId <>:userIds");
+//                map.remove("isAdmin");
+//            }
         }
         bHql.append(" order by userId desc");
         ListPage listPage = baseDao.queryPage(pageNo, pageSize, cHql.toString(), bHql.toString(), map, false);
