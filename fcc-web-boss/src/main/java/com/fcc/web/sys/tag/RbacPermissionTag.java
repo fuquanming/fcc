@@ -4,11 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.fcc.web.sys.cache.CacheUtil;
+import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.RbacPermissionService;
+import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.RbacPermissionService;
 
 /**
@@ -22,6 +20,8 @@ public class RbacPermissionTag extends BodyTagSupport {
 	private static final long serialVersionUID = 5357399722954554280L;
 
 	private static RbacPermissionService rbacPermissionService;
+	
+	private CacheService cacheService;
 	/**
 	 * 系统模块ID 
 	 */
@@ -45,11 +45,15 @@ public class RbacPermissionTag extends BodyTagSupport {
 //		HttpSession session = pageContext.getSession();
 		// 获取用户sessionBean
 	    if (rbacPermissionService == null) {
-	        rbacPermissionService = WebApplicationContextUtils
-	                .getWebApplicationContext(pageContext.getServletContext())
-	                .getBean(RbacPermissionService.class);
+//	        rbacPermissionService = WebApplicationContextUtils
+//	                .getWebApplicationContext(pageContext.getServletContext())
+//	                .getBean(RbacPermissionService.class);
+	        rbacPermissionService = SpringContextUtil.getBean(RbacPermissionService.class);
 	    }
-		SysUser user = CacheUtil.getSysUser((HttpServletRequest)pageContext.getRequest());
+	    if (cacheService == null) {
+	        cacheService = SpringContextUtil.getBean(CacheService.class);
+	    }
+		SysUser user = cacheService.getSysUser((HttpServletRequest)pageContext.getRequest());
 		if (moduleId == null || "".equals(moduleId)) {
 		    moduleId = (String) pageContext.getRequest().getAttribute("rightModuleId");
 		}

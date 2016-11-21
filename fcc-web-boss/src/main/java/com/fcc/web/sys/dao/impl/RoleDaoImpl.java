@@ -33,7 +33,7 @@ public class RoleDaoImpl implements RoleDao {
     private BaseDao baseDao;
     
     @Override
-    public void createUserRole(String userId, String[] roleIds) {
+    public void addRole(String userId, String[] roleIds) {
         int length = roleIds.length;
         for (int i = 0; i < length; i++) {
             StringBuilder sb = new StringBuilder();
@@ -45,22 +45,22 @@ public class RoleDaoImpl implements RoleDao {
     
     /**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.dao.RoleDao#deleteUserRoleByUserId(java.lang.String)
+     * @see com.fcc.web.sys.dao.RoleDao#deleteRoleByUserId(java.lang.String)
      **/
     @Override
-    public Integer deleteUserRoleByUserId(String userId) {
+    public Integer deleteRoleByUserId(String userId) {
         return baseDao.executeSql("delete from sys_rbac_usertorole where user_id =?", userId);
     }
 
     @Override
-    public Integer deleteUserRoleByUserId(String[] userIds) {
+    public Integer deleteRoleByUserId(String[] userIds) {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("userId", userIds);
         return baseDao.executeSql("delete from sys_rbac_usertorole where user_id in(:userId)", param);
     }
     
     @Override
-    public Integer deleteUserRoleByRoleId(String[] roleIds) {
+    public Integer deleteRoleByRoleId(String[] roleIds) {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("roleId", roleIds);
         return baseDao.executeSql("delete from sys_rbac_usertorole where role_Id in(:roleId)", param);

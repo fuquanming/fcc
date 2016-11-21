@@ -41,7 +41,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/manage/sys/operate")
 public class OperateController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(OperateController.class);
+	private Logger logger = Logger.getLogger(OperateController.class);
 	@Resource
 	private OperateService operateService;
 	

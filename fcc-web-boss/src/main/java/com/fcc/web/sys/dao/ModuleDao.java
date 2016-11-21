@@ -9,7 +9,6 @@
  */
 package com.fcc.web.sys.dao;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.fcc.web.sys.model.Module;
@@ -26,7 +25,7 @@ public interface ModuleDao {
      * @param moduleId
      * @param operateIds
      */
-    public void createModuleOperate(String moduleId, String[] operateIds);
+    public void addOperate(String moduleId, String[] operateIds);
     /**
      * 删除模块
      * @param moduleId
@@ -41,25 +40,12 @@ public interface ModuleDao {
      * @param isAll     true:及子模块操作
      * @return
      */
-    public Integer deleteModuleOperate(String moduleId, boolean isAll);
+    public Integer deleteOperate(String moduleId, boolean isAll);
     
     /**
      * 获取模块及操作
      * @return
      */
     public List<Module> getModuleWithOperate();
-    
-    public List<Module> getModuleByUrl();
-    
-    /**
-     * 返回当前模块的子模块
-     * @param moduleId
-     * @return
-     */
-    public List<Module> findChildModulesWithOperation(String moduleId);
-    
-    public List<Module> findModules(Collection<String> moduleIdList);
-    
-    public List<Module> findChildModules(String parentModuleId, boolean allChildren);
     
 }

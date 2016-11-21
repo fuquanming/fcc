@@ -13,19 +13,19 @@ import com.fcc.web.sys.model.SysUser;
 
 public interface SysUserService {
 
-    void create(SysUser data, String[] roleIds);
+    void add(SysUser data, String[] roleIds);
 
-    void createRole(String userId, String[] roleIds);
+    void addRole(String userId, String[] roleIds);
 
-    void update(SysUser data, String[] roleIds);
+    void edit(SysUser data, String[] roleIds);
 
-    void update(SysUser data);
+    void edit(SysUser data);
 
     void resetPassword(String[] userIds, String userPass);
 
     void delete(String[] userIds);
 
-    Integer updateStatus(String[] userIds, String userStatus);
+    Integer editStatus(String[] userIds, String userStatus);
 
     SysUser getLoninUser(String userId, String password) throws RefusedException;
 

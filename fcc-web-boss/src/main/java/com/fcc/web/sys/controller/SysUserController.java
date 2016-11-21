@@ -54,7 +54,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/manage/sys/user")
 public class SysUserController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(SysUserController.class);
+	private Logger logger = Logger.getLogger(SysUserController.class);
 	@Resource
     private BaseService baseService;
 	@Resource
@@ -72,32 +72,34 @@ public class SysUserController extends AppWebController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
-		if (getSysUser(request).isAdmin()) {
-			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的用户
-			String servletPath = request.getServletPath();
-			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
-			String moduleId = cacheService.getModuleUrlMap().get(servletPath);
-			Module module = cacheService.getModuleMap().get(moduleId);
-			if (module != null) {
-				try {
-					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
-					List<String> roleIdList = new ArrayList<String>();
-					for (RoleModuleRight r : list) {
-						roleIdList.add(r.getRoleId());
-					}
-					if (roleIdList.size() > 0) {
-						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
-						if (sysUserList != null && sysUserList.size() > 0) {
-							request.setAttribute("userList", sysUserList);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.error(e);
-				}
-			}
-			request.setAttribute("isAdmin", true);
-		}
+	    if (isGroup()) {
+	        if (getSysUser(request).isAdmin()) {
+	            // 获取所有有该权限的用户列表，可以根据创建者查询其创建的用户
+	            String servletPath = request.getServletPath();
+	            if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
+	            String moduleId = cacheService.getModuleUrlMap().get(servletPath);
+	            Module module = cacheService.getModuleMap().get(moduleId);
+	            if (module != null) {
+	                try {
+	                    List<RoleModuleRight> list = roleModuleRightService.getRightByModuleId(module.getModuleId());
+	                    List<String> roleIdList = new ArrayList<String>();
+	                    for (RoleModuleRight r : list) {
+	                        roleIdList.add(r.getRoleId());
+	                    }
+	                    if (roleIdList.size() > 0) {
+	                        List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
+	                        if (sysUserList != null && sysUserList.size() > 0) {
+	                            request.setAttribute("userList", sysUserList);
+	                        }
+	                    }
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    logger.error(e);
+	                }
+	            }
+	            request.setAttribute("isAdmin", true);
+	        }
+	    }
 		request.setAttribute("userStatusLock", UserStatus.locked.name());
 		request.setAttribute("userStatusActivation", UserStatus.normal.name());
 		request.setAttribute("userStatusOff", UserStatus.off.name());
@@ -133,8 +135,11 @@ public class SysUserController extends AppWebController {
 	@Permissions("add")
 	public String toAdd(HttpServletRequest request) {
 		try {
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put("createUser", getSysUser(request).getUserId());
+			Map<String, Object> param = null;
+			if (isGroup()) {
+			    param = new HashMap<String, Object>(1);
+	            param.put("createUser", getSysUser(request).getUserId());
+			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,8 +163,11 @@ public class SysUserController extends AppWebController {
 					request.setAttribute("organ", organService.getOrganById(data.getDept()));
 				}
 			}
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put("createUser", data.getCreateUser());
+			Map<String, Object> param = null;
+			if (isGroup()) {
+			    param = new HashMap<String, Object>(1);
+	            param.put("createUser", data.getCreateUser());
+			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,7 +207,7 @@ public class SysUserController extends AppWebController {
 			sysUser.setRegDate(new Timestamp(System.currentTimeMillis()));
 			sysUser.setCreateTime(sysUser.getRegDate());
 			sysUser.setCreateUser(user.getUserId());
-			sysUserService.create(sysUser, roleIds);
+			sysUserService.add(sysUser, roleIds);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -233,7 +241,7 @@ public class SysUserController extends AppWebController {
 //			}
 			
 			sysUser.setDept(dept);
-			sysUserService.update(sysUser, roleIds);
+			sysUserService.edit(sysUser, roleIds);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -303,7 +311,7 @@ public class SysUserController extends AppWebController {
 		try {
 			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
 			String[] ids = StringUtils.split(id, ",");
-			sysUserService.updateStatus(ids, userStatus);
+			sysUserService.editStatus(ids, userStatus);
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
@@ -336,11 +344,13 @@ public class SysUserController extends AppWebController {
 			param.put("userId", userId);
 			param.put("dept", organId);
 			param.put("userName", userName);
-			if (getSysUser(request).isAdmin()) {
-                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
-            } else {
-                param.put("createUser", getSysUser(request).getUserId());
-            }
+			if (isGroup()) {
+			    if (getSysUser(request).isAdmin()) {
+	                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
+	            } else {
+	                param.put("createUser", getSysUser(request).getUserId());
+	            }
+			}
 			ListPage listPage = sysUserService.queryPage(dg.getPage(), dg.getRows(), param);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			

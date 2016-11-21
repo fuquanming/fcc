@@ -1,10 +1,14 @@
 package com.fcc.web.sys.enums;
 
-import org.apache.log4j.chainsaw.Main;
-
 public enum UserStatus {
-
-    inactive("未激活"), normal("正常状态"), locked("锁定状态"), off("注销");
+    /** 未激活 */
+    inactive("未激活"),
+    /** 未激活 */
+    normal("正常状态"), 
+    /** 未激活 */
+    locked("锁定状态"), 
+    /** 未激活 */
+    off("注销");
 
     private final String info;
 

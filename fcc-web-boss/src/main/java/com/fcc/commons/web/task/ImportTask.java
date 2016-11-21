@@ -30,7 +30,7 @@ import com.fcc.commons.web.view.ImportMessage;
  */
 public class ImportTask implements Runnable {
 	
-	private static Logger logger = Logger.getLogger(ImportTask.class);
+	private Logger logger = Logger.getLogger(ImportTask.class);
 	
 	private ImportMessage importMessage = new ImportMessage();
 	

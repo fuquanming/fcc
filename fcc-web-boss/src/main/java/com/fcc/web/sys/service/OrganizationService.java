@@ -1,6 +1,5 @@
 package com.fcc.web.sys.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.fcc.commons.web.view.EasyuiTreeGridOrgan;
@@ -29,13 +28,6 @@ public interface OrganizationService {
      * @param organId
      */
     void delete(String organId);
-
-    /**
-     * 查找组织机构通过ID
-     * @param organIdList
-     * @return
-     */
-    List<Organization> findOrgans(Collection<String> organIdList);
 
     /**
      * 查询组织机构的下级

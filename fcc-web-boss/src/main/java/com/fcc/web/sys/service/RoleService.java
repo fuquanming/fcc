@@ -8,24 +8,55 @@ import com.fcc.web.sys.model.Role;
 
 public interface RoleService {
 
-    //事务申明
-    void create(Role role);
+    /**
+     * 新增角色
+     * @param role
+     */
+    void add(Role role);
 
-    //事务申明
-    void create(Role role, String[] moduleRight) throws RefusedException;
+    /**
+     * 新增角色
+     * @param role
+     * @param moduleRight
+     * @throws RefusedException
+     */
+    void add(Role role, String[] moduleRight) throws RefusedException;
 
-    //事务申明
-    void update(Role role, String[] moduleRight) throws RefusedException;
+    /**
+     * 修改角色
+     * @param role
+     * @param moduleRight
+     * @throws RefusedException
+     */
+    void edit(Role role, String[] moduleRight) throws RefusedException;
 
-    //事务申明
+    /**
+     * 删除角色
+     * @param roleIds
+     * @throws Exception
+     */
     void delete(String[] roleIds) throws Exception;
 
-    //只查事务申明
+    /**
+     * 获取角色
+     * @param roleId
+     * @return
+     */
     Role getRole(String roleId);
 
-    //只查事务申明
+    /**
+     * 获取角色
+     * @param roleId
+     * @return
+     */
     Role getRoleWithModuleRight(String roleId);
-
+    /**
+     * 分页查询角色
+     * @param pageNo
+     * @param pageSize
+     * @param param
+     * @return
+     */
     ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
 
 }

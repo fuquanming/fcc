@@ -19,14 +19,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.fcc.commons.core.service.BaseService;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
+import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.model.SysUser;
 
 /**
  * 
@@ -68,6 +72,10 @@ public class CacheService {
     
     public Map<String, String> getModuleUrlMap() {
         return moduleUrlMap;
+    }
+    
+    public SysUser getSysUser(HttpServletRequest request) {
+        return (SysUser) request.getSession().getAttribute(Constants.SysUserSession.loginUser);
     }
     
     /**
@@ -118,12 +126,22 @@ public class CacheService {
         return dataMap;
     }
     
+    @Cacheable(value = {"operateCache"}, key = "'operateMap'")
+    public Map<String, Operate> getOperateMap() {
+        @SuppressWarnings("unchecked")
+        List<Operate> dataList = baseService.getAll(Operate.class);
+        Map<String, Operate> dataMap = new HashMap<String, Operate>(dataList.size());
+        for (Operate data : dataList) {
+            dataMap.put(data.getOperateId(), data);
+        }
+        return dataMap;
+    }
+    
     /**
      * 清除模块缓存 
      */
     @CacheEvict(value = {"moduleCache"}, allEntries = true)
     public void cleanModuleMap() {
-        
     }
     
     /**
@@ -131,7 +149,13 @@ public class CacheService {
      */
     @CacheEvict(value = {"roleModuleRightCache"}, allEntries = true)
     public void cleanRoleModuleRightMap() {
-        
+    }
+    
+    /**
+     * 清除操作缓存
+     */
+    @CacheEvict(value = {"operateCache"}, allEntries = true)
+    public void cleanOperateMap() {
     }
     
     public int getExportDataTotalSize() {

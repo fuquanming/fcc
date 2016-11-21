@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
@@ -55,7 +54,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 	 */
 	
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-	    SysUser user = CacheUtil.getSysUser(request);
+	    SysUser user = cacheService.getSysUser(request);
 	    try {
             if (object instanceof HandlerMethod) {
                 HandlerMethod handlerMethod = (HandlerMethod) object;

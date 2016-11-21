@@ -20,11 +20,24 @@ import com.fcc.web.sys.view.OperateValueCount;
  * @author 傅泉明
  */
 public interface OperateDao {
-    
+    /**
+     * 删除操作
+     * @param ids   操作ID
+     * @return
+     */
     public Integer delete(String[] ids);
-    
+    /**
+     * 查询操作最大值
+     * @return
+     */
     public OperateValueCount getMaxOperateValueAndCount();
-
+    /**
+     * 分页查询操作
+     * @param pageNo        页码
+     * @param pageSize      页记录数
+     * @param param         查询参数
+     * @return
+     */
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
     
 }

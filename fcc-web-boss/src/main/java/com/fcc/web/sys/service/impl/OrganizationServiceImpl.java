@@ -1,7 +1,6 @@
 package com.fcc.web.sys.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -68,16 +67,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.OrganizationService#findOrgans(java.util.Collection)
-     **/
-	@Override
-    @Transactional(readOnly = true)//只查事务申明
-    public List<Organization> findOrgans(Collection<String> organIdList) {
-		return organizationDao.findOrgans(organIdList);
-    }
-	
-	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#findChildOrgans(java.lang.String, boolean)
      **/
 	@Override
@@ -109,15 +98,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 	 * @param sysUser
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
 	public List<Organization> getOrgans(SysUser sysUser) {
 	    List<Organization> dataList = null;
-	    String organId = sysUser.getDept();
-        if (sysUser.isAdmin()) {// 管理员无组织机构
-            dataList = baseService.getAll(Organization.class);
+        if (sysUser == null) {// 
+            dataList = findChildOrgans(Organization.ROOT.getOrganId(), true);
+        } else if (sysUser.isAdmin()) {
+            dataList = findChildOrgans(Organization.ROOT.getOrganId(), true);
         } else {
             // 制定ID查询
+            String organId = sysUser.getDept();
             dataList = findChildOrgans(organId, true);
             dataList.add((Organization) baseService.get(Organization.class, organId));
         }

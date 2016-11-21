@@ -53,7 +53,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/manage/sys/role")
 public class RoleController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(RoleController.class);
+	private Logger logger = Logger.getLogger(RoleController.class);
 	@Resource
 	private RoleService roleService;
 	@Resource
@@ -71,31 +71,33 @@ public class RoleController extends AppWebController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
-		if (getSysUser(request).isAdmin()) {
-			// 获取所有有该权限的用户列表，可以根据创建者查询其创建的角色
-			String servletPath = request.getServletPath();
-			if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
-			String moduleId = cacheService.getModuleUrlMap().get(servletPath);
-			Module module = cacheService.getModuleMap().get(moduleId);
-			if (module != null) {
-				try {
-					List<RoleModuleRight> list = roleModuleRightService.getModuleRightByModuleId(module.getModuleId());
-					List<String> roleIdList = new ArrayList<String>();
-					for (RoleModuleRight r : list) {
-						roleIdList.add(r.getRoleId());
-					}
-					if (roleIdList.size() > 0) {
-						List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
-						if (sysUserList != null && sysUserList.size() > 0) {
-							request.setAttribute("userList", sysUserList);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.error(e);
-				}
-			}
-		}
+	    if (isGroup()) {
+	        if (getSysUser(request).isAdmin()) {
+	            // 获取所有有该权限的用户列表，可以根据创建者查询其创建的角色
+	            String servletPath = request.getServletPath();
+	            if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
+	            String moduleId = cacheService.getModuleUrlMap().get(servletPath);
+	            Module module = cacheService.getModuleMap().get(moduleId);
+	            if (module != null) {
+	                try {
+	                    List<RoleModuleRight> list = roleModuleRightService.getRightByModuleId(module.getModuleId());
+	                    List<String> roleIdList = new ArrayList<String>();
+	                    for (RoleModuleRight r : list) {
+	                        roleIdList.add(r.getRoleId());
+	                    }
+	                    if (roleIdList.size() > 0) {
+	                        List<SysUser> sysUserList = sysUserService.getUserByRoleIds(roleIdList);
+	                        if (sysUserList != null && sysUserList.size() > 0) {
+	                            request.setAttribute("userList", sysUserList);
+	                        }
+	                    }
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    logger.error(e);
+	                }
+	            }
+	        }
+	    }
 		request.setAttribute("sysUser", getSysUser(request));// 当前用户
 		return "manage/sys/role_list";
 	}
@@ -122,7 +124,8 @@ public class RoleController extends AppWebController {
 	@RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
 	@Permissions("edit")
 	public String toEdit(HttpServletRequest request) {
-		getRole(request);
+		Role role = getRole(request);
+		request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
 		return "manage/sys/role_edit";
 	}
 	
@@ -144,9 +147,9 @@ public class RoleController extends AppWebController {
 			role.setCreateUser(getSysUser(request).getUserId());
 			if (rightValue != null && !"".equals(rightValue)) {
 				String[] moduleRigth = StringUtils.split(rightValue, ",");
-				roleService.create(role, moduleRigth);
+				roleService.add(role, moduleRigth);
 			} else {
-				roleService.create(role);
+				roleService.add(role);
 			}
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
@@ -192,10 +195,10 @@ public class RoleController extends AppWebController {
 			
 			if (rightValue == null || "".equals(rightValue)) {
 				// 清空权限
-				roleService.update(dbRole, null);
+				roleService.edit(dbRole, null);
 			} else {
 				String[] moduleRigth = StringUtils.split(rightValue, ",");
-				roleService.update(dbRole, moduleRigth);
+				roleService.edit(dbRole, moduleRigth);
 			}
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
@@ -252,10 +255,12 @@ public class RoleController extends AppWebController {
             if (!StringUtils.isEmpty(roleName)) {
                 param.put("roleName", roleName);
             }
-            if (getSysUser(request).isAdmin()) {
-                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
-            } else {
-                param.put("createUser", getSysUser(request).getUserId());
+            if (isGroup()) {
+                if (getSysUser(request).isAdmin()) {
+                    param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
+                } else {
+                    param.put("createUser", getSysUser(request).getUserId());
+                }
             }
 			ListPage listPage = roleService.queryPage(dg.getPage(), dg.getRows(), param);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
@@ -292,18 +297,18 @@ public class RoleController extends AppWebController {
 		return role;
 	} 
 	
-	private void getRole(HttpServletRequest request) {
+	private Role getRole(HttpServletRequest request) {
 		Role role = null;
 		String roleId = request.getParameter("id");
 		try {
 			if (StringUtils.isNotEmpty(roleId)) {
 				role = (Role) baseService.get(Role.class, roleId);
-				request.getSession().setAttribute(Constants.SysUserSession.sessionRole, role);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
 		}
+		return role;
 	}
 	
 	@ApiOperation(value = "查询模块树形数据")
@@ -342,7 +347,11 @@ public class RoleController extends AppWebController {
         List<EasyuiTreeGridModule> nodeList = null;
         try {
             Role role = (Role) request.getSession().getAttribute(Constants.SysUserSession.sessionRole);
-            nodeList = moduleService.getModuleTreeGrid(getSysUser(request), nodeStatus, role);
+            SysUser sysUser = null;
+            if (isGroup()) {
+                sysUser = getSysUser(request);// 组模式校验用户权限
+            }
+            nodeList = moduleService.getModuleTreeGrid(sysUser, nodeStatus, role);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("查询模块树形列表失败", e);

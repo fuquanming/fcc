@@ -3,25 +3,23 @@ package com.fcc.web.sys.interceptor;
 import java.util.Date;
 import java.util.Enumeration;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.cache.QueueUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
 import com.fcc.web.sys.model.SysUser;
+import com.fcc.web.sys.service.CacheService;
 
 
 /**
@@ -32,8 +30,10 @@ import com.fcc.web.sys.model.SysUser;
  */
 public class LogInterceptor implements HandlerInterceptor {
 	private Logger logger = Logger.getLogger(LogInterceptor.class);
-	@Autowired
+	@Resource
 	private RequestIpService requestIpService;
+	@Resource
+	private CacheService cacheService;
 	
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
 	}
@@ -49,7 +49,7 @@ public class LogInterceptor implements HandlerInterceptor {
 		Module module = (Module) request.getAttribute(Constants.REQUEST.MODULE);
 		Operate operate = (Operate) request.getAttribute(Constants.REQUEST.OPERATE);
 		try {
-			SysUser user = CacheUtil.getSysUser(request);
+			SysUser user = cacheService.getSysUser(request);
 			sysLog.setModuleName(module != null ? module.getModuleId() : message.getModule());
 			sysLog.setOperateName(operate != null ? operate.getOperateId() : message.getOperate());
 			boolean isLogin = false;
