@@ -33,13 +33,13 @@
     <!-- component-scan自动搜索@Component , @Controller , @Service , @Repository等标注的类 -->
     <context:component-scan base-package="com.fcc.**.dao,com.fcc.**.service" />
     
-    <bean id="cacheUtil" class="com.fcc.web.sys.cache.CacheUtil"
+    <!-- <bean id="cacheUtil" class="com.fcc.web.sys.cache.CacheUtil"
         init-method="init" destroy-method="destroy">
         <property name="exportDataTotalSize" value="${export.data.totalsize}">
         </property>
         <property name="appName" value="${app.name}"></property>
         <property name="threadPoolSize" value="${thread.pool.size}"></property>
-    </bean>
+    </bean> -->
     
     <bean id="cacheService" class="com.fcc.web.sys.service.CacheService"
         init-method="init" destroy-method="destroy">

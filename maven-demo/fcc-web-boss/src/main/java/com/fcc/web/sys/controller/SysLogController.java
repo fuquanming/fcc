@@ -44,7 +44,6 @@ import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.web.view.ReportInfo;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
@@ -66,7 +65,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequestMapping(value={"/manage/sys/sysLog"} )
 public class SysLogController extends AppWebController {
 	
-	private static Logger logger = Logger.getLogger(SysLogController.class);
+	private Logger logger = Logger.getLogger(SysLogController.class);
 	
 	private ExportTask exportTask;
 	private ImportTask importTask;
@@ -88,7 +87,7 @@ public class SysLogController extends AppWebController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
-		operateSet.addAll(CacheUtil.operateMap.values());
+		operateSet.addAll(cacheService.getOperateMap().values());
 		request.setAttribute("operateList", operateSet);
 		return "manage/sys/sysLog/sysLog_list";
 	}
@@ -99,7 +98,7 @@ public class SysLogController extends AppWebController {
 	@Permissions("report")
 	public String reportView(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
-		operateSet.addAll(CacheUtil.operateMap.values());
+		operateSet.addAll(cacheService.getOperateMap().values());
 		request.setAttribute("operateList", operateSet);
 		return "manage/sys/sysLog/sysLog_report_list";
 	}
@@ -119,7 +118,7 @@ public class SysLogController extends AppWebController {
 					if (Constants.Module.requestApp.equals(moduleId)) {
 						data.setModuleName(Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp));
 					} else if (moduleId != null) {
-						Module m = CacheUtil.moduleMap.get(moduleId);
+						Module m = cacheService.getModuleMap().get(moduleId);
 						if (m != null) data.setModuleName(m.getModuleName());
 					}
 					String operateId = data.getOperateName();
@@ -128,7 +127,7 @@ public class SysLogController extends AppWebController {
 					} else if (Constants.Operate.logout.equals(operateId)) {
 						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout));
 					} else if (operateId != null) {
-						Operate o = CacheUtil.operateMap.get(operateId);
+						Operate o = cacheService.getOperateMap().get(operateId);
 						if (o != null) data.setOperateName(o.getOperateName());
 					}
 					String eventResult = data.getEventResult();
@@ -277,7 +276,7 @@ public class SysLogController extends AppWebController {
 					if (Constants.Module.requestApp.equals(moduleId)) {
 						data.setModuleName(Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp));
 					} else if (moduleId != null) {
-						Module m = CacheUtil.moduleMap.get(moduleId);
+						Module m = cacheService.getModuleMap().get(moduleId);
 						if (m != null) data.setModuleName(m.getModuleName());
 					}
 					String operateId = data.getOperateName();
@@ -286,7 +285,7 @@ public class SysLogController extends AppWebController {
 					} else if (Constants.Operate.logout.equals(operateId)) {
 						data.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout));
 					} else if (operateId != null) {
-						Operate o = CacheUtil.operateMap.get(operateId);
+						Operate o = cacheService.getOperateMap().get(operateId);
 						if (o != null) data.setOperateName(o.getOperateName());
 					}
 				}
@@ -324,7 +323,7 @@ public class SysLogController extends AppWebController {
 	        			String groupName = null;
 		        		if ("moduleName".equals(reportGroupName)) {// 模块名称
 		        			String groupNameVal = info.getGroupName();
-		        			Module module = CacheUtil.moduleMap.get(groupNameVal);
+		        			Module module = cacheService.getModuleMap().get(groupNameVal);
 		        			if (module != null) {
 		        				groupName = module.getModuleName();
 		        			} else if (Constants.Module.requestApp.equals(groupNameVal)) {
@@ -332,7 +331,7 @@ public class SysLogController extends AppWebController {
 		        			} 
 		        		} else if ("operateName".equals(reportGroupName)) {// 操作名称
 		        			String groupNameVal = info.getGroupName();
-		        			Operate operate = CacheUtil.operateMap.get(groupNameVal);
+		        			Operate operate = cacheService.getOperateMap().get(groupNameVal);
 		        			if (operate != null) {
 		        				groupName = operate.getOperateName();
 		        			} else if (Constants.Operate.login.equals(groupNameVal)) {

@@ -26,6 +26,7 @@ import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Organization;
+import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.SysUserService;
 
@@ -42,7 +43,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/manage/sys/organ")
 public class OrganController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(OrganController.class);
+	private Logger logger = Logger.getLogger(OrganController.class);
 	@Resource
 	private OrganizationService organService;
 	@Resource
@@ -236,7 +237,11 @@ public class OrganController extends AppWebController {
 	public List<EasyuiTreeGridOrgan> treegrid(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeGridOrgan> nodeList = null;
 		try {
-		    nodeList = organService.getOrganTreeGrid(getSysUser(request));
+		    SysUser sysUser = null;
+            if (isGroup()) {
+                sysUser = getSysUser(request);
+            }
+		    nodeList = organService.getOrganTreeGrid(sysUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载机构树形列表失败！", e);
@@ -258,7 +263,11 @@ public class OrganController extends AppWebController {
 	public List<EasyuiTreeNode> tree(HttpServletRequest request, HttpServletResponse response) {
 		List<EasyuiTreeNode> nodeList = null;
 		try {
-		    nodeList = organService.getOrganTree(getSysUser(request));
+		    SysUser sysUser = null;
+		    if (isGroup()) {
+		        sysUser = getSysUser(request);
+		    }
+		    nodeList = organService.getOrganTree(sysUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载机构树形失败！", e);

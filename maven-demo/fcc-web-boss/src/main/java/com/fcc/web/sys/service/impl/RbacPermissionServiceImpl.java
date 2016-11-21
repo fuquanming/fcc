@@ -69,12 +69,16 @@ public class RbacPermissionServiceImpl implements RbacPermissionService {
 			while (roleIt.hasNext()){
 				Role role = roleIt.next();
 				//获取角色-模块的权值
-				RoleModuleRight rmr = roleModuleRightService.getModuleRightByKey(role.getRoleId() , moduleId);
-				//进行权值&比较
-				if(rmr != null){
-					if((rmr.getRightValue() & op.getOperateValue()) > 0){
-						return true;
-					}
+//				RoleModuleRight rmr = roleModuleRightService.getModuleRightByKey(role.getRoleId() , moduleId);
+				Map<String, RoleModuleRight> rightMap = cacheService.getRoleModuleRightMap().get(role.getRoleId());
+				if (rightMap != null) {
+				    RoleModuleRight rmr = rightMap.get(moduleId);
+	                //进行权值&比较
+	                if(rmr != null){
+	                    if((rmr.getRightValue() & op.getOperateValue()) > 0){
+	                        return true;
+	                    }
+	                }
 				}
 			}
 		}

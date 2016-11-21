@@ -9,7 +9,6 @@
  */
 package com.fcc.web.sys.dao.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,23 +47,20 @@ public class OrganizationDaoImpl implements OrganizationDao {
     }
     
     @Override
-    public List<Organization> findOrgans(Collection<String> organIdList) {
-        Map<String, Object> param = new HashMap<String, Object>(1);
-        param.put("organId", organIdList);
-        return baseDao.find("from Organization where organId in(:organId)", param);
-    }
-    
-    @Override
     public List<Organization> findChildOrgans(String parentOrganId, boolean allChildren) {
         StringBuilder sb = new StringBuilder();
         Map<String, Object> param = null;
         sb.append("from Organization where 1=1 ");
         if (allChildren) {
-            Organization organ = (Organization) baseDao.get(Organization.class, parentOrganId);
-            if (organ != null) {
-                param = new HashMap<String, Object>(1);
-                sb.append(" and parentIds like:organId ");
-                param.put("organId", organ.getParentIds() + "-%");
+            if (Organization.ROOT.getOrganId().equals(parentOrganId)) {
+                
+            } else {
+                Organization organ = (Organization) baseDao.get(Organization.class, parentOrganId);
+                if (organ != null) {
+                    param = new HashMap<String, Object>(1);
+                    sb.append(" and parentIds like:organId ");
+                    param.put("organId", organ.getParentIds() + "-%");
+                }
             }
         } else {
 //            sb.append(" and organId like:organId ");

@@ -41,37 +41,34 @@ public class RoleServiceImpl implements RoleService {
 
     /**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.RoleService#create(com.fcc.web.sys.model.Role)
+     * @see com.fcc.web.sys.service.RoleService#add(com.fcc.web.sys.model.Role)
      **/
     @Override
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void create(Role role) {
+    public void add(Role role) {
         baseService.create(role);
     }
 
     /**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.RoleService#create(com.fcc.web.sys.model.Role, java.lang.String[])
+     * @see com.fcc.web.sys.service.RoleService#add(com.fcc.web.sys.model.Role, java.lang.String[])
      **/
     @Override
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void create(Role role, String[] moduleRight) throws RefusedException {
+    public void add(Role role, String[] moduleRight) throws RefusedException {
         baseService.create(role);
-        roleModuleRightService.createRight(role.getRoleId(), moduleRight);
+        roleModuleRightService.addRight(role.getRoleId(), moduleRight);
     }
 
     /**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.RoleService#update(com.fcc.web.sys.model.Role, java.lang.String[])
+     * @see com.fcc.web.sys.service.RoleService#edit(com.fcc.web.sys.model.Role, java.lang.String[])
      **/
     @Override
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
-    public void update(Role role, String[] moduleRight) throws RefusedException {
+    public void edit(Role role, String[] moduleRight) throws RefusedException {
         baseService.update(role);
-        roleModuleRightService.createRight(role.getRoleId(), moduleRight);
+        roleModuleRightService.addRight(role.getRoleId(), moduleRight);
     }
 
     /**
@@ -80,12 +77,11 @@ public class RoleServiceImpl implements RoleService {
      **/
     @Override
     @Transactional(rollbackFor = Exception.class)
-    //事务申明
     public void delete(String[] roleIds) throws Exception {
         if (roleIds != null && roleIds.length > 0) {
             roleModuleRightDao.deleteByRoleIds(roleIds);
             roleDao.delete(roleIds);
-            roleDao.deleteUserRoleByRoleId(roleIds);
+            roleDao.deleteRoleByRoleId(roleIds);
         }
     }
 
@@ -95,7 +91,6 @@ public class RoleServiceImpl implements RoleService {
      **/
     @Override
     @Transactional(readOnly = true)
-    //只查事务申明
     public Role getRole(String roleId) {
         Role role = null;
         if (Role.ROOT.getRoleId().equals(roleId)) {
@@ -112,7 +107,6 @@ public class RoleServiceImpl implements RoleService {
      **/
     @Override
     @Transactional(readOnly = true)
-    //只查事务申明
     public Role getRoleWithModuleRight(String roleId) {
         Role role = getRole(roleId);
         if (role != null) {
@@ -128,6 +122,7 @@ public class RoleServiceImpl implements RoleService {
      * @see com.fcc.web.sys.service.RoleService#queryPage(int, int, java.util.Map)
      **/
     @Override
+    @Transactional(readOnly = true)
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
         return roleDao.queryPage(pageNo, pageSize, param);
     }

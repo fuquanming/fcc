@@ -27,5 +27,13 @@ public class ConfigUtil {
         }
         return false;
     }
+    /** 是否是组模式 */
+    public static boolean isGroup() {
+        String mode = Resources.CONFIG.getString("group.mode");
+        if ("group".equals(mode)) {
+            return true;
+        }
+        return false;
+    }
     
 }

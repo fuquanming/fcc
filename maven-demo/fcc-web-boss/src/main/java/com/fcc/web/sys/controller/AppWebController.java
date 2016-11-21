@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import com.fcc.commons.web.controller.BaseController;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 
@@ -16,13 +17,22 @@ public class AppWebController extends BaseController {
     @Resource
     CacheService cacheService;
     
+    public void setSysUser(SysUser sysUser, HttpServletRequest request) {
+        request.getSession().setAttribute(Constants.SysUserSession.loginUser, sysUser);
+    }
+    
     public SysUser getSysUser(HttpServletRequest request) {
-        return (SysUser) request.getSession().getAttribute(Constants.SysUserSession.loginUser);
+        return cacheService.getSysUser(request);
     }
     
     public void execute(Runnable runnable) {
         cacheService.getThreadPool().execute(runnable);
     }
+    
+    public boolean isGroup() {
+        return ConfigUtil.isGroup();
+    }
+    
     /** 重载模块缓存 */
     public void reloadModuleCache() {
         execute(new Runnable() {

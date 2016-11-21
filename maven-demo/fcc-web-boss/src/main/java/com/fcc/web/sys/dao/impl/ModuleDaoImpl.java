@@ -10,9 +10,7 @@
 package com.fcc.web.sys.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -39,7 +37,7 @@ public class ModuleDaoImpl implements ModuleDao {
     private BaseDao baseDao;
     
     @Override
-    public void createModuleOperate(String moduleId, String[] operateIds) {
+    public void addOperate(String moduleId, String[] operateIds) {
         int length = operateIds.length;
         for (int i = 0; i < length; i++) {
             StringBuilder sb = new StringBuilder();
@@ -63,7 +61,7 @@ public class ModuleDaoImpl implements ModuleDao {
     }
 
     @Override
-    public Integer deleteModuleOperate(String moduleId, boolean isAll) {
+    public Integer deleteOperate(String moduleId, boolean isAll) {
         if (isAll) {
             return baseDao.executeSql("delete from sys_rbac_mod2op where module_Id like ?", moduleId + "%");
         } else {
@@ -127,62 +125,31 @@ public class ModuleDaoImpl implements ModuleDao {
         return moduleList;
     }
     
-    @Override
-    public List<Module> getModuleByUrl() {
-        Map<String, Object> param = null;
-        return baseDao.find("from Module where moduleDesc is not null and moduleDesc != ''", param);
-    }
-    
-    
-    @Override
-    public List<Module> findChildModulesWithOperation(String moduleId) {
-        Map<String, Object> param = new HashMap<String, Object>(1);
-        StringBuilder sb = new StringBuilder();
-        sb.append("from Module where 1=1 ");
-        if (!Module.ROOT.getModuleId().equals(moduleId)) {
-            sb.append(" and moduleId like:=moduleId ");
-            param.put("moduleId", moduleId + "-%");
-        }
-        sb.append(" order by moduleLevel asc, moduleSort asc");
-        List<Module> dataList = baseDao.find(sb.toString(), param);
-        for (Iterator<Module> it = dataList.iterator(); it.hasNext();) {
-            it.next().getOperates().size();
-        }
-        return dataList;
-    }
-    
-    @Override
-    public List<Module> findModules(Collection<String> moduleIdList) {
-        Map<String, Object> param = new HashMap<String, Object>(1);
-        param.put("moduleId", moduleIdList);
-        return baseDao.find("from Module where moduleId in(:moduleId)", param);
-    }
-    
-    @Override
-    public List<Module> findChildModules(String parentModuleId, boolean allChildren) {
-        if (parentModuleId != null) {
-            StringBuilder sb = new StringBuilder();
-            Map<String, Object> param = new HashMap<String, Object>();
-            sb.append("from Module where 1=1 ");
-            if (Module.ROOT.getModuleId().equals(parentModuleId)) {
-                if (allChildren) {
-                    // Do Nothing
-                } else {
-                    sb.append(" and moduleId not like:=moduleId ");
-                    param.put("moduleId", "%-%");
-                }
-            } else {
-                if (allChildren) {
-                    sb.append(" and moduleId like:=moduleId ");
-                    param.put("moduleId", parentModuleId + "-%");
-                } else {
-                    sb.append(" and moduleId like:=moduleId ");
-                    param.put("moduleId", parentModuleId + "-____");
-                }
-            }
-            sb.append(" order by moduleLevel asc, moduleSort asc");
-            return baseDao.find(sb.toString(), param);
-        }
-        return null;
-    }
+//    @Override
+//    public List<Module> findChildModules(String parentModuleId, boolean allChildren) {
+//        if (parentModuleId != null) {
+//            StringBuilder sb = new StringBuilder();
+//            Map<String, Object> param = new HashMap<String, Object>();
+//            sb.append("from Module where 1=1 ");
+//            if (Module.ROOT.getModuleId().equals(parentModuleId)) {
+//                if (allChildren) {
+//                    // Do Nothing
+//                } else {
+//                    sb.append(" and moduleId not like:=moduleId ");
+//                    param.put("moduleId", "%-%");
+//                }
+//            } else {
+//                if (allChildren) {
+//                    sb.append(" and moduleId like:=moduleId ");
+//                    param.put("moduleId", parentModuleId + "-%");
+//                } else {
+//                    sb.append(" and moduleId like:=moduleId ");
+//                    param.put("moduleId", parentModuleId + "-____");
+//                }
+//            }
+//            sb.append(" order by moduleLevel asc, moduleSort asc");
+//            return baseDao.find(sb.toString(), param);
+//        }
+//        return null;
+//    }
 }

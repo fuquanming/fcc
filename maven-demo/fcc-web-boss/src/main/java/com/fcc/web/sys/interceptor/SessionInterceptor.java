@@ -1,5 +1,6 @@
 package com.fcc.web.sys.interceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,10 +14,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
+import com.fcc.web.sys.service.CacheService;
 
 /**
  * <p>Description:会话拦截器</p>
@@ -27,6 +28,8 @@ import com.fcc.web.sys.model.SysUser;
 public class SessionInterceptor implements HandlerInterceptor {
 
     private Logger logger = Logger.getLogger(SessionInterceptor.class);
+    @Resource
+    private CacheService cacheService;
     // TODO 耗时改造
     ThreadLocal<StopWatch> stopWatchLocal = new ThreadLocal<StopWatch>();
     ThreadLocal<Long> timeLocal = new ThreadLocal<Long>();
@@ -75,8 +78,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 	        }
 	    }
         
-	    
-	    SysUser user = CacheUtil.getSysUser(request);
+	    SysUser user = cacheService.getSysUser(request);
 //	    // uploadify-3.2.1 使用flash上传文件 没有携带cookie 代码绑定 原来sessionId
 //		HttpSession session = request.getSession();
 //	    if (user == null) {

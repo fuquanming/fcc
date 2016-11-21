@@ -49,48 +49,48 @@ public class SysUserServiceImpl implements SysUserService {
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.SysUserService#create(com.fcc.web.sys.model.SysUser, java.lang.String[])
+     * @see com.fcc.web.sys.service.SysUserService#add(com.fcc.web.sys.model.SysUser, java.lang.String[])
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public void create(SysUser data, String[] roleIds) {
+	public void add(SysUser data, String[] roleIds) {
 	    baseService.create(data);
-		createRole(data.getUserId(), roleIds);
+		addRole(data.getUserId(), roleIds);
 	}
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.SysUserService#createRole(java.lang.String, java.lang.String[])
+     * @see com.fcc.web.sys.service.SysUserService#addRole(java.lang.String, java.lang.String[])
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public void createRole(String userId, String[] roleIds) {
+	public void addRole(String userId, String[] roleIds) {
 		// 删除所有操作
-		roleDao.deleteUserRoleByUserId(userId);
+		roleDao.deleteRoleByUserId(userId);
     	if (roleIds == null || roleIds.length == 0) {
     	} else {// 更新操作
-    	    roleDao.createUserRole(userId, roleIds);
+    	    roleDao.addRole(userId, roleIds);
     	}
 	}
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.SysUserService#update(com.fcc.web.sys.model.SysUser, java.lang.String[])
+     * @see com.fcc.web.sys.service.SysUserService#edit(com.fcc.web.sys.model.SysUser, java.lang.String[])
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public void update(SysUser data, String[] roleIds) {
-		update(data);
-		createRole(data.getUserId(), roleIds);
+	public void edit(SysUser data, String[] roleIds) {
+		edit(data);
+		addRole(data.getUserId(), roleIds);
 	}
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.SysUserService#update(com.fcc.web.sys.model.SysUser)
+     * @see com.fcc.web.sys.service.SysUserService#edit(com.fcc.web.sys.model.SysUser)
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public void update(SysUser data) {
+	public void edit(SysUser data) {
 	    sysUserDao.update(data);
 	}
 	
@@ -112,16 +112,16 @@ public class SysUserServiceImpl implements SysUserService {
     @Transactional(rollbackFor = Exception.class)
 	public void delete(String[] userIds) {
 	    sysUserDao.deleteUser(userIds);
-	    roleDao.deleteUserRoleByUserId(userIds);
+	    roleDao.deleteRoleByUserId(userIds);
 	}
 	
 	/**
      * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.SysUserService#updateStatus(java.lang.String[], java.lang.String)
+     * @see com.fcc.web.sys.service.SysUserService#editStatus(java.lang.String[], java.lang.String)
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public Integer updateStatus(String[] userIds, String userStatus) {
+	public Integer editStatus(String[] userIds, String userStatus) {
 	    return sysUserDao.updateStatus(userIds, userStatus);
 	}
 	

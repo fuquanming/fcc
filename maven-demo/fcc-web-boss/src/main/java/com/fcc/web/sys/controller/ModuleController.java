@@ -27,7 +27,6 @@ import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.ModuleService;
 import com.fcc.web.sys.service.OperateService;
 import com.fcc.web.sys.service.RbacPermissionService;
@@ -48,7 +47,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/manage/sys/module")
 public class ModuleController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(ModuleController.class);
+	private Logger logger = Logger.getLogger(ModuleController.class);
 	@Resource
 	private ModuleService moduleService;
 	@Resource
@@ -121,7 +120,7 @@ public class ModuleController extends AppWebController {
 		if (it.hasNext()) {
 			role = it.next();
 			if (role != null && role.getRoleId() != null) {
-			    roleModuleRightService.updateModuleRight(role.getRoleId(), data.getModuleId(), Long.MAX_VALUE);
+			    roleModuleRightService.editRight(role.getRoleId(), data.getModuleId(), Long.MAX_VALUE);
 			    // 更新系统缓存角色
 			}
 		}

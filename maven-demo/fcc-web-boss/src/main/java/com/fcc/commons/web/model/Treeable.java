@@ -9,11 +9,7 @@
  */
 package com.fcc.commons.web.model;
 
-import javax.persistence.Transient;
-
 import org.springframework.util.StringUtils;
-
-import com.fcc.web.sys.model.Organization;
 
 /**
  * tree结构

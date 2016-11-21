@@ -11,14 +11,13 @@ import org.springframework.web.context.WebApplicationContext;
  * @Email fuquanming@gmail.com
  */
 
-@SuppressWarnings("unchecked")
 public final class SpringContextUtil {
 	private static WebApplicationContext wac;
 	static {
 		wac = ContextLoader.getCurrentWebApplicationContext();
 	}
 
-	public static Object getBean(Class clazz) {
+	public static <T> T getBean(Class<T> clazz) {
 		return wac.getBean(clazz);
 	}
 

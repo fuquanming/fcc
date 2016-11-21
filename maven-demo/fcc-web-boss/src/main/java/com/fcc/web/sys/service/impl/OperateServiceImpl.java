@@ -7,8 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +89,6 @@ public class OperateServiceImpl implements OperateService {
      * @see com.fcc.web.sys.service.OperateService#edit(com.fcc.web.sys.model.Operate)
      **/
 	@Override
-    @CacheEvict(value = "operateCache", key = "#o.getOperateId()")
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void edit(Operate o) {
 	    if (o.getOperateId() != null) {
@@ -111,28 +108,6 @@ public class OperateServiceImpl implements OperateService {
 	public Integer delete(String[] ids) {
 		return operateDao.delete(ids);
 	}
-	
-	/**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.OperateService#getOperates()
-     **/
-	@Override
-    @Transactional(readOnly = true)//只查事务申明
-	@Cacheable(value = "operateCache", key = "#operate")
-	public List<Operate> getOperates() {
-	    return baseService.getAll(Operate.class);
-	}
-	
-	/**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.OperateService#getOperate(java.lang.String)
-     **/
-	@Override
-    @Transactional(readOnly = true)//只查事务申明
-    @Cacheable(value = "operateCache", key = "#operateId")
-    public Operate getOperate(String operateId) {
-        return (Operate) baseService.get(Operate.class, operateId);
-    }
 	
 	/**
      * //TODO 添加override说明

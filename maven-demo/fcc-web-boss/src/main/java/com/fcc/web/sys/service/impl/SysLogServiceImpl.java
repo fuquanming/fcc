@@ -18,10 +18,10 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
+import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysLogService;
 
 /**
@@ -36,6 +36,8 @@ import com.fcc.web.sys.service.SysLogService;
 public class SysLogServiceImpl implements SysLogService, ExportService, ImportService {
     @Resource
     private BaseService baseService;
+    @Resource
+    private CacheService cacheService;
     
     public List<String> dataConver(Object converObj) {
         List<String> dataList = new ArrayList<String>();
@@ -47,7 +49,7 @@ public class SysLogServiceImpl implements SysLogService, ExportService, ImportSe
             dataList.add(DataFormater.noNullValue(data.getIpAddress()));
             dataList.add(DataFormater.noNullValue(data.getLogTime(), "yyyy-MM-dd HH:mm:ss"));
             String moduleVal = DataFormater.noNullValue(data.getModuleName());
-            Module module = CacheUtil.moduleMap.get(moduleVal);
+            Module module = cacheService.getModuleMap().get(moduleVal);
             String moduleName = moduleVal;
             if (module != null) {
                 moduleName = module.getModuleName();
@@ -57,7 +59,7 @@ public class SysLogServiceImpl implements SysLogService, ExportService, ImportSe
             dataList.add(moduleName);
             
             String operateVal = DataFormater.noNullValue(data.getOperateName());
-            Operate operate = CacheUtil.operateMap.get(operateVal);
+            Operate operate = cacheService.getOperateMap().get(operateVal);
             String operateName = operateVal;
             if (operate != null) {
                 operateName = operate.getOperateName();
@@ -98,7 +100,7 @@ public class SysLogServiceImpl implements SysLogService, ExportService, ImportSe
                 if (Constants.MODULE.Text.TEXT_MAP.get(Constants.MODULE.REQUEST_APP).equals(value)) {
                     value = Constants.MODULE.REQUEST_APP;
                 } else {
-                    Iterator<Module> mIt = CacheUtil.moduleMap.values().iterator();
+                    Iterator<Module> mIt = cacheService.getModuleMap().values().iterator();
                     while (mIt.hasNext()) {
                         Module o = mIt.next();
                         if (o.getModuleName().equals(value)) {
@@ -114,7 +116,7 @@ public class SysLogServiceImpl implements SysLogService, ExportService, ImportSe
                 } else if (Constants.OPERATE.Text.TEXT_MAP.get(Constants.OPERATE.LOGOUT).equals(value)) {
                     value = Constants.OPERATE.LOGOUT;
                 } else {
-                    Iterator<Operate> opIt = CacheUtil.operateMap.values().iterator();
+                    Iterator<Operate> opIt = cacheService.getOperateMap().values().iterator();
                     while (opIt.hasNext()) {
                         Operate o = opIt.next();
                         if (o.getOperateName().equals(value)) {

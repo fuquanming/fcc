@@ -24,23 +24,23 @@ public interface RoleDao {
      * @param userId
      * @param roleIds
      */
-    public void createUserRole(String userId, String[] roleIds);
+    public void addRole(String userId, String[] roleIds);
     /**
      * 删除用户角色 
      * @param userId
      */
-    public Integer deleteUserRoleByUserId(String userId);
+    public Integer deleteRoleByUserId(String userId);
     /**
      * 删除用户角色 
      * @param userId
      */
-    public Integer deleteUserRoleByUserId(String[] userIds);
+    public Integer deleteRoleByUserId(String[] userIds);
     
     /**
      * 删除用户角色 
      * @param userId
      */
-    public Integer deleteUserRoleByRoleId(String[] roleIds);
+    public Integer deleteRoleByRoleId(String[] roleIds);
     /**
      * 删除角色 
      * @param userId

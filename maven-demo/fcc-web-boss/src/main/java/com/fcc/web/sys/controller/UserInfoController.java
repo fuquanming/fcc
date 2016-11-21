@@ -14,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
@@ -34,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/manage/sys/userInfo")
 public class UserInfoController extends AppWebController {
 
-	private static Logger logger = Logger.getLogger(UserInfoController.class);
+	private Logger logger = Logger.getLogger(UserInfoController.class);
 	@Autowired
 	private SysUserService sysUserService;
 	
@@ -57,10 +56,10 @@ public class UserInfoController extends AppWebController {
 		try {
 			SysUser user = getSysUser(request);
 			Set<Role> roles = user.getRoles();
-			sysUserService.update(sysUser);
+			sysUserService.edit(sysUser);
 			BeanUtils.copyProperties(sysUser, user);
 			user.setRoles(roles);
-			CacheUtil.setSysUser(request, user);
+			setSysUser(user, request);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {

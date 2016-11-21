@@ -15,7 +15,6 @@ import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.cache.CacheUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
@@ -35,7 +34,7 @@ import io.swagger.annotations.ApiParam;
 @Controller
 public class LoginController extends AppWebController {
 
-    private static Logger logger = Logger.getLogger(LoginController.class);
+    private Logger logger = Logger.getLogger(LoginController.class);
 
     @Resource
     private SysUserService sysUserService;
@@ -67,7 +66,8 @@ public class LoginController extends AppWebController {
             logger.info("系统登录成功，userId:" + user.getUserId());
             message.setSuccess(true);
             message.setMsg(Constants.StatusCode.Sys.success);
-            CacheUtil.initLoginUser(request, user);
+//            CacheUtil.initLoginUser(request, user);
+            setSysUser(user, request);
         } catch (RefusedException e) {
             message.setMsg(e.getMessage());
             message.setObj(e.getMessage());

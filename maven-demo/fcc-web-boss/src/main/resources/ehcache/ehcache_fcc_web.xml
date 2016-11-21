@@ -20,7 +20,7 @@
 	<!-- 集群配置 通知的其他缓存地址
 	<cacheManagerPeerProviderFactory
 	class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-	properties="peerDiscovery=manual,rmiUrls=//localhost:40002/moduleCache|//localhost:40002/roleModuleRightCache" />
+	properties="peerDiscovery=manual,rmiUrls=//localhost:40002/moduleCache|//localhost:40002/roleModuleRightCache|//localhost:40002/operateCache" />
 	--><!-- 本机监听的地址 
 	<cacheManagerPeerListenerFactory
 		class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
@@ -44,6 +44,22 @@
     
     <!-- 系统模块缓存  不过期 -->
     <cache name="roleModuleRightCache"
+           maxEntriesLocalHeap="10000"
+           overflowToDisk="false"
+           eternal="false"
+           diskPersistent="false"
+           timeToLiveSeconds="0"
+           timeToIdleSeconds="0"
+           statistics="true">
+           <!-- 集群监听 
+           <cacheEventListenerFactory
+    class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+    properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true,replicateUpdatesViaCopy= false, replicateRemovals= true " />
+    -->
+    </cache> 
+    
+    <!-- 系统模块操作  不过期 -->
+    <cache name="operateCache"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
            eternal="false"

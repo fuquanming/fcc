@@ -9,7 +9,6 @@
  */
 package com.fcc.web.sys.dao;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.fcc.web.sys.model.Organization;
@@ -20,10 +19,17 @@ import com.fcc.web.sys.model.Organization;
  * @author 傅泉明
  */
 public interface OrganizationDao {
-
+    /**
+     * 删除组织机构
+     * @param organId   机构ID
+     * @return
+     */
     public Integer delete(String organId);
-    
-    public List<Organization> findOrgans(Collection<String> organIdList);
-    
+    /**
+     * 查询子机构
+     * @param parentOrganId     父机构ID
+     * @param allChildren       是否全部子机构
+     * @return
+     */
     public List<Organization> findChildOrgans(String parentOrganId, boolean allChildren);
 }
