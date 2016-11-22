@@ -43,7 +43,7 @@ $(function() {
         },
         done: function (e, data) {
         	Tool.message.progress('close');
-        	if (Tool.operate.check(data.result) == true) {
+        	if (Tool.operate.check(data.result, true) == true) {
                 cleanFileuploadTable();
                 $('<tr><td id="importWatiImgTd"><img id="importWaitImg" src="images/wait.gif"/></td><td id="importDataTd" style="color:red;"></td></tr>').appendTo(fileuploadTable)
                 queryImportDataSize();

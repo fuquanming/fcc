@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
 import com.fcc.commons.core.service.BaseService;
-import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
@@ -40,6 +39,8 @@ import com.fcc.commons.web.task.ExportTask;
 import com.fcc.commons.web.task.ImportTask;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
+import com.fcc.commons.web.view.EasyuiTreeGridModule;
+import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
@@ -48,6 +49,7 @@ import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
+import com.fcc.web.sys.service.ModuleService;
 import com.fcc.web.sys.service.SysLogService;
 
 import io.swagger.annotations.ApiOperation;
@@ -80,6 +82,8 @@ public class SysLogController extends AppWebController {
 	//默认多列排序,example: username desc,createTime asc
 	@Resource
 	private SysLogService sysLogService;
+	@Resource
+	private ModuleService moduleService;
 	
 	/** 显示列表 */
 	@ApiOperation(value = "显示日志列表页面")
@@ -88,6 +92,16 @@ public class SysLogController extends AppWebController {
 	public String view(HttpServletRequest request) {
 		TreeSet<Operate> operateSet = new TreeSet<Operate>();
 		operateSet.addAll(cacheService.getOperateMap().values());
+		Operate loginOperate = new Operate();
+		loginOperate.setOperateId(Constants.Operate.login);
+		loginOperate.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.login));
+		loginOperate.setOperateValue(-2L);
+		operateSet.add(loginOperate);
+		Operate logoutOperate = new Operate();
+		logoutOperate.setOperateId(Constants.Operate.logout);
+		logoutOperate.setOperateName(Constants.Operate.Text.TEXT_MAP.get(Constants.Operate.logout));
+		logoutOperate.setOperateValue(-1L);
+		operateSet.add(logoutOperate);
 		request.setAttribute("operateList", operateSet);
 		return "manage/sys/sysLog/sysLog_list";
 	}
@@ -111,7 +125,7 @@ public class SysLogController extends AppWebController {
 	        @ApiParam(required = true, value = "日志ID") @RequestParam(name = "id", defaultValue = "") String id) {
 		if (StringUtils.isNotEmpty(id)) {
 			try {
-				SysLog data = (SysLog) baseService.get(SysLog.class, java.lang.Long.valueOf(id));
+				SysLog data = (SysLog) baseService.get(SysLog.class, id);
 				request.setAttribute("sysLog", data);
 				if (data != null) {
 					String moduleId = data.getModuleName();
@@ -161,7 +175,7 @@ public class SysLogController extends AppWebController {
 		String id = request.getParameter("id");
 		if (StringUtils.isNotEmpty(id)) {
 			try {
-				SysLog sysLog = (SysLog) baseService.get(SysLog.class, java.lang.Long.valueOf(id));
+				SysLog sysLog = (SysLog) baseService.get(SysLog.class, id);
 				request.setAttribute("sysLog", sysLog);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -202,7 +216,7 @@ public class SysLogController extends AppWebController {
 			SysLog dbSysLog = null;
 			String logId = request.getParameter("logId");
 			if (StringUtils.isNotEmpty(logId)) {
-				dbSysLog = (SysLog) baseService.get(SysLog.class, Long.valueOf(logId));
+				dbSysLog = (SysLog) baseService.get(SysLog.class, logId);
 			}
 			if (dbSysLog != null) {
 				String logTimeString = request.getParameter("logTimeString");
@@ -241,7 +255,7 @@ public class SysLogController extends AppWebController {
 				throw new RefusedException("请选择要删除的记录！");
 			}
 			String[] ids = StringUtils.split(id, ",");
-			baseService.deleteById(SysLog.class, DataFormater.getLong(ids), "logId");
+			baseService.deleteById(SysLog.class, ids, "logId");
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -301,6 +315,36 @@ public class SysLogController extends AppWebController {
 		}
 		return json;
 	}
+	
+	/**
+     * 模块 Tree 返回json 给 easyUI
+     * @return
+     */
+    @ApiOperation(value = "查询模块树形数据")
+    @RequestMapping(value = "/moduleTree.do", method = RequestMethod.POST)
+    @ResponseBody
+    @Permissions("view")
+    public List<EasyuiTreeNode> moduleTree(HttpServletRequest request,
+            @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
+        if (StringUtils.isEmpty(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;
+        List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
+        try {
+            // 查询所有模块
+            nodeList = moduleService.getModuleTree(null, nodeStatus, false, null);
+            EasyuiTreeNode node = new EasyuiTreeNode();
+            node.setId(Constants.Module.requestApp);
+            node.setText(Constants.Module.Text.TEXT_MAP.get(Constants.Module.requestApp));
+            nodeList.add(node);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("查询模块树形失败", e);
+            nodeList = new ArrayList<EasyuiTreeNode>();
+            EasyuiTreeGridModule node = new EasyuiTreeGridModule();
+            node.setMsg(e.getMessage());
+            nodeList.add(node);
+        }
+        return nodeList;
+    }
 	
 	/** 报表 */
 	@SuppressWarnings("unchecked")

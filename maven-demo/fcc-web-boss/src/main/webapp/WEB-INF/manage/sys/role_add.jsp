@@ -51,7 +51,7 @@
 <%@ include file="/WEB-INF/head/init_treegrid.jsp" %>
 <script type="text/javascript">
 treegridParam_id = 'treegrid';// 用到的datagrid的ID
-treegridParam_url = '${basePath}manage/sys/role/treegrid.do';// 数据源url
+treegridParam_url = '${basePath}manage/sys/role/treegrid.do?nodeStatus=closed';// 数据源url
 treegridParam_idField = 'id';// datagrid表格的唯一标识
 treegridParam_idField_checkbox = true;// 是否显示多选框
 treegridParam_column_value = [ [ {
@@ -154,6 +154,6 @@ saveParam_afterCallback = function(data, success) {
 }
 var moduleTree;
 $(function() {
-	//moduleTree = getTree({queryUrl:'manage/sys/role/tree.do?nodeStatus=closed',id:'moduleTree',closed:true});
+	<%-- moduleTree = getTree({queryUrl:'manage/sys/role/tree.do?nodeStatus=closed',id:'moduleTree',closed:true}); --%>
 })
 </script>

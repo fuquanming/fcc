@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fcc.commons.web.util.SpringContextUtil;
+import com.fcc.web.sys.cache.QueueUtil;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysLog;
 import com.fcc.web.sys.model.SysUser;
@@ -29,12 +30,16 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 
 	private Logger logger = Logger.getLogger(AppListener.class);
 
+	private CacheService cacheService;
+	
 	public void contextInitialized(ServletContextEvent event) {
-		final CacheService cacheService = (CacheService) SpringContextUtil.getBean(CacheService.class);
+		cacheService = (CacheService) SpringContextUtil.getBean(CacheService.class);
 		cacheService.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
                 cacheService.getModuleMap();
+                cacheService.getRoleModuleRightMap();
+                cacheService.getOperateMap();
             }
         });
 	}
@@ -52,14 +57,14 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 			try {
 				SysLog sysLog = new SysLog();
 				sysLog.setIpAddress(user.getIp());
-//				sysLog.setModuleName(Constanst.MODULE.REQUEST_APP);
-//				sysLog.setOperateName(Constanst.OPERATE.LOGOUT);
+				sysLog.setModuleName(Constants.Module.requestApp);
+				sysLog.setOperateName(Constants.Operate.logout);
 				sysLog.setUserId(user.getUserId());
 				sysLog.setUserName(user.getUserName());
 				sysLog.setEventParam(user.getUserId());
 				sysLog.setEventResult(SysLog.EVENT_RESULT_OK);
 				sysLog.setLogTime(new Date());
-//				QueueUtil.getQueue().offer(sysLog);
+				QueueUtil.getCreateQueue().offer(sysLog);
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error(e);

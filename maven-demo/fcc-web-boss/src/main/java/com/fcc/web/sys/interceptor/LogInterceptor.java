@@ -11,10 +11,10 @@ import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.cache.QueueUtil;
+import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
@@ -46,15 +46,15 @@ public class LogInterceptor implements HandlerInterceptor {
 		String status = message.isSuccess() ? SysLog.EVENT_RESULT_OK : SysLog.EVENT_RESULT_FAIL;
 		Object obj = message.getObj();
 		SysLog sysLog = new SysLog();
-		Module module = (Module) request.getAttribute(Constants.REQUEST.MODULE);
-		Operate operate = (Operate) request.getAttribute(Constants.REQUEST.OPERATE);
+		Module module = (Module) request.getAttribute(Constants.Request.module);
+		Operate operate = (Operate) request.getAttribute(Constants.Request.operate);
 		try {
 			SysUser user = cacheService.getSysUser(request);
 			sysLog.setModuleName(module != null ? module.getModuleId() : message.getModule());
 			sysLog.setOperateName(operate != null ? operate.getOperateId() : message.getOperate());
 			boolean isLogin = false;
-			if (Constants.MODULE.REQUEST_APP.equals(sysLog.getModuleName()) &&
-					Constants.OPERATE.LOGIN.equals(sysLog.getOperateName())) {
+			if (Constants.Module.requestApp.equals(sysLog.getModuleName()) &&
+			        Constants.Operate.login.equals(sysLog.getOperateName())) {
 				// 访问系统，登录
 				isLogin = true;
 			}
