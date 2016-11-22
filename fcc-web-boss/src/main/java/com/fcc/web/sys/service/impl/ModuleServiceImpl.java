@@ -204,7 +204,6 @@ public class ModuleServiceImpl implements ModuleService {
             node.setText(m.getModuleName());
             node.setModuleDesc(moduleDesc);
             node.setModuleSort(m.getModuleSort());
-            node.setState(nodeStatus);
             
             Map<String, Object> attributes = new HashMap<String, Object>(2);
             node.setAttributes(attributes);
@@ -262,6 +261,7 @@ public class ModuleServiceImpl implements ModuleService {
                 cacheNode.setChildren(children);
             } else {
                 nodeList.add(node);// 移除根目录后，添加节点
+                node.setState(nodeStatus);
             }
         }
         return nodeList;

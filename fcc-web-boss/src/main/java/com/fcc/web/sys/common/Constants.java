@@ -94,7 +94,7 @@ public interface Constants {
             public static Map<String, String> TEXT_MAP = new HashMap<String, String>();
             static {
                 TEXT_MAP.put(login, "登录");
-                TEXT_MAP.put(login, "退出");
+                TEXT_MAP.put(logout, "退出");
             }
         }
     }

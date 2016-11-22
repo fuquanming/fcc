@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
@@ -290,7 +291,7 @@ public class ModuleController extends AppWebController {
 	@ApiOperation(value = "查询模块树形数据")
 	@RequestMapping(value = "/tree.do", method = RequestMethod.POST)
 	@ResponseBody
-	@Permissions("edit")
+	@Permissions(value = {"add", "edit"}, logical = Logical.OR)
 	public List<EasyuiTreeNode> tree(HttpServletRequest request,
 	        @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
 	    if (StringUtils.isEmpty(nodeStatus)) nodeStatus = EasyuiTreeNode.STATE_OPEN;

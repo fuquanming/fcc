@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
@@ -341,7 +342,7 @@ public class RoleController extends AppWebController {
     @ApiOperation(value = "查询模块树形列表")
     @RequestMapping(value = "/treegrid.do", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    @Permissions(value = {"edit"})
+    @Permissions(value = {"add", "edit"}, logical = Logical.OR)
     public List<EasyuiTreeGridModule> treegrid(HttpServletRequest request,
             @ApiParam(required = false, value = "节点状态，open、closed") @RequestParam(name = "nodeStatus", defaultValue = "") String nodeStatus) {
         List<EasyuiTreeGridModule> nodeList = null;

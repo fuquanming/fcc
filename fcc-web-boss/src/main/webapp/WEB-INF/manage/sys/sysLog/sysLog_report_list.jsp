@@ -21,15 +21,15 @@
 		<tr>	
 			<th><%=SysLog.ALIAS_USER_ID%></th>	
 			<td colspan="2">
-				<input id="userId" name="userId" maxlength="20"  style="width: 120px;"/>
+				<input id="userId" name="userId" maxlength="20"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入用户ID...'"/>
 			</td>
 			<th><%=SysLog.ALIAS_USER_NAME%></th>	
 			<td colspan="2">
-				<input id="userName" name="userName" maxlength="20"  style="width: 120px;"/>
+				<input id="userName" name="userName" maxlength="20"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入用户名称...'"/>
 			</td>
 			<th><%=SysLog.ALIAS_IP_ADDRESS%></th>	
 			<td colspan="2">
-				<input id="ipAddress" name="ipAddress" maxlength="24"  style="width: 120px;"/>
+				<input id="ipAddress" name="ipAddress" maxlength="24"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入IP...'"/>
 			</td>
 			<th><%=SysLog.ALIAS_LOG_TIME%></th>	
 			<td colspan="2">
@@ -40,48 +40,19 @@
 		<tr>	
 			<th><%=SysLog.ALIAS_MODULE_NAME%></th>	
 			<td colspan="2">
-				<select id="moduleName" name="moduleName" style="width: 130px;">
-				<option value="">---请选择---</option>
-				<c:forEach items="${USER_MENU}" var="module">
-				<c:if test="${not empty module.moduleDesc}">
-				<option value="${module.moduleId }">${module.moduleName }</option>
-				</c:if>
-				</c:forEach>
-				</select>
+			    <select id="moduleName" name="moduleName" style="width: 130px;" class="easyui-combobox">
 			</td>
 			<th><%=SysLog.ALIAS_OPERATE_NAME%></th>	
 			<td colspan="2">
-				<select id="operateName" name="operateName" style="width: 130px;">
-				<option value="">---请选择---</option>
-				<option value="login">登录</option>
-				<option value="logout">退出</option>
-				<c:forEach items="${operateList}" var="operate">
-				<option value="${operate.operateId }">${operate.operateName }</option>
-				</c:forEach>
-				</select>
+			    <input id="operateName" name="operateName" style="width: 130px;" class="easyui-combobox"/>
 			</td>
 			<th><%=SysLog.ALIAS_EVENT_RESULT%></th>	
 			<td colspan="2">
-				<select name="eventResult" id="eventResult" style="width: 130px;">
-					<option value="">---请选择---</option>
-					<option value="0">失败</option>
-					<option value="1">成功</option>
-				</select>
+			    <input id="eventResult" name="eventResult" style="width: 130px;" class="easyui-combobox"/>
 			</td>
 			<th>分组</th>	
 			<td colspan="2">
-				<select name="reportGroupName" id="reportGroupName" style="width: 130px;">
-					<option value="">---请选择---</option>
-					<option value="userId"><%=SysLog.ALIAS_USER_ID%></option>
-					<option value="userName"><%=SysLog.ALIAS_USER_NAME%></option>
-					<option value="ipAddress"><%=SysLog.ALIAS_IP_ADDRESS%></option>
-					<option value="logTime"><%=SysLog.ALIAS_LOG_TIME%></option>
-					<option value="moduleName"><%=SysLog.ALIAS_MODULE_NAME%></option>
-					<option value="operateName"><%=SysLog.ALIAS_OPERATE_NAME%></option>
-					<option value="eventParam"><%=SysLog.ALIAS_EVENT_PARAM%></option>
-					<option value="eventObject"><%=SysLog.ALIAS_EVENT_OBJECT%></option>
-					<option value="eventResult"><%=SysLog.ALIAS_EVENT_RESULT%></option>
-				</select>
+			    <input id="reportGroupName" name="reportGroupName" style="width: 130px;" class="easyui-combobox"/>
 			</td>
 		</tr>	
 		<tr>
@@ -106,99 +77,78 @@
 </div>
 </body>
 </html>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
+<%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript" charset="UTF-8">
-    var datagrid;
-    var userForm;
-    var dataList;
-    var dataTitle;
-    $(function() {
-        userForm = $('#userForm').form();
-        
-        datagrid = $('#datagrid').datagrid({
-            url : '${basePath}manage/sys/sysLog/report/datagrid.do?random=' + Math.random(),
-            toolbar : '#toolbar',
-            title : '',
-            iconCls : 'icon-save',
-            pagination : true,
-            rownumbers:true,
-            striped:true,
-            pageSize : 10,
-            pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
-            fit : true,
-            fitColumns : true,
-            nowrap : false,
-            border : false,
-            idField : 'groupName',
-            frozenColumns : [ [ 
-             ] ],
-            columns : [ [ 
-                {
-                    field : 'groupName',
-                    title : '',
-                    sortable:true,
-                    width : 100
-                } ,
-                {
-                    field : 'count',
-                    title : '总数',
-                    sortable:true,
-                    width : 100
-                } 
-            ] ],
-            onRowContextMenu : function(e, rowIndex, rowData) {
-                e.preventDefault();
-                $(this).datagrid('unselectAll');
-                $(this).datagrid('selectRow', rowIndex);
-                $('#menu').menu('show', {
-                    left : e.pageX,
-                    top : e.pageY
-                });
-            },
-            onLoadError : function(e) {
-                window.location.href = overUrl;
-            },
-            onLoadSuccess : function(data) {
-                if (data.msg && data.msg != '') {
-                    Tool.message.alert(Lang.tip, Lang.dataError, Tool.icon.error);
-                } else {
-                    dataList = data.rows;
-                    dataTitle = $('.datagrid-view td[field="groupName"] div span:first-child');
-                }
-            },
-            loadFilter : function(data) {
-                var flag = Tool.operate.check(data);
-                if (flag != true || flag != false) {
-                    return data;                                            
-                }
-            }
-        });
-
-    });
-    
-    function searchFun() {
-        datagrid.datagrid('load', {
-                userId : $('#toolbar input[name=userId]').val(),
-                userName : $('#toolbar input[name=userName]').val(),
-                ipAddress : $('#toolbar input[name=ipAddress]').val(),
-                logTimeBegin : $('#toolbar input[name=logTimeBegin]').val(),
-                logTimeEnd : $('#toolbar input[name=logTimeEnd]').val(),
-                moduleName : $('#moduleName').val(),
-                operateName : $('#operateName').val(),
-                eventResult : $('#eventResult').val(),
-                reportGroupName : $('#reportGroupName').val()
-        });
-        var groupName = $('#reportGroupName').val();
-        if (groupName != '') {
-            dataTitle.html($('#reportGroupName').find("option:selected").text());   
-        }
+// 报表数据缓存    
+var dataList;   
+var dataTitle;
+$(function() {
+    moduleTree = getComboTree({queryUrl:'manage/sys/sysLog/moduleTree.do',id:'moduleName',closed:false});
+    getComboBoxByData({
+        id : 'operateName',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+            <c:forEach items="${operateList}" var="operate">
+            {text : '${operate.operateName }', id : '${operate.operateId }'},
+            </c:forEach>
+        ]
+    })
+    getComboBoxByData({
+        id : 'eventResult',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+            {text : '成功', id : '1'},
+            {text : '失败', id : '0'}
+        ]
+    })
+    getComboBoxByData({
+        id : 'reportGroupName',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+            {text : '用户ID', id : 'userId'},
+            {text : '用户名称', id : 'userName'},
+            {text : 'IP地址', id : 'ipAddress'},
+            {text : '日志时间', id : 'logTime'},
+            {text : '模块名称', id : 'moduleName'},
+            {text : '操作名称', id : 'operateName'},
+            {text : '事件结果', id : 'eventResult'},
+        ]
+    })
+})    
+function toBack() {
+    window.location.href = "${basePath}manage/sys/sysLog/view.do";
+} 
+datagridParam_id = 'datagrid';// 用到的datagrid的ID
+datagridParam_url = '${basePath}manage/sys/sysLog/report/datagrid.do';// 数据源url
+datagridParam_idField = 'groupName';// datagrid表格的唯一标识
+datagridParam_idField_checkbox = true;// 是否显示多选框
+datagridParam_column_value = [ [ 
+    {
+        field : 'groupName',
+        title : '',
+        sortable:true,
+        width : 100
+    } ,
+    {
+        field : 'count',
+        title : '总数',
+        sortable:true,
+        width : 100
+    } 
+] ];// 表格的列
+datagridParam_queryParamName = ['userId', 'userName', 'ipAddress', 'logTimeBegin', 'logTimeEnd', 'moduleName', 'operateName', 'eventResult', 'reportGroupName'];
+datagridParam_load_beforeCallback = function(data) {
+	dataTitle = $('.datagrid-header-row td[field="groupName"] div span:first-child');
+	var groupName = $('#toolbar input[name="reportGroupName"]').val();
+    if (groupName != '') {
+    	dataTitle.html($('#reportGroupName').combobox('getText'));
     }
-    function clearFun() {
-        $('#toolbar input').val('');
-        $('#reportGroupName').val('');
-        datagrid.datagrid('load', {});
-    }
-    function toBack() {
-        window.location.href = "${basePath}manage/sys/sysLog/view.do";
-    }
-    
+    dataList = data.rows;
+}
 </script>

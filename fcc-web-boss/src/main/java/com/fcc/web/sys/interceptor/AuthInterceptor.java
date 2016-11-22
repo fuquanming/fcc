@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
@@ -74,7 +75,9 @@ public class AuthInterceptor implements HandlerInterceptor {
                         Permissions permissions = handlerMethod.getMethodAnnotation(Permissions.class);
                         if (permissions != null) {
                             String[] operates = permissions.value();
+                            Logical logical = permissions.logical();
                             Operate operate = null;
+                            boolean flag = true;
                             for (String operateId : operates) {
                                 Set<Operate> operateSet = module.getOperates();
                                 for (Operate o : operateSet) {
@@ -83,29 +86,37 @@ public class AuthInterceptor implements HandlerInterceptor {
                                         break;
                                     }
                                 }
-                                if (operate != null) break;
-                            }
-                            if (operate != null) {
-                                request.setAttribute(Constants.Request.operate, operate);
-                                // 鉴权
-                                boolean flag = rbacPermissionService.checkPermissionCache(user.getRoles(), moduleId, operate.getOperateId());
-//                                flag = false;
-                                if (flag == false) {
-                                    logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + module.getModuleName() + "，" + operate.getOperateName());
-                                    if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)
-                                            || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
-                                        response.setContentType("application/json;charset=UTF-8");
-                                        Message message = new Message();
-                                        message.setMsg(Constants.StatusCode.Sys.noPermissions);
-                                        message.setObj(module.getModuleName() + "：" + operate.getOperateName());
-                                        byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
-                                        response.getOutputStream().write(bytes);
-                                        return false;
-                                    } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
-                                        request.getSession().setAttribute("filterMsg", "right");// 无权限跳转页面
-                                        request.getRequestDispatcher("/overtime.jsp").forward(request, response);
-                                        return false;
+                                if (operate != null) {
+                                    request.setAttribute(Constants.Request.operate, operate);
+                                    // 鉴权
+                                    flag = rbacPermissionService.checkPermissionCache(user.getRoles(), moduleId, operate.getOperateId());
+//                                    flag = false;
+                                    if (Logical.OR == logical) {// 有一个权限就可以通过
+                                        if (flag == false) {
+                                            continue;
+                                        } else {
+                                            break;
+                                        }
+                                    } else {// 有所有权限才可以通过
+                                        if (flag == false) break;
                                     }
+                                }
+                            }
+                            if (flag == false) {
+                                logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + module.getModuleName() + "，" + operate.getOperateName());
+                                if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)
+                                        || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
+                                    response.setContentType("application/json;charset=UTF-8");
+                                    Message message = new Message();
+                                    message.setMsg(Constants.StatusCode.Sys.noPermissions);
+                                    message.setObj(module.getModuleName() + "：" + operate.getOperateName());
+                                    byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
+                                    response.getOutputStream().write(bytes);
+                                    return false;
+                                } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
+                                    request.getSession().setAttribute("filterMsg", "right");// 无权限跳转页面
+                                    request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+                                    return false;
                                 }
                             }
                         }

@@ -21,12 +21,13 @@
 		<c:if test="${not empty userList}">
         <th>创建者</th>
         <td>
-        <select name="createUser" id="createUser" style="width: 150px;" class="easyui-combobox">
+        <input id="createUser" name="createUser" style="width: 130px;" class="easyui-combobox"/>
+        <%-- <select name="createUser" id="createUser" style="width: 150px;" class="easyui-combobox">
         <option value="">--请选择--</option>
         <c:forEach items="${userList}" var="user">
         <option value="${user.userId }">${user.userId }</option>
         </c:forEach>
-        </select>
+        </select> --%>
         </td>
         </c:if>
         <th>组织机构</th>
@@ -56,6 +57,7 @@
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
 <%@ include file="/WEB-INF/head/init_operate.jsp" %>
+<%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
 $(function(){
 	organTree = getComboTree({queryUrl:'${basePath}manage/sys/organ/tree.do',id:'organId',closed:false});
@@ -69,6 +71,18 @@ $(function(){
     $("#unlock_button").removeClass('operate-button');
     $('#edit_button').after($('#unlock_button'));
     </fcc:permission>
+    <c:if test="${not empty userList}">
+    getComboBoxByData({
+    	id : 'createUser',
+    	valueField : 'id',
+        textField : 'text',
+        data : [
+            <c:forEach items="${userList}" var="user">
+            {text : '${user.userId }', id : '${user.userId }'},
+            </c:forEach>
+        ]
+    })
+    </c:if>
 })
 <fcc:permission operateId="edit">
 function resetPassword() {

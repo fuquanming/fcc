@@ -8,7 +8,6 @@ import java.util.List;
  * @author 傅泉明
  * @version v1.0
  */
-@SuppressWarnings("unchecked")
 public class JqGridDataGridJson implements java.io.Serializable {
 
 	/**

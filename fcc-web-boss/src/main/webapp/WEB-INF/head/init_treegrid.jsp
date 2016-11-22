@@ -46,11 +46,6 @@ $(function() {
         onLoadSuccess : function(row, data) {
             var t = $(this);
             if (data) {
-                $(data).each(function(index, d) {
-                    if (this.state == 'closed') {
-                        t.treegrid('expandAll');
-                    }
-                });
                 if (data[0] && data[0].msg && data[0].msg != '') {
                     Tool.message.alert(Lang.tip, data[0].msg, Tool.icon.error);
                 }

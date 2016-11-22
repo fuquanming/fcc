@@ -16,7 +16,14 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
 public @interface Permissions {
-
+    /**
+     * 确定用户是否被允许调用受此注释保护的代码
+     * @return
+     */
     String[] value();
-    
+    /**
+     * 如果指定了多个角色，则进行权限检查的逻辑操作。 AND是默认值
+     * @return
+     */
+    Logical logical() default Logical.AND;
 }

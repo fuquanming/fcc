@@ -11,6 +11,7 @@ var datagridParam_idField;// datagrid表格的唯一标识
 var datagridParam_idField_checkbox = true;// 是否显示多选框
 var datagridParam_column_value;// 表格的列 [[{field:'userId',title:'用户ID'}]]
 var datagridParam_queryParamName;// 查询的参数name ['userId','userName'];
+var datagridParam_load_beforeCallback;// 加载数据回调函数
 var datagridParam_confirm_beforeCallback;// 确认框操作前回调
 var datagridParam_confirm_afterCallback;// 确认框操作后回调
 
@@ -57,6 +58,8 @@ $(function() {
         onLoadSuccess : function(data) {
             if (data.msg && data.msg != '') {
                 Tool.message.alert(Lang.tip, Lang.dataError, Tool.icon.error);
+            } else {
+            	if (datagridParam_load_beforeCallback) datagridParam_load_beforeCallback(data); 
             }
         },
         loadFilter : function(data) {

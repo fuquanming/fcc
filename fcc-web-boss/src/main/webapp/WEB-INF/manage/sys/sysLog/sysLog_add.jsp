@@ -25,13 +25,13 @@
 		<tr>	
 			<th><%=SysLog.ALIAS_USER_NAME%>：</th>		
 			<td>
-			<input id="userName" name="userName" type="text" class="easyui-validatebox" maxlength="20" />
+			<input id="userName" name="userName" type="text" class="easyui-validatebox easyui-textbox" maxlength="20" />
 			</td>
 		</tr>	
 		<tr>	
 			<th><%=SysLog.ALIAS_IP_ADDRESS%>：</th>		
 			<td>
-			<input id="ipAddress" name="ipAddress" type="text" class="easyui-validatebox" maxlength="24" />
+			<input id="ipAddress" name="ipAddress" type="text" class="easyui-validatebox easyui-textbox" maxlength="24" />
 			</td>
 		</tr>	
 		<tr>	
@@ -43,31 +43,31 @@
 		<tr>	
 			<th><%=SysLog.ALIAS_MODULE_NAME%>：</th>		
 			<td>
-			<input id="moduleName" name="moduleName" type="text" class="easyui-validatebox" maxlength="255" />
+			<input id="moduleName" name="moduleName" type="text" class="easyui-validatebox easyui-textbox" maxlength="255" />
 			</td>
 		</tr>	
 		<tr>	
 			<th><%=SysLog.ALIAS_OPERATE_NAME%>：</th>		
 			<td>
-			<input id="operateName" name="operateName" type="text" class="easyui-validatebox" maxlength="20" />
+			<input id="operateName" name="operateName" type="text" class="easyui-validatebox easyui-textbox" maxlength="20" />
 			</td>
 		</tr>	
 		<tr>	
 			<th><%=SysLog.ALIAS_EVENT_PARAM%>：</th>		
 			<td>
-			<input id="eventParam" name="eventParam" type="text" class="easyui-validatebox" maxlength="200" />
+			<input id="eventParam" name="eventParam" type="text" class="easyui-validatebox easyui-textbox" maxlength="200" />
 			</td>
 		</tr>	
 		<tr>	
 			<th><%=SysLog.ALIAS_EVENT_OBJECT%>：</th>		
 			<td>
-			<input id="eventObject" name="eventObject" type="text" class="easyui-validatebox" maxlength="4000" />
+			<input id="eventObject" name="eventObject" type="text" class="easyui-validatebox easyui-textbox" maxlength="4000" />
 			</td>
 		</tr>	
 		<tr>	
 			<th><%=SysLog.ALIAS_EVENT_RESULT%>：</th>		
 			<td>
-			<input id="eventResult" name="eventResult" type="text" class="easyui-validatebox" maxlength="20" />
+			<input id="eventResult" name="eventResult" type="text" class="easyui-validatebox easyui-textbox" maxlength="20" />
 			</td>
 		</tr>	
         <tr>

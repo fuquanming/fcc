@@ -18,15 +18,15 @@
         <tr>    
             <th><%=SysLog.ALIAS_USER_ID%></th>  
             <td colspan="2">
-                <input name="userId" maxlength="20"  style="width: 120px;"/>
+                <input name="userId" maxlength="20"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入用户ID...'"/>
             </td>
             <th><%=SysLog.ALIAS_USER_NAME%></th>    
             <td colspan="2">
-                <input id="userName" name="userName" maxlength="20"  style="width: 120px;"/>
+                <input id="userName" name="userName" maxlength="20"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入用户名称...'"/>
             </td>
             <th><%=SysLog.ALIAS_IP_ADDRESS%></th>   
             <td colspan="2">
-                <input id="ipAddress" name="ipAddress" maxlength="24"  style="width: 120px;"/>
+                <input id="ipAddress" name="ipAddress" maxlength="24"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入IP...'"/>
             </td>
             <th><%=SysLog.ALIAS_LOG_TIME%></th> 
             <td colspan="2">
@@ -37,33 +37,35 @@
         <tr>    
             <th><%=SysLog.ALIAS_MODULE_NAME%></th>  
             <td colspan="2">
-                <select id="moduleName" name="moduleName" style="width: 130px;">
-                <option value="">---请选择---</option>
-                <c:forEach items="${USER_MENU}" var="module">
+                <select id="moduleName" name="moduleName" style="width: 130px;" class="easyui-combobox">
+                <%-- <option value="">---请选择---</option>
+                <c:forEach items="${moduleList}" var="module">
                 <c:if test="${not empty module.moduleDesc}">
                 <option value="${module.moduleId }">${module.moduleName }</option>
                 </c:if>
-                </c:forEach>
+                </c:forEach> --%>
                 </select>
             </td>
             <th><%=SysLog.ALIAS_OPERATE_NAME%></th> 
             <td colspan="2">
-                <select id="operateName" name="operateName" style="width: 130px;">
+                <input id="operateName" name="operateName" style="width: 130px;" class="easyui-combobox"/>
+                <%-- <select id="operateName" name="operateName" style="width: 130px;" class="easyui-combobox">
                 <option value="">---请选择---</option>
                 <option value="login">登录</option>
                 <option value="logout">退出</option>
                 <c:forEach items="${operateList}" var="operate">
                 <option value="${operate.operateId }">${operate.operateName }</option>
                 </c:forEach>
-                </select>
+                </select> --%>
             </td>
             <th><%=SysLog.ALIAS_EVENT_RESULT%></th> 
             <td colspan="2">
-                <select name="eventResult" id="eventResult" style="width: 130px;">
+                <input id="eventResult" name="eventResult" style="width: 130px;" class="easyui-combobox"/>
+                <!-- <select name="eventResult" id="eventResult" style="width: 130px;" class="easyui-combobox">
                     <option value="">---请选择---</option>
                     <option value="0">失败</option>
                     <option value="1">成功</option>
-                </select>
+                </select> -->
             </td>
         </tr>   
         <tr>
@@ -97,7 +99,34 @@ $(function() {
 <%@ include file="/WEB-INF/head/init_operate.jsp" %>
 <%@ include file="/WEB-INF/head/init_export.jsp" %>
 <%@ include file="/WEB-INF/head/init_import.jsp" %>
+<%@ include file="/WEB-INF/head/init_combotree.jsp" %>
+<%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
+var moduleTree;
+
+$(function() {
+	moduleTree = getComboTree({queryUrl:'manage/sys/sysLog/moduleTree.do',id:'moduleName',closed:false});
+	getComboBoxByData({
+        id : 'operateName',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+        	<c:forEach items="${operateList}" var="operate">
+            {text : '${operate.operateName }', id : '${operate.operateId }'},
+            </c:forEach>
+        ]
+    })
+    getComboBoxByData({
+        id : 'eventResult',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+        	{text : '成功', id : '1'},
+            {text : '失败', id : '0'}
+        ]
+    })
+})
+
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
 datagridParam_url = '${basePath}manage/sys/sysLog/datagrid.do';// 数据源url
 datagridParam_idField = 'logId';// datagrid表格的唯一标识
