@@ -72,7 +72,6 @@
             <td colspan="3" align="center">
             <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
             <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="clearFun();" href="javascript:void(0);">清空</a>
-            <span id="importDataSizeSpan" style="color: red; font-weight: bolder;"></span>
             </td>
         </tr>
     </table>
@@ -86,13 +85,13 @@
 </body>
 </html>
 <script type="text/javascript" charset="UTF-8">
-var datagrid;
+/* var datagrid;
 var userForm;
 var userDialog;
 var importDataFlag = false;
 $(function() {
     userForm = $('#userForm').form();
-});
+}); */
 </script>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
