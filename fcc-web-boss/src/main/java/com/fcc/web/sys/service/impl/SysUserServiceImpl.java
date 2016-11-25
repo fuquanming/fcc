@@ -54,7 +54,7 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
     @Transactional(rollbackFor = Exception.class)
 	public void add(SysUser data, String[] roleIds) {
-	    baseService.create(data);
+	    baseService.add(data);
 		addRole(data.getUserId(), roleIds);
 	}
 	

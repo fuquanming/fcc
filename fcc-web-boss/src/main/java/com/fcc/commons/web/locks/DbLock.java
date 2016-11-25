@@ -45,7 +45,7 @@ public class DbLock implements Lock {
 				sysLock.setCreateTime(new Date());
 				sysLock.setLockKey(lockKey);
 				sysLock.setLockStatus(SysLock.STATUS_UNLOCK);
-				baseService.create(sysLock);
+				baseService.add(sysLock);
 			} catch (Exception e) {
 				sysLock = null;
 			} finally {

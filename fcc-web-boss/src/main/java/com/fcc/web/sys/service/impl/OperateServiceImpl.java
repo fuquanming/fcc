@@ -80,7 +80,7 @@ public class OperateServiceImpl implements OperateService {
 				OperateServiceImpl.factorialPop.clear();
 			}			
 			o.setOperateValue(value);
-			baseService.create(o);
+			baseService.add(o);
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class OperateServiceImpl implements OperateService {
 	    if (o.getOperateId() != null) {
 	        Operate old = (Operate) baseService.get(Operate.class, o.getOperateId());
 	        old.setOperateName(o.getOperateName());
-	        baseService.update(old);
+	        baseService.edit(old);
 	    }
 	}
 	

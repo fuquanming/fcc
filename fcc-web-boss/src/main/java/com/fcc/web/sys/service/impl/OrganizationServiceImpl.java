@@ -43,7 +43,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
     @Transactional(rollbackFor = Exception.class)//事务申明
 	public void add(Organization data) {
-		baseService.create(data);
+		baseService.add(data);
 	}
 	/**
      * //TODO 添加override说明
@@ -52,7 +52,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	@Override
     @Transactional(rollbackFor = Exception.class)//事务申明
 	public void edit(Organization data) {
-		baseService.update(data);
+		baseService.edit(data);
 	}
 	
 	/**

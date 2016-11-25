@@ -21,9 +21,13 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = { "classpath:config/config.properties", "classpath:config/email.properties"})
 public final class Resources {
 
+    /** 系统配置 */
+    public static final ResourceBundle DB = ResourceBundle.getBundle("config/db");
     /** 邮箱服务器配置 */
     public static final ResourceBundle EMAIL = ResourceBundle.getBundle("config/email");
     /** 系统配置 */
     public static final ResourceBundle CONFIG = ResourceBundle.getBundle("config/config");
+    
+    
     
 }

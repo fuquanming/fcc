@@ -53,5 +53,14 @@ public class AppWebController extends BaseController {
             }
         });
     }
-    
+    /** 重载操作缓存 */
+    public void reloadOperateCache() {
+        execute(new Runnable() {
+            @Override
+            public void run() {
+                cacheService.cleanOperateMap();
+                cacheService.getOperateMap();
+            }
+        });
+    }
 }

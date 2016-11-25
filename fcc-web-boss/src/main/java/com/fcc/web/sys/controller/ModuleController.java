@@ -121,7 +121,7 @@ public class ModuleController extends AppWebController {
 		if (it.hasNext()) {
 			role = it.next();
 			if (role != null && role.getRoleId() != null) {
-			    roleModuleRightService.editRight(role.getRoleId(), data.getModuleId(), Long.MAX_VALUE);
+			    roleModuleRightService.editRight(role.getRoleId(), data.getModuleId(), Long.valueOf(Integer.MAX_VALUE));
 			    // 更新系统缓存角色
 			}
 		}

@@ -194,12 +194,12 @@ public class SysLogController extends AppWebController {
 		try {
 			String logTimeString = request.getParameter("logTimeString");
 			sysLog.setLogTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(logTimeString));
-			baseService.create(sysLog);
+			baseService.add(sysLog);
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("保持日志失败！", e);
+			logger.error("保存日志失败！", e);
 			message.setMsg(Constants.StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
@@ -222,7 +222,7 @@ public class SysLogController extends AppWebController {
 				String logTimeString = request.getParameter("logTimeString");
 				sysLog.setLogTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(logTimeString));
 				BeanUtils.copyProperties(sysLog, dbSysLog);
-				baseService.update(dbSysLog);
+				baseService.edit(dbSysLog);
 				// 更新
 				message.setSuccess(true);
 				message.setMsg(Constants.StatusCode.Sys.success);
@@ -251,9 +251,7 @@ public class SysLogController extends AppWebController {
 		Message message = new Message();
 		String id = request.getParameter("ids");
 		try {
-			if (id == null || "".equals(id)) {
-				throw new RefusedException("请选择要删除的记录！");
-			}
+			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ",");
 			baseService.deleteById(SysLog.class, ids, "logId");
 			message.setSuccess(true);
@@ -308,7 +306,7 @@ public class SysLogController extends AppWebController {
 			json.setRows(listPage.getDataList());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("加载查询日志数据失败！", e);
 			json.setTotal(0L);
 			json.setRows(new ArrayList<SysLog>());
 			json.setMsg(e.getMessage());
@@ -402,7 +400,7 @@ public class SysLogController extends AppWebController {
 	        }
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("查询日志失败！", e);
+			logger.error("查询日志报表数据失败！", e);
 			json.setTotal(0L);
 			json.setRows(new ArrayList<ReportInfo>());
 			json.setMsg(e.getMessage());

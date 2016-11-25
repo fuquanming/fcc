@@ -46,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void add(Role role) {
-        baseService.create(role);
+        baseService.add(role);
     }
 
     /**
@@ -56,7 +56,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void add(Role role, String[] moduleRight) throws RefusedException {
-        baseService.create(role);
+        baseService.add(role);
         roleModuleRightService.addRight(role.getRoleId(), moduleRight);
     }
 
@@ -67,7 +67,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void edit(Role role, String[] moduleRight) throws RefusedException {
-        baseService.update(role);
+        baseService.edit(role);
         roleModuleRightService.addRight(role.getRoleId(), moduleRight);
     }
 

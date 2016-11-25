@@ -204,7 +204,7 @@
     </servlet-mapping>
     
     
-    <servlet>
+    <!-- <servlet>
         <display-name>FCExporter报表导出</display-name>
         <servlet-name>FCExporter</servlet-name>
         <servlet-class>
@@ -215,7 +215,7 @@
     <servlet-mapping>
         <servlet-name>FCExporter</servlet-name>
         <url-pattern>/manage/FCExporter</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
     <!-- 
         <session-config>
         <session-timeout>1</session-timeout>

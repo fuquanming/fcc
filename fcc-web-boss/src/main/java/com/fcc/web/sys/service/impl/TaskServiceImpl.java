@@ -39,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
         Object obj = null;
         while ((obj = QueueUtil.getCreateQueue().poll()) != null) {
             try {
-                baseService.create(obj);
+                baseService.add(obj);
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("保持失败！", e);

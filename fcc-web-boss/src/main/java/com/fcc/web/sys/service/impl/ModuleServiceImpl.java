@@ -57,7 +57,7 @@ public class ModuleServiceImpl implements ModuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void add(Module data, String[] operateIds) {
-        baseService.create(data);
+        baseService.add(data);
         addOperate(data.getModuleId(), operateIds);
     }
 
@@ -68,7 +68,7 @@ public class ModuleServiceImpl implements ModuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void edit(Module data, String[] operateIds) {
-        baseService.update(data);
+        baseService.edit(data);
         addOperate(data.getModuleId(), operateIds);
     }
 
