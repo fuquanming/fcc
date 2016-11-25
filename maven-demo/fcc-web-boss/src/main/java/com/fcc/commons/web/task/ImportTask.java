@@ -130,6 +130,7 @@ public class ImportTask implements Runnable {
 			List<String> cellList = new ArrayList<String>(cellNum);
 			for (int j = 0; j < cellNum; j++) {
 				cell = row.getCell(j);
+				if (cell == null) break;
 				cell.setCellType(Cell.CELL_TYPE_STRING);
 				cellList.add(cell.getStringCellValue());
 			}

@@ -84,6 +84,8 @@ public class OperateController extends AppWebController {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
             if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
             operateService.edit(operate);
+            reloadOperateCache();
+            reloadModuleCache();
 			message.setSuccess(true);
 			message.setMsg(Constants.StatusCode.Sys.success);
 		} catch (Exception e) {
@@ -105,6 +107,8 @@ public class OperateController extends AppWebController {
 			if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ',');
 			operateService.delete(ids);
+			reloadOperateCache();
+			reloadModuleCache();
 			message.setMsg(Constants.StatusCode.Sys.success);
 			message.setSuccess(true);
 			reloadModuleCache();

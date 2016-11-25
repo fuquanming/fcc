@@ -102,6 +102,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                                     }
                                 }
                             }
+//                            flag = false;
                             if (flag == false) {
                                 logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + module.getModuleName() + "，" + operate.getOperateName());
                                 if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)

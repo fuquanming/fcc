@@ -75,13 +75,13 @@ public class RoleModuleRightServiceImpl implements RoleModuleRightService {
 		RoleModuleRight data = roleModuleRightDao.getModuleRightByKey(roleId, moduleId);
 		if (data != null) {
 			data.setRightValue(rightValue);
-			baseService.update(data);
+			baseService.edit(data);
 		} else {
 			RoleModuleRight rmr = new RoleModuleRight();
 			rmr.setModuleId(moduleId);
 			rmr.setRoleId(roleId);
 			rmr.setRightValue(rightValue);
-			baseService.create(rmr);
+			baseService.add(rmr);
 		}
 	}
 	/**

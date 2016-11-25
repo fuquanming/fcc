@@ -41,7 +41,7 @@ public class SysUserOnlineServiceImpl implements SysUserOnlineService {
     @Transactional(rollbackFor = Exception.class)//事务申明
     
     public void online(SysUserOnline sysUserOnline) {
-        baseDao.save(sysUserOnline);
+        baseDao.add(sysUserOnline);
     }
 
     /**
