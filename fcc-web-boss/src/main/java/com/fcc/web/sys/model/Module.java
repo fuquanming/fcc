@@ -45,11 +45,11 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
 	private Integer moduleLevel;
 	//  MODULE_SORT  INTEGER not null,
 	private Integer moduleSort;
-	
-	//  MODULE_DESC  VARCHAR2(100)
+    //  MODULE_DESC  VARCHAR2(100)
 	private String moduleDesc;
-	
-	/** 父ID */
+	// 是否可用
+    private Boolean show = Boolean.TRUE;
+    /** 父ID */
     private String parentId;
     /** 所有父路径 如1-2-3 */
     private String parentIds;
@@ -145,6 +145,15 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
 	}
+	
+	@Column(name = "IS_SHOW")
+	public Boolean getShow() {
+        return show;
+    }
+
+    public void setShow(Boolean show) {
+        this.show = show;
+    }
 	
 	@Column(name = "PARENT_ID")
     public String getParentId() {

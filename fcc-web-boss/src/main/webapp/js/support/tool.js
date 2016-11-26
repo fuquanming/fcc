@@ -48,6 +48,45 @@ Tool.removeSelect = function(params) {
 	}
 }
 /**
+ * select 下拉框复制
+ * Tool.copySelect({
+ *		'sourceId':'sourceId',
+ *		'targetId':'sourceId',
+ *		'isAll':true,
+ *      'callbackFun':''
+ * })
+ *
+ */
+Tool.copySelect = function(params) {
+	if (params.sourceId) {
+		if (params.callbackFun) str = new Array();
+		if (params.isAll == true) {
+			if (params.targetId) {
+				$('#' + params.sourceId).children().each(function(){
+					Tool.addOption({
+						'sourceId' : params.targetId,
+						'text' : $(this).html(),
+						'val' : $(this).val()
+					})
+				});	
+			}
+		} else {
+			if (params.targetId) {
+				$('#' + params.sourceId).children().each(function(){
+					if ($(this).attr('selected')) {
+						Tool.addOption({
+							'sourceId' : params.targetId,
+							'text' : $(this).html(),
+							'val' : $(this).val()
+						})
+					}
+				});
+			}
+		}
+		if (params.callbackFun) params.callbackFun(str);
+	}
+}
+/**
  * 为select 下拉框添加选项
  * Tool.addOption({
  *		'sourceId':'sourceId',
@@ -58,7 +97,32 @@ Tool.removeSelect = function(params) {
  */
 Tool.addOption = function(params) {
 	if (params.sourceId) {
-		$('#' + params.sourceId).append('<option value="' + params.val + '">' + params.text + '</option>');
+		var flag = false;
+		$('#' + params.sourceId).children().each(function(){
+			if ($(this).val() == params.val) {
+				flag = true;
+				return;
+			}
+		})
+		if (flag == false) $('#' + params.sourceId).append('<option value="' + params.val + '">' + params.text + '</option>');
+	}
+}
+/**
+ * Tool.removeOperate({
+ *		'sourceId':'sourceId',
+ *		'isAll':true,
+ */
+Tool.removeOperate = function(params) {
+	if (params.sourceId) {
+		if (params.isAll == true) {
+			$('#' + params.sourceId).html('');
+		} else {
+			$('#' + params.sourceId).children().each(function(){
+				if ($(this).attr('selected')) {
+					$(this).remove();
+				}
+			})
+		}
 	}
 }
 

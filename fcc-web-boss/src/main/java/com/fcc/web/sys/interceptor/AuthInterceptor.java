@@ -73,11 +73,13 @@ public class AuthInterceptor implements HandlerInterceptor {
                         request.setAttribute("rightModuleId", module.getModuleId());
                         // 获取执行的方法
                         Permissions permissions = handlerMethod.getMethodAnnotation(Permissions.class);
+                        boolean flag = true;
+                        String moduleName = module.getModuleName();
+                        String operateName = "";
                         if (permissions != null) {
                             String[] operates = permissions.value();
                             Logical logical = permissions.logical();
                             Operate operate = null;
-                            boolean flag = true;
                             for (String operateId : operates) {
                                 Set<Operate> operateSet = module.getOperates();
                                 for (Operate o : operateSet) {
@@ -100,25 +102,45 @@ public class AuthInterceptor implements HandlerInterceptor {
                                     } else {// 有所有权限才可以通过
                                         if (flag == false) break;
                                     }
+                                    operateName = operate.getOperateName();
                                 }
                             }
-//                            flag = false;
-                            if (flag == false) {
-                                logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + module.getModuleName() + "，" + operate.getOperateName());
-                                if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)
-                                        || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
-                                    response.setContentType("application/json;charset=UTF-8");
-                                    Message message = new Message();
-                                    message.setMsg(Constants.StatusCode.Sys.noPermissions);
-                                    message.setObj(module.getModuleName() + "：" + operate.getOperateName());
-                                    byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
-                                    response.getOutputStream().write(bytes);
-                                    return false;
-                                } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
-                                    request.getSession().setAttribute("filterMsg", "right");// 无权限跳转页面
-                                    request.getRequestDispatcher("/overtime.jsp").forward(request, response);
-                                    return false;
+                        }
+
+                        if (module.getShow() == false) {// 不显示该模块
+                            flag = false;
+                        }
+                        // 上级模块是否显示
+                        String parentId = module.getParentId();
+                        while (true) {
+                            Module parentModule = cacheService.getModuleMap().get(parentId);
+                            if (parentModule != null) {
+                                if (parentModule.getShow() == false) {
+                                    flag = false;
+                                    break;
+                                } else {
+                                    parentId = parentModule.getParentId();
                                 }
+                            } else {
+                                break;
+                            }
+                        }
+//                      flag = false;
+                        if (flag == false) {
+                            logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + moduleName + "，" + operateName);
+                            if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)
+                                    || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
+                                response.setContentType("application/json;charset=UTF-8");
+                                Message message = new Message();
+                                message.setMsg(Constants.StatusCode.Sys.noPermissions);
+                                message.setObj(module.getModuleName() + "：" + operateName);
+                                byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
+                                response.getOutputStream().write(bytes);
+                                return false;
+                            } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
+                                request.getSession().setAttribute("filterMsg", "right");// 无权限跳转页面
+                                request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+                                return false;
                             }
                         }
                     }

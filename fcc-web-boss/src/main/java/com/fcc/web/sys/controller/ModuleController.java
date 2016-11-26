@@ -261,6 +261,35 @@ public class ModuleController extends AppWebController {
 		return getModelAndView(message);
 	}
 	
+	@ApiOperation(value = "显示、隐藏模块")
+    @RequestMapping(value = "/show.do", method = RequestMethod.POST)
+    @Permissions("edit")
+    public ModelAndView show(HttpServletRequest request,
+            @ApiParam(required = true, value = "模块ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id,
+            @ApiParam(required = true, value = "模块状态") @RequestParam(name = "moduleStatus", defaultValue = "") String moduleStatus) {
+        Message message = new Message();
+        try {
+            if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+            String[] ids = StringUtils.split(id, ",");
+            boolean show = false;
+            if ("show".equals(moduleStatus)) {
+                show = true;
+            }
+            moduleService.editShow(ids, show);
+            reloadModuleCache();
+            message.setMsg(Constants.StatusCode.Sys.success);
+            message.setSuccess(true);
+        } catch (RefusedException e) {
+            message.setMsg(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("显示、隐藏模块失败！", e);
+            message.setMsg(Constants.StatusCode.Sys.fail);
+            message.setObj(e.getMessage());
+        }
+        return getModelAndView(message);
+    }
+	
 	/**
 	 * 模块 列表 返回json 给 easyUI 
 	 * @return
