@@ -43,6 +43,12 @@ public interface ModuleDao {
     public Integer deleteOperate(String moduleId, boolean isAll);
     
     /**
+     * 更新模块是否显示
+     * @param ids
+     * @param show
+     */
+    public Integer editShow(String[] ids, boolean show);
+    /**
      * 获取模块及操作
      * @return
      */

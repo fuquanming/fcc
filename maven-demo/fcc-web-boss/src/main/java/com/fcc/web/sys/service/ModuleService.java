@@ -33,6 +33,12 @@ public interface ModuleService {
      */
     void addOperate(String moduleId, String[] operateIds);
     /**
+     * 更新模块是否显示
+     * @param ids
+     * @param show
+     */
+    Integer editShow(String[] ids, boolean show);
+    /**
      * 获取模块通过ID
      * @param moduleId      模块ID
      * @return

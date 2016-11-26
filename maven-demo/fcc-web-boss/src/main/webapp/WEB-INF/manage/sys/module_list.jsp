@@ -15,6 +15,8 @@
   <div id="operateDiv"></div>
   <a id="expandAll_button" class="easyui-linkbutton operate_button" iconCls="icon-folder-open" onClick="gridExpandAll()" plain="true" href="javascript:void(0);">展开</a>
   <a id="collapseAll_button" class="easyui-linkbutton operate_button" iconCls="icon-folder-close" onClick="gridCollapseAll();" plain="true" href="javascript:void(0);">折叠</a>
+  <a id="show_button" class="easyui-linkbutton operate_button" iconCls="icon-edit" onClick="editStatus('show');" plain="true" href="javascript:void(0);">显示</a>  
+  <a id="unShow_button" class="easyui-linkbutton operate_button" iconCls="icon-edit" onClick="editStatus('unShow');" plain="true" href="javascript:void(0);">隐藏</a>  
   </div>  
   <table id="treegrid">
   </table>
@@ -30,7 +32,31 @@ $(function() {
     
     $("#collapseAll_button").removeClass('operate-button');
     $('#refresh_button').after($('#collapseAll_button'));
+    
+    <fcc:permission operateId="edit">
+    $("#show_button").removeClass('operate-button');
+    $('#edit_button').after($('#show_button'));
+    
+    $("#unShow_button").removeClass('operate-button');
+    $('#edit_button').after($('#unShow_button'));
+    </fcc:permission>
 })
+
+<fcc:permission operateId="edit">
+function editStatus(moduleStatus) {
+    gridConfirm({
+        gridType : Tool.grid.data,
+        userFormId : 'userForm',
+        operateUrl : '${basePath}manage/sys/module/show.do?moduleStatus=' + moduleStatus,
+        fieldId : 'id',
+        beforeCallback : function(rows) {
+        },
+        afterCallback : function(data, success) {
+            if (success == true) searchFun();
+        }
+    });
+}
+</fcc:permission>
 
 treegridParam_id = 'treegrid';// 用到的datagrid的ID
 treegridParam_url = '${basePath}manage/sys/module/treegrid.do';// 数据源url
@@ -48,6 +74,20 @@ treegridParam_column_value = [ [ {
     field : 'moduleSort',
     title : '排序',
     width : 50
+}, {
+    field : 'show',
+    title : '是否显示',
+    width : 50,
+    formatter : function(value, rowData, rowIndex) {
+    	if (rowData.attributes) {
+    		var show = rowData.attributes.show;
+    		if (show == true) {
+    			return '是';
+    		} else if (show == false) {
+    			return '否';
+    		}
+    	}
+    }
 }, {
     field : 'attributes',
     title : '模块操作',

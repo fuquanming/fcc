@@ -96,6 +96,9 @@ public class CacheService {
                 String moduleId = module.getModuleId();
                 String moduleUrl = module.getModuleDesc();
                 moduleMap.put(moduleId, module);
+                if (module.getModuleId().equals("IQQz")) {
+                    System.out.println("111");
+                }
                 if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
             }
         } catch(Exception e) {

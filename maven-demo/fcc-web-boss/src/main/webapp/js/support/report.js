@@ -72,8 +72,8 @@ var type_3d = '3D';
 function lineCharts(title, basePath) {
 	setChartsTitle('折线图')
 	if (Tool.isFlash()) {
-		buildFusionCharts('line', title);
-		return;
+		/*buildFusionCharts('line', title);
+		return;*/
 	}
 	var length = dataList.length;
 	var categories = [];
@@ -160,8 +160,8 @@ function lineCharts(title, basePath) {
 function columnCharts(title, basePath) {
 	setChartsTitle('柱形图');
 	if (Tool.isFlash()) {
-		buildFusionCharts('column', title);
-		return;
+		/*buildFusionCharts('column', title);
+		return;*/
 	}
 	var length = dataList.length;
 	var categories = [];
@@ -267,8 +267,8 @@ function columnCharts(title, basePath) {
 function pieCharts(title, basePath) {
 	setChartsTitle('饼图');
 	if (Tool.isFlash()) {
-		buildFusionCharts('pie', title);
-		return;
+		/*buildFusionCharts('pie', title);
+		return;*/
 	}
 	var length = dataList.length;
 	var data = [];

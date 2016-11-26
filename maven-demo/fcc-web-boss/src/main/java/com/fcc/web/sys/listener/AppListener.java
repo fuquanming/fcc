@@ -42,6 +42,7 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
                 cacheService.getOperateMap();
             }
         });
+		event.getServletContext().setAttribute("APP_NAME", cacheService.getAppName());
 	}
 	
 	public void contextDestroyed(ServletContextEvent event) {

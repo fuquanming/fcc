@@ -102,6 +102,12 @@ public class ModuleServiceImpl implements ModuleService {
         }
     }
     
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer editShow(String[] ids, boolean show) {
+        return moduleDao.editShow(ids, show);
+    }
+    
     /**
      * //TODO 添加override说明
      * @see com.fcc.web.sys.service.ModuleService#getModuleById(java.lang.String)
@@ -209,6 +215,7 @@ public class ModuleServiceImpl implements ModuleService {
             node.setAttributes(attributes);
             
             attributes.put("parentIds", m.getParentIds());
+            attributes.put("show", m.getShow());
             
             Set<Operate> operateSet = m.getOperates();
             if (operateSet != null && operateSet.size() > 0) {
