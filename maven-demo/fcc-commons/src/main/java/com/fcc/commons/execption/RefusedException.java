@@ -41,4 +41,14 @@ public class RefusedException extends Exception {
     public int getCode() {
         return code;
     }
+    
+    /**
+     * 移除父类同步方法
+     * @see java.lang.Throwable#fillInStackTrace()
+     *
+     */
+    @Override
+    public Throwable fillInStackTrace() {
+        return this;
+    }
 }

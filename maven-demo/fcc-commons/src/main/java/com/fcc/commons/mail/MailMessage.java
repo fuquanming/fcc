@@ -35,7 +35,7 @@ import com.fcc.commons.utils.FileUtil;
  */
 public class MailMessage {
 	
-	private static Logger logger = Logger.getLogger(MailMessage.class.getName());
+	private Logger logger = Logger.getLogger(MailMessage.class.getName());
 	/** 读取数据 */
 	private Queue<String> readDataQueue = new ConcurrentLinkedQueue<String>();
 	interface StatusCode {
