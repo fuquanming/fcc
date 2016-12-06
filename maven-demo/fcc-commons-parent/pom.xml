@@ -45,6 +45,7 @@
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
 		<fcc-web.version>1.0-SNAPSHOT</fcc-web.version>
+		<fcc-web-api.version>1.0-SNAPSHOT</fcc-web-api.version>
 
 		<fcc-demo.version>1.0-SNAPSHOT</fcc-demo.version>
 
@@ -61,7 +62,7 @@
 
 		<!-- timer projects -->
 
-		<!-- frameworks -->
+		<!-- frameworks spring 4.3.3.RELEASE -->
 		<org.springframework.version>4.3.3.RELEASE</org.springframework.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
 		<hibernate-common-annotations.version>4.0.5.Final</hibernate-common-annotations.version>
@@ -75,6 +76,8 @@
 		<fastjson.version>1.2.17</fastjson.version>
 		<!-- poi -->
 		<org.apache.poi.version>3.9</org.apache.poi.version>
+
+		<ehcache.core.version>2.6.11</ehcache.core.version>
 	</properties>
 
 	<dependencies>
@@ -464,6 +467,11 @@
 				<artifactId>hibernate-commons-annotations</artifactId>
 				<version>${hibernate-common-annotations.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate.version}</version>
+			</dependency>
 			<!-- <dependency> <groupId>org.hibernate.javax.persistence</groupId> <artifactId>hibernate-jpa-2.0-api</artifactId> 
 				<version>${hibernate-jpa.version}</version> </dependency> -->
 			<!-- hibernate end -->
@@ -596,6 +604,20 @@
 				<version>2.7.4</version>
 			</dependency>
 
+			<!-- encache 相关jar包 -->
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache-core</artifactId>
+				<version>${ehcache.core.version}</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 			<!-- el 表达式 -->
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -616,7 +638,7 @@
 				<version>1.7.3</version>
 			</dependency>
 
-			<!-- swagger api -->
+			<!-- swagger api begin -->
 			<dependency>
 				<groupId>io.springfox</groupId>
 				<artifactId>springfox-swagger2</artifactId>
@@ -627,6 +649,54 @@
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>${swagger.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-annotations</artifactId>
+				<version>1.5.10</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-staticdocs</artifactId>
+				<version>${swagger.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- swagger api end -->
+			
+			<!-- hightchar 导出图片 begin -->
+			<dependency>
+			    <groupId>batik</groupId>
+			    <artifactId>batik-all</artifactId>
+			    <version>1.6</version>
+			</dependency>
+			<dependency>
+                <groupId>org.apache.pdf</groupId>
+				<artifactId>pdf-transcoder</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+			    <groupId>xalan</groupId>
+			    <artifactId>xalan</artifactId>
+			    <version>2.7.1</version>
+			</dependency>
+			<dependency>
+			    <groupId>xerces</groupId>
+			    <artifactId>xercesImpl</artifactId>
+			    <version>2.9.1</version>
+			</dependency>
+			<!-- hightchar 导出图片 end -->
+            
+            <!-- code begin -->
+			<dependency>
+				<groupId>com.fcc</groupId>
+				<artifactId>fcc-code</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+			    <groupId>freemarker</groupId>
+			    <artifactId>freemarker</artifactId>
+			    <version>2.3.8</version>
+			</dependency>
+			<!-- code end -->
 		</dependencies>
 	</dependencyManagement>
 
