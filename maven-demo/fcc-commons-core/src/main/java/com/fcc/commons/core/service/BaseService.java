@@ -21,12 +21,12 @@ public interface BaseService {
 	 * @param o
 	 *            对象
 	 */
-	public void create(Object o);
+	public void add(Object o);
 	/**
 	 * 保存
 	 * @param list
 	 */
-    public void createList(List list);
+    public void addList(List list);
 
 	/**
 	 * 更新一个对象
@@ -34,7 +34,7 @@ public interface BaseService {
 	 * @param o
 	 *            对象
 	 */
-	public void update(Object o);
+	public void edit(Object o);
 
 	/**
 	 * 保存或更新对象
@@ -42,7 +42,7 @@ public interface BaseService {
 	 * @param o
 	 *            对象
 	 */
-	public void createOrUpdate(Object o);
+	public void addOrEdit(Object o);
 
 	/**
 	 * 合并一个对象
