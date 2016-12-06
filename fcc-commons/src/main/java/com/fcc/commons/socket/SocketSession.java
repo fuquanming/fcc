@@ -23,7 +23,7 @@ import com.fcc.commons.socket.io.codec.ProtocolEncoder;
 
 public class SocketSession extends IoSessionAbstract {
 	
-	private static Logger logger = Logger.getLogger(SocketSession.class.getName());
+	private Logger logger = Logger.getLogger(SocketSession.class.getName());
 	
 	private SocketSession session;
 	/** socket */

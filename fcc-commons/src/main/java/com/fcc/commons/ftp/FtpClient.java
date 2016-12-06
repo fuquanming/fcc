@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
  */
 public class FtpClient {
 	
-	private static Logger logger = Logger.getLogger(FtpClient.class.getName());
+	private Logger logger = Logger.getLogger(FtpClient.class.getName());
 	/**
 	 * FTP 返回代码
 	 */
