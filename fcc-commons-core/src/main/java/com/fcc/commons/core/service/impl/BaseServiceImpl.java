@@ -116,16 +116,16 @@ public class BaseServiceImpl implements BaseService {
 		return baseDao.queryColumns(sql);
 	}
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void create(Object o) {
-		baseDao.save(o);
+	public void add(Object o) {
+		baseDao.add(o);
 	}
     @Transactional(rollbackFor = Exception.class)//事务申明
-	public void createList(List o) {
-		for (Object data : o) baseDao.save(data);
+	public void addList(List o) {
+		for (Object data : o) baseDao.add(data);
 	}
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void createOrUpdate(Object o) {
-		baseDao.saveOrUpdate(o);
+	public void addOrEdit(Object o) {
+		baseDao.addOrEdit(o);
 	}
 	@Transactional(readOnly = true)//只查事务申明
 	public Object uniqueResult(String hql, Object... param) {
@@ -136,7 +136,7 @@ public class BaseServiceImpl implements BaseService {
 		return baseDao.uniqueResult(hql, param);
 	}
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void update(Object o) {
-		baseDao.update(o);
+	public void edit(Object o) {
+		baseDao.edit(o);
 	}
 }

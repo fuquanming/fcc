@@ -80,15 +80,15 @@ public class BaseDaoImpl implements BaseDao {
 		}
 	}
 
-	public void save(Object o) {
+	public void add(Object o) {
 		this.getCurrentSession().save(o);
 	}
 
-	public void update(Object o) {
+	public void edit(Object o) {
 		this.getCurrentSession().update(o);
 	}
 
-	public void saveOrUpdate(Object o) {
+	public void addOrEdit(Object o) {
 		this.getCurrentSession().saveOrUpdate(o);
 	}
 
