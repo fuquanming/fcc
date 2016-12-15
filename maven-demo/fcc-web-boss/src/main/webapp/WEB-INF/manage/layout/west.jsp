@@ -4,6 +4,7 @@
 var tree;
 var datas;
 $(function() {
+	return;
 	$.ajax({
         url : 'manage/sys/user/userMenu.do?random=' + Math.random(),
         cache : false,
@@ -151,75 +152,5 @@ $(function() {
    	<%-- 
 	<div title="EasyUiDemo" href="easyuidemo.html"></div>
 	--%>
-	<%-- <c:forEach items="${sessionScope.USER_MENU}" var="module">
-	<c:if test="${module.moduleLevel == '1'}">
-	<div title="${module.moduleName }" iconCls="icon-tip">
-		<!-- 只展示二级模块
-		<ul style="margin:0;padding:0;margin-left:10px;" name="menuUl">
-		<c:forEach items="${sessionScope.USER_MENU}" var="module2">
-			<c:if test="${module2.moduleLevel == '2' && module2.parentId == module.moduleId}">
-				<li class="drag-item" onclick="toModule('${module2.moduleDesc }', '${module2.moduleName }', this)">${module2.moduleName }</li>
-			</c:if>
-		</c:forEach>
-		</ul>
-		 -->
-		 <ul id="tree_${module.moduleId }" style="margin-top: 5px;">
-         </ul>
-         <script type="text/javascript">
-         $(function() {
-			var tree_${module.moduleId } = $('#tree_${module.moduleId }').tree({
-				url : 'manage/sys/user/userMenu.do?moduleId=${module.moduleId }&random=' + Math.random(),
-				animate : false,
-				lines : !Tool.isLessThanIe8(),
-				onClick : function(node) {
-					if (node.attributes && node.attributes.src && node.attributes.src != '') {
-						var href = node.attributes.src;
-						/*
-						$.messager.progress({
-							text : '请求数据中....',
-							interval : 100
-						});
-						*/
-						addTabFun({
-							src : href,
-							title : node.text
-						});
-					} else {
-						/*
-						addTabFun({
-							src : 'test/err.jsp',
-							title : '工程建设'
-						});
-						*/
-					}
-				},
-				onLoadSuccess : function(node, data) {
-					var t = $(this);
-					if (data) {
-						$(data).each(function(index, d) {
-							if (this.state == 'closed') {
-								t.tree('expandAll');
-							}
-						});
-						try {
-							if (data[0] && data[0].msg) {
-								$.messager.show({
-									msg : '数据库异常！',
-									title : '提示'
-								});
-							}
-						} catch(e){alert(e)}
-					}
-				},
-				onLoadError : function() {
-						window.location.href = overUrl;
-				}
-			});
-		});
-         </script>
-	</div>
-	</c:if>
-	</c:forEach> --%>
-	
   </div>
 </div>
