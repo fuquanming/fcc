@@ -55,7 +55,7 @@
 		<tr>  
             <th colspan="3">列字段：</th>        
             <td>
-            <select id="allColumnName" name="allColumnName" type="text" multiple="multiple" size="10">
+            <select id="allColumnName" name="allColumnName" type="text" multiple="multiple" >
             </select>
             </td>
         </tr>	
@@ -147,6 +147,7 @@ $(function() {
 
 function queryColumn() {
     var queryTable = $('input[name="tableName"]').val();
+    $('#allColumnName').attr('size', 10);
     Tool.removeSelect({
         'sourceId':'allColumnName',
         'targetId':'sourceId',

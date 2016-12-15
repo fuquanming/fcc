@@ -61,14 +61,14 @@ treegridParam_column_value = [ [ {
 }, {
     field : 'moduleDesc',
     title : '选择',
-    width : 200,
+    width : 100,
     formatter : function(value, rowData, rowIndex) {
     	return '<input type="checkbox" id="module_' + rowData.attributes.parentIds +'" onclick="checkModule(this)"/>';
     }
 }, {
     field : 'attributes',
     title : '模块操作',
-    width : 200,
+    width : 400,
     formatter : function(value, rowData, rowIndex) {
         if (value) {
             var operates = value.operate;
