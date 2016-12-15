@@ -23,7 +23,7 @@
 			centerTabs.tabs('add', {
 				title : '首页',
 				content : '<iframe src="' + src + '" frameborder="0" style="border:0;width:100%;height:99.2%;"></iframe>',
-				closable : true,
+				closable : false,
 				iconCls : ''
 			});
 		}, 0);
