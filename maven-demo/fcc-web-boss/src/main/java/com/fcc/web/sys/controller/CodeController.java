@@ -32,7 +32,6 @@ import org.springframework.web.util.WebUtils;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -41,7 +40,6 @@ import com.fcc.framework.generator.GeneratorProperties;
 import com.fcc.framework.generator.provider.db.table.TableFactory;
 import com.fcc.framework.generator.provider.db.table.model.Column;
 import com.fcc.framework.generator.provider.db.table.model.Table;
-import com.fcc.framework.generator.util.FileHelper;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.Resources;
 import com.fcc.web.sys.model.SysType;
@@ -247,7 +245,6 @@ public class CodeController extends AppWebController {
     public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
         EasyuiDataGridJson json = new EasyuiDataGridJson();
         try {
-            String tableName = request.getParameter("tableName");
             List<Table> list = TableFactory.getInstance().getAllTables();
             int size = list.size();
             List<String> nameList = new ArrayList<String>(size);
