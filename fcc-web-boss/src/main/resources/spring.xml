@@ -20,6 +20,7 @@
             <list>
                 <value>classpath:config/db.properties</value>
                 <value>classpath:config/config.properties</value>
+                <value>classpath:config/email.properties</value>
             </list>
         </property>
     </bean>
@@ -28,6 +29,7 @@
     <import resource="spring/spring-hibernate.xml" />
     <import resource="spring/spring-task.xml" />
     <import resource="spring/spring-cache.xml" />
+    <import resource="spring/spring-email.xml" />
     <!-- <import resource="spring/spring-simple-shiro.xml" /> -->
     
     <!-- component-scan自动搜索@Component , @Controller , @Service , @Repository等标注的类 -->
