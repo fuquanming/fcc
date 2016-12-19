@@ -87,9 +87,9 @@ $(function() {
                         selected : openFlag
                     });
                 })
-                $('#topTabs').addClass('panel-header');
-                $('#rightContent').addClass('panel-header');
-                $('#leftContent').addClass('panel-header');
+                //$('#topTabs').addClass('panel-header1');
+                //$('#rightContent').addClass('panel-header1');
+                //$('#leftContent').addClass('panel-header');
             } catch(e) {
                 alert(e)
                 //window.location.href = overUrl;
@@ -101,14 +101,14 @@ $(function() {
 </script>
 
     <!-- -->  
-    <div class="easyui-layout" style="width:100%;height:54px;">
-        <div id="leftContent" data-options="region:'west'" title="" style="width:199px; border-right-style: none;" >
+    <div class="easyui-layout " style="width:100%;height:54px;">
+        <div id="leftContent" data-options="region:'west'" title="" style="width:199px; border-right-style: none;" class="panel-header-top">
             <!-- <p >width: 30%</p> -->
         </div>
-        <div id="topTabs" data-options="region:'center'" title="" style="border-left-style: none;">
+        <div id="topTabs" data-options="region:'center'" title="" style="border-left-style: none;" class="panel-header-top">
             <div id="northTabs" style="margin-top: 25px; margin-left: 2px;"></div>
         </div>
-        <div id="rightContent" data-options="region:'east'" title="" style="width: 175px; border-left-style: none;">
+        <div id="rightContent" data-options="region:'east'" title="" style="width: 175px; border-left-style: none;" class="panel-header-top">
             
         </div>
     </div>
