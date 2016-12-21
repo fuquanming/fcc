@@ -233,6 +233,8 @@ public class SysUserServiceImpl implements SysUserService {
                     if (parentModule != null && parentModule.getShow() == true) {
                         moduleSet.add(parentModule);
                         moduleSet.add(module);
+                    } else if (Module.ROOT.getModuleId().equals(module.getParentId())) {
+                        moduleSet.add(module);
                     }
                 }
             }
