@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
+import com.fcc.commons.core.config.DbPasswordCallback;
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
@@ -94,7 +96,7 @@ public class CodeController extends AppWebController {
         GeneratorProperties.setProperty("jdbc.url", Resources.DB.getString("jdbc.url"));
         GeneratorProperties.setProperty("jdbc.driver", Resources.DB.getString("jdbc.driver"));
         GeneratorProperties.setProperty("jdbc.username", Resources.DB.getString("jdbc.username"));
-        GeneratorProperties.setProperty("jdbc.password", Resources.DB.getString("jdbc.password"));
+        GeneratorProperties.setProperty("jdbc.password", EncryptionUtil.decryptDES(DbPasswordCallback.DB_KEY, Resources.DB.getString("jdbc.password"), null));
         GeneratorProperties.setProperty("jdbc.schema", Resources.DB.getString("jdbc.schema"));
         
         List<Table> list = TableFactory.getInstance().getAllTables();
