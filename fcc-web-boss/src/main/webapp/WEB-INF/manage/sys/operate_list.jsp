@@ -28,6 +28,9 @@
   <table id="datagrid">
   </table>
 </div>
+  <form id="userFormDel" name="userFormDel" method="post">
+    <input name="ids" type="hidden" value=""/>
+  </form>
 <div id="userDialog" style="display: none;overflow: hidden;">
   <form id="userForm" name="userForm" method="post">
     <input name="operateValue" type="hidden" value=""/>
@@ -107,7 +110,7 @@ datagridParam_column_value = [ [ {
 }] ];// 表格的列
 datagridParam_queryParamName = ['searchName'];
 
-operateParam_form = 'userForm';
+operateParam_form = 'userFormDel';
 operateParam_operateDiv = 'operateDiv';
 operateParam_dataId = 'operateId';
 operateParam_dataName = 'operateName';
