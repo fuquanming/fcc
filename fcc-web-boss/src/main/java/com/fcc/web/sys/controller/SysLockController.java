@@ -21,10 +21,10 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysLock;
 import com.fcc.web.sys.service.SysLockService;
 
@@ -72,17 +72,17 @@ public class SysLockController extends AppWebController {
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
-			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ",");
 			baseService.deleteById(SysLock.class, ids, "lockKey");
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除系统锁失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);

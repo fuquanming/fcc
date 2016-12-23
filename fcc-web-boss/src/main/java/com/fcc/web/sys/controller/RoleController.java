@@ -24,6 +24,7 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
@@ -153,14 +154,14 @@ public class RoleController extends AppWebController {
 				roleService.add(role);
 			}
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("新增角色失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -183,7 +184,7 @@ public class RoleController extends AppWebController {
 				dbRole.setRoleName(roleName);
 				dbRole.setRoleDesc(role.getRoleDesc());
 			} else {
-				throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+				throw new RefusedException(StatusCode.Sys.emptyUpdateId);
 			}
 			
 			SysUser user = getSysUser(request);
@@ -202,14 +203,14 @@ public class RoleController extends AppWebController {
 				roleService.edit(dbRole, moduleRigth);
 			}
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			reloadRoleModuleRightCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改角色失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -222,10 +223,10 @@ public class RoleController extends AppWebController {
 	        @ApiParam(required = true, value = "角色ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
-		    if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+		    if (StringUtils.isEmpty(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ",");
 			roleService.delete(ids);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 			reloadModuleCache();
 		} catch (RefusedException e) {
@@ -233,7 +234,7 @@ public class RoleController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除角色失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);

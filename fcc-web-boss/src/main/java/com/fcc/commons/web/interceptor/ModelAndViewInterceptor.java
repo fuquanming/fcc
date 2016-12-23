@@ -1,4 +1,4 @@
-package com.fcc.web.sys.interceptor;
+package com.fcc.commons.web.interceptor;
 
 import java.util.Iterator;
 

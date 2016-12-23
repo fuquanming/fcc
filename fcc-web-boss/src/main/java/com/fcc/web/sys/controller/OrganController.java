@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiTreeGridOrgan;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
@@ -130,13 +131,13 @@ public class OrganController extends AppWebController {
 			data.setOrganLevel(parent.getOrganLevel() + 1);
 			organService.add(data);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("新增机构失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -154,7 +155,7 @@ public class OrganController extends AppWebController {
             @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
 		Message message = new Message();
 		try {
-			if (organId == null || "".equals(organId)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (organId == null || "".equals(organId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
 			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
 			if (Organization.ROOT.getOrganId().equals(organId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
 //			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否修改上级组织机构
@@ -182,13 +183,13 @@ public class OrganController extends AppWebController {
 			data.setOrganLevel(parent.getOrganLevel() + 1);
 			organService.edit(data);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改机构失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -201,7 +202,7 @@ public class OrganController extends AppWebController {
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "ids") String organId) {
 		Message message = new Message();
 		try {
-			if (organId == null || "".equals(organId)) new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (organId == null || "".equals(organId)) new RefusedException(StatusCode.Sys.emptyDeleteId);
 			if (Organization.ROOT.getOrganId().equals(organId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
 //			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否删除上级组织机构
 //				throw new RefusedException("不能删除上级机构！");
@@ -213,14 +214,14 @@ public class OrganController extends AppWebController {
 			if (listPage.getTotalSize() > 0) throw new RefusedException(Constants.StatusCode.Organization.hasUser);
 			
 			organService.delete(organId);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除机构失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);

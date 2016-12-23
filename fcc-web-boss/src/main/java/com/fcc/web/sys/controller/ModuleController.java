@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
@@ -165,7 +166,7 @@ public class ModuleController extends AppWebController {
 			
 			updateUserModule(operateIds, data, request);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			
 			reloadModuleCache();
 			reloadRoleModuleRightCache();
@@ -174,7 +175,7 @@ public class ModuleController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("新增模块失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -192,7 +193,7 @@ public class ModuleController extends AppWebController {
 	        @ApiParam(required = false, value = "模块排序") @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
 			if (moduleName == null || "".equals(moduleName)) throw new RefusedException(Constants.StatusCode.Module.emptyModuleName);
 			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
 			
@@ -221,7 +222,7 @@ public class ModuleController extends AppWebController {
 			updateUserModule(operateIds, data, request);
 			
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			
 			reloadModuleCache();
 			reloadRoleModuleRightCache();
@@ -230,7 +231,7 @@ public class ModuleController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改模块失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -243,10 +244,10 @@ public class ModuleController extends AppWebController {
 	        @ApiParam(required = true, value = "模块ID") @RequestParam(name = "ids") String moduleId) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
 			moduleService.delete(moduleId);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 			reloadModuleCache();
 			reloadRoleModuleRightCache();
@@ -255,7 +256,7 @@ public class ModuleController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除模块失败！", e.getCause());
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -269,7 +270,7 @@ public class ModuleController extends AppWebController {
             @ApiParam(required = true, value = "模块状态") @RequestParam(name = "moduleStatus", defaultValue = "") String moduleStatus) {
         Message message = new Message();
         try {
-            if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+            if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
             String[] ids = StringUtils.split(id, ",");
             boolean show = false;
             if ("show".equals(moduleStatus)) {
@@ -277,14 +278,14 @@ public class ModuleController extends AppWebController {
             }
             moduleService.editShow(ids, show);
             reloadModuleCache();
-            message.setMsg(Constants.StatusCode.Sys.success);
+            message.setMsg(StatusCode.Sys.success);
             message.setSuccess(true);
         } catch (RefusedException e) {
             message.setMsg(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("显示、隐藏模块失败！", e);
-            message.setMsg(Constants.StatusCode.Sys.fail);
+            message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         }
         return getModelAndView(message);

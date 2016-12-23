@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysUserService;
@@ -61,11 +61,11 @@ public class UserInfoController extends AppWebController {
 			user.setRoles(roles);
 			setSysUser(user, request);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改登录用户信息失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);

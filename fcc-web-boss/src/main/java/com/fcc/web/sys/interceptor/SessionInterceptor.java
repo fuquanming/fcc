@@ -6,15 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.StopWatch;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fcc.commons.web.common.StatusCode;
+import com.fcc.commons.web.interceptor.BaseInterceptor;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
@@ -25,7 +22,7 @@ import com.fcc.web.sys.service.CacheService;
  * @author 傅泉明
  * @version v1.0
  */
-public class SessionInterceptor implements HandlerInterceptor {
+public class SessionInterceptor extends BaseInterceptor {
 
     private Logger logger = Logger.getLogger(SessionInterceptor.class);
     @Resource
@@ -35,6 +32,8 @@ public class SessionInterceptor implements HandlerInterceptor {
     ThreadLocal<Long> timeLocal = new ThreadLocal<Long>();
     String timePageStr = "耗时毫秒：%d,page=%s";
     String timeControllerStr = "耗时毫秒：%d,controller=%s";
+    
+    private String filterMsg = "login";
 	/**
 	 * 完成页面的render后调用
 	 */
@@ -97,24 +96,14 @@ public class SessionInterceptor implements HandlerInterceptor {
 		if (user == null) {
 	        if (object instanceof HandlerMethod) {
                 HandlerMethod handlerMethod = (HandlerMethod) object;
-                if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class) || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
-//                    text/html;charset=UTF-8
-                    response.setContentType("application/json;charset=UTF-8");
-                    Message message = new Message();
-                    message.setMsg(Constants.StatusCode.Sys.sessionTimeout);
-                    message.setObj(Constants.StatusCode.Sys.sessionTimeout);
-                    byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
-                    response.getOutputStream().write(bytes);
-                    return false;
-                } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
-                    request.getSession().setAttribute("filterMsg", "login");// 表示重新登录系统
-                    request.getRequestDispatcher("/overtime.jsp").forward(request, response);
-                    return false;
-                }
+                Message message = new Message();
+                message.setMsg(StatusCode.Sys.sessionTimeout);
+                message.setObj(StatusCode.Sys.sessionTimeout);
+                boolean flag = output(request, response, handlerMethod, message, filterMsg, goPage);
+                if (flag) return false;
             }
 //	        response.sendRedirect(basePath + "/overtime.jsp");
-	        request.getSession().setAttribute("filterMsg", "login");// 表示重新登录系统
-            request.getRequestDispatcher("/overtime.jsp").forward(request, response);
+            goPage(request, response, filterMsg, goPage);
             return false;
 		}
 		return true;

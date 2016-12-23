@@ -7,15 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
+import com.fcc.commons.web.interceptor.BaseInterceptor;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Module;
@@ -30,9 +28,9 @@ import com.fcc.web.sys.service.RbacPermissionService;
  * @author 傅泉明
  * @version v1.0
  */
-public class AuthInterceptor implements HandlerInterceptor {
+public class AuthInterceptor extends BaseInterceptor {
 
-	private static final Logger logger = Logger.getLogger(AuthInterceptor.class);
+	private Logger logger = Logger.getLogger(AuthInterceptor.class);
 	@Resource
 	private RbacPermissionService rbacPermissionService;
 	@Resource
@@ -128,20 +126,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 //                      flag = false;
                         if (flag == false) {
                             logger.info("用户：" + user.getUserId() + "，您没有权限！执行：" + moduleName + "，" + operateName);
-                            if (handlerMethod.getMethod().isAnnotationPresent(ResponseBody.class)
-                                    || handlerMethod.getMethod().getReturnType() == ModelAndView.class) {// json
-                                response.setContentType("application/json;charset=UTF-8");
-                                Message message = new Message();
-                                message.setMsg(Constants.StatusCode.Sys.noPermissions);
-                                message.setObj(module.getModuleName() + "：" + operateName);
-                                byte[] bytes = JSON.toJSONBytes(message, SerializerFeature.DisableCircularReferenceDetect);
-                                response.getOutputStream().write(bytes);
-                                return false;
-                            } else if (handlerMethod.getMethod().getReturnType() == String.class) {// 跳转页面
-                                request.getSession().setAttribute("filterMsg", "right");// 无权限跳转页面
-                                request.getRequestDispatcher("/overtime.jsp").forward(request, response);
-                                return false;
-                            }
+                            Message message = new Message();
+                            message.setMsg(StatusCode.Sys.noPermissions);
+                            message.setObj(module.getModuleName() + "：" + operateName);
+                            output(request, response, handlerMethod, message, "right", goPage);
                         }
                     }
                 }

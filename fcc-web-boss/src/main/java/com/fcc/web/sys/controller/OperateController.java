@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -63,13 +64,13 @@ public class OperateController extends AppWebController {
 		    if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
 			operateService.add(operate);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("新增操作失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -81,17 +82,17 @@ public class OperateController extends AppWebController {
 	public ModelAndView edit(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
-		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
             if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
             operateService.edit(operate);
             reloadOperateCache();
             reloadModuleCache();
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改操作失败！", e.getCause());
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getCause());
 		}
 		return getModelAndView(message);
@@ -104,12 +105,12 @@ public class OperateController extends AppWebController {
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (StringUtils.isEmpty(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ',');
 			operateService.delete(ids);
 			reloadOperateCache();
 			reloadModuleCache();
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 			reloadModuleCache();
 		} catch (RefusedException e) {
@@ -117,7 +118,7 @@ public class OperateController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除操作失败！", e.getCause());
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getCause());
 		}
 		return getModelAndView(message);

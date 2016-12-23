@@ -24,6 +24,7 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeNode;
@@ -209,13 +210,13 @@ public class SysUserController extends AppWebController {
 			sysUser.setCreateUser(user.getUserId());
 			sysUserService.add(sysUser, roleIds);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("新增用户失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -243,13 +244,13 @@ public class SysUserController extends AppWebController {
 			sysUser.setDept(dept);
 			sysUserService.edit(sysUser, roleIds);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改用户失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -262,17 +263,17 @@ public class SysUserController extends AppWebController {
 	        @ApiParam(required = true, value = "操作ID、用，分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
 		Message message = new Message();
 		try {
-			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ",");
 			sysUserService.delete(ids);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除用户失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -285,17 +286,17 @@ public class SysUserController extends AppWebController {
             @ApiParam(required = true, value = "操作ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id) {
         Message message = new Message();
         try {
-            if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+            if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
             String[] ids = StringUtils.split(id, ",");
             sysUserService.resetPassword(ids, EncryptionUtil.encodeMD5("888888").toLowerCase());
-            message.setMsg(Constants.StatusCode.Sys.success);
+            message.setMsg(StatusCode.Sys.success);
             message.setSuccess(true);
         } catch (RefusedException e) {
             message.setMsg(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("重置用户密码失败！", e);
-            message.setMsg(Constants.StatusCode.Sys.fail);
+            message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         }
         return getModelAndView(message);
@@ -309,17 +310,17 @@ public class SysUserController extends AppWebController {
 	        @ApiParam(required = true, value = "用户状态") @RequestParam(name = "userStatus", defaultValue = "") String userStatus) {
 		Message message = new Message();
 		try {
-			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyUpdateId);
+			if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
 			String[] ids = StringUtils.split(id, ",");
 			sysUserService.editStatus(ids, userStatus);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("锁定解锁用户失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
