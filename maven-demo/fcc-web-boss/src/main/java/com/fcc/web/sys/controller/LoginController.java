@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
@@ -65,7 +66,7 @@ public class LoginController extends AppWebController {
             user.setIp(requestIpService.getRequestIp(request));
             logger.info("系统登录成功，userId:" + user.getUserId());
             message.setSuccess(true);
-            message.setMsg(Constants.StatusCode.Sys.success);
+            message.setMsg(StatusCode.Sys.success);
 //            CacheUtil.initLoginUser(request, user);
             setSysUser(user, request);
         } catch (RefusedException e) {
@@ -92,7 +93,7 @@ public class LoginController extends AppWebController {
         if (user != null) {
             userId = user.getUserId();
             logger.info("退出系统成功，userId:" + userId);
-            message.setMsg(Constants.StatusCode.Sys.success);
+            message.setMsg(StatusCode.Sys.success);
         }
         request.getSession().invalidate();
         return getModelAndView(message);

@@ -55,7 +55,7 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<bean class="com.fcc.web.sys.interceptor.ModelAndViewInterceptor" />
+			<bean class="com.fcc.commons.web.interceptor.ModelAndViewInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
@@ -63,12 +63,22 @@
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/manage/**" />
-			<bean class="com.fcc.web.sys.interceptor.SessionInterceptor" />
+			<bean class="com.fcc.web.sys.interceptor.SessionInterceptor">
+			     <property name="goPage" value="/overtime.jsp" />
+			</bean>
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/manage/**" />
-			<bean class="com.fcc.web.sys.interceptor.AuthInterceptor" />
+			<bean class="com.fcc.web.sys.interceptor.AuthInterceptor">
+			     <property name="goPage" value="/overtime.jsp" />
+			</bean>
 		</mvc:interceptor>
+		<mvc:interceptor>
+            <mvc:mapping path="/manage/**" />
+            <bean class="com.fcc.commons.web.interceptor.MemoryInterceptor">
+                 <property name="goPage" value="/overtime.jsp" />
+            </bean>
+        </mvc:interceptor>
 	</mvc:interceptors>
 	
 </beans>

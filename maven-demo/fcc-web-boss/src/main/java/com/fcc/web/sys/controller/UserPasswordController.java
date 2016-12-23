@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.SysUser;
@@ -67,13 +68,13 @@ public class UserPasswordController extends AppWebController {
 			}
 			sysUserService.updatePassword(user.getUserId(), EncryptionUtil.encodeMD5(newPassword).toLowerCase());
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改密码失败！", e.getCause());
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);

@@ -101,21 +101,23 @@ public interface Constants {
     
     
     public interface StatusCode {
-        /** 系统 */
-        public interface Sys {
-            /** 成功 sys_000 */
-            String success = "sys_000";
-            /** 失败 sys_001 */
-            String fail = "sys_001";
-            /** 修改记录时，ID为空 sys_002 */
-            String emptyUpdateId = "sys_002";
-            /** 删除记录时，ID为空 sys_003 */
-            String emptyDeleteId = "sys_003";
-            /** session过期 sys_004 */
-            String sessionTimeout = "sys_004";
-            /** 无权限 sys_005 */
-            String noPermissions = "sys_005";
-        }
+//        /** 系统 */
+//        public interface Sys {
+//            /** 成功 sys_000 */
+//            String success = "sys_000";
+//            /** 失败 sys_001 */
+//            String fail = "sys_001";
+//            /** 修改记录时，ID为空 sys_002 */
+//            String emptyUpdateId = "sys_002";
+//            /** 删除记录时，ID为空 sys_003 */
+//            String emptyDeleteId = "sys_003";
+//            /** session过期 sys_004 */
+//            String sessionTimeout = "sys_004";
+//            /** 无权限 sys_005 */
+//            String noPermissions = "sys_005";
+//            /** 堆空间不足 sys_006 */
+//            String heapSpace = "sys_006";
+//        }
         
         /** 上传文件 */
         public interface Import {

@@ -42,12 +42,12 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
         <description>数据库连接回调密码解密</description>
     </bean>
 	
-	<bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter" lazy-init="true">
+	<!-- <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter" lazy-init="true">
         <description>状态过滤器</description>
         <property name="slowSqlMillis" value="3000" />
         <property name="logSlowSql" value="true" />
         <property name="mergeSql" value="true" />
-    </bean>
+    </bean> -->
 	
 	<!--see https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_DruidDataSource%E5%8F%82%E8%80%83%E9%85%8D%E7%BD%AE-->
     <bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -84,11 +84,11 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
         <!-- 配置监控统计拦截的filters -->
         <property name="filters" value="${druid.filters}" />
         
-        <property name="proxyFilters">
+        <!-- <property name="proxyFilters">
             <list>
                 <ref bean="stat-filter" />
             </list>
-        </property>
+        </property> -->
     </bean>
     
     <bean id="slaveDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -125,11 +125,11 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
         <!-- 配置监控统计拦截的filters -->
         <property name="filters" value="${druid.filters}" />
         
-        <property name="proxyFilters">
+        <!-- <property name="proxyFilters">
             <list>
                 <ref bean="stat-filter" />
             </list>
-        </property>
+        </property> -->
     </bean>
     
     <bean id="dataSource" class="com.fcc.commons.core.datasource.DynamicDataSource" lazy-init="true">
