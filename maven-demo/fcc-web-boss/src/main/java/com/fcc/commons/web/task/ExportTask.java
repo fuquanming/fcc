@@ -16,8 +16,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.fcc.commons.web.service.ExportService;
+import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.zip.Zip;
+import com.fcc.web.sys.service.CacheService;
 
 /**
  * <p>Description:导出数据任务</p>
@@ -51,6 +53,9 @@ public class ExportTask implements Runnable {
 	/** 导出数据总大小 */
 	private int exportTotalSize = 500000;
 	
+	public ExportTask() {
+	}
+	
     public ExportTask(String runningKey, List<String> titleList, String exportDataPath, Object queryService, String queryServiceMethodName, int pageNoSub,
             Object[] queryParams, ExportService exportService) {
         super();
@@ -64,6 +69,16 @@ public class ExportTask implements Runnable {
         this.exportService = exportService;
     }
 	
+    public void init() {
+        CacheService cacheService = (CacheService) SpringContextUtil.getBean(CacheService.class);
+        exportTotalSize = cacheService.getExportDataTotalSize();
+        exportMessage.setEmpty(false);
+        exportMessage.setCurrentSize(0);
+        exportMessage.setFileName(null);
+        exportMessage.setError(false);
+        exportDataFlag = true;
+    }
+    
     public void run() {
 		long startTime = System.currentTimeMillis();
 		FileOutputStream fos = null;
@@ -76,9 +91,10 @@ public class ExportTask implements Runnable {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fos);
-			long endTime = System.currentTimeMillis();
-			logger.info("time=" + (endTime - startTime) + ",fileName=" + exportMessage.getFileName());
 			exportDataFlag = false;
+			long endTime = System.currentTimeMillis();
+			String info = "export end:%d,time=%d,totalSize=%d,fileName=%s";
+            logger.info(String.format(info, Thread.currentThread().getId(), (endTime - startTime), exportMessage.getCurrentSize(), exportMessage.getFileName()));
 		}
 	}
 	@SuppressWarnings("unchecked")

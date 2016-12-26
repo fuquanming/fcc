@@ -21,6 +21,7 @@ import com.fcc.web.sys.model.SysLog;
  * @author 傅泉明
  */
 public interface SysLogDao {
+    
     /**
      * 分页查询
      * @return

@@ -18,14 +18,15 @@ import java.util.List;
  */
 public interface ImportService {
     /**
-     * 转化数据为对象
-     * @return
+     * 转化一行数据为一个对象
+     * @param src        需要转化的对象
+     * @return           需要持久化的对象
      */
-    public Object dataConver(List<String> dataList);
+    public Object converObject(Object src);
     /**
-     * 保存数据 
+     * 保存数据
      * @param dataList
      */
-    public void saveData(List<Object> dataList);
+    public void addData(List<Object> dataList);
     
 }

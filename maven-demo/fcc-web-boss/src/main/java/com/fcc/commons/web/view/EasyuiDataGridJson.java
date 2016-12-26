@@ -8,6 +8,7 @@ import java.util.List;
  * @author 傅泉明
  * @version v1.0
  */
+@SuppressWarnings("rawtypes")
 public class EasyuiDataGridJson implements java.io.Serializable {
 
 	/**
@@ -15,7 +16,7 @@ public class EasyuiDataGridJson implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -3859118647387392258L;
 	private Long total;// 总记录数
-	private List rows;// 每行记录
+    private List rows;// 每行记录
 	private String msg = "";// 提示信息
 	private List footer;
 

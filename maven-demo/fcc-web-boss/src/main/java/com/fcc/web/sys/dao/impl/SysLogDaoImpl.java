@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fcc.commons.core.dao.BaseDao;
@@ -31,6 +32,9 @@ public class SysLogDaoImpl implements SysLogDao {
 
     @Resource
     private BaseDao baseDao;
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+    
     /**
      * //TODO 添加override说明
      * @see com.fcc.web.sys.dao.SysLogDao#queryPage(int, int, java.util.Map, boolean)

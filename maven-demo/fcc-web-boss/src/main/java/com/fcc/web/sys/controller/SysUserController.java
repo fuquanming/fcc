@@ -2,6 +2,7 @@ package com.fcc.web.sys.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -375,7 +376,7 @@ public class SysUserController extends AppWebController {
 			e.printStackTrace();
 			logger.error("加载查询用户数据失败！", e);
 			json.setTotal(0L);
-			json.setRows(new ArrayList<SysUserView>());
+			json.setRows(Collections.EMPTY_LIST);
 			json.setMsg(e.getMessage());
 		}
 		return json;
