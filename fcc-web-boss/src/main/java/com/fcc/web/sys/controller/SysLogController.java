@@ -1,10 +1,9 @@
 package com.fcc.web.sys.controller;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +31,7 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
+import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
 import com.fcc.commons.web.task.ExportTask;
@@ -196,11 +195,11 @@ public class SysLogController extends AppWebController {
 			sysLog.setLogTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(logTimeString));
 			baseService.add(sysLog);
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("保存日志失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -225,16 +224,16 @@ public class SysLogController extends AppWebController {
 				baseService.edit(dbSysLog);
 				// 更新
 				message.setSuccess(true);
-				message.setMsg(Constants.StatusCode.Sys.success);
+				message.setMsg(StatusCode.Sys.success);
 			} else {
 				// 修改的不存在
 				message.setSuccess(false);
-				message.setMsg(Constants.StatusCode.Sys.emptyUpdateId);
+				message.setMsg(StatusCode.Sys.emptyUpdateId);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改日志失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -251,17 +250,17 @@ public class SysLogController extends AppWebController {
 		Message message = new Message();
 		String id = request.getParameter("ids");
 		try {
-			if (id == null || "".equals(id)) throw new RefusedException(Constants.StatusCode.Sys.emptyDeleteId);
+			if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
 			String[] ids = StringUtils.split(id, ",");
 			baseService.deleteById(SysLog.class, ids, "logId");
 			message.setSuccess(true);
-			message.setMsg(Constants.StatusCode.Sys.success);
+			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除日志失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -308,7 +307,7 @@ public class SysLogController extends AppWebController {
 			e.printStackTrace();
 			logger.error("加载查询日志数据失败！", e);
 			json.setTotal(0L);
-			json.setRows(new ArrayList<SysLog>());
+			json.setRows(Collections.EMPTY_LIST);
 			json.setMsg(e.getMessage());
 		}
 		return json;
@@ -396,13 +395,13 @@ public class SysLogController extends AppWebController {
 				json.setRows(listPage.getDataList());
 	        } else {
 	        	json.setTotal(0L);
-				json.setRows(new ArrayList<ReportInfo>());
+				json.setRows(Collections.EMPTY_LIST);
 	        }
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("查询日志报表数据失败！", e);
 			json.setTotal(0L);
-			json.setRows(new ArrayList<ReportInfo>());
+			json.setRows(Collections.EMPTY_LIST);
 			json.setMsg(e.getMessage());
 		}
 		return json;
@@ -483,13 +482,14 @@ public class SysLogController extends AppWebController {
 		lockExportData.lock();
 		try {
 		    if (exportTask == null || exportTask.isExportDataFlag() == false) {
+		        if (exportTask == null) exportTask = new ExportTask();
 		        if (exportDataPath == null) {
 		            StringBuilder sb = new StringBuilder();
 	                sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.EXPORT_DATA_FILENAME)
 	                .append(File.separatorChar).append("sysLogExport").append(File.separatorChar);
 	                exportDataPath = sb.toString();
 		        }
-		        List<String> titleList = new ArrayList<String>();
+		        List<String> titleList = new ArrayList<String>(10);
                 titleList.add(SysLog.ALIAS_LOG_ID);
                 titleList.add(SysLog.ALIAS_USER_ID);
                 titleList.add(SysLog.ALIAS_USER_NAME);
@@ -501,8 +501,15 @@ public class SysLogController extends AppWebController {
                 titleList.add(SysLog.ALIAS_EVENT_OBJECT);
                 titleList.add(SysLog.ALIAS_EVENT_RESULT);
                 Object[] paramObject = new Object[]{1, Constants.EXPORT_DATA_PAGE_SIZE, getParams(request), false};
-                exportTask = new ExportTask("sysLog", titleList, exportDataPath, sysLogService, 
-                        "query", 0, paramObject, (ExportService) sysLogService);
+                exportTask.setRunningKey("sysLog");
+                exportTask.setTitleList(titleList);
+                exportTask.setExportDataPath(exportDataPath);
+                exportTask.setQueryService(sysLogService);
+                exportTask.setQueryServiceMethodName("query");
+                exportTask.setPageNoSub(0);
+                exportTask.setQueryParams(paramObject);
+                exportTask.setExportService((ExportService) sysLogService);
+                exportTask.init();
 		        execute(exportTask);
 		        message.setSuccess(true);
                 message.setMsg(Constants.StatusCode.Export.exportNow);
@@ -512,7 +519,7 @@ public class SysLogController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("导出日志失败！", e);
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		} finally {
 			lockExportData.unlock();
@@ -542,10 +549,10 @@ public class SysLogController extends AppWebController {
 	public ModelAndView importSysLog(HttpServletRequest request, HttpServletResponse response) {
 		Message message = new Message();
 		lockImportData.lock();
-		FileOutputStream fos = null;
 		MultipartFile file = null;
 		try {
 			if (importTask == null || importTask.getImportDataFlag() == false) {
+			    if (importTask == null) importTask = new ImportTask();
 				// 接收上传文件
 				file = ((MultipartHttpServletRequest) request).getFile("upload");
 				if (file != null && file.isEmpty() == false) {
@@ -560,11 +567,15 @@ public class SysLogController extends AppWebController {
                                 .append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
                         importDataPath = sb.toString();
 	                }
-					importTask = new ImportTask("sysLog", importDataPath, file.getOriginalFilename(), file.getInputStream(), 
-					        (ImportService)sysLogService, 9);
-					execute(importTask);
-					message.setSuccess(true);
-					message.setMsg(Constants.StatusCode.Import.importNow);
+					importTask.setRunningKey("sysLog");
+                    importTask.setImportDataPath(importDataPath);
+                    importTask.setFile(file);
+                    importTask.setImportService((ImportService) sysLogService);
+                    importTask.setBeginRowNum(2);
+                    importTask.init();
+                    execute(importTask);
+                    message.setSuccess(true);
+                    message.setMsg(Constants.StatusCode.Import.importNow);
 				} else {
 					message.setMsg(Constants.StatusCode.Import.emptyFile);
 				}
@@ -572,17 +583,11 @@ public class SysLogController extends AppWebController {
 				message.setMsg(Constants.StatusCode.Import.importBusy);
 			}
 		} catch (Exception e) {
-			message.setMsg(Constants.StatusCode.Sys.fail);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 			logger.error("上传日志失败！", e);
 			e.printStackTrace();
 		} finally {
-			try {
-				IOUtils.closeQuietly(file.getInputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			IOUtils.closeQuietly(fos);
 			lockImportData.unlock();
 		}
 		return getModelAndView(message);
@@ -595,6 +600,12 @@ public class SysLogController extends AppWebController {
 	    ImportMessage im = null;
         if (importTask != null) {
             im = importTask.getImportMessage();
+//            if (im.isImportFlag()) {
+//                im = new ImportMessage();
+//                im.setImportFlag(true);
+//                im.setCurrentSize(importTask.getImportMessage().getCurrentSize());
+//                importTask = null;
+//            }
         }
         if (im == null) {
             im = new ImportMessage();
@@ -602,4 +613,5 @@ public class SysLogController extends AppWebController {
         }
         return im;
 	}
+	
 }

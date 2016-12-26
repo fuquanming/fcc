@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -17,9 +18,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fcc.commons.web.service.ImportService;
+import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.commons.web.view.ImportMessage;
+import com.fcc.web.sys.service.CacheService;
 
 
 /**
@@ -32,74 +36,133 @@ public class ImportTask implements Runnable {
 	
 	private Logger logger = Logger.getLogger(ImportTask.class);
 	
-	private ImportMessage importMessage = new ImportMessage();
+	private ImportMessage importMessage;
 	
-	private String runningKey;
+    private String runningKey;
 	
 	/** 导入数据标识 */
 	private boolean importDataFlag;
     /** 导入数据保存的文件夹 */
 	private String importDataPath;
-	/** 上传的文件名 */
+	/** 上传的文件 */
+	private MultipartFile file;
+
+    /** 上传的文件名 */
 	private String fileName;
 	/** 上传的文件流 */
 	private InputStream fileInputStream;
 	
 	private ImportService importService;
-	
-    /** 上传excel里共几列 */
-	private int cellNum;
+	/** 从第几行数据读取 */
+	private int beginRowNum;
 	
 	/** 上传数据总数 */
 	private int totalSize = 0;
 	
+	private int batchSize = 5000;
+	
+	private int batchTaskSize = 5;
+	
+	private ReentrantLock lock = new ReentrantLock();
+	
+	private List<BatchTask> batchTaskList = new ArrayList<ImportTask.BatchTask>(batchTaskSize);
+	
 	public ImportTask() {
 	}
 	
-	public ImportTask(String runningKey, String importDataPath, String fileName, InputStream fileInputStream, ImportService importService, int cellNum) {
+	public ImportTask(String runningKey, String importDataPath, MultipartFile file, ImportService importService, int beginRowNum) {
+        super();
+        this.runningKey = runningKey;
+        this.importDataPath = importDataPath;
+        this.file = file;
+        this.importService = importService;
+        this.beginRowNum = beginRowNum;
+    }
+	
+	public ImportTask(String runningKey, String importDataPath, String fileName, InputStream fileInputStream, ImportService importService, int beginRowNum) {
         super();
         this.runningKey = runningKey;
         this.importDataPath = importDataPath;
         this.fileName = fileName;
         this.fileInputStream = fileInputStream;
         this.importService = importService;
-        this.cellNum = cellNum;
+        this.beginRowNum = beginRowNum;
     }
+	
+	public void init() {
+	    if (importMessage == null) {
+	        importMessage = new ImportMessage();
+	    } else {
+	        importMessage.setCurrentSize(0);
+	        importMessage.setFileFlag(false);
+	        importMessage.setImportFlag(false);
+	    }
+        if (batchTaskList.size() == 0) {
+            for (int i = 0; i < batchTaskSize; i++) {
+                BatchTask batchTask = new BatchTask();
+                batchTaskList.add(batchTask);
+            }
+        }
+        beginRowNum = beginRowNum - 1;
+        importDataFlag = true;
+        totalSize = 0;
+	}
 	
     public void run() {
 		long startTime = System.currentTimeMillis();
-		FileInputStream fis = null;
+		InputStream is = null;
+		Workbook rwb = null;
 		try {
+		    boolean fileFlag = false;
+		    if (file != null) {
+		        this.fileInputStream = file.getInputStream();
+		        this.fileName = file.getOriginalFilename();
+		    }
 			File saveFile = saveFile();
 			// 读取Execle
-			Workbook rwb = null;
 			try {
-				fis = new FileInputStream(saveFile);
-				String fileName = saveFile.getName().toLowerCase();
-				fileName = fileName.substring(fileName.lastIndexOf("."));
-				if (fileName.contains(".xlsx")) { // 2007
-					rwb = new XSSFWorkbook(fis);
-				} else if (fileName.contains(".xls")) { // 97-03
-					rwb = new HSSFWorkbook(fis);
+				if (saveFile != null) {
+				    is = new FileInputStream(saveFile);
+				} else {
+				    is = fileInputStream;
 				}
-				importData(rwb);
+				String fileNameTemp = fileName.toLowerCase();
+				fileNameTemp = fileNameTemp.substring(fileNameTemp.lastIndexOf("."));
+				if (fileNameTemp.contains(".xlsx")) { // 2007
+					rwb = new XSSFWorkbook(is);
+				} else if (fileNameTemp.contains(".xls")) { // 97-03
+					rwb = new HSSFWorkbook(is);
+				}
+				fileFlag = true;
 			} catch (Exception e) {
 				logger.error("打开文件出错：", e);
 			} finally {
-				IOUtils.closeQuietly(fis);
+				IOUtils.closeQuietly(is);
+				is = null;
+			}
+			importMessage.setFileFlag(fileFlag);
+			if (fileFlag) {
+			    importExcelData(rwb);
+			    waitBatchTask();
 			}
 		} catch (Exception e) {
 			logger.error("导入数据失败！", e);
 			e.printStackTrace();
 		} finally {
+		    IOUtils.closeQuietly(fileInputStream);
 			importMessage.setImportFlag(true);
+			rwb = null;
+			fileInputStream = null;
+			file = null;
 			long endTime = System.currentTimeMillis();
-			logger.info("time=" + (endTime - startTime) + ",totalSize=" + totalSize);
+			String info = "import end:%d,time=%d,totalSize=%s";
+			logger.info(String.format(info, Thread.currentThread().getId(), (endTime - startTime), importMessage.getCurrentSize()));
 			importDataFlag = false;
 		}
 	}
 	/** 保存文件 */
 	public File saveFile() throws Exception {
+	    if (importDataPath == null) return null;
 		File importDataPathFile = new File(importDataPath);
         if (importDataPathFile.exists() == false) importDataPathFile.mkdirs();
         
@@ -116,45 +179,121 @@ public class ImportTask implements Runnable {
 		return saveFile;
 	}
 	
-	/** 导入数据 */
-	public void importData(Workbook rwb) throws Exception {
-		List<Object> dataList = new ArrayList<Object>();
-		Sheet sheet = rwb.getSheetAt(0);
-		int rows = sheet.getPhysicalNumberOfRows();
-		for (int i = 1; i < rows; i++) {
-			Row row = sheet.getRow(i); 
-			if (row == null) break;
-			Cell cell = row.getCell(0);
-			if (cell == null) break;
-			
-			List<String> cellList = new ArrayList<String>(cellNum);
-			for (int j = 0; j < cellNum; j++) {
-				cell = row.getCell(j);
-				if (cell == null) break;
-				cell.setCellType(Cell.CELL_TYPE_STRING);
-				cellList.add(cell.getStringCellValue());
-			}
-			
-			Object dataObj = importService.dataConver(cellList);
-			
-			totalSize++;
-			dataList.add(dataObj);
-			if (i % 500 == 0) {
-				importService.saveData(dataList);
-				dataList.clear();
-			}
-			importMessage.setCurrentSize(totalSize);
-//			Thread.sleep(1000);
-		}
-		if (dataList.size() > 0) {
-			importService.saveData(dataList);
-			dataList.clear();
-		}
-		importMessage.setCurrentSize(totalSize);
-	}
-	public ImportMessage getImportMessage() {
-		return importMessage;
-	}
+    /** 导入数据 */
+    public void importExcelData(Workbook rwb) throws Exception {
+        CacheService cacheServce = SpringContextUtil.getBean(CacheService.class);
+        Sheet sheet = rwb.getSheetAt(0);
+        int rows = sheet.getPhysicalNumberOfRows();
+        totalSize = rows - beginRowNum;
+        if (totalSize < 0) {
+            totalSize = 0;
+            importMessage.setCurrentSize(totalSize);
+            return;
+        }
+        int begin = 1;
+        int end = batchSize;
+        while (true) {
+            BatchTask batchTask = getBatchTask();
+            if (batchTask == null) {
+                Thread.sleep(100);
+            } else {
+                batchTask.sheet = sheet;
+                batchTask.running = true;
+                if (end > totalSize) {
+                    end = totalSize;
+                }
+                batchTask.begin = begin;
+                batchTask.end = end;
+                cacheServce.getThreadPool().execute(batchTask);
+
+                begin = end + 1;
+                end = begin + batchSize - 1;
+                if (begin > totalSize) {
+                    break;
+                }
+                if (end > totalSize) {
+                    end = totalSize;
+                }
+            }
+        }
+    }
+    
+    public void waitBatchTask() throws Exception {
+        while (true) {
+            BatchTask task = null;
+            for (BatchTask batchTask : batchTaskList) {
+                task = batchTask;
+                if (task.running) {
+                    break;
+                }
+            }
+            if (task.running) {
+                Thread.sleep(100);
+            } else {
+                break;
+            }
+        }
+    }
+    
+    public BatchTask getBatchTask() {
+        for (int i = 0; i < batchTaskSize; i++) {
+            BatchTask batchTask = batchTaskList.get(i);
+            if (batchTask.running == false) {
+                return batchTask;
+            }
+        }
+        return null;
+    }
+
+    public void addSize(int size) {
+        lock.lock();
+        try {
+            int currentSize = importMessage.getCurrentSize();
+            importMessage.setCurrentSize(currentSize + size);
+        } finally {
+            lock.unlock();
+        }
+    }
+	
+    class BatchTask implements Runnable {
+        Logger logger = Logger.getLogger(BatchTask.class);
+        boolean running = false;
+        Sheet sheet;
+        int begin;
+        int end;
+        List<Object> dataList = new ArrayList<Object>(batchSize);
+        @Override
+        public void run() {
+            running = true;
+//            long beginTime = System.currentTimeMillis();
+            try {
+                for (int i = begin; i <= end; i++) {
+                    Row row = sheet.getRow(i);
+                    if (row == null) break;
+                    Cell cell = row.getCell(0);
+                    if (cell == null) break;
+
+                    Object dataObj = importService.converObject(row);
+                    if (dataObj != null) {
+                        dataList.add(dataObj);
+                    }
+                }
+                importService.addData(dataList);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                addSize(dataList.size());
+                dataList.clear();
+                running = false;
+//                long endTime = System.currentTimeMillis();
+//                logger.info(Thread.currentThread().getId() + ":end:" + (endTime - beginTime) + ":" + (Runtime.getRuntime().freeMemory() / 1024));
+            }
+        }
+    }
+
+    public ImportMessage getImportMessage() {
+        return importMessage;
+    }
 	public void setImportMessage(ImportMessage importMessage) {
 		this.importMessage = importMessage;
 	}
@@ -172,6 +311,12 @@ public class ImportTask implements Runnable {
 		this.importDataPath = importDataPath;
 		return this;
 	}
+	public MultipartFile getFile() {
+        return file;
+    }
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 	public String getFileName() {
 		return fileName;
 	}
@@ -199,12 +344,10 @@ public class ImportTask implements Runnable {
 		this.importService = importService;
 		return this;
 	}
-	public int getCellNum() {
-		return cellNum;
-	}
-	public ImportTask setCellNum(int cellNum) {
-		this.cellNum = cellNum;
-		return this;
-	}
-
+	public int getBeginRowNum() {
+        return beginRowNum;
+    }
+    public void setBeginRowNum(int beginRowNum) {
+        this.beginRowNum = beginRowNum;
+    }
 }

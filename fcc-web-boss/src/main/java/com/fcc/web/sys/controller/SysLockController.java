@@ -1,7 +1,7 @@
 package com.fcc.web.sys.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,7 +108,7 @@ public class SysLockController extends AppWebController {
 			e.printStackTrace();
 			logger.error("查询系统锁失败！", e);
 			json.setTotal(0L);
-			json.setRows(new ArrayList<SysLock>());
+			json.setRows(Collections.EMPTY_LIST);
 			json.setMsg(e.getMessage());
 		}
 		return json;

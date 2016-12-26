@@ -12,20 +12,24 @@ import java.io.Serializable;
 public class ImportMessage extends Message implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private boolean uploadFlag = false;// 是否上次成功
-	private Integer currentSize = 0;// 当前导入数据总数
-	private boolean importFlag;// 是否导入完成
-	private boolean destroy;// 是否系统停止
-	public boolean isUploadFlag() {
-		return uploadFlag;
+	/** 文件是否正常 */
+	private boolean fileFlag = false;// 
+	/** 当前导入数据总数 */
+	private int currentSize = 0;// 
+	/** 是否导入完成 */
+	private boolean importFlag;// 
+	/** 是否系统停止 */
+	private boolean destroy;// 
+	public boolean isFileFlag() {
+		return fileFlag;
 	}
-	public void setUploadFlag(boolean uploadFlag) {
-		this.uploadFlag = uploadFlag;
+	public void setFileFlag(boolean fileFlag) {
+		this.fileFlag = fileFlag;
 	}
-	public Integer getCurrentSize() {
+	public int getCurrentSize() {
 		return currentSize;
 	}
-	public void setCurrentSize(Integer currentSize) {
+	public void setCurrentSize(int currentSize) {
 		this.currentSize = currentSize;
 	}
 	public boolean isImportFlag() {

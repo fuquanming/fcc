@@ -1,6 +1,7 @@
 package com.fcc.web.sys.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -271,7 +272,7 @@ public class RoleController extends AppWebController {
 			e.printStackTrace();
 			logger.error(e);
 			json.setTotal(0L);
-			json.setRows(new ArrayList<Role>());
+			json.setRows(Collections.EMPTY_LIST);
 			json.setMsg(e.getMessage());
 		}
 		return json;

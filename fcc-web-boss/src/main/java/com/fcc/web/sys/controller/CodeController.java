@@ -10,11 +10,10 @@
 package com.fcc.web.sys.controller;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +43,6 @@ import com.fcc.framework.generator.provider.db.table.TableFactory;
 import com.fcc.framework.generator.provider.db.table.model.Column;
 import com.fcc.framework.generator.provider.db.table.model.Table;
 import com.fcc.web.sys.config.Resources;
-import com.fcc.web.sys.model.SysType;
 
 import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
@@ -77,6 +75,7 @@ public class CodeController extends AppWebController {
     }
     
     /** 跳转到新增页面 */
+    @SuppressWarnings("unchecked")
     @ApiOperation(value = "显示新增页面")
     @RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
     @Permissions("add")
@@ -240,6 +239,7 @@ public class CodeController extends AppWebController {
      * 列表 返回json 给 easyUI 
      * @return
      */
+    @SuppressWarnings("unchecked")
     @ApiOperation(value = "查询数据库表")
     @RequestMapping(value = "/datagrid.do", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
@@ -266,60 +266,10 @@ public class CodeController extends AppWebController {
             e.printStackTrace();
             logger.error("加载查询表名数据失败！", e);
             json.setTotal(0L);
-            json.setRows(new ArrayList<SysType>());
+            json.setRows(Collections.EMPTY_LIST);
             json.setMsg(e.getMessage());
         }
         return json;
-    }
-    
-    private Map<String, Object> getParams(HttpServletRequest request) {
-        Map<String, Object> param = new HashMap<String, Object>();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            String typeId = request.getParameter("typeId");
-            if (StringUtils.isNotEmpty(typeId)) {
-                param.put("typeId", typeId);
-            }
-            String typeName = request.getParameter("typeName");
-            if (StringUtils.isNotEmpty(typeName)) {
-                param.put("typeName", typeName);
-            }
-            String typeCode = request.getParameter("typeCode");
-            if (StringUtils.isNotEmpty(typeCode)) {
-                param.put("typeCode", typeCode);
-            }
-            String typeLevel = request.getParameter("typeLevel");
-            if (StringUtils.isNotEmpty(typeLevel)) {
-                param.put("typeLevel", typeLevel);
-            }
-            String typeSort = request.getParameter("typeSort");
-            if (StringUtils.isNotEmpty(typeSort)) {
-                param.put("typeSort", typeSort);
-            }
-            String typeDesc = request.getParameter("typeDesc");
-            if (StringUtils.isNotEmpty(typeDesc)) {
-                param.put("typeDesc", typeDesc);
-            }
-            String createTimeBegin = request.getParameter("createTimeBegin");
-            if (StringUtils.isNotEmpty(createTimeBegin)) {
-                param.put("createTimeBegin", format.parse(createTimeBegin + " 00:00:00"));
-            }
-            String createTimeEnd = request.getParameter("createTimeEnd");
-            if (StringUtils.isNotEmpty(createTimeEnd)) {
-                param.put("createTimeEnd", format.parse(createTimeEnd + " 23:59:59"));
-            }
-            String sortColumns = request.getParameter("sort");
-            if (StringUtils.isNotEmpty(sortColumns)) {
-                param.put("sortColumns", sortColumns);
-            }
-            String orderType = request.getParameter("order");
-            if (StringUtils.isNotEmpty(orderType)) {
-                param.put("orderType", orderType);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return param;
     }
     
 }
