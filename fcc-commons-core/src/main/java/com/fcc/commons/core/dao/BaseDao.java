@@ -1,10 +1,9 @@
 package com.fcc.commons.core.dao;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
-
-import org.hibernate.Session;
 
 import com.fcc.commons.data.ListPage;
 
@@ -17,7 +16,7 @@ import com.fcc.commons.data.ListPage;
 @SuppressWarnings("rawtypes")
 public interface BaseDao {
 
-	public Session getCurrentSession();
+	public Connection getConnection();
 	
 	/**
 	 * 保存一个对象
@@ -26,6 +25,22 @@ public interface BaseDao {
 	 *            对象
 	 */
 	public void add(Object o);
+	
+	/**
+     * 保存一个对象
+     * 
+     * @param o
+     *            对象
+     */
+    public void addList(List o);
+    
+    /**
+     * 保存一个对象
+     * 
+     * @param o
+     *            对象
+     */
+    public void addListBatch(List dataList);
 
 	/**
 	 * 更新一个对象

@@ -1,6 +1,8 @@
 package com.fcc.commons.core.dao.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,13 +16,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.persistence.Column;
+import javax.persistence.Table;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.internal.SessionImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.hibernate4.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
 
 import com.fcc.commons.core.dao.BaseDao;
@@ -35,20 +44,25 @@ import com.fcc.commons.data.ListPage;
 @SuppressWarnings({"deprecation", "rawtypes"})
 @Repository("baseDao")
 public class BaseDaoImpl implements BaseDao {
-
+    
+    @Resource
 	private SessionFactory sessionFactory;
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	@Autowired
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+	@Resource
+    private JdbcTemplate jdbcTemplate;
 
 	public Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
+	}
+	
+	@Override
+	public Connection getConnection() {
+	    Connection conn = null;
+	    try {
+	        conn = SessionFactoryUtils.getDataSource(sessionFactory).getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	    return conn;
 	}
 	
 	public void launchParamValues(Query query, Map<String, Object> param) {
@@ -82,6 +96,95 @@ public class BaseDaoImpl implements BaseDao {
 
 	public void add(Object o) {
 		this.getCurrentSession().save(o);
+	}
+	
+	public void addList(List o) {
+	    int size = o.size();
+	    for (int i = 0; i < size; i++) {
+	        Object obj = o.get(i);
+	        this.getCurrentSession().save(obj);
+	        if (i % 1000 == 0) {
+	            getCurrentSession().flush();
+	            getCurrentSession().clear();
+	        }
+	    }
+	    getCurrentSession().flush();
+        getCurrentSession().clear();
+    }
+	
+	@Override
+	public void addListBatch(final List dataList) {
+	    final Object[] objs = new Object[]{};
+	    jdbcTemplate.execute(new ConnectionCallback<Object>() {
+	        @Override
+	        public Object doInConnection(Connection conn) throws SQLException, DataAccessException {
+	            Object obj = (Object) dataList.get(0);
+	            Class<?> c = obj.getClass();
+	            String tableName = c.getAnnotation(Table.class).name();
+	            StringBuilder sb = new StringBuilder();
+	            sb.append("insert into ").append(tableName).append("(");
+	            
+	            Method[] methods = c.getMethods();
+	            int length = methods.length;
+	            List<Method> methodList = new ArrayList<Method>(length);
+	            
+	            for (int i = 0; i < length; i++) {
+	                Method method = methods[i];
+	                if (method.isAnnotationPresent(Column.class)) {
+                        try {
+                            Column column = method.getAnnotation(Column.class);
+                            sb.append(column.name());
+                            sb.append(",");
+                            methodList.add(method);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+	            }
+	            sb.setCharAt(sb.length() - 1, ' ');
+	            sb.append(") values(");
+	            length = methodList.size();
+	            for (int i = 0; i < length; i++) {
+	                sb.append("?");
+	                if (i != length - 1) {
+                        sb.append(",");
+                    } else {
+                        sb.append(")");
+                    }
+	            }
+	            
+	            PreparedStatement ps = conn.prepareStatement(sb.toString());
+                int index = 1;
+                int size = dataList.size();
+                for (int i = 0; i < size; i++) {
+                    obj = (Object) dataList.get(i);
+                    c = obj.getClass();
+                    for (int j = 0; j < length; j++) {
+                        Method method = methodList.get(j);
+                        try {
+                            ps.setObject(index++, method.invoke(obj, objs));
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ps.addBatch();
+                    index = 1;
+                    if (i % 1000 == 0) {
+                        ps.executeBatch();
+                        conn.commit();
+                        ps.clearBatch();
+                    }
+                }
+                ps.executeBatch();
+                conn.commit();
+                ps.clearBatch();
+	            return null;
+	        }
+        });
 	}
 
 	public void edit(Object o) {

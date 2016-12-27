@@ -121,8 +121,12 @@ public class BaseServiceImpl implements BaseService {
 	}
     @Transactional(rollbackFor = Exception.class)//事务申明
 	public void addList(List o) {
-		for (Object data : o) baseDao.add(data);
+        baseDao.addList(o);
 	}
+    @Transactional(rollbackFor = Exception.class)//事务申明
+    public void addListBatch(List o) {
+        baseDao.addListBatch(o);
+    }
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void addOrEdit(Object o) {
 		baseDao.addOrEdit(o);
