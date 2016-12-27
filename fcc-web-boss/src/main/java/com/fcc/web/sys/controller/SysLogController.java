@@ -459,13 +459,13 @@ public class SysLogController extends AppWebController {
 	        if (StringUtils.isNotEmpty(sortColumns)) {
 	        	param.put("sortColumns", sortColumns);
 	        } else {
-	        	param.put("sortColumns", "logId");
+//	        	param.put("sortColumns", "logId");
 	        }
 	        String orderType = request.getParameter("order");
 	        if (StringUtils.isNotEmpty(orderType)) {
 	        	param.put("orderType", orderType);
 	        } else {
-	        	param.put("orderType", "desc");
+//	        	param.put("orderType", "desc");
 	        }
         } catch (Exception e) {
 			e.printStackTrace();
