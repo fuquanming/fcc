@@ -130,7 +130,19 @@
 			<artifactId>mybatis-spring</artifactId>
 		</dependency>
 		<!-- MyBatis Dependency End -->
-
+		
+		<!-- alibaba Begin -->
+		<dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <!-- alibaba End -->
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        
 	</dependencies>
 
 
