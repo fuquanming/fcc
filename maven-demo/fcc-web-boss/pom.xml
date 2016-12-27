@@ -216,7 +216,8 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
-
+        
+        <!-- el 表达式 -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
@@ -224,6 +225,12 @@
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
+        </dependency>
+        
+        <!-- email -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
         </dependency>
         <!-- Others End -->
 
@@ -285,7 +292,36 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <!-- swagger api end -->
+        
+        <!-- hightchar 导出图片 begin -->
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdf</groupId>
+            <artifactId>pdf-transcoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+        <!-- hightchar 导出图片 end -->
 
+        <!-- code begin -->
+        <dependency>
+            <groupId>com.fcc</groupId>
+            <artifactId>fcc-code</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+        <!-- code end -->
     </dependencies>
 	
 	
@@ -306,7 +342,7 @@
 	<build>
 		<finalName>fcc-web</finalName>
 		<resources>
-			<resource>
+			<!-- <resource>
 				<targetPath>${project.build.directory}/classes</targetPath>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
@@ -314,8 +350,17 @@
 					<include>**/*.xml</include>
 					<include>**/*.properties</include>
 				</includes>
-			</resource>
+			</resource> -->
+			
+			<!-- 先指定 src/main/resources下所有文件及文件夹为资源文件 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/classes</targetPath>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
 		</resources>
 	</build>
-
+	
 </project>
