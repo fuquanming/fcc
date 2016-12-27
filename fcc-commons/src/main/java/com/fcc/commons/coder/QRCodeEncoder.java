@@ -1,4 +1,4 @@
-package com.fcc.commons.code;
+package com.fcc.commons.coder;
 
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;

@@ -27,8 +27,9 @@ public class RedisUtil {
     private static Properties prop = new Properties();
     
     private static ShardedJedisPool shardedJedisPool;
+    
     // 读取配置文件
-    static {
+    public static synchronized void init() {
         try {
             prop.load(RedisUtil.class.getClassLoader().getResourceAsStream("config/redis.properties"));
 
@@ -62,7 +63,7 @@ public class RedisUtil {
     }
     
     public static void close() {
-        shardedJedisPool.close();
+        if (shardedJedisPool != null) shardedJedisPool.close();
     }
 
     public static void main(String[] args) {
