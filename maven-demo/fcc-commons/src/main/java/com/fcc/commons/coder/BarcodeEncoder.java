@@ -7,7 +7,7 @@
  * 修改历史 : 
  *     1. [2016年10月11日]创建文件 by fqm
  */
-package com.fcc.commons.code;
+package com.fcc.commons.coder;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

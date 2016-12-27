@@ -182,16 +182,17 @@ public class DataFormater {
      * Object o = t.getNumber(Long.getClass(), "11111");
      * 给出一个String 型数据 a = 100;
      * 将这个String型转 a 换为Integer
+	 * @param <T>
      * @param type
      * @param str
      * @return
      * @throws Exception
      */
-    public static Object getNumber(Class type, String str) throws Exception {
+    public static <T> Object getNumber(Class<T> type, String str) throws Exception {
         if (str == null || "".equals(str)) return -1;
         Class[] paramsClasses = { str.getClass() };
         Object[] params = { str };
-        Constructor c = type.getConstructor(paramsClasses);
+        Constructor<T> c = type.getConstructor(paramsClasses);
         Object o = c.newInstance(params);
         return o;
     }

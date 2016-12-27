@@ -27,15 +27,15 @@ public class MemcachedUtil {
         MemcachedUtil.memcachedCache = memcachedCache;
     }
 
-    static {
-	    manager = CacheUtil.getCacheManager(IMemcachedCache.class,
+    public static synchronized void init() {
+        manager = CacheUtil.getCacheManager(IMemcachedCache.class,
                 MemcachedCacheManager.class.getName());
         manager.setConfigFile("config/memcached.xml");
         manager.start();
         memcachedCache = manager.getCache("mclient1");
-	}
+    }
 	
-	public static void destroy() {
+	public static synchronized void destroy() {
 		if (manager != null) {
 			manager.stop();
 			manager = null;
