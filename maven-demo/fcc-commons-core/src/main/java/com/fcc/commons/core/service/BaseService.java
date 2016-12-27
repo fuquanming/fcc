@@ -27,6 +27,12 @@ public interface BaseService {
 	 * @param list
 	 */
     public void addList(List list);
+    
+    /**
+     * 保存
+     * @param list
+     */
+    public void addListBatch(List list);
 
 	/**
 	 * 更新一个对象
