@@ -3,8 +3,6 @@
 <#assign classNameLower = className?uncap_first> 
 package ${basepackage}.model;
 
-import java.util.UUID;
-
 import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
