@@ -48,6 +48,8 @@ public class CacheService {
     private RoleModuleRightService roleModuleRightService;
     
     private ThreadPoolExecutor pool;
+    
+    private ReentrantLock lock = new ReentrantLock();
     /** 缓存模块URL地址  moduleUrl, moduleId */
     private Map<String, String> moduleUrlMap = new ConcurrentHashMap<String, String>();
     /** 导出数据总量 */
@@ -82,9 +84,8 @@ public class CacheService {
      * 缓存模块
      * @return ModuleId, Module
      */
-    @Cacheable(value = {"moduleCache"}, key = "'moduleMap'")
+    @Cacheable(value = {"fcc:moduleMapCache"}, key = "'fcc:moduleMapCache'")
     public Map<String, Module> getModuleMap() {
-        ReentrantLock lock = new ReentrantLock();
         lock.lock();
         Map<String, Module> moduleMap = null;
         try {
@@ -113,7 +114,7 @@ public class CacheService {
      * 缓存角色模块权限
      * @return RoleId, ModuleId, RoleModuleRight
      */
-    @Cacheable(value = {"roleModuleRightCache"}, key = "'roleModuleRightMap'")
+    @Cacheable(value = {"fcc:roleModuleRightMapCache"}, key = "'fcc:roleModuleRightMapCache'")
     public Map<String, Map<String, RoleModuleRight>> getRoleModuleRightMap() {
         List<RoleModuleRight> dataList = roleModuleRightService.getRoleModuleRights();
         Map<String, Map<String, RoleModuleRight>> dataMap = new HashMap<String, Map<String, RoleModuleRight>>();
@@ -129,7 +130,7 @@ public class CacheService {
         return dataMap;
     }
     
-    @Cacheable(value = {"operateCache"}, key = "'operateMap'")
+    @Cacheable(value = {"fcc:operateMapCache"}, key = "'fcc:operateMapCache'")
     public Map<String, Operate> getOperateMap() {
         @SuppressWarnings("unchecked")
         List<Operate> dataList = baseService.getAll(Operate.class);
@@ -143,21 +144,21 @@ public class CacheService {
     /**
      * 清除模块缓存 
      */
-    @CacheEvict(value = {"moduleCache"}, allEntries = true)
+    @CacheEvict(value = {"fcc:moduleMapCache"}, allEntries = true)
     public void cleanModuleMap() {
     }
     
     /**
      * 清除角色模块权限缓存
      */
-    @CacheEvict(value = {"roleModuleRightCache"}, allEntries = true)
+    @CacheEvict(value = {"fcc:roleModuleRightMapCache"}, allEntries = true)
     public void cleanRoleModuleRightMap() {
     }
     
     /**
      * 清除操作缓存
      */
-    @CacheEvict(value = {"operateCache"}, allEntries = true)
+    @CacheEvict(value = {"fcc:operateMapCache"}, allEntries = true)
     public void cleanOperateMap() {
     }
     
