@@ -35,10 +35,9 @@
     </filter>
     <filter-mapping>
         <filter-name>indexCacheFilter</filter-name>
-        <url-pattern>/index.htm</url-pattern>
+        <url-pattern>/manage/sys/sysLog/view.do</url-pattern>
     </filter-mapping>
     -->
-    
     <!-- 设置servlet编码开始 -->
     <filter>
         <filter-name>Set Character Encoding</filter-name>

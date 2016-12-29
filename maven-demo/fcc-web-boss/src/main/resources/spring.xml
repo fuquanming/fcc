@@ -51,5 +51,6 @@
     </bean>
 
     <bean id="lock" class="com.fcc.commons.web.locks.DbLock" />
-    <!-- <aop:aspectj-autoproxy proxy-target-class="true"/> -->
+    <!-- 开启切面注解 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
 </beans>
