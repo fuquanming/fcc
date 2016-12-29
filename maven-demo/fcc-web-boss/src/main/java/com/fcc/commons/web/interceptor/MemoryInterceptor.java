@@ -28,6 +28,8 @@ public class MemoryInterceptor extends BaseInterceptor {
     private int kb = 1024;
     /** 是否出现堆内存不足 */
     private boolean heapSpace = false;
+    // 最大可使用内存
+    private long maxMemory = 0;
     
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
 	}
@@ -43,7 +45,7 @@ public class MemoryInterceptor extends BaseInterceptor {
 	        // 剩余内存
 	        long freeMemory = Runtime.getRuntime().freeMemory() / kb;
 	        // 最大可使用内存
-	        long maxMemory = Runtime.getRuntime().maxMemory() / kb;
+	        if (maxMemory == 0) maxMemory = Runtime.getRuntime().maxMemory() / kb;
 	        // 是否memory
 	        boolean flag = false;
 	        // 可用内存百分比
