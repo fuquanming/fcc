@@ -39,21 +39,6 @@
     </filter-mapping>
     -->
     
-    <filter>
-        <filter-name>openSessionInViewFilter</filter-name>
-        <filter-class>
-            org.springframework.orm.hibernate4.support.OpenSessionInViewFilter
-        </filter-class>
-        <init-param>
-            <param-name>singleSession</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>openSessionInViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
     <!-- 设置servlet编码开始 -->
     <filter>
         <filter-name>Set Character Encoding</filter-name>
@@ -73,6 +58,30 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <!-- 设置servlet编码结束 -->
+    <!-- spring session Begin -->
+    <filter>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- spring session End -->
+    <filter>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <filter-class>
+            org.springframework.orm.hibernate4.support.OpenSessionInViewFilter
+        </filter-class>
+        <init-param>
+            <param-name>singleSession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     
     <!--druid 监控-->
     <filter>
