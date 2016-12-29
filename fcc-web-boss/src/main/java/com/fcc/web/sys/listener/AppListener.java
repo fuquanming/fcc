@@ -49,6 +49,7 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 	}
 
 	public void sessionCreated(HttpSessionEvent event) {
+//	    System.out.println("createsession=" + event.getSession().getId());
 	}
 
 	public void sessionDestroyed(HttpSessionEvent event) {
