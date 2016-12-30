@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 
 import com.fcc.commons.web.controller.BaseController;
+import com.fcc.commons.web.service.ConfigService;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
@@ -14,6 +15,8 @@ import com.fcc.web.sys.service.CacheService;
 @Controller
 public class AppWebController extends BaseController {
 
+    @Resource
+    ConfigService configService;
     @Resource
     CacheService cacheService;
     
@@ -26,7 +29,7 @@ public class AppWebController extends BaseController {
     }
     
     public void execute(Runnable runnable) {
-        cacheService.getThreadPool().execute(runnable);
+        configService.getThreadPool().execute(runnable);
     }
     
     public boolean isGroup() {

@@ -12,26 +12,33 @@
 		<property name="minIdle" value="${redis.minIdle}" />
 		<property name="maxTotal" value="${redis.maxTotal}" />
 		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="true" />
 	</bean>
-	<bean id="jedisShardInfo" class="redis.clients.jedis.JedisShardInfo">
-		<constructor-arg index="0" value="${redis.host1}" />
-		<constructor-arg index="1" value="${redis.port1}" type="int" />
-		<constructor-arg index="2" value="${redis.name1}" />
+	<!-- 要让集群正常工作至少需要3个主节点，在这里我们要创建6个redis节点，其中三个为主节点，三个为从节点 -->
+	<bean id="redisClusterConfiguration"
+		class="org.springframework.data.redis.connection.RedisClusterConfiguration">
+		<property name="maxRedirects" value="${redis.maxRedirects}"></property>
+		<property name="clusterNodes">
+			<set>
+				<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+				    <constructor-arg name="host" value="${redis.host1}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.port1}"></constructor-arg>
+				</bean>
+				<!-- <bean class="org.springframework.data.redis.connection.RedisClusterNode">
+                    <constructor-arg name="host" value="${redis.host2}"></constructor-arg>
+                    <constructor-arg name="port" value="${redis.port2}"></constructor-arg>
+                </bean> -->
+			</set>
+		</property>
 	</bean>
-    <!-- Jedis集群 -->
-	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
-		<constructor-arg index="0" ref="jedisPoolConfig" />
-		<constructor-arg index="1">
-			<list>
-				<ref bean="jedisShardInfo" />
-			</list>
-		</constructor-arg>
-    </bean>
 	
 	<!-- Redis连接 -->
 	<bean id="jedisConnectionFactory"
 		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-		p:shard-info-ref="jedisShardInfo" p:pool-config-ref="jedisPoolConfig" />
+		destroy-method="destroy">
+		<constructor-arg ref="redisClusterConfiguration" />  
+        <constructor-arg ref="jedisPoolConfig" /> 
+	</bean>
     <!-- 缓存序列化方式 -->
     <bean id="keySerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 	<bean id="valueSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
