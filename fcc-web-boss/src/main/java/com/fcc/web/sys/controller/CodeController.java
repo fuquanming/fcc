@@ -34,6 +34,7 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
+import com.fcc.commons.web.config.Resources;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
@@ -42,7 +43,6 @@ import com.fcc.framework.generator.GeneratorProperties;
 import com.fcc.framework.generator.provider.db.table.TableFactory;
 import com.fcc.framework.generator.provider.db.table.model.Column;
 import com.fcc.framework.generator.provider.db.table.model.Table;
-import com.fcc.web.sys.config.Resources;
 
 import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;

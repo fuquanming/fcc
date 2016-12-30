@@ -9,6 +9,8 @@
  */
 package com.fcc.web.sys.config;
 
+import com.fcc.commons.web.config.Resources;
+
 /**
  * 
  * @version 

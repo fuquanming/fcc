@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.fcc.commons.web.service.ConfigService;
 import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.web.sys.cache.QueueUtil;
 import com.fcc.web.sys.common.Constants;
@@ -30,11 +31,13 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 
 	private Logger logger = Logger.getLogger(AppListener.class);
 
+	private ConfigService configService;
 	private CacheService cacheService;
 	
 	public void contextInitialized(ServletContextEvent event) {
 		cacheService = (CacheService) SpringContextUtil.getBean(CacheService.class);
-		cacheService.getThreadPool().execute(new Runnable() {
+		configService = (ConfigService) SpringContextUtil.getBean(ConfigService.class);
+		configService.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
                 cacheService.getModuleMap();
@@ -42,7 +45,7 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
                 cacheService.getOperateMap();
             }
         });
-		event.getServletContext().setAttribute("APP_NAME", cacheService.getAppName());
+		event.getServletContext().setAttribute("APP_NAME", configService.getAppName());
 	}
 	
 	public void contextDestroyed(ServletContextEvent event) {

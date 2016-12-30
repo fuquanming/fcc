@@ -48,7 +48,7 @@
         </dependency>
         
         <!-- Spring Dependency Begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
@@ -120,7 +120,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc-portlet</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- Spring Dependency End -->
         <dependency>
             <groupId>org.springframework.session</groupId>
@@ -132,7 +132,7 @@
         </dependency>
 
         <!-- hibernate begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
@@ -151,18 +151,18 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- hibernate end -->
 
         <!-- MyBatis Dependency Begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- MyBatis Dependency End -->
 
         <!-- apache shiro begin -->
@@ -189,10 +189,10 @@
         <!-- apache shiro end -->
 
         <!-- Others Begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>servlet-api</artifactId>
@@ -236,14 +236,14 @@
         </dependency>
         
         <!-- email -->
-        <dependency>
+        <!-- <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- Others End -->
 
         <!-- poi begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>net.sourceforge.jexcelapi</groupId>
             <artifactId>jxl</artifactId>
         </dependency>
@@ -258,7 +258,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- poi end -->
 
         <!-- encache 相关jar包 -->
@@ -283,7 +283,7 @@
         <!-- Mysql Driver End -->
 
         <!-- swagger api begin -->
-        <dependency>
+        <!-- <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
         </dependency>
@@ -302,7 +302,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
+        </dependency> -->
         <!-- swagger api end -->
         
         <!-- hightchar 导出图片 begin -->
@@ -328,10 +328,6 @@
         <dependency>
             <groupId>com.fcc</groupId>
             <artifactId>fcc-code</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
         </dependency>
         <!-- code end -->
     </dependencies>

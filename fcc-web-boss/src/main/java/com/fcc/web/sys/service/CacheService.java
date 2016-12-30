@@ -13,9 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
@@ -47,32 +44,12 @@ public class CacheService {
     @Resource
     private RoleModuleRightService roleModuleRightService;
     
-    private ThreadPoolExecutor pool;
-    
     private ReentrantLock lock = new ReentrantLock();
     /** 缓存模块URL地址  moduleUrl, moduleId */
     private Map<String, String> moduleUrlMap = new ConcurrentHashMap<String, String>();
-    /** 导出数据总量 */
-    private int exportDataTotalSize = 500000;
-    /** 应用名称 */
-    private String appName;
-    /** 线程池大小 */
-    private int threadPoolSize = 10;
 
-    public void init() {
-        System.out.println("CacheService.init");
-        pool = new ThreadPoolExecutor(threadPoolSize, threadPoolSize * 2, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-    }
-    
-    public void destroy() {
-        pool.shutdown();
-    }
-    
-    public ThreadPoolExecutor getThreadPool() {
-        return pool;
-    }
-    
     public Map<String, String> getModuleUrlMap() {
+        System.out.println("getModuleUrlMap=" + moduleUrlMap.size());
         return moduleUrlMap;
     }
     
@@ -97,9 +74,6 @@ public class CacheService {
                 String moduleId = module.getModuleId();
                 String moduleUrl = module.getModuleDesc();
                 moduleMap.put(moduleId, module);
-                if (module.getModuleId().equals("IQQz")) {
-                    System.out.println("111");
-                }
                 if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
             }
         } catch(Exception e) {
@@ -160,30 +134,6 @@ public class CacheService {
      */
     @CacheEvict(value = {"fcc:operateMapCache"}, allEntries = true)
     public void cleanOperateMap() {
-    }
-    
-    public int getExportDataTotalSize() {
-        return exportDataTotalSize;
-    }
-
-    public void setExportDataTotalSize(int exportDataTotalSize) {
-        this.exportDataTotalSize = exportDataTotalSize;
-    }
-    
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public int getThreadPoolSize() {
-        return threadPoolSize;
-    }
-
-    public void setThreadPoolSize(int threadPoolSize) {
-        this.threadPoolSize = threadPoolSize;
     }
 
 }

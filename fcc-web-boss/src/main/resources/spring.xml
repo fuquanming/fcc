@@ -42,15 +42,23 @@
     <!-- component-scan自动搜索@Component , @Controller , @Service , @Repository等标注的类 -->
     <context:component-scan base-package="com.fcc.**.dao,com.fcc.**.service" />
     
-    <bean id="cacheService" class="com.fcc.web.sys.service.CacheService"
+    <!-- <bean id="cacheService" class="com.fcc.web.sys.service.CacheService"
         init-method="init" destroy-method="destroy">
         <property name="exportDataTotalSize" value="${export.data.totalsize}">
         </property>
         <property name="appName" value="${app.name}"></property>
         <property name="threadPoolSize" value="${thread.pool.size}"></property>
+    </bean> -->
+    
+    <bean id="configService" class="com.fcc.commons.web.service.ConfigService"
+        init-method="init" destroy-method="destroy">
+        <property name="exportDataSize" value="${export.data.totalsize}"></property>
+        <property name="appName" value="${app.name}"></property>
+        <property name="threadPoolSize" value="${thread.pool.size}"></property>
     </bean>
 
-    <bean id="lock" class="com.fcc.commons.web.locks.DbLock" />
+    <!-- <bean id="lock" class="com.fcc.commons.web.locks.DbLock" /> -->
+    <bean id="lock" class="com.fcc.commons.locks.SimpleLock"/>
     <!-- 开启切面注解 -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
 </beans>
