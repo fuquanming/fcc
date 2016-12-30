@@ -14,10 +14,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.fcc.commons.code.BarcodeDecoder;
-import com.fcc.commons.code.BarcodeEncoder;
-import com.fcc.commons.code.QRCodeDecoder;
-import com.fcc.commons.code.QRCodeEncoder;
+import com.fcc.commons.coder.BarcodeDecoder;
+import com.fcc.commons.coder.BarcodeEncoder;
+import com.fcc.commons.coder.QRCodeDecoder;
+import com.fcc.commons.coder.QRCodeEncoder;
 import com.fcc.commons.utils.EncryptionUtil;
 
 public class TestMain {
