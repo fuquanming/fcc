@@ -45,17 +45,14 @@ public class RedisUtil {
             config.setTestOnBorrow(false);
 
             int size = Integer.parseInt(getProperty("redis.size"));
-            if (size > 1) {
-                List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>(size);
-                for (int i = 1; i <= size; i++) {
-                    shards.add(new JedisShardInfo(getProperty("redis.host" + size), 
-                            Integer.parseInt(getProperty("redis.port" + size)), 
-                            getProperty("redis.name" + size)));
-                }
-                shardedJedisPool = new ShardedJedisPool(config, shards);
-            } else {
-                jedisPool = new JedisPool(config, getProperty("redis.host1"), Integer.parseInt(getProperty("redis.port1")));
+            List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>(size);
+            for (int i = 1; i <= size; i++) {
+                shards.add(new JedisShardInfo(getProperty("redis.host" + size), 
+                        Integer.parseInt(getProperty("redis.port" + size)), 
+                        getProperty("redis.name" + size)));
             }
+            shardedJedisPool = new ShardedJedisPool(config, shards);
+            jedisPool = new JedisPool(config, getProperty("redis.host1"), Integer.parseInt(getProperty("redis.port1")));
         } catch (Exception e) {
             e.printStackTrace();
         }
