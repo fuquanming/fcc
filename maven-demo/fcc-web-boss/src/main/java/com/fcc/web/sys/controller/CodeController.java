@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -29,17 +30,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
-import com.fcc.commons.core.config.DbPasswordCallback;
 import com.fcc.commons.data.ListPage;
-import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.config.Resources;
+import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
 import com.fcc.framework.generator.GeneratorFacade;
 import com.fcc.framework.generator.GeneratorProperties;
+import com.fcc.framework.generator.provider.db.DataSourceProvider;
 import com.fcc.framework.generator.provider.db.table.TableFactory;
 import com.fcc.framework.generator.provider.db.table.model.Column;
 import com.fcc.framework.generator.provider.db.table.model.Table;
@@ -92,12 +93,14 @@ public class CodeController extends AppWebController {
         GeneratorProperties.setProperty("java_typemapping.java.math.BigDecimal", "Long");
         GeneratorProperties.setProperty("java_typemapping.java.sql.Clob", "String");
         
-        GeneratorProperties.setProperty("jdbc.url", Resources.DB.getString("jdbc.url"));
-        GeneratorProperties.setProperty("jdbc.driver", Resources.DB.getString("jdbc.driver"));
-        GeneratorProperties.setProperty("jdbc.username", Resources.DB.getString("jdbc.username"));
-        GeneratorProperties.setProperty("jdbc.password", EncryptionUtil.decryptDES(DbPasswordCallback.DB_KEY, Resources.DB.getString("jdbc.password"), null));
-        GeneratorProperties.setProperty("jdbc.schema", Resources.DB.getString("jdbc.schema"));
+//        GeneratorProperties.setProperty("jdbc.url", Resources.DB.getString("jdbc.url"));
+//        GeneratorProperties.setProperty("jdbc.driver", Resources.DB.getString("jdbc.driver"));
+//        GeneratorProperties.setProperty("jdbc.username", Resources.DB.getString("jdbc.username"));
+//        GeneratorProperties.setProperty("jdbc.password", EncryptionUtil.decryptDES(DbPasswordCallback.DB_KEY, Resources.DB.getString("jdbc.password"), null));
+//        GeneratorProperties.setProperty("jdbc.schema", Resources.DB.getString("jdbc.schema"));
         
+        DataSourceProvider.setDataSource((DataSource)SpringContextUtil.getBean("dataSource"));
+        long begin = System.currentTimeMillis();
         List<Table> list = TableFactory.getInstance().getAllTables();
 //        List<Table> list = new ArrayList<Table>();
         int size = list.size();
@@ -106,6 +109,7 @@ public class CodeController extends AppWebController {
             tableNameList.add(table.getSqlName());
         }
         request.setAttribute("tableList", tableNameList);
+        System.out.println("time=" + (System.currentTimeMillis() - begin));
         return "/manage/sys/code/code_add";
     }
     

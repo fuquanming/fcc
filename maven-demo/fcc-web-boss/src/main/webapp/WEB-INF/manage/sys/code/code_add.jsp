@@ -24,19 +24,19 @@
 		<tr>	
 			<th colspan="3">java包名：</th>		
 			<td>
-			<input id="basepackage" name="basepackage" type="text" class="easyui-validatebox easyui-textbox" maxlength="255" required="true" data-options="prompt:'请输入java包名...'"/>
+			<input id="basepackage" name="basepackage" type="text" style="width: 200px;" class="easyui-validatebox easyui-textbox" maxlength="255" required="true" data-options="prompt:'请输入java包名...'"/>
 			</td>
 		</tr>	
 		<tr>	
 			<th colspan="3">jsp路径：</th>		
 			<td>
-			<input id="namespace" name="namespace" type="text" class="easyui-validatebox easyui-textbox" maxlength="255" required="true" data-options="prompt:'请输入jsp路径...'"/>
+			<input id="namespace" name="namespace" type="text" style="width: 200px;" class="easyui-validatebox easyui-textbox" maxlength="255" required="true" data-options="prompt:'请输入jsp路径...'"/>
 			</td>
 		</tr>	
 		<tr>	
 			<th colspan="3">生成代码路径：</th>		
 			<td>
-			<input id="outRoot" name="outRoot" type="text" class="easyui-validatebox easyui-textbox" required="true" data-options="prompt:'请输入代码路径...'"/>
+			<input id="outRoot" name="outRoot" type="text" style="width: 500px;" class="easyui-validatebox easyui-textbox" required="true" data-options="prompt:'请输入代码路径...'"/>
 			</td>
 		</tr>	
 		<tr>	
@@ -59,6 +59,8 @@
             </select>
             </td>
         </tr>	
+        </table>
+        <table class="tableForm" align="center">
         <tr>
             <td>
             <!-- <input type="checkbox" checked="checked" value="listQuery" style="width: 0px; "/> -->
@@ -119,7 +121,7 @@
         </tr>
         <tr>
           <td colspan="6" align="center">
-          <a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> 
+          <a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">生成代码</a> 
           </td>
         </tr>
       </table>
