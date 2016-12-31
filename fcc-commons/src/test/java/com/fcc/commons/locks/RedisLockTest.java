@@ -30,6 +30,7 @@ public class RedisLockTest {
     @Test
     public void testTryLock() {
         RedisLock lock = new RedisLock();
+        RedisUtil.init();
         lock.setShardedJedisPool(RedisUtil.getShardedJedisPool());
         SimpleLockTest.testMain(lock, true);
         RedisUtil.getShardedJedisPool().destroy();
