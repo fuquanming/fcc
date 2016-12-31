@@ -24,7 +24,7 @@ public class RedisLock implements Lock {
     
     private ShardedJedisPool shardedJedisPool;
     /** key前缀 */
-    private String lockPre = "redis:lock:";
+    private String lockPre = "fcc:lock:";
     
     public ShardedJedisPool getShardedJedisPool() {
         return shardedJedisPool;
@@ -43,17 +43,29 @@ public class RedisLock implements Lock {
     }
 
     /**
-     * 未实现
      * @see com.fcc.commons.locks.Lock#lock(java.lang.String)
      **/
     @Override
     public void lock(String lockKey) {
-        int i = 1 % 0;
-        i = i + 1;
+        ShardedJedis shardedJedis = null;
+        boolean flag = false;
+        try {
+            shardedJedis = getShardedJedis();
+            String lockName = lockPre + lockKey;
+            String value = lockName + System.currentTimeMillis();
+            while (flag == false) {
+                flag = lock(shardedJedis, lockName, value, DEFAULT_CACHE_SECONDS);
+                if (flag == true) break;
+                Thread.sleep(10);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeShardedJedis(shardedJedis);
+        }
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#unLock(java.lang.String)
      **/
     @Override
@@ -70,16 +82,15 @@ public class RedisLock implements Lock {
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String)
      **/
     @Override
     public boolean tryLock(String lockKey) {
 //        JedisShardInfo info = new JedisShardInfo("");
-        ShardedJedis conn = null;
+        ShardedJedis shardedJedis = null;
         boolean flag = false;
         try {
-            conn = getShardedJedis();
+            shardedJedis = getShardedJedis();
 //            conn.watch(lockKey);
 //            Transaction trans = conn.multi();
 //            trans.setex(lockKey, 5000, identifier);
@@ -89,24 +100,17 @@ public class RedisLock implements Lock {
 //            }
 //            conn.unwatch();
             String lockName = lockPre + lockKey;
-            String identifier = lockName + System.currentTimeMillis();
-            if (conn.setnx(lockName, identifier) == 1) {
-                conn.expire(lockKey, DEFAULT_CACHE_SECONDS);
-                flag = true;
-            }
-            if (conn.ttl(lockKey) == -1) {
-                conn.expire(lockKey, DEFAULT_CACHE_SECONDS);
-            }
+            String value = lockName + System.currentTimeMillis();
+            flag = lock(shardedJedis, lockName, value, DEFAULT_CACHE_SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeShardedJedis(conn);
+            closeShardedJedis(shardedJedis);
         }
         return flag;
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String, long)
      **/
     @Override
@@ -115,35 +119,49 @@ public class RedisLock implements Lock {
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String, long, long)
      **/
     @Override
     public boolean tryLock(String lockKey, long tryTimeoutMilliSeconds, int lockTimeoutSeconds) throws InterruptedException {
-        ShardedJedis conn = null;
+        ShardedJedis shardedJedis = null;
         boolean flag = false;
         try {
-            conn = getShardedJedis();
+            shardedJedis = getShardedJedis();
             String lockName = lockPre + lockKey;
-            String identifier = lockName + System.currentTimeMillis();
+            String value = lockName + System.currentTimeMillis();
             
             long end = System.currentTimeMillis() + tryTimeoutMilliSeconds;
             while (System.currentTimeMillis() < end) {
-                if (conn.setnx(lockName, identifier) == 1) {
-                    conn.expire(lockKey, lockTimeoutSeconds);
-                    flag = true;
-                    break;
-                }
-                if (conn.ttl(lockKey) == -1) {
-                    conn.expire(lockKey, lockTimeoutSeconds);
-                }
+                flag = lock(shardedJedis, lockName, value, lockTimeoutSeconds);
+                if (flag == true) break;
+                end = end - 10;
+                Thread.sleep(10);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeShardedJedis(conn);
+            closeShardedJedis(shardedJedis);
         }
         return flag;
     }
-
+    /**
+     * 锁定
+     * @param shardedJedis
+     * @param lockName              key
+     * @param value                 value
+     * @param lockTimeoutSeconds    time
+     * @return
+     * @throws Exception
+     */
+    private boolean lock(ShardedJedis shardedJedis, String lockName, String value, int lockTimeoutSeconds) throws Exception {
+        boolean flag = false;
+        if (shardedJedis.setnx(lockName, value) == 1) {
+            shardedJedis.expire(lockName, lockTimeoutSeconds);
+            flag = true;
+        }
+        if (shardedJedis.ttl(lockName) == -1) {
+            shardedJedis.expire(lockName, lockTimeoutSeconds);
+        }
+        return flag;
+    }
 }

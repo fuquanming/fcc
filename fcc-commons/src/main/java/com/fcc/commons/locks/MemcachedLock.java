@@ -37,17 +37,26 @@ public class MemcachedLock implements Lock {
     }
     
     /**
-     * 未实现
      * @see com.fcc.commons.locks.Lock#lock(java.lang.String)
      **/
     @Override
     public void lock(String lockKey) {
-        int i = 1 % 0;
-        i = i + 1;
+        boolean flag = false;
+        try {
+            String lockName = lockPre + lockKey;
+            String value = lockName + System.currentTimeMillis();
+            while (flag == false) {
+                flag = lock(lockName, value, DEFAULT_CACHE_SECONDS);
+                if (flag) break;
+                Thread.sleep(10);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#unLock(java.lang.String)
      **/
     @Override
@@ -56,18 +65,16 @@ public class MemcachedLock implements Lock {
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String)
      **/
     @Override
     public boolean tryLock(String lockKey) {
         String lockName = lockPre + lockKey;
-        String identifier = lockName + System.currentTimeMillis();
-        return memcachedCache.add(lockName, identifier, new Date(DEFAULT_CACHE_SECONDS * 1000));
+        String value = lockName + System.currentTimeMillis();
+        return lock(lockName, value, DEFAULT_CACHE_SECONDS);
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String, long)
      **/
     @Override
@@ -76,7 +83,6 @@ public class MemcachedLock implements Lock {
     }
 
     /**
-     * //TODO 添加override说明
      * @see com.fcc.commons.locks.Lock#tryLock(java.lang.String, long, int)
      **/
     @Override
@@ -84,15 +90,14 @@ public class MemcachedLock implements Lock {
         boolean flag = false;
         try {
             String lockName = lockPre + lockKey;
-            String identifier = lockName + System.currentTimeMillis();
+            String value = lockName + System.currentTimeMillis();
             
             long end = System.currentTimeMillis() + tryTimeoutMilliSeconds;
             while (System.currentTimeMillis() < end) {
-                boolean lockFlag = memcachedCache.add(lockName, identifier, new Date(lockTimeoutSeconds * 1000));
-                if (lockFlag) {
-                    flag = true;
-                    break;
-                }
+                flag = lock(lockName, value, lockTimeoutSeconds);
+                if (flag == true) break;
+                end = end - 10;
+                Thread.sleep(10);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,5 +105,8 @@ public class MemcachedLock implements Lock {
         }
         return flag;
     }
-
+    
+    private boolean lock(String lockName, String value, int lockTimeoutSeconds) {
+        return memcachedCache.add(lockName, value, new Date(lockTimeoutSeconds * 1000));
+    }
 }

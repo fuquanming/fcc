@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.ShardedJedisPool;
@@ -28,6 +29,8 @@ public class RedisUtil {
     
     private static ShardedJedisPool shardedJedisPool;
     
+    private static JedisPool jedisPool;
+    
     // 读取配置文件
     public static synchronized void init() {
         try {
@@ -42,13 +45,17 @@ public class RedisUtil {
             config.setTestOnBorrow(false);
 
             int size = Integer.parseInt(getProperty("redis.size"));
-            List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>(size);
-            for (int i = 1; i <= size; i++) {
-                shards.add(new JedisShardInfo(getProperty("redis.host" + size), 
-                        Integer.parseInt(getProperty("redis.port" + size)), 
-                        getProperty("redis.name" + size)));
+            if (size > 1) {
+                List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>(size);
+                for (int i = 1; i <= size; i++) {
+                    shards.add(new JedisShardInfo(getProperty("redis.host" + size), 
+                            Integer.parseInt(getProperty("redis.port" + size)), 
+                            getProperty("redis.name" + size)));
+                }
+                shardedJedisPool = new ShardedJedisPool(config, shards);
+            } else {
+                jedisPool = new JedisPool(config, getProperty("redis.host1"), Integer.parseInt(getProperty("redis.port1")));
             }
-            shardedJedisPool = new ShardedJedisPool(config, shards);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,8 +69,13 @@ public class RedisUtil {
         return shardedJedisPool;
     }
     
+    public static JedisPool getJedisPool() {
+        return jedisPool;
+    }
+    
     public static void close() {
         if (shardedJedisPool != null) shardedJedisPool.close();
+        if (jedisPool != null) jedisPool.close();
     }
 
     public static void main(String[] args) {
