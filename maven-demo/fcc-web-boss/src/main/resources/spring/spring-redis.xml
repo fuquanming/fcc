@@ -18,12 +18,18 @@
 		<constructor-arg index="1" value="${redis.port1}" type="int" />
 		<constructor-arg index="2" value="${redis.name1}" />
 	</bean>
+	<!-- <bean id="jedisShardInfo1" class="redis.clients.jedis.JedisShardInfo">
+        <constructor-arg index="0" value="${redis.host2}" />
+        <constructor-arg index="1" value="${redis.port2}" type="int" />
+        <constructor-arg index="2" value="${redis.name2}" />
+    </bean> -->
     <!-- Jedis集群 -->
-	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool" destroy-method="close">
 		<constructor-arg index="0" ref="jedisPoolConfig" />
 		<constructor-arg index="1">
 			<list>
 				<ref bean="jedisShardInfo" />
+				<!-- <ref bean="jedisShardInfo1" /> -->
 			</list>
 		</constructor-arg>
     </bean>
