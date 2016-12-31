@@ -49,7 +49,6 @@ public class CacheService {
     private Map<String, String> moduleUrlMap = new ConcurrentHashMap<String, String>();
 
     public Map<String, String> getModuleUrlMap() {
-        System.out.println("getModuleUrlMap=" + moduleUrlMap.size());
         return moduleUrlMap;
     }
     
