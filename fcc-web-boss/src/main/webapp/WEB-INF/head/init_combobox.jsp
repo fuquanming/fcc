@@ -38,12 +38,16 @@ function getComboBoxByUrl(param) {
 }
 function getComboBoxByData(param) {
     var id = param.id;// 绑定的ID
+    var editable = true;
+    if (param.editable == false) editable = false;
     return $('#' + id).combobox({
         data : param.data,
         valueField : param.valueField,
         textField : param.textField,
+        editable : editable,
+        panelHeight : 'auto',
         onLoadSuccess : function(node, data) {
-            
+        	$('#' + id).combobox('setValue', param.selectValue);
         }
     });
 }
