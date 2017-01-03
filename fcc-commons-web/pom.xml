@@ -31,12 +31,6 @@
             <artifactId>fcc-commons-core</artifactId>
             <version>${fcc-commons-core.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.fcc.commons</groupId>
-            <artifactId>fcc-commons-web</artifactId>
-            <version>${fcc-commons-web.version}</version>
-        </dependency>
         
         <dependency>
             <groupId>com.fcc.commons</groupId>
