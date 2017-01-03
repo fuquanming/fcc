@@ -35,9 +35,9 @@ public interface ModuleService {
     /**
      * 更新模块是否显示
      * @param ids
-     * @param show
+     * @param moduleStatus
      */
-    Integer editShow(String[] ids, boolean show);
+    Integer editModuleStatus(String[] ids, boolean moduleStatus);
     /**
      * 获取模块通过ID
      * @param moduleId      模块ID

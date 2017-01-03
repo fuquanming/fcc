@@ -47,6 +47,18 @@ public class OrganizationDaoImpl implements OrganizationDao {
     }
     
     @Override
+    public Integer editOrganStatus(String[] ids, boolean organStatus) {
+        Map<String, Object> params = new HashMap<String, Object>(2);
+        params.put("organId", ids);
+        List<Organization> list = baseDao.find("from Organization where organId in(:organId)", params);
+        for (Organization data : list) {
+            baseDao.executeHql("update Organization set organStatus=? where parentIds like ?", organStatus, data.getParentIds() + "-%");
+        }
+        params.put("organStatus", organStatus);
+        return baseDao.executeHql("update Organization set organStatus=:organStatus where organId in(:organId)", params);
+    }
+    
+    @Override
     public List<Organization> findChildOrgans(String parentOrganId, boolean allChildren) {
         StringBuilder sb = new StringBuilder();
         Map<String, Object> param = null;

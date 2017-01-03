@@ -228,9 +228,9 @@ public class SysUserServiceImpl implements SysUserService {
             Set<String> moduleIdSet = rightMap.keySet();
             for (String moduleId : moduleIdSet) {
                 Module module = cacheService.getModuleMap().get(moduleId);
-                if (module.getShow()) {
+                if (module.getModuleStatus()) {
                     Module parentModule = cacheService.getModuleMap().get(module.getParentId());
-                    if (parentModule != null && parentModule.getShow() == true) {
+                    if (parentModule != null && parentModule.getModuleStatus() == true) {
                         moduleSet.add(parentModule);
                         moduleSet.add(module);
                     } else if (Module.ROOT.getModuleId().equals(module.getParentId())) {

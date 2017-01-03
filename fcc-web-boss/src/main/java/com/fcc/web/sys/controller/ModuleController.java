@@ -276,7 +276,7 @@ public class ModuleController extends AppWebController {
             if ("show".equals(moduleStatus)) {
                 show = true;
             }
-            moduleService.editShow(ids, show);
+            moduleService.editModuleStatus(ids, show);
             reloadModuleCache();
             message.setMsg(StatusCode.Sys.success);
             message.setSuccess(true);
@@ -306,7 +306,7 @@ public class ModuleController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("查询模块树形列表失败", e);
-			nodeList = new ArrayList<EasyuiTreeGridModule>();
+			nodeList = new ArrayList<EasyuiTreeGridModule>(1);
 			EasyuiTreeGridModule node = new EasyuiTreeGridModule();
 			node.setMsg(e.getMessage());
 			nodeList.add(node);
@@ -332,7 +332,7 @@ public class ModuleController extends AppWebController {
 		} catch (Exception e) {
 		    e.printStackTrace();
             logger.error("查询模块树形失败", e);
-            nodeList = new ArrayList<EasyuiTreeNode>();
+            nodeList = new ArrayList<EasyuiTreeNode>(1);
             EasyuiTreeGridModule node = new EasyuiTreeGridModule();
             node.setMsg(e.getMessage());
             nodeList.add(node);

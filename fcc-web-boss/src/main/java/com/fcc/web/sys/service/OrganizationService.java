@@ -28,6 +28,13 @@ public interface OrganizationService {
      * @param organId
      */
     void delete(String organId);
+    
+    /**
+     * 更新机构是否显示
+     * @param ids
+     * @param moduleStatus
+     */
+    Integer editOrganStatus(String[] ids, boolean organStatus);
 
     /**
      * 查询组织机构的下级

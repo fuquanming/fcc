@@ -45,9 +45,9 @@ public interface ModuleDao {
     /**
      * 更新模块是否显示
      * @param ids
-     * @param show
+     * @param moduleStatus
      */
-    public Integer editShow(String[] ids, boolean show);
+    public Integer editModuleStatus(String[] ids, boolean moduleStatus);
     /**
      * 获取模块及操作
      * @return

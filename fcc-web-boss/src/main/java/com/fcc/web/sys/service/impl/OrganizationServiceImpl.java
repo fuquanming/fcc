@@ -37,7 +37,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 	private CacheService cacheService;
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#add(com.fcc.web.sys.model.Organization)
      **/
 	@Override
@@ -46,17 +45,16 @@ public class OrganizationServiceImpl implements OrganizationService {
 		baseService.add(data);
 	}
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#edit(com.fcc.web.sys.model.Organization)
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)//事务申明
 	public void edit(Organization data) {
 		baseService.edit(data);
+		organizationDao.editOrganStatus(new String[]{data.getOrganId()}, data.getOrganStatus());
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#delete(java.lang.String)
      **/
 	@Override
@@ -65,8 +63,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 	    organizationDao.delete(organId);
     }
 	
+	@Override
+	@Transactional(rollbackFor = Exception.class)//事务申明
+	public Integer editOrganStatus(String[] ids, boolean organStatus) {
+	    return organizationDao.editOrganStatus(ids, organStatus);
+	}
+	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#findChildOrgans(java.lang.String, boolean)
      **/
 	@Override
@@ -76,7 +79,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#getOrganById(java.lang.String)
      **/
 	@Override
@@ -115,7 +117,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.OrganizationService#getOrganTreeGrid(com.fcc.web.sys.model.SysUser)
      **/
 	@Override
@@ -139,6 +140,13 @@ public class OrganizationServiceImpl implements OrganizationService {
                 node.setOrganDesc(m.getOrganDesc());
                 node.setOrganSort(m.getOrganSort());
                 node.setOrganLevel(m.getOrganLevel());
+                
+                Map<String, Object> attributes = new HashMap<String, Object>(2);
+                node.setAttributes(attributes);
+                
+                attributes.put("parentIds", m.getParentIds());
+                attributes.put("show", m.getOrganStatus());
+                
                 nodeMap.put(node.getId(), node);
                 
                 String parendId = m.getParentId();

@@ -26,6 +26,12 @@ public interface OrganizationDao {
      */
     public Integer delete(String organId);
     /**
+     * 更新机构是否显示
+     * @param ids
+     * @param moduleStatus
+     */
+    Integer editOrganStatus(String[] ids, boolean organStatus);
+    /**
      * 查询子机构
      * @param parentOrganId     父机构ID
      * @param allChildren       是否全部子机构

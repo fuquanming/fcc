@@ -70,17 +70,17 @@ public class ModuleDaoImpl implements ModuleDao {
     }
     
     @Override
-    public Integer editShow(String[] ids, boolean show) {
+    public Integer editModuleStatus(String[] ids, boolean moduleStatus) {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("moduleId", ids);
-        params.put("show", show);
-        return baseDao.executeHql("update Module set show=:show where moduleId in(:moduleId)", params);
+        params.put("moduleStatus", moduleStatus);
+        return baseDao.executeHql("update Module set moduleStatus=:moduleStatus where moduleId in(:moduleId)", params);
     }
     
     @Override
     public List<Module> getModuleWithOperate() {
         List<Module> moduleList = new ArrayList<Module>();
-        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,m.parent_id,m.parent_ids,m.is_show,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_level asc,module_sort asc,parent_Ids";
+        String bHql = "select m.module_id,m.module_name,m.module_level,m.module_sort,m.module_desc,m.parent_id,m.parent_ids,m.module_status,mo.operate_id from sys_rbac_module m left join sys_rbac_mod2op mo on m.module_id=mo.module_id order by module_level asc,module_sort asc,parent_Ids";
         Map<String, Object> param = null;
         List<Object> list = baseDao.findSQL(bHql, param);
         if (list.size() > 0) {
@@ -101,7 +101,7 @@ public class ModuleDaoImpl implements ModuleDao {
                 String moduleDesc = (String) obj[4];
                 String parentId = (String) obj[5];
                 String parentIds = (String) obj[6];
-                String show = obj[7].toString();
+                String moduleStatus = obj[7].toString();
                 String operateId = (String) obj[8];
                 
                 Module module = null;
@@ -122,7 +122,7 @@ public class ModuleDaoImpl implements ModuleDao {
                     module.setModuleDesc(moduleDesc);
                     module.setParentId(parentId);
                     module.setParentIds(parentIds);
-                    module.setShow("1".equals(show) ? true : false);
+                    module.setModuleStatus("1".equals(moduleStatus) ? true : false);
                     if (module.getOperates() == null) module.setOperates(new TreeSet<Operate>());
                     moduleList.add(module);
                 }

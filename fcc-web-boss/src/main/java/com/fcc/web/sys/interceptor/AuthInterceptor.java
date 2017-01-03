@@ -105,7 +105,7 @@ public class AuthInterceptor extends BaseInterceptor {
                             }
                         }
 
-                        if (module.getShow() == false) {// 不显示该模块
+                        if (module.getModuleStatus() == false) {// 不显示该模块
                             flag = false;
                         }
                         // 上级模块是否显示
@@ -113,7 +113,7 @@ public class AuthInterceptor extends BaseInterceptor {
                         while (true) {
                             Module parentModule = cacheService.getModuleMap().get(parentId);
                             if (parentModule != null) {
-                                if (parentModule.getShow() == false) {
+                                if (parentModule.getModuleStatus() == false) {
                                     flag = false;
                                     break;
                                 } else {

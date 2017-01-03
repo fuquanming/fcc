@@ -47,7 +47,12 @@ public class CacheService {
     private ReentrantLock lock = new ReentrantLock();
     /** 缓存模块URL地址  moduleUrl, moduleId */
     private Map<String, String> moduleUrlMap = new ConcurrentHashMap<String, String>();
-
+    
+    /**
+     * 缓存模块URL
+     * @return
+     */
+    @Cacheable(value = {"fcc:moduleUrlMapCache"}, key = "'fcc:moduleUrlMapCache'")
     public Map<String, String> getModuleUrlMap() {
         return moduleUrlMap;
     }
@@ -119,6 +124,13 @@ public class CacheService {
      */
     @CacheEvict(value = {"fcc:moduleMapCache"}, allEntries = true)
     public void cleanModuleMap() {
+    }
+    
+    /**
+     * 清除模块URL缓存 
+     */
+    @CacheEvict(value = {"fcc:moduleUrlMapCache"}, allEntries = true)
+    public void cleanModuleUrlMap() {
     }
     
     /**

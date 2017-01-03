@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,7 +99,8 @@ public class OrganController extends AppWebController {
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
             @ApiParam(required = false, value = "机构编码") @RequestParam(name = "organCode", defaultValue = "") String organCode,
             @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort,
-            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc
+            @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
+            @ApiParam(required = false, value = "机构状态") @RequestParam(name = "organStatus", defaultValue = "true") String organStatus
             ) {
 		Message message = new Message();
 		try {
@@ -129,6 +131,9 @@ public class OrganController extends AppWebController {
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);
 			data.setOrganLevel(parent.getOrganLevel() + 1);
+			
+			data.setOrganStatus("true".equals(organStatus) ? true : false);
+			
 			organService.add(data);
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
@@ -152,7 +157,9 @@ public class OrganController extends AppWebController {
             @ApiParam(required = true, value = "机构名称") @RequestParam(name = "organName", defaultValue = "") String organName,
             @ApiParam(required = false, value = "机构编码") @RequestParam(name = "organCode", defaultValue = "") String organCode,
             @ApiParam(required = false, value = "机构描述") @RequestParam(name = "organDesc", defaultValue = "") String organDesc,
-            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort) {
+            @ApiParam(required = false, value = "机构排序") @RequestParam(name = "organSort", defaultValue = "1") int organSort,
+            @ApiParam(required = false, value = "机构状态") @RequestParam(name = "organStatus", defaultValue = "true") String organStatus
+            ) {
 		Message message = new Message();
 		try {
 			if (organId == null || "".equals(organId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
@@ -181,6 +188,9 @@ public class OrganController extends AppWebController {
 			data.setOrganName(organName);
 			data.setOrganSort(organSort);
 			data.setOrganLevel(parent.getOrganLevel() + 1);
+			
+			data.setOrganStatus("true".equals(organStatus) ? true : false);
+			
 			organService.edit(data);
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
@@ -194,6 +204,35 @@ public class OrganController extends AppWebController {
 		}
 		return getModelAndView(message);
 	}
+	
+	@ApiOperation(value = "显示、隐藏机构")
+    @RequestMapping(value = "/show.do", method = RequestMethod.POST)
+    @Permissions("edit")
+    public ModelAndView show(HttpServletRequest request,
+            @ApiParam(required = true, value = "机构ID、用,分割多个ID") @RequestParam(name = "ids", defaultValue = "") String id,
+            @ApiParam(required = true, value = "机构状态") @RequestParam(name = "organStatus", defaultValue = "") String organStatus) {
+        Message message = new Message();
+        try {
+            if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
+            String[] ids = StringUtils.split(id, ",");
+            boolean show = false;
+            if ("show".equals(organStatus)) {
+                show = true;
+            }
+            organService.editOrganStatus(ids, show);
+            reloadModuleCache();
+            message.setMsg(StatusCode.Sys.success);
+            message.setSuccess(true);
+        } catch (RefusedException e) {
+            message.setMsg(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("显示、隐藏机构失败！", e);
+            message.setMsg(StatusCode.Sys.fail);
+            message.setObj(e.getMessage());
+        }
+        return getModelAndView(message);
+    }
 	
 	@ApiOperation(value = "删除机构")
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
@@ -272,7 +311,7 @@ public class OrganController extends AppWebController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载机构树形失败！", e);
-			nodeList = new ArrayList<EasyuiTreeNode>(); 
+			nodeList = new ArrayList<EasyuiTreeNode>(1); 
 			EasyuiTreeNode node = new EasyuiTreeNode();
 			node.setMsg(e.getMessage());
 			nodeList.add(node);

@@ -63,8 +63,9 @@ public class Organization extends Treeable implements Comparable<Organization>, 
      * organDesc       db_column: ORGAN_DESC 
      */ 	
 	private java.lang.String organDesc;
-	
-	/** 父ID */
+	// 是否可用
+    private boolean organStatus = Boolean.TRUE;
+    /** 父ID */
     private String parentId;
     /** 所有父路径 如1-2-3 */
     private String parentIds;
@@ -139,6 +140,14 @@ public class Organization extends Treeable implements Comparable<Organization>, 
 	public void setOrganDesc(java.lang.String value) {
 		this.organDesc = value;
 	}
+	@Column(name = "ORGAN_STATUS")
+	public boolean getOrganStatus() {
+        return organStatus;
+    }
+
+    public void setOrganStatus(boolean organStatus) {
+        this.organStatus = organStatus;
+    }
 	
     @Column(name = "PARENT_ID")
     public String getParentId() {

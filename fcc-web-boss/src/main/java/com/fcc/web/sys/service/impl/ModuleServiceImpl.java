@@ -104,8 +104,8 @@ public class ModuleServiceImpl implements ModuleService {
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer editShow(String[] ids, boolean show) {
-        return moduleDao.editShow(ids, show);
+    public Integer editModuleStatus(String[] ids, boolean moduleStatus) {
+        return moduleDao.editModuleStatus(ids, moduleStatus);
     }
     
     /**
@@ -215,7 +215,7 @@ public class ModuleServiceImpl implements ModuleService {
             node.setAttributes(attributes);
             
             attributes.put("parentIds", m.getParentIds());
-            attributes.put("show", m.getShow());
+            attributes.put("show", m.getModuleStatus());
             
             Set<Operate> operateSet = m.getOperates();
             if (operateSet != null && operateSet.size() > 0) {
