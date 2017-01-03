@@ -36,6 +36,12 @@
           </td>
         </tr>
         <tr>
+          <th>是否显示</th>
+          <td>
+          <input id="organStatus" name="organStatus" style="width: 155px;" class="easyui-combobox"/>
+          </td>
+        </tr>
+        <tr>
           <th>组织机构说明</th>
           <td>
           <textarea rows="5" cols="40" name="organDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
@@ -55,7 +61,22 @@
 </body>
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
+$(function() {
+	var organStatus = getComboBoxByData({
+        id : 'organStatus',
+        valueField : 'id',
+        textField : 'text',
+        data : [
+            {text : '显示', id : 'true'},
+            {text : '隐藏', id : 'false'}
+        ],
+        editable : false,
+        selectValue : 'true'
+    })
+})
+
 saveParam_form = 'userForm';
 saveParam_saveUrl = '${basePath}manage/sys/organ/add.do';
 saveParam_backUrl = '${basePath}manage/sys/organ/view.do';
