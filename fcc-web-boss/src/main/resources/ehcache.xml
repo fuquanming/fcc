@@ -42,7 +42,23 @@
     -->
     </cache> 
     
-    <!-- 系统模块缓存  不过期 -->
+    <!-- 系统模块URL缓存  不过期 -->
+    <cache name="fcc:moduleUrlMapCache"
+           maxEntriesLocalHeap="10000"
+           overflowToDisk="false"
+           eternal="false"
+           diskPersistent="false"
+           timeToLiveSeconds="0"
+           timeToIdleSeconds="0"
+           statistics="true">
+           <!-- 集群监听 
+           <cacheEventListenerFactory
+    class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+    properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true,replicateUpdatesViaCopy= false, replicateRemovals= true " />
+    -->
+    </cache> 
+    
+    <!-- 系统权限缓存  不过期 -->
     <cache name="fcc:roleModuleRightMapCache"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
