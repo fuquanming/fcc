@@ -51,6 +51,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Transactional(rollbackFor = Exception.class)//事务申明
 	public void edit(Organization data) {
 		baseService.edit(data);
+		organizationDao.editOrganStatus(data);
 		organizationDao.editOrganStatus(new String[]{data.getOrganId()}, data.getOrganStatus());
 	}
 	

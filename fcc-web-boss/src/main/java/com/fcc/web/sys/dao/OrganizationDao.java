@@ -25,6 +25,13 @@ public interface OrganizationDao {
      * @return
      */
     public Integer delete(String organId);
+    
+    /**
+     * 更新机构是否显示
+     * @param organ
+     * @param moduleStatus
+     */
+    Integer editOrganStatus(Organization organ);
     /**
      * 更新机构是否显示
      * @param ids

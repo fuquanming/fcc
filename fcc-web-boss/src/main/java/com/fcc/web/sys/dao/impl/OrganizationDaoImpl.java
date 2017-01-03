@@ -47,6 +47,11 @@ public class OrganizationDaoImpl implements OrganizationDao {
     }
     
     @Override
+    public Integer editOrganStatus(Organization organ) {
+        return baseDao.executeHql("update Organization set organStatus=? where parentIds like ?", organ.getOrganStatus(), organ.getParentIds() + "-%");
+    }
+    
+    @Override
     public Integer editOrganStatus(String[] ids, boolean organStatus) {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("organId", ids);

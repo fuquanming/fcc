@@ -119,11 +119,7 @@ public class OrganController extends AppWebController {
 			
 			Organization data = new Organization();
 			data.setOrganId(RandomStringUtils.random(6, true, false));
-			if (Organization.ROOT.getOrganId().equals(parentId)) {
-			    data.setParentId(Organization.ROOT.getOrganId());
-			} else {
-			    data.setParentId(parentId);
-			}
+			data.setParentId(parentId);
 			data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
 			
 			data.setOrganCode(organCode);
@@ -132,7 +128,7 @@ public class OrganController extends AppWebController {
 			data.setOrganSort(organSort);
 			data.setOrganLevel(parent.getOrganLevel() + 1);
 			
-			data.setOrganStatus("true".equals(organStatus) ? true : false);
+			data.setOrganStatus(Boolean.valueOf(organStatus));
 			
 			organService.add(data);
 			message.setSuccess(true);
@@ -176,11 +172,7 @@ public class OrganController extends AppWebController {
 			
 			Organization data = organService.getOrganById(organId);
 			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
-			if (Organization.ROOT.getOrganId().equals(parentId)) {
-			    data.setParentId(null);
-            } else {
-                data.setParentId(parentId);
-            }
+            data.setParentId(parentId);
             data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
 			
 			data.setOrganCode(organCode);
@@ -189,7 +181,7 @@ public class OrganController extends AppWebController {
 			data.setOrganSort(organSort);
 			data.setOrganLevel(parent.getOrganLevel() + 1);
 			
-			data.setOrganStatus("true".equals(organStatus) ? true : false);
+			data.setOrganStatus(Boolean.valueOf(organStatus));
 			
 			organService.edit(data);
 			message.setSuccess(true);
