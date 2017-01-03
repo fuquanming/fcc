@@ -85,6 +85,8 @@ treegridParam_column_value = [ [ {
     			return '是';
     		} else if (show == false) {
     			return '否';
+    		} else {
+    			return value;
     		}
     	}
     }
