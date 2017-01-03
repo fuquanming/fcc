@@ -100,7 +100,6 @@ public class CodeController extends AppWebController {
 //        GeneratorProperties.setProperty("jdbc.schema", Resources.DB.getString("jdbc.schema"));
         
         DataSourceProvider.setDataSource((DataSource)SpringContextUtil.getBean("dataSource"));
-        long begin = System.currentTimeMillis();
         List<Table> list = TableFactory.getInstance().getAllTables();
 //        List<Table> list = new ArrayList<Table>();
         int size = list.size();
@@ -109,7 +108,6 @@ public class CodeController extends AppWebController {
             tableNameList.add(table.getSqlName());
         }
         request.setAttribute("tableList", tableNameList);
-        System.out.println("time=" + (System.currentTimeMillis() - begin));
         return "/manage/sys/code/code_add";
     }
     
