@@ -27,6 +27,9 @@ function getComboTree(param) {
             		t.tree('collapseAll');
             	}
             }
+            if (param.selectValue) {
+            	$('#' + id).combotree('setValues', param.selectValue); 
+            }
         },
         onLoadError : function(e) {
         	console.log(e)
