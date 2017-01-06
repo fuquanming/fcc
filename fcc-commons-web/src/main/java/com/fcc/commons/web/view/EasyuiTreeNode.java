@@ -9,8 +9,9 @@ import java.util.Map;
  * @version v1.0
  */
 public class EasyuiTreeNode implements java.io.Serializable {
-
+    /** 无子节点 */
     public static final String STATE_OPEN = "open";
+    /** 有子节点 */
     public static final String STATE_CLOSED = "closed";
 	/**
 	 * 
