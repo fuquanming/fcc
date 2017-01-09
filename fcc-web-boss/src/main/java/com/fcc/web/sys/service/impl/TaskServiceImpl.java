@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
                 baseService.add(obj);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("保持失败！", e);
+                logger.error("保存失败！", e);
             }
         }
     }

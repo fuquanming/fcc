@@ -11,42 +11,47 @@ package com.fcc.commons.core.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+
 /**
  * 基础实体类，包含各实体公用属性 .
  * @version v1.0
  * @author 傅泉明
  */
+@MappedSuperclass
 public class BaseModel {
-
-    private String id;
-    private String createBy;
+    /** 创建者 */
+    private String createUser;
+    /** 创建时间 */
     private Date createTime;
-    private String updateBy;
+    /** 修改者 */
+    private String updateUser;
+    /** 修改时间 */
     private Date updateTime;
-    public String getId() {
-        return id;
+    
+    @Column(name = "CREATE_USER")
+    public String getCreateUser() {
+        return createUser;
     }
-    public void setId(String id) {
-        this.id = id;
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
     }
-    public String getCreateBy() {
-        return createBy;
-    }
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
+    @Column(name = "CREATE_TIME")
     public Date getCreateTime() {
         return createTime;
     }
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-    public String getUpdateBy() {
-        return updateBy;
+    @Column(name = "UPDATE_USER")
+    public String getUpdateUser() {
+        return updateUser;
     }
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
     }
+    @Column(name = "UPDATE_TIME")
     public Date getUpdateTime() {
         return updateTime;
     }
