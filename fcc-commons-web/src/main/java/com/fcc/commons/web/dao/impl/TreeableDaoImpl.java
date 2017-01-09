@@ -127,7 +127,10 @@ public class TreeableDaoImpl implements TreeableDao {
         } else {
             Object parentId = params.get("parentId");
             if (parentId != null) {
-                Boolean allChildren = (Boolean) params.get(allName);
+                Boolean allChildren = null;
+                if (params.get(allName) != null) {
+                    allChildren = Boolean.valueOf(params.get(allName).toString());
+                }
                 dataList = findChilds(clazz, parentId.toString(), allChildren == null ? false : allChildren);
             } else {
                 StringBuilder bHql = new StringBuilder();

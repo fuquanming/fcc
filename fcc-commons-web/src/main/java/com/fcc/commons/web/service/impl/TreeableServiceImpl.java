@@ -108,8 +108,8 @@ public class TreeableServiceImpl implements TreeableService {
     @Transactional(readOnly = true)//只查事务申明
     public List<EasyuiTreeNode> getTreeGrid(Class<?> clazz, Map<String, Object> params) {
         Boolean all = null;
-        if (params != null) {
-            all = (Boolean) params.get("all");
+        if (params != null && params.get("all") != null) {
+            all = Boolean.valueOf(params.get("all").toString());
         }
         List<Treeable> dataList = treeableDao.queryList(clazz, params);
         List<EasyuiTreeNode> nodeList = null;
