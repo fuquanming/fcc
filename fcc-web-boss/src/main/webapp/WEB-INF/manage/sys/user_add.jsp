@@ -40,7 +40,7 @@
         </tr>
         <tr>
 			<th>组织机构</th>
-			<td><select id="organId" name="organId" class="easyui-validatebox" required="true" style="width: 200px;"></select></td>
+			<td><input id="organId" name="organId" class="easyui-validatebox" required="true" /></td>
 		</tr>
         <tr>
           <th>备注</th>
@@ -99,11 +99,12 @@ saveParam_beforeCallback = function() {
     });
     var idsVal = roleIds.join(',');
     $('#' + saveParam_form).form().find('[name=roleValue]').val(idsVal);
+    $('#organId').val(getCombotreeValues(organTree));
 }
 saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转
 }
 $(function() {
-	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'organId',closed:false});
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true',id:'organId',closed:false});
 })
 </script>

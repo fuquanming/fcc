@@ -26,7 +26,13 @@ public interface SysUserService {
     void delete(String[] userIds);
 
     Integer editStatus(String[] userIds, String userStatus);
-
+    /**
+     * 系统登录
+     * @param userId
+     * @param password
+     * @return
+     * @throws RefusedException     错误信息，登录次数限制等
+     */
     SysUser getLoninUser(String userId, String password) throws RefusedException;
 
     SysUser getUserWithRole(String userId);

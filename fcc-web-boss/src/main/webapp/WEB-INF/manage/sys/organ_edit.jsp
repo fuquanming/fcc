@@ -14,38 +14,38 @@
     <fieldset>
     <legend>修改组织机构</legend>
     <form id="userForm" name="userForm" method="post">
-      <input name="id" type="hidden" value="${data.organId }"/>
+      <input name="id" type="hidden" value="${data.nodeId }"/>
       <table class="tableForm" align="center">
         <tr>
           <th>上级机构</th>
-          <td><select id="parentId" name="parentId" class="easyui-validatebox" style="width: 200px;"></select>
+          <td><select id="parentId" name="parentId" class="easyui-validatebox" style="width: 155px;"></select>
           <a class="easyui-linkbutton" iconCls="icon-clear" plain="true" onClick="clearOrgan();" href="javascript:void(0);">清空</a>
           </td>
         </tr>
         <tr>
           <th>组织机构名称</th>
-          <td><input name="organName" type="text" value="${data.organName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
+          <td><input name="nodeNameStr" type="text" value="${data.nodeName }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
         </tr>
         <tr>
           <th>组织机构编码</th>
-          <td><input name="organCode" type="text" value="${data.organCode }" class="easyui-validatebox easyui-textbox" maxlength="10"/>
+          <td><input name="nodeCode" type="text" value="${data.nodeCode }" class="easyui-validatebox easyui-textbox" maxlength="10"/>
           </td>
         </tr>
         <tr>
           <th>组织机构排序</th>
-          <td><input name="organSort" type="text" value="${data.organSort }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
+          <td><input name="nodeSort" type="text" value="${data.nodeSort }" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
           </td>
         </tr>
         <tr>
           <th>是否显示</th>
           <td>
-          <input id="organStatus" name="organStatus" style="width: 155px;" class="easyui-combobox"/>
+          <input id="nodeStatus" name="nodeStatus" style="width: 155px;" class="easyui-combobox"/>
           </td>
         </tr>
         <tr>
           <th>组织机构说明</th>
           <td>
-          <textarea rows="5" cols="40" name="organDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]">${data.organDesc }</textarea>
+          <textarea rows="5" cols="40" name="nodeDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]">${data.nodeDesc }</textarea>
           </td>
         </tr>
         <tr>
@@ -66,11 +66,11 @@ var organTree;
 $(function() {
 	var values = '${data.parentId }';
 	if (values == 'ROOT') values = '';
-	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'parentId',closed:false,selectValue:values});
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?all=true',id:'parentId',closed:false,selectValue:values});
 	//setCombotreeValues(organTree, values);
 	
-	var organStatus = getComboBoxByData({
-        id : 'organStatus',
+	var nodeStatus = getComboBoxByData({
+        id : 'nodeStatus',
         valueField : 'id',
         textField : 'text',
         data : [
@@ -78,7 +78,7 @@ $(function() {
             {text : '隐藏', id : 'false'}
         ],
         editable : false,
-        selectValue : '${data.organStatus }'
+        selectValue : '${data.nodeStatus }'
     })
 })
 function clearOrgan() {

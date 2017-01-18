@@ -12,7 +12,6 @@ package com.fcc.web.sys.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
@@ -45,8 +44,6 @@ public class CacheService {
     private RoleModuleRightService roleModuleRightService;
     
     private ReentrantLock lock = new ReentrantLock();
-    /** 缓存模块URL地址  moduleUrl, moduleId */
-    private Map<String, String> moduleUrlMap = new ConcurrentHashMap<String, String>();
     
     /**
      * 缓存模块URL
@@ -54,6 +51,14 @@ public class CacheService {
      */
     @Cacheable(value = {"fcc:moduleUrlMapCache"}, key = "'fcc:moduleUrlMapCache'")
     public Map<String, String> getModuleUrlMap() {
+        Map<String, Module> moduleMap = getModuleMap();
+        Map<String, String> moduleUrlMap = new HashMap<String, String>(moduleMap.size());
+        for (Module module : moduleMap.values()) {
+            String moduleId = module.getModuleId();
+            String moduleUrl = module.getModuleDesc();
+            moduleMap.put(moduleId, module);
+            if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
+        }
         return moduleUrlMap;
     }
     
@@ -71,14 +76,14 @@ public class CacheService {
         Map<String, Module> moduleMap = null;
         try {
             System.out.println("-----getModuleMap-----");
-            moduleUrlMap.clear();
+//            moduleUrlMap.clear();
             List<Module> moduleList = moduleService.getModuleWithOperate();
             moduleMap = new HashMap<String, Module>(moduleList.size());
             for (Module module : moduleList) {
                 String moduleId = module.getModuleId();
-                String moduleUrl = module.getModuleDesc();
+//                String moduleUrl = module.getModuleDesc();
                 moduleMap.put(moduleId, module);
-                if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
+//                if (moduleUrl != null && !"".equals(moduleUrl)) moduleUrlMap.put(moduleUrl, moduleId);
             }
         } catch(Exception e) {
             e.printStackTrace();

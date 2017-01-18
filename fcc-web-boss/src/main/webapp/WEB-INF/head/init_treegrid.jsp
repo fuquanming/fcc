@@ -72,7 +72,10 @@ $(function() {
             }
         },
         onBeforeExpand : function(row) {
-            if (row) $(this).treegrid('options').url = Tool.urlAddParam(treegridParam_url, 'parentId=' + row.id);
+            if (row) {
+            	$(this).treegrid('options').queryParams = {};
+            	$(this).treegrid('options').url = Tool.urlAddParam(treegridParam_url, 'parentId=' + row.id);
+            }
             return true;
         }
     });

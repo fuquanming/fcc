@@ -12,7 +12,6 @@ package com.fcc.commons.web.service;
 import java.util.List;
 import java.util.Map;
 
-import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.model.Treeable;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 
@@ -49,10 +48,11 @@ public interface TreeableService {
      * 查询下级
      * @param clazz
      * @param parentNodeId    
-     * @param allChildren      是否所有下级
+     * @param allChildren       是否所有下级
+     * @param parent            是否包含parentNodeId
      * @return
      */
-    List<Treeable> findChilds(Class<?> clazz, String parentNodeId, boolean allChildren);
+    List<Treeable> getChilds(Class<?> clazz, String parentNodeId, boolean allChildren, boolean parent);
     /**
      * 取得Treeable通过ID
      * @param clazz
@@ -61,19 +61,15 @@ public interface TreeableService {
      */
     Treeable getTreeableById(Class<?> clazz, String nodeId);
     /**
-     * 
+     * 查询
+     * @param clazz
+     * @param params        
      * @return treeGrid
      */
     List<EasyuiTreeNode> getTreeGrid(Class<?> clazz, Map<String, Object> params);
     /**
-     * 
+     * 查询树形
      * @return tree
      */
-    List<EasyuiTreeNode> getTree(Class<?> clazz, String nodeId, boolean allChildren);
-    
-    /**
-     * 分页查询
-     * @return
-     */
-    ListPage queryPage(Class<?> clazz, int pageNo, int pageSize, Map<String, Object> param, boolean isSQL);
+    List<EasyuiTreeNode> getTree(Class<?> clazz, String nodeId, boolean allChildren, boolean parent);
 }

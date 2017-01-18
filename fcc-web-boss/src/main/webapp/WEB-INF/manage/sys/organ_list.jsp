@@ -10,9 +10,26 @@
 <body class="easyui-layout" fit="true">
 <div region="center" border="false" style="overflow: hidden;">
   <div id="toolbar" class="datagrid-toolbar" style="height: auto;display: none;">
-	<form id="userForm" name="userForm" method="post">
-	  <input name="ids" type="hidden" value=""/>
-	</form>
+  <fieldset>
+    <legend>筛选</legend>
+    <form id="userForm" name="userForm" method="post">
+    <input name="ids" type="hidden" value=""/>
+    <table class="tableForm">
+      <tr>
+        <th>名称</th>
+        <td><input id="nodeNameStr" name="nodeNameStr" class="easyui-textbox" data-options="prompt:'请输入地区名称...'" style="width: 150px;" />
+        </td>
+        <th>编码</th>
+        <td><input id="nodeCode" name="nodeCode" class="easyui-textbox" data-options="prompt:'请输入地区编码...'" style="width: 150px;" />
+        </td>
+        <td>
+        <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
+        <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="clearFun();" href="javascript:void(0);">清空</a>
+        </td>
+      </tr>
+    </table>
+    </form>
+    </fieldset>
   <div id="operateDiv"></div>
   <a id="expandAll_button" class="easyui-linkbutton operate_button" iconCls="icon-folder-open" onClick="gridExpandAll()" plain="true" href="javascript:void(0);">展开</a>
   <a id="collapseAll_button" class="easyui-linkbutton operate_button" iconCls="icon-folder-close" onClick="gridCollapseAll();" plain="true" href="javascript:void(0);">折叠</a>
@@ -46,11 +63,11 @@ $(function() {
 })
 
 <fcc:permission operateId="edit">
-function editStatus(organStatus) {
+function editStatus(nodeStatus) {
     gridConfirm({
         gridType : Tool.grid.data,
         userFormId : 'userForm',
-        operateUrl : '${basePath}manage/sys/organ/show.do?organStatus=' + organStatus,
+        operateUrl : '${basePath}manage/sys/organ/show.do?nodeStatus=' + nodeStatus,
         fieldId : 'id',
         beforeCallback : function(rows) {
         },
@@ -62,38 +79,63 @@ function editStatus(organStatus) {
 </fcc:permission>
 
 treegridParam_id = 'treegrid';// 用到的datagrid的ID
-treegridParam_url = '${basePath}manage/sys/organ/treegrid.do';// 数据源url
+treegridParam_url = '${basePath}manage/sys/organ/treegrid.do?all=true';// 数据源url
 treegridParam_idField = 'id';// datagrid表格的唯一标识
 treegridParam_idField_checkbox = true;// 是否显示多选框
+treegridParam_page = false;// 显示分页
 treegridParam_column_value = [ [ {
     field : 'text',
-    title : '组织机构名称',
+    title : '机构名称',
     width : 100
-},{
-    field : 'organDesc',
-    title : '组织机构说明',
-    width : 200
 }, {
-    field : 'organSort',
+    field : 'nodeCode',
+    title : '编码',
+    width : 50,
+    formatter : function(value, rowData, rowIndex) {
+        if (rowData.attributes) {
+            return rowData.attributes.nodeCode;
+        }
+    }
+}, {
+    field : 'nodeLevel',
+    title : '级别',
+    width : 50,
+    formatter : function(value, rowData, rowIndex) {
+        if (rowData.attributes) {
+            return rowData.attributes.nodeLevel;
+        }
+    }
+}, {
+    field : 'nodeSort',
     title : '排序',
-    width : 50
+    width : 50,
+    formatter : function(value, rowData, rowIndex) {
+        if (rowData.attributes) {
+            return rowData.attributes.nodeSort;
+        }
+    }
 }, {
     field : 'show',
     title : '是否显示',
     width : 50,
     formatter : function(value, rowData, rowIndex) {
         if (rowData.attributes) {
-            var show = rowData.attributes.show;
+            var show = rowData.attributes.nodeStatus;
             if (show == true) {
                 return '是';
             } else if (show == false) {
                 return '否';
             } else {
-            	return value;
+                return value;
             }
         }
     }
+}, {
+    field : 'nodeDesc',
+    title : '说明',
+    width : 200
 }] ];// 表格的列
+treegridParam_queryParamName = ['nodeNameStr','nodeCode'];
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';

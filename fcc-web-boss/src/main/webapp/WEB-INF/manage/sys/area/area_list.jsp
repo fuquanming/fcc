@@ -16,8 +16,11 @@
     <input name="ids" type="hidden" value=""/>
     <table class="tableForm">
       <tr>
-        <th>地区名称</th>
-        <td><input id="nodeNameStr" name="nodeNameStr" class="easyui-textbox" data-options="prompt:'请输入地区名称...'" style="width: 305px;" />
+        <th>名称</th>
+        <td><input id="nodeNameStr" name="nodeNameStr" class="easyui-textbox" data-options="prompt:'请输入地区名称...'" style="width: 150px;" />
+        </td>
+        <th>编码</th>
+        <td><input id="nodeCode" name="nodeCode" class="easyui-textbox" data-options="prompt:'请输入地区编码...'" style="width: 150px;" />
         </td>
         <td>
         <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onClick="searchFun();" href="javascript:void(0);">查找</a>
@@ -132,7 +135,7 @@ treegridParam_column_value = [ [ {
     title : '说明',
     width : 200
 }] ];// 表格的列
-treegridParam_queryParamName = ['nodeNameStr'];
+treegridParam_queryParamName = ['nodeNameStr', 'nodeCode'];
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';

@@ -38,18 +38,18 @@
 			<input id="nodeSort" name="nodeSort" type="text" class="easyui-validatebox easyui-textbox" maxlength="10" required="true" data-options="prompt:'请输入地区排序...'"/>
 			</td>
 		</tr>	
-		<tr>	
-			<th>地区备注：</th>		
-			<td>
-			<input id="nodeDesc" name="nodeDesc" type="text" class="easyui-validatebox easyui-textbox" maxlength="255" />
-			</td>
-		</tr>	
 		<tr>
           <th><span class="required">*</span>是否显示</th>
           <td>
           <input id="nodeStatus" name="nodeStatus" style="width: 155px;" class="easyui-combobox"/>
           </td>
-        </tr>	
+        </tr>
+		<tr>	
+			<th>地区备注：</th>		
+			<td>
+            <textarea rows="5" cols="40" name="nodeDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
+            </td>
+		</tr>	
         <tr>
           <td colspan="2" align="center"><a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="save();" href="javascript:void(0);">保存</a> <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> </td>
         </tr>
@@ -75,7 +75,7 @@ $(function() {
             {text : '隐藏', id : 'false'}
         ],
         editable : false,
-        selectValue : '${data.nodeStatus }'
+        selectValue : 'true'
     })
 })
 saveParam_form = 'userForm';// 提交的Form

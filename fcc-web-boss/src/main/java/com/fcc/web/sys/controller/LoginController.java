@@ -1,6 +1,7 @@
 package com.fcc.web.sys.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -67,7 +68,12 @@ public class LoginController extends AppWebController {
             logger.info("系统登录成功，userId:" + user.getUserId());
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
-//            CacheUtil.initLoginUser(request, user);
+            request.getSession().invalidate();
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    cookie.setMaxAge(0);
+                }
+            }
             setSysUser(user, request);
         } catch (RefusedException e) {
             message.setMsg(e.getMessage());
@@ -94,6 +100,8 @@ public class LoginController extends AppWebController {
             userId = user.getUserId();
             logger.info("退出系统成功，userId:" + userId);
             message.setMsg(StatusCode.Sys.success);
+            message.setModule(Constants.Module.requestApp);
+            message.setOperate(Constants.Operate.logout);
         }
         request.getSession().invalidate();
         return getModelAndView(message);

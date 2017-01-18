@@ -29,7 +29,6 @@ import com.fcc.commons.web.service.TreeableService;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.model.Area;
 import com.fcc.web.sys.service.SysUserService;
 
@@ -100,10 +99,15 @@ public class AreaController extends AppWebController {
 		    String nodeName = request.getParameter("nodeNameStr");
 		    area.setNodeName(nodeName);
 		    String parentId = area.getParentId();
-			if (StringUtils.isEmpty(nodeName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
-			if (StringUtils.isEmpty(parentId)) parentId = Treeable.ROOT.getNodeId();
-			Area parent = (Area) treeableService.getTreeableById(Area.class, parentId);
-			if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
+			if (StringUtils.isEmpty(nodeName)) throw new RefusedException(StatusCode.Treeable.emptyName);
+			Treeable parent = null;
+			if (StringUtils.isEmpty(parentId)) {
+			    parentId = Treeable.ROOT.getNodeId();
+			    parent = Treeable.ROOT;
+            } else {
+                parent = (Area) treeableService.getTreeableById(Area.class, parentId);
+            }
+			if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
 			
 			area.setNodeId(RandomStringUtils.random(6, true, true));
 			area.setParentId(parentId);
@@ -136,16 +140,20 @@ public class AreaController extends AppWebController {
             area.setNodeName(nodeName);
 		    String parentId = area.getParentId();
 			if (nodeId == null || "".equals(nodeId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
-			if (nodeName == null || "".equals(nodeName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
-			if (Treeable.ROOT.getNodeId().equals(nodeId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
-			if (nodeId.equals(parentId)) throw new RefusedException(Constants.StatusCode.Organization.errorParentOneself);
-			if (parentId == null || "".equals(parentId)) parentId = Treeable.ROOT.getNodeId();
-			
-            Area parent = (Area) treeableService.getTreeableById(Area.class, parentId);
-            if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
+			if (nodeName == null || "".equals(nodeName)) throw new RefusedException(StatusCode.Treeable.emptyName);
+			if (Treeable.ROOT.getNodeId().equals(nodeId)) throw new RefusedException(StatusCode.Treeable.errorRootId);
+			if (nodeId.equals(parentId)) throw new RefusedException(StatusCode.Treeable.errorParentOneself);
+			Treeable parent = null;
+			if (parentId == null || "".equals(parentId)) {
+			    parentId = Treeable.ROOT.getNodeId();
+			    parent = Treeable.ROOT;
+			} else {
+			    parent = (Area) treeableService.getTreeableById(Area.class, parentId);
+			}
+            if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
 			
             Area data = (Area) treeableService.getTreeableById(Area.class, nodeId);
-			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
+			if (data == null) throw new RefusedException(StatusCode.Treeable.errorId);
 			BeanUtils.copyProperties(area, data);
 			
 			data.setUpdateTime(new Date());
@@ -198,14 +206,11 @@ public class AreaController extends AppWebController {
 	@RequestMapping(value = "/delete.do", method = RequestMethod.POST)
 	@Permissions("delete")
 	public ModelAndView delete(HttpServletRequest request,
-	        @ApiParam(required = true, value = "ID") @RequestParam(name = "ids") String nodeId) {
+	        @ApiParam(required = true, value = "ID、用,分割多个ID") @RequestParam(name = "ids") String nodeId) {
 		Message message = new Message();
 		try {
 			if (nodeId == null || "".equals(nodeId)) new RefusedException(StatusCode.Sys.emptyDeleteId);
-			if (Treeable.ROOT.getNodeId().equals(nodeId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
-//			if (OrganUtil.checkParent(getSysUser(request), nodeId)) {// 判断是否删除上级组织机构
-//				throw new RefusedException("不能删除上级机构！");
-//			}
+			if (Treeable.ROOT.getNodeId().equals(nodeId)) throw new RefusedException(StatusCode.Treeable.errorRootId);
 			treeableService.delete(Area.class, nodeId);
 			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
@@ -231,15 +236,28 @@ public class AreaController extends AppWebController {
 	public List<EasyuiTreeNode> treegrid(EasyuiDataGrid dg, HttpServletRequest request, HttpServletResponse response) {
 	    List<EasyuiTreeNode> nodeList = null;
         try {
-//            String userId = null;
-//            if (isGroup()) {
-//                userId = getSysUser(request).getUserId();
-//            }
             Map<String, Object> params = getParams(request);
-            nodeList = treeableService.getTreeGrid(Area.class, params);
+            boolean searchFlag = false;
+            if (params.size() > 0) {// 检索查询
+                searchFlag = true;
+            }
+            String parentId = request.getParameter("parentId");
+            if (StringUtils.isNotEmpty(parentId)) {
+                params.put("parentId", parentId);
+            }
+            if (searchFlag) {
+                nodeList = treeableService.getTreeGrid(Area.class, params);
+            } else {
+                String all = request.getParameter("all");
+                boolean allFlag = false;
+                if (StringUtils.isNotEmpty(all)) {
+                    allFlag = true;
+                }
+                nodeList = treeableService.getTree(Area.class, parentId, allFlag, false);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("加载地区树形失败！", e);
+            logger.error("加载地区树形表格失败！", e);
             nodeList = new ArrayList<EasyuiTreeNode>(1); 
             EasyuiTreeNode node = new EasyuiTreeNode();
             node.setMsg(e.getMessage());
@@ -257,14 +275,11 @@ public class AreaController extends AppWebController {
     @ResponseBody
 	public List<EasyuiTreeNode> tree(HttpServletRequest request,
 	        @ApiParam(required = true, value = "节点ID") @RequestParam(name = "id", defaultValue = "") String nodeId, 
-	        @ApiParam(required = false, value = "是否全部节点") @RequestParam(name = "all", defaultValue = "false") String all) {
+	        @ApiParam(required = false, value = "是否全部节点") @RequestParam(name = "all", defaultValue = "true") String all,
+	        @ApiParam(required = false, value = "是否包含父节点") @RequestParam(name = "parent", defaultValue = "false") String parent) {
 		List<EasyuiTreeNode> nodeList = null;
 		try {
-//		    if (isGroup()) {
-//		        String userId = null;
-//		        userId = getSysUser(request).getUserId();
-//		    }
-		    nodeList = treeableService.getTree(Area.class, nodeId, Boolean.valueOf(all));
+		    nodeList = treeableService.getTree(Area.class, nodeId, Boolean.valueOf(all), Boolean.valueOf(parent));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载地区树形失败！", e);
@@ -289,7 +304,7 @@ public class AreaController extends AppWebController {
             }
             String nodeCode = request.getParameter("nodeCode");
             if (StringUtils.isNotEmpty(nodeCode)) {
-                param.put("nodeCode", nodeCode);
+                param.put("nodeCode", "%" + nodeCode + "%");
             }
             String nodeLevel = request.getParameter("nodeLevel");
             if (StringUtils.isNotEmpty(nodeLevel)) {
@@ -299,33 +314,9 @@ public class AreaController extends AppWebController {
             if (StringUtils.isNotEmpty(nodeSort)) {
                 param.put("nodeSort", nodeSort);
             }
-            String nodeDesc = request.getParameter("nodeDesc");
-            if (StringUtils.isNotEmpty(nodeDesc)) {
-                param.put("nodeDesc", nodeDesc);
-            }
             String nodeStatus = request.getParameter("nodeStatus");
             if (StringUtils.isNotEmpty(nodeStatus)) {
                 param.put("nodeStatus", nodeStatus);
-            }
-            String parentId = request.getParameter("parentId");
-            if (StringUtils.isNotEmpty(parentId)) {
-                param.put("parentId", parentId);
-            }
-            String parentIds = request.getParameter("parentIds");
-            if (StringUtils.isNotEmpty(parentIds)) {
-                param.put("parentIds", parentIds);
-            }
-            String sortColumns = request.getParameter("sort");
-            if (StringUtils.isNotEmpty(sortColumns)) {
-                param.put("sortColumns", sortColumns);
-            }
-            String orderType = request.getParameter("order");
-            if (StringUtils.isNotEmpty(orderType)) {
-                param.put("orderType", orderType);
-            }
-            String all = request.getParameter("all");
-            if (StringUtils.isNotEmpty(all)) {
-                param.put("all", all);
             }
         } catch (Exception e) {
             e.printStackTrace();

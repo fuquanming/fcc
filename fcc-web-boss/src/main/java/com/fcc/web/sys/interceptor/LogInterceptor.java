@@ -45,11 +45,11 @@ public class LogInterceptor implements HandlerInterceptor {
 		if (message == null) return;
 		String status = message.isSuccess() ? SysLog.EVENT_RESULT_OK : SysLog.EVENT_RESULT_FAIL;
 		Object obj = message.getObj();
-		SysLog sysLog = new SysLog();
 		Module module = (Module) request.getAttribute(Constants.Request.module);
 		Operate operate = (Operate) request.getAttribute(Constants.Request.operate);
 		try {
 			SysUser user = cacheService.getSysUser(request);
+			SysLog sysLog = new SysLog();
 			sysLog.setModuleName(module != null ? module.getModuleId() : message.getModule());
 			sysLog.setOperateName(operate != null ? operate.getOperateId() : message.getOperate());
 			boolean isLogin = false;
@@ -57,6 +57,11 @@ public class LogInterceptor implements HandlerInterceptor {
 			        Constants.Operate.login.equals(sysLog.getOperateName())) {
 				// 访问系统，登录
 				isLogin = true;
+			}
+			// 主动退出系统不记录，session回话记录
+			if (Constants.Module.requestApp.equals(sysLog.getModuleName()) &&
+                    Constants.Operate.logout.equals(sysLog.getOperateName())) {
+			    return;
 			}
 			if (user != null) {
 				sysLog.setIpAddress(user.getIp());

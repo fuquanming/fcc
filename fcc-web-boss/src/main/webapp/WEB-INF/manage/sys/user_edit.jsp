@@ -41,8 +41,9 @@
         </tr>
         <tr>
 			<th>组织机构</th>
-			<td>
-			 <input id="organId" name="organId" type="text" value="${organ.organId }" class="easyui-validatebox" required="true" style="width: 200px;"/>
+			<td><!-- required="true" id="organId"  validType="comboTreeRequired" -->
+			 <input name="organId" id="organId" type="text" value="${organ.nodeId }" class="easyui-validatebox easyui-textbox" required="true" />
+			 <%-- <input  name="organId" type="text" value="${organ.nodeId }" class="easyui-validatebox" required="true" style="width: 200px;"/> --%>
 			</td>
 		</tr>
         <tr>
@@ -101,6 +102,7 @@ saveParam_beforeCallback = function() {
     });
     var idsVal = roleIds.join(',');
     $('#' + saveParam_form).form().find('[name=roleValue]').val(idsVal);
+    $('#organId').val(getCombotreeValues(organTree));
 }
 saveParam_afterCallback = function(data, success) {
     if (success == false) return false;// 失败，不执行自动跳转
@@ -118,6 +120,6 @@ $(function() {
         } 
     });
     Tool.removeSelect({'sourceId':'unSelectRole','targetId':'selecetRole'})
-    organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'organId',closed:false});
+    organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true',name:'organId',id:'organId',closed:false});
 })
 </script>

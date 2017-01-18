@@ -26,6 +26,7 @@ import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
+import com.fcc.commons.web.service.TreeableService;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeNode;
@@ -33,10 +34,10 @@ import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.enums.UserStatus;
 import com.fcc.web.sys.model.Module;
+import com.fcc.web.sys.model.Organization;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
 import com.fcc.web.sys.service.SysUserService;
@@ -64,7 +65,7 @@ public class SysUserController extends AppWebController {
 	@Resource
 	private RoleService roleService;
 	@Resource
-	private OrganizationService organService;
+	private TreeableService treeableService;
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
 	
@@ -121,7 +122,7 @@ public class SysUserController extends AppWebController {
 			if (data != null) {
 				String organId = data.getDept();
 				if (organId != null) {
-					request.setAttribute("organ", organService.getOrganById(data.getDept()));
+					request.setAttribute("organ", treeableService.getTreeableById(Organization.class, data.getDept()));
 				}
 			}
 		} catch (Exception e) {
@@ -161,8 +162,8 @@ public class SysUserController extends AppWebController {
 			request.setAttribute("data", data);
 			if (data != null) {
 				String organId = data.getDept();
-				if (organId != null) {
-					request.setAttribute("organ", organService.getOrganById(data.getDept()));
+				if (StringUtils.isNotEmpty(organId)) {
+					request.setAttribute("organ", treeableService.getTreeableById(Organization.class, data.getDept()));
 				}
 			}
 			Map<String, Object> param = null;
@@ -236,12 +237,11 @@ public class SysUserController extends AppWebController {
 			if (roleValue != null && !"".equals(roleValue)) {
 				roleIds = StringUtils.split(roleValue, ",");
 			}
-//			// 组织机构
+			// 组织机构
 //			SysUser user = getSysUser(request);
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否选择上级组织机构
 //				throw new RefusedException("不能选择上级机构！");
 //			}
-			
 			sysUser.setDept(dept);
 			sysUserService.edit(sysUser, roleIds);
 			message.setSuccess(true);

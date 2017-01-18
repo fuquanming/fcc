@@ -12,7 +12,6 @@ package com.fcc.commons.web.dao;
 import java.util.List;
 import java.util.Map;
 
-import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.model.Treeable;
 
 /**
@@ -42,11 +41,12 @@ public interface TreeableDao {
     /**
      * 查询子节点
      * @param clazz
-     * @param parentNodeId     父ID
+     * @param parentNodeId      父ID
      * @param allChildren       是否全部子节点
+     * @param parent            是否包含parentNodeId
      * @return
      */
-    public List<Treeable> findChilds(Class<?> clazz, String parentNodeId, boolean allChildren);
+    public List<Treeable> getChilds(Class<?> clazz, String parentNodeId, boolean allChildren, boolean parent);
     /**
      * 查询
      * @param clazz
@@ -54,14 +54,4 @@ public interface TreeableDao {
      * @return
      */
     public List<Treeable> queryList(Class<?> clazz, Map<String, Object> params);
-    /**
-     * 分页查询
-     * @param clazz
-     * @param pageNo
-     * @param pageSize
-     * @param param
-     * @param isSQL
-     * @return
-     */
-    ListPage queryPage(Class<?> clazz, int pageNo, int pageSize, Map<String, Object> param, boolean isSQL);
 }
