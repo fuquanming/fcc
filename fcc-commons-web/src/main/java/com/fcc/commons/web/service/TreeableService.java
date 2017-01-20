@@ -69,6 +69,13 @@ public interface TreeableService {
      */
     Treeable getTreeableById(Class<?> clazz, String nodeId);
     /**
+     * 取得Treeable通过Name
+     * @param clazz
+     * @param nodeCode
+     * @return
+     */
+    Treeable getTreeableByName(Class<?> clazz, String nodeName);
+    /**
      * 查询
      * @param clazz
      * @param params        

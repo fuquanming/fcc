@@ -92,6 +92,12 @@ public class TreeableServiceImpl implements TreeableService {
         Treeable treeable = (Treeable) baseService.get(clazz, nodeId);
         return treeable;
     }
+    
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public Treeable getTreeableByName(Class<?> clazz, String nodeName) {
+        return treeableDao.getTreeableByName(clazz, nodeName);
+    }
 
     @Override
     @Transactional(readOnly = true)//只查事务申明

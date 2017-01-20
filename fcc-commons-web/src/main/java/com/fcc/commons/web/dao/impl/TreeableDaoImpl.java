@@ -92,6 +92,15 @@ public class TreeableDaoImpl implements TreeableDao {
     }
 
     @Override
+    public Treeable getTreeableByName(Class<?> clazz, String nodeName) {
+        String className = clazz.getName();
+        StringBuilder sb = new StringBuilder();
+        sb.append("from ").append(className).append(" where nodeName=?");
+        List<Object> list = baseDao.find(sb.toString(), nodeName);
+        return list.size() > 0 ? (Treeable) list.get(0) : null;
+    }
+    
+    @Override
     public List<Treeable> getChilds(Class<?> clazz, String parentNodeId, boolean allChildren, boolean parent) {
         StringBuilder sb = new StringBuilder();
         Map<String, Object> param = null;

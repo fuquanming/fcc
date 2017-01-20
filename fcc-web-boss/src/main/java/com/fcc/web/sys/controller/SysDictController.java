@@ -112,9 +112,9 @@ public class SysDictController extends AppWebController {
                 parent = treeableService.getTreeableById(SysDict.class, parentId);
             }
             if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
-            if (treeableService.checkNodeCode(SysDict.class, sysDict.getNodeCode(), null) == true) {
-                throw new RefusedException(StatusCode.Treeable.existCode);
-            }
+//            if (treeableService.checkNodeCode(SysDict.class, sysDict.getNodeCode(), null) == true) {
+//                throw new RefusedException(StatusCode.Treeable.existCode);
+//            }
             
             sysDict.setNodeId(RandomStringUtils.random(6, true, true));
             sysDict.setParentId(parentId);
@@ -160,9 +160,9 @@ public class SysDictController extends AppWebController {
             
             SysDict data = (SysDict) treeableService.getTreeableById(SysDict.class, nodeId);
             if (data == null) throw new RefusedException(StatusCode.Treeable.errorId);
-            if (treeableService.checkNodeCode(SysDict.class, sysDict.getNodeCode(), data.getNodeId()) == true) {
-                throw new RefusedException(StatusCode.Treeable.existCode);
-            }
+//            if (treeableService.checkNodeCode(SysDict.class, sysDict.getNodeCode(), data.getNodeId()) == true) {
+//                throw new RefusedException(StatusCode.Treeable.existCode);
+//            }
             BeanUtils.copyProperties(sysDict, data);
             
             data.setUpdateTime(new Date());

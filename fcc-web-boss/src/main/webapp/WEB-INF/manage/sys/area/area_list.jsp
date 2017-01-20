@@ -133,7 +133,12 @@ treegridParam_column_value = [ [ {
 }, {
     field : 'nodeDesc',
     title : '说明',
-    width : 200
+    width : 200,
+    formatter : function(value, rowData, rowIndex) {
+        if (rowData.attributes) {
+            return rowData.attributes.nodeDesc;
+        }
+    }
 }] ];// 表格的列
 treegridParam_queryParamName = ['nodeNameStr', 'nodeCode'];
 

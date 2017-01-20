@@ -11,15 +11,22 @@ package com.fcc.commons.coder;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import sun.security.rsa.RSAPrivateCrtKeyImpl;
+import sun.security.rsa.RSAPublicKeyImpl;
 
 /**
  * 编码器
@@ -41,7 +48,7 @@ public class Coder {
         // KeyPairGenerator类用于生成公钥和私钥对
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(coderEnum.getInfo());
         //生成一个密钥对，保存在keyPair中
-        if (CoderEnum.RSA == coderEnum) {
+        if (CoderEnum.RSA == coderEnum || CoderEnum.DSA == coderEnum) {
             kpg.initialize(512, new SecureRandom(strKey));
         }
         KeyPair keyPair = kpg.generateKeyPair();
@@ -63,6 +70,63 @@ public class Coder {
         SecretKey secretKey = kg.generateKey();
         return secretKey;
     }
+    /**
+     * byte转化Key，对称加密，适用 DES,3DES(DESede),AES
+     * @param coderEnum
+     * @param bytes
+     * @return
+     */
+    public static Key byteToKey(CoderEnum coderEnum, byte[] bytes) {
+        SecretKey secretKey = null;  
+        try {  
+//            DESKeySpec dks = new DESKeySpec(bytes);  
+//            SecretKeyFactory factory = SecretKeyFactory.getInstance(coderEnum.getInfo());  
+//            secretKey = factory.generateSecret(dks);  
+            // 当使用其他对称加密算法时，如AES、Blowfish等算法时，用下述代码替换上述三行代码  
+            secretKey = new SecretKeySpec(bytes, coderEnum.getInfo());  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        return secretKey; 
+    }
+    /**
+     * byte转化Key，非对称加密，适用 RSA
+     * @param coderEnum
+     * @param bytes
+     * @return
+     */
+    public static PublicKey byteToPublicKey(CoderEnum coderEnum, byte[] bytes) {
+        try {
+            if (CoderEnum.RSA == coderEnum) {
+                RSAPublicKeyImpl sepc = new RSAPublicKeyImpl(bytes);
+                return sepc;
+            } else if (CoderEnum.DSA == coderEnum) {
+                
+            }
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * byte转化Key，非对称加密，适用 RSA
+     * @param coderEnum
+     * @param bytes
+     * @return
+     */
+    public static PrivateKey byteToPrivateKey(CoderEnum coderEnum, byte[] bytes) {
+        try {
+            if (CoderEnum.RSA == coderEnum) {
+                return RSAPrivateCrtKeyImpl.newKey(bytes);
+            } else if (CoderEnum.DSA == coderEnum) {
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     /**
      * 加密
      * @param coderEnum 类型

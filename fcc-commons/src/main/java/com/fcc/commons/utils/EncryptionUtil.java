@@ -50,7 +50,7 @@ public class EncryptionUtil {
      */
     public static String decryptDES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return new String(Coder.decrypt(CoderEnum.DES, key, decodeBase64(data)), charset);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -70,7 +70,7 @@ public class EncryptionUtil {
      */
     public static String decrypt3DES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return new String(Coder.decrypt(CoderEnum.DES3, key, decodeBase64(data)), charset);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class EncryptionUtil {
      */
     public static String decryptAES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return new String(Coder.decrypt(CoderEnum.AES, key, decodeBase64(data)), charset);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -110,7 +110,7 @@ public class EncryptionUtil {
      */
     public static String decryptRSA(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return new String(Coder.decrypt(CoderEnum.RSA, key, decodeBase64(data)), charset);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -153,7 +153,7 @@ public class EncryptionUtil {
      * @return
      */
     public static String encodeBase64(String data, String charset) {
-        if (charset == null || !"".equals(charset)) charset = CHARSET;
+        if (charset == null || "".equals(charset)) charset = CHARSET;
         try {
             return Base64.encodeBase64String(data.getBytes(charset));
         } catch (UnsupportedEncodingException e) {
@@ -170,7 +170,7 @@ public class EncryptionUtil {
      */
     public static String encryptDES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return encodeBase64(Coder.encrypt(CoderEnum.DES, key, data.getBytes(charset)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -190,7 +190,7 @@ public class EncryptionUtil {
      */
     public static String encrypt3DES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return encodeBase64(Coder.encrypt(CoderEnum.DES3, key, data.getBytes(charset)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -210,7 +210,7 @@ public class EncryptionUtil {
      */
     public static String encryptAES(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return encodeBase64(Coder.encrypt(CoderEnum.AES, key, data.getBytes(charset)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -230,7 +230,7 @@ public class EncryptionUtil {
      */
     public static String encryptRSA(Key key, String data, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return encodeBase64(Coder.encrypt(CoderEnum.RSA, key, data.getBytes(charset)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -250,7 +250,7 @@ public class EncryptionUtil {
      */
 	public static Key getKeyDES(String strKey, String charset) {
 	    try {
-	        if (charset == null || !"".equals(charset)) charset = CHARSET;
+	        if (charset == null || "".equals(charset)) charset = CHARSET;
             return Coder.getKey(CoderEnum.DES, strKey.getBytes(charset));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -267,7 +267,7 @@ public class EncryptionUtil {
      */
 	public static Key getKey3DES(String strKey, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return Coder.getKey(CoderEnum.DES3, strKey.getBytes(charset));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -284,7 +284,7 @@ public class EncryptionUtil {
      */
 	public static Key getKeyAES(String strKey, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return Coder.getKey(CoderEnum.AES, strKey.getBytes(charset));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -301,7 +301,7 @@ public class EncryptionUtil {
      */
 	public static KeyPair getKeyRSA(String strKey, String charset) {
         try {
-            if (charset == null || !"".equals(charset)) charset = CHARSET;
+            if (charset == null || "".equals(charset)) charset = CHARSET;
             return Coder.getKeyPair(CoderEnum.RSA, strKey.getBytes(charset));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -311,37 +311,45 @@ public class EncryptionUtil {
         return null;
     }
 	
-	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
         String str = "fqm";
         System.out.println(DigestUtils.sha1Hex(str));
         
         String strKey = "fcc-db";
         Key key = getKeyDES(strKey, null);
+        key = Coder.byteToKey(CoderEnum.DES, key.getEncoded());
         String encrypt = encryptDES(key, str, null);
         System.out.println(strKey);
         System.out.println(encrypt);
-        System.out.println(decryptDES(key, encrypt, null));
+        System.out.println("value=" + decryptDES(key, encrypt, null));
         
         key = getKey3DES(strKey, null);
         encrypt = encrypt3DES(key, str, null);
+        key = Coder.byteToKey(CoderEnum.DES3, key.getEncoded());
         System.out.println(strKey);
         System.out.println(encrypt);
-        System.out.println(decrypt3DES(key, encrypt, null));
+        System.out.println("value=" + decrypt3DES(key, encrypt, null));
         
         key = getKeyAES(strKey, null);
         encrypt = encryptAES(key, str, null);
+        key = Coder.byteToKey(CoderEnum.AES, key.getEncoded());
         System.out.println(strKey);
         System.out.println(encrypt);
-        System.out.println(decryptAES(key, encrypt, null));
+        System.out.println("value=" + decryptAES(key, encrypt, null));
         
         KeyPair keyPair = getKeyRSA(str, null);
         System.out.println(encodeBase64(keyPair.getPublic().getEncoded()));
         System.out.println(encodeBase64(keyPair.getPrivate().getEncoded()));
-        encrypt = encryptRSA(keyPair.getPublic(), strKey, null);
+        
+        key = keyPair.getPublic();
+        key = Coder.byteToPublicKey(CoderEnum.RSA, key.getEncoded());
+        encrypt = encryptRSA(key, strKey, null);
         System.out.println(strKey);
         System.out.println(encrypt);
-        System.out.println(decryptRSA(keyPair.getPrivate(), encrypt, null));
+        key = keyPair.getPrivate();
+        
+        key = Coder.byteToPrivateKey(CoderEnum.RSA, key.getEncoded());
+        System.out.println("value=" + decryptRSA(keyPair.getPrivate(), encrypt, null));
         
     }
 }

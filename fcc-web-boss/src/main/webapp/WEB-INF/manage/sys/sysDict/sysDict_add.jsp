@@ -45,7 +45,7 @@
           </td>
         </tr>
         <tr>    
-            <th>地区备注：</th>      
+            <th>备注：</th>      
             <td>
             <textarea rows="5" cols="40" name="nodeDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
             </td>

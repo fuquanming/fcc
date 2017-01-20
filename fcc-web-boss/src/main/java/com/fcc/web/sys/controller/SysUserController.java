@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.TreeableService;
@@ -205,7 +204,6 @@ public class SysUserController extends AppWebController {
 			if (tempUser != null) throw new RefusedException(Constants.StatusCode.SysUser.exitsUserId);
 			
 			sysUser.setUserStatus(UserStatus.normal.name());
-			sysUser.setPassword(EncryptionUtil.encodeMD5("888888").toLowerCase());
 			sysUser.setDept(dept);
 			sysUser.setRegDate(new Timestamp(System.currentTimeMillis()));
 			sysUser.setCreateTime(sysUser.getRegDate());
@@ -289,7 +287,10 @@ public class SysUserController extends AppWebController {
         try {
             if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
             String[] ids = StringUtils.split(id, ",");
-            sysUserService.resetPassword(ids, EncryptionUtil.encodeMD5("888888").toLowerCase());
+            String userPass = sysUserService.getDefaultUserPass();
+            for (String data : ids) {
+                sysUserService.resetPassword(data, userPass);
+            }
             message.setMsg(StatusCode.Sys.success);
             message.setSuccess(true);
         } catch (RefusedException e) {

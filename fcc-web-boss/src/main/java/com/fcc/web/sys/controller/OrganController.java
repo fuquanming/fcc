@@ -97,36 +97,6 @@ public class OrganController extends AppWebController {
 	public ModelAndView add(Organization data, HttpServletRequest request) {
 		Message message = new Message();
 		try {
-//			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
-//			if (parentId == null || "".equals(parentId)) parentId = Organization.ROOT.getOrganId();
-//			Organization parent = organService.getOrganById(parentId);
-//			if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
-//			
-////			String organId = getSysUser(request).getDept();
-////			if (StringUtils.isNotEmpty(organId)) {// 非管理员
-////				int indexOf = parentId.indexOf(organId);
-////				if (indexOf != 0) {
-////					throw new RefusedException("不能添加上级机构！");
-////				}
-////			}
-//			
-//			Organization data = new Organization();
-//			data.setOrganId(RandomStringUtils.random(6, true, false));
-//			data.setParentId(parentId);
-//			data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
-//			
-//			data.setOrganCode(organCode);
-//			data.setOrganDesc(organDesc);
-//			data.setOrganName(organName);
-//			data.setOrganSort(organSort);
-//			data.setOrganLevel(parent.getOrganLevel() + 1);
-//			
-//			data.setOrganStatus(Boolean.valueOf(organStatus));
-//			
-//			organService.add(data);
-//			message.setSuccess(true);
-//			message.setMsg(StatusCode.Sys.success);
-		    
 		    String nodeName = request.getParameter("nodeNameStr");
             data.setNodeName(nodeName);
             String parentId = data.getParentId();
@@ -168,35 +138,6 @@ public class OrganController extends AppWebController {
 	public ModelAndView edit(Organization organ, HttpServletRequest request) {
 		Message message = new Message();
 		try {
-//			if (organId == null || "".equals(organId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
-//			if (organName == null || "".equals(organName)) throw new RefusedException(Constants.StatusCode.Organization.emptyOrganizationName);
-//			if (Organization.ROOT.getOrganId().equals(organId)) throw new RefusedException(Constants.StatusCode.Organization.errorRootOrganizationId);
-////			if (OrganUtil.checkParent(getSysUser(request), organId)) {// 判断是否修改上级组织机构
-////				throw new RefusedException("不能修改上级机构！");
-////			}
-//			if (organId.equals(parentId)) throw new RefusedException(Constants.StatusCode.Organization.errorParentOneself);
-//			if (parentId == null || "".equals(parentId)) parentId = Organization.ROOT.getOrganId();
-//			
-//            Organization parent = organService.getOrganById(parentId);
-//            if (parent == null) throw new RefusedException(Constants.StatusCode.Organization.emptyParentOrganization);
-//			
-//			Organization data = organService.getOrganById(organId);
-//			if (data == null) throw new RefusedException(Constants.StatusCode.Organization.errorOrganizationId);
-//            data.setParentId(parentId);
-//            data.setParentIds(data.buildParendIds(parent, data.getOrganId()));
-//			
-//			data.setOrganCode(organCode);
-//			data.setOrganDesc(organDesc);
-//			data.setOrganName(organName);
-//			data.setOrganSort(organSort);
-//			data.setOrganLevel(parent.getOrganLevel() + 1);
-//			
-//			data.setOrganStatus(Boolean.valueOf(organStatus));
-//			
-//			organService.edit(data);
-//			message.setSuccess(true);
-//			message.setMsg(StatusCode.Sys.success);
-		    
 		    String nodeId = request.getParameter("id");
 		    organ.setNodeId(nodeId);
             String nodeName = request.getParameter("nodeNameStr");

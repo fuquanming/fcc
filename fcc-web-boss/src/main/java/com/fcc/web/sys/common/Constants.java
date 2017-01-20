@@ -18,6 +18,10 @@ import java.util.Map;
  * @author 傅泉明
  */
 public interface Constants {
+    
+    public static final String ENCODING = "UTF-8";
+    
+    String defaultUserPass = "888888";
     /**
      * 当前登录的用户
      */

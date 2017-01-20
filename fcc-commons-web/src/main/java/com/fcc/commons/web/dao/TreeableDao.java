@@ -47,6 +47,13 @@ public interface TreeableDao {
      */
     boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId);
     /**
+     * 取得Treeable通过Name
+     * @param clazz
+     * @param nodeCode
+     * @return
+     */
+    Treeable getTreeableByName(Class<?> clazz, String nodeName);
+    /**
      * 查询子节点
      * @param clazz
      * @param parentNodeId      父ID
