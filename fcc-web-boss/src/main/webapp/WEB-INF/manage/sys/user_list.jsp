@@ -50,9 +50,6 @@
 </div>
 </body>
 </html>
-<script type="text/javascript" charset="UTF-8">
-</script>
-
 <%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <%@ include file="/WEB-INF/head/init_datagrid.jsp" %>

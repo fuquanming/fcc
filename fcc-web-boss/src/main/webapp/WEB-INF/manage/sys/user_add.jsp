@@ -15,6 +15,8 @@
     <legend>新增用户</legend>
     <form id="userForm" name="userForm" method="post">
       <input name="roleValue" type="hidden" value=""/>
+      <input name="annexType" type="hidden" value="logo"/>
+      <input name="linkType" type="hidden" value="user"/>
       <table class="tableForm" align="center">
         <tr>
           <th>帐号</th>
@@ -40,12 +42,18 @@
         </tr>
         <tr>
 			<th>组织机构</th>
-			<td><select id="organId" name="organId" class="easyui-validatebox" required="true" style="width: 200px;"></select></td>
+			<td><input id="organId" name="organId" class="easyui-validatebox" required="true" /></td>
 		</tr>
         <tr>
           <th>备注</th>
           <td colspan="3"><textarea rows="5" cols="40" name="remark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
           </td>
+        </tr>
+        <tr>
+             <th>上传附件：</th>
+             <td width="350px;">
+             <tool:fileUpload linkType="user" fid="logo" maxFileTotal="5" fileType="jpg|png"></tool:fileUpload>
+             </td>
         </tr>
         <tr>
           <th></th>
@@ -99,11 +107,12 @@ saveParam_beforeCallback = function() {
     });
     var idsVal = roleIds.join(',');
     $('#' + saveParam_form).form().find('[name=roleValue]').val(idsVal);
+    $('#organId').val(getCombotreeValues(organTree));
 }
 saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转
 }
 $(function() {
-	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do',id:'organId',closed:false});
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true',id:'organId',closed:false});
 })
 </script>

@@ -14,3 +14,5 @@
 <script src="js/support/js.extend.js" charset="UTF-8" type="text/javascript"></script>
 <script src="js/support/lang-zh_CN.js" charset="UTF-8" type="text/javascript"></script>
 <script src="js/easyui.extend.js" charset="UTF-8" type="text/javascript"></script>
+
+<jsp:include page="/WEB-INF/head/easyui-portal.jsp"></jsp:include>

@@ -11,6 +11,7 @@ request.setAttribute("basePath", basePath);
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/permission_tag.tld" prefix="fcc" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tool" %>
 <base href="<%=basePath%>">
 <script type="text/javascript">
 var overUrl = "<%=basePath%>overtime.jsp";

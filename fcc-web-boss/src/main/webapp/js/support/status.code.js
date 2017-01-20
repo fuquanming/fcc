@@ -5,7 +5,11 @@
  */
 var StatusCode = $.extend({}, StatusCode);/* 全局对象 */
 StatusCode.msg = function(code) {
-	return codeMap[code];
+	var val = codeMap[code];
+	if (val) {
+		return val;
+	}
+	return code;
 }
 
 var codeMap = {
@@ -16,6 +20,13 @@ var codeMap = {
 	'sys_004':'未登录用户或用户访问已超时，您可以重新登陆',
 	'sys_005':'您没有权限！<br/>执行：{0}',
 	'sys_006':'系统忙，请稍后再试！',
+	
+    'treeable_000':'节点名称为空',
+    'treeable_001':'上级节点为空',
+	'treeable_002':'不能修改根节点',
+	'treeable_003':'修改的节点不存在',
+	'treeable_004':'上级节点不能是自己！',
+	'treeable_005':'编码重复',
 	
     'import_000':'已上传成功！系统正在导入数据...',
 	'import_001':'系统正在执行上次导入数据，请稍后...',
@@ -29,8 +40,10 @@ var codeMap = {
 	'login_002':'验证码为空',
 	'login_003':'验证码错误',
 	'login_004':'用户名不存在',
-	'login_005':'密码错误',
+	'login_005':'用户或密码错误',
 	'login_006':'用户锁定',
+	'login_007':'登录失败！剩余登录次数：{0}次',
+	'login_008':'登录失败次数达到上限，今天已不能登录！',
 	
 	'module_000':'模块名称为空',
 	'module_001':'父模块为空',

@@ -18,6 +18,14 @@ import java.util.Map;
  * @author 傅泉明
  */
 public interface Constants {
+    
+    public static final String ENCODING = "UTF-8";
+    /** 用户默认密码 */
+    String defaultUserPass = "888888";
+    /** 上传附件临时文件目录 */
+    String uploadFileTempPath = "temp";
+    /** 上传附件文件目录 */
+    String uploadFilePath = "fcc";
     /**
      * 当前登录的用户
      */
@@ -153,6 +161,10 @@ public interface Constants {
             String errorPassword = "login_005";
             /** 用户锁定 login_006 */
             String lockUserName = "login_006";
+            /** 登录次数限制 login_007 */
+            String errorLoginCount = "login_007";
+            /** 无登录次数 login_007 */
+            String emptyLoginCount = "login_008";
         }
         
         public interface Module {

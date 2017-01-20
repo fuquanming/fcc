@@ -39,6 +39,7 @@ body{ background:url("images/login/bg.jpg") repeat-x; height:646px; }
 <script type="text/javascript" src="js/jquery-easyui-1.5/locale/easyui-lang-zh_CN.js" charset="UTF-8"></script>
 <script type="text/javascript" src="js/support/tool.js" charset="UTF-8"></script>
 <script type="text/javascript" src="js/support/status.code.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/support/js.extend.js" charset="UTF-8"></script>
 
 <link rel="icon" href="image/favicon.ico" type="image/x-icon" />
 
@@ -82,8 +83,12 @@ $(function(){
 		url : 'login.do?login',
 		success : function(data) {
 			var d = $.parseJSON(data);
+			var msg = StatusCode.msg(d.msg);
+			if (d.obj) {
+				msg = msg.format(d.obj)
+			}
 			Tool.message.show({
-                msg : StatusCode.msg(d.msg),
+                msg : msg,
                 title : '提示'
             });
 			if (d.success) {

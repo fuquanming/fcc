@@ -12,10 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import com.fcc.commons.web.model.Treeable;
+import org.springframework.util.StringUtils;
 /**
  * <p>Description:系统模块</p>
  * <p>Copyright:Copyright (c) 2009 </p>
@@ -24,7 +24,7 @@ import com.fcc.commons.web.model.Treeable;
  */
 @Entity
 @Table(name = "sys_rbac_module")
-public class Module extends Treeable implements Comparable<Object>, Serializable {
+public class Module implements Comparable<Object>, Serializable {
 
 	/**
 	 * 
@@ -49,6 +49,9 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
 	private String moduleDesc;
 	// 是否可用
     private boolean moduleStatus = Boolean.TRUE;
+    
+    /** 父路径分隔符 */
+    private String separator = "-";
     /** 父ID */
     private String parentId;
     /** 所有父路径 如1-2-3 */
@@ -154,13 +157,18 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
     public void setModuleStatus(Boolean moduleStatus) {
         this.moduleStatus = moduleStatus;
     }
-	
+    @Transient
+    public String getSeparator() {
+        return separator;
+    }
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
 	@Column(name = "PARENT_ID")
     public String getParentId() {
         return parentId;
     };
     public void setParentId(String parentId) {
-        super.setParentId(parentId);
         this.parentId = parentId;
     }
     @Column(name = "PARENT_IDS")
@@ -168,7 +176,6 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
         return parentIds;
     }
     public void setParentIds(String parentIds) {
-        super.setParentIds(parentIds);
         this.parentIds = parentIds;
     }
 	
@@ -185,6 +192,24 @@ public class Module extends Treeable implements Comparable<Object>, Serializable
 		this.operates = operates;
 	}
 
+	/**
+     * 
+     * @param parentIds     父节点ID集合
+     * @param id            自己的ID
+     * @return
+     */
+    public String buildParendIds(Module parent, String id) {
+        String parent_parentIds = parent.getParentIds();
+        if (StringUtils.isEmpty(parent_parentIds)) {
+            parent_parentIds = id;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(parent_parentIds).append(parent.getSeparator()).append(id);
+            parent_parentIds = sb.toString();
+        }
+        return parent_parentIds;
+    }
+	
 	@Override
 	public boolean equals(Object obj){
 		if(obj instanceof Module){

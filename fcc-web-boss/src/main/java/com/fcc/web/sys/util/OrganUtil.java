@@ -2,7 +2,7 @@ package com.fcc.web.sys.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fcc.web.sys.model.Organization;
+import com.fcc.commons.web.model.Treeable;
 import com.fcc.web.sys.model.SysUser;
 
 /**
@@ -17,7 +17,7 @@ public class OrganUtil {
 	public static boolean checkParent(SysUser sysUser, String selectOrganId) {
 		String organId = sysUser.getDept();
 		if (StringUtils.isEmpty(organId)) return false;
-		if (selectOrganId == null || "".equals(selectOrganId) || Organization.ROOT.getOrganId().equals(selectOrganId)) return true;
+		if (selectOrganId == null || "".equals(selectOrganId) || Treeable.ROOT.getNodeId().equals(selectOrganId)) return true;
 		int indexOf = organId.indexOf(selectOrganId);
 		if (indexOf == 0 && organId.length() != selectOrganId.length()) {
 			return true;	

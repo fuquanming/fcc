@@ -52,6 +52,12 @@
             <input id="className" name="className" type="text" class="easyui-validatebox easyui-textbox" required="true" data-options="prompt:'请输入类名...'"/>
             </td>
         </tr>
+        <tr>  
+            <th colspan="3">是否tree：</th>        
+            <td align="left">
+            <input type="radio" name="type" value="tree" />tree<input type="radio" name="type" value="table" checked="checked"/>table
+            </td>
+        </tr>
 		<tr>  
             <th colspan="3">列字段：</th>        
             <td>
@@ -219,6 +225,7 @@ saveParam_beforeCallback = function(data, success) {
     	reportQuery.push($(this).val());
     });
     form.find('[name=reportQuery]').val(reportQuery.join(','));
+    
 }
 saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转

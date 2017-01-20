@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fcc.commons.core.service.BaseService;
-import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.dao.TreeableDao;
 import com.fcc.commons.web.model.Treeable;
 import com.fcc.commons.web.service.TreeableService;
@@ -41,141 +40,114 @@ public class TreeableServiceImpl implements TreeableService {
     @Resource
     private TreeableDao treeableDao;
     
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#add(com.fcc.commons.web.model.Treeable)
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)//事务申明
     public void add(Treeable data, Treeable parent) {
+        if (parent == null) parent = Treeable.ROOT;
         data.setNodeLevel(parent.getNodeLevel() + 1);
         data.setParentIds(data.buildParendIds(parent, data.getNodeId()));
         baseService.add(data);
     }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#edit(com.fcc.commons.web.model.Treeable)
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)//事务申明
     public void edit(Treeable data, Treeable parent) {
+        if (parent == null) parent = Treeable.ROOT;
         data.setNodeLevel(parent.getNodeLevel() + 1);
         data.setParentIds(data.buildParendIds(parent, data.getNodeId()));
         baseService.edit(data);
         treeableDao.editNodeStatus(data);
     }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#editStatus(java.lang.Class, java.lang.String[], boolean)
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)//事务申明
     public Integer editStatus(Class<?> clazz, String[] ids, boolean nodeStatus) {
         return treeableDao.editNodeStatus(clazz, ids, nodeStatus);
     }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#delete(java.lang.Class, java.lang.String)
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)//事务申明
     public void delete(Class<?> clazz, String nodeId) {
         treeableDao.delete(clazz, nodeId);
     }
-
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#findChilds(java.lang.Class, java.lang.String, boolean)
-     **/
+    
     @Override
     @Transactional(readOnly = true)//只查事务申明
-    public List<Treeable> findChilds(Class<?> clazz, String parentNodeId, boolean allChildren) {
-        return treeableDao.findChilds(clazz, parentNodeId, allChildren);
+    public boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId) {
+        return treeableDao.checkNodeCode(clazz, nodeCode, nodeId);
     }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#getOrganById(java.lang.Class, java.lang.String)
-     **/
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public List<Treeable> getChilds(Class<?> clazz, String parentNodeId, boolean allChildren, boolean parent) {
+        return treeableDao.getChilds(clazz, parentNodeId, allChildren, parent);
+    }
+
     @Override
     @Transactional(readOnly = true)//只查事务申明
     public Treeable getTreeableById(Class<?> clazz, String nodeId) {
+        if (nodeId == null || "".equals(nodeId) || Treeable.ROOT.getNodeId().equals(nodeId)) {
+            return Treeable.ROOT;
+        }
         Treeable treeable = (Treeable) baseService.get(clazz, nodeId);
         return treeable;
     }
+    
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public Treeable getTreeableByName(Class<?> clazz, String nodeName) {
+        return treeableDao.getTreeableByName(clazz, nodeName);
+    }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#getTreeGrid(java.lang.Class, java.lang.String, java.lang.String, boolean)
-     **/
     @Override
     @Transactional(readOnly = true)//只查事务申明
     public List<EasyuiTreeNode> getTreeGrid(Class<?> clazz, Map<String, Object> params) {
-        Boolean all = null;
-        if (params != null && params.get("all") != null) {
-            all = Boolean.valueOf(params.get("all").toString());
-        }
-        List<Treeable> dataList = treeableDao.queryList(clazz, params);
+        List<Treeable> dataList = null;
         List<EasyuiTreeNode> nodeList = null;
-        if (all != null && all == true) {
-            nodeList = getEasyuiTreeNodeChild(dataList);
-        }
-        if (nodeList == null) {
-            nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
-            for (Treeable data : dataList) {
-                nodeList.add(getEasyuiTreeNode(data));
-            }
+        dataList = treeableDao.queryList(clazz, params);
+        nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
+        for (Treeable data : dataList) {
+            nodeList.add(getEasyuiTreeNode(data, false));
         }
         return nodeList;
     }
 
-    /**
-     * @see com.fcc.commons.web.service.TreeableService#getTree(java.lang.Class, java.lang.String, java.lang.String)
-     **/
     @Override
     @Transactional(readOnly = true)//只查事务申明
-    public List<EasyuiTreeNode> getTree(Class<?> clazz, String nodeId, boolean allChildren) {
-        List<Treeable> dataList = treeableDao.findChilds(clazz, nodeId, allChildren);
+    public List<EasyuiTreeNode> getTree(Class<?> clazz, String nodeId, boolean allChildren, boolean parent) {
+        List<Treeable> dataList = treeableDao.getChilds(clazz, nodeId, allChildren, parent);
         List<EasyuiTreeNode> nodeList = null;
         if (allChildren) {
             nodeList = getEasyuiTreeNodeChild(dataList);
         } else {
             nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
             for (Treeable data : dataList) {
-                nodeList.add(getEasyuiTreeNode(data));
+                nodeList.add(getEasyuiTreeNode(data, true));
             }
         }
         return nodeList;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override
-    @Transactional(readOnly = true)//只查事务申明
-    public ListPage queryPage(Class<?> clazz, int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
-        ListPage listPage = treeableDao.queryPage(clazz, pageNo, pageSize, param, isSQL);
-        int size = listPage.getDataSize();
-        if (size > 0) {
-            List<Treeable> dataList = listPage.getDataList();
-            List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>(size);
-            for (Treeable data : dataList) {
-                nodeList.add(getEasyuiTreeNode(data));
-            }
-            listPage.setDataList(nodeList);
-        }
-        return listPage;
-    }
-    
-    private EasyuiTreeNode getEasyuiTreeNode(Treeable data) {
+    private EasyuiTreeNode getEasyuiTreeNode(Treeable data, boolean childFlag) {
         EasyuiTreeNode node = new EasyuiTreeNode();
         node.setId(data.getNodeId());
         node.setText(data.getNodeName());
-        node.setState(data.getChildSize() > 0 ? EasyuiTreeNode.STATE_CLOSED : EasyuiTreeNode.STATE_OPEN);
-        Map<String, Object> attributes = new HashMap<String, Object>(4);
+        if (childFlag) node.setState(data.getChildSize() > 0 ? EasyuiTreeNode.STATE_CLOSED : EasyuiTreeNode.STATE_OPEN);
+        Map<String, Object> attributes = new HashMap<String, Object>(6);
         attributes.put("nodeLevel", data.getNodeLevel());
         attributes.put("nodeSort", data.getNodeSort());
+        attributes.put("nodeCode", data.getNodeCode());
         attributes.put("nodeStatus", data.getNodeStatus());
         attributes.put("nodeDesc", data.getNodeDesc());
         attributes.put("parentId", data.getParentId());
         node.setAttributes(attributes);
         return node;
     }
-    
+    /**
+     * 构建树形结构
+     * @param dataList
+     * @return
+     */
     private List<EasyuiTreeNode> getEasyuiTreeNodeChild(List<Treeable> dataList) {
         List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
         if (dataList != null) {
@@ -187,7 +159,7 @@ public class TreeableServiceImpl implements TreeableService {
             for (Iterator<Treeable> it = dataSet.iterator(); it.hasNext();) {
                 Treeable m = it.next();
                 
-                EasyuiTreeNode node = getEasyuiTreeNode(m);
+                EasyuiTreeNode node = getEasyuiTreeNode(m, true);
                 
                 nodeMap.put(node.getId(), node);
                 

@@ -23,9 +23,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
+import com.fcc.commons.web.service.TreeableService;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeNode;
@@ -33,12 +33,13 @@ import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.enums.UserStatus;
 import com.fcc.web.sys.model.Module;
+import com.fcc.web.sys.model.Organization;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
 import com.fcc.web.sys.model.SysUser;
-import com.fcc.web.sys.service.OrganizationService;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
+import com.fcc.web.sys.service.SysAnnexService;
 import com.fcc.web.sys.service.SysUserService;
 import com.fcc.web.sys.view.SysUserView;
 
@@ -64,9 +65,11 @@ public class SysUserController extends AppWebController {
 	@Resource
 	private RoleService roleService;
 	@Resource
-	private OrganizationService organService;
+	private TreeableService treeableService;
 	@Resource
 	private RoleModuleRightService roleModuleRightService;
+	@Resource
+	private SysAnnexService sysAnnexService;
 	
 	/** 显示系统用户列表 */
 	@ApiOperation(value = "显示用户列表页面")
@@ -121,7 +124,7 @@ public class SysUserController extends AppWebController {
 			if (data != null) {
 				String organId = data.getDept();
 				if (organId != null) {
-					request.setAttribute("organ", organService.getOrganById(data.getDept()));
+					request.setAttribute("organ", treeableService.getTreeableById(Organization.class, data.getDept()));
 				}
 			}
 		} catch (Exception e) {
@@ -161,8 +164,8 @@ public class SysUserController extends AppWebController {
 			request.setAttribute("data", data);
 			if (data != null) {
 				String organId = data.getDept();
-				if (organId != null) {
-					request.setAttribute("organ", organService.getOrganById(data.getDept()));
+				if (StringUtils.isNotEmpty(organId)) {
+					request.setAttribute("organ", treeableService.getTreeableById(Organization.class, data.getDept()));
 				}
 			}
 			Map<String, Object> param = null;
@@ -198,18 +201,28 @@ public class SysUserController extends AppWebController {
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否删除上级组织机构
 //				throw new RefusedException("不能选择上级机构！");
 //			}
+			// 附件
+			String annexType = request.getParameter("annexType");// 附件类型
+            String fileName = request.getParameter(annexType + "-uploadFileName");// 提交的文件名
+            String fileRealName = request.getParameter(annexType + "-uploadFileRealName");// 保存的文件名
 			
 			// 判断userId
 			SysUser tempUser = (SysUser) baseService.get(SysUser.class, userId);
 			if (tempUser != null) throw new RefusedException(Constants.StatusCode.SysUser.exitsUserId);
 			
 			sysUser.setUserStatus(UserStatus.normal.name());
-			sysUser.setPassword(EncryptionUtil.encodeMD5("888888").toLowerCase());
 			sysUser.setDept(dept);
 			sysUser.setRegDate(new Timestamp(System.currentTimeMillis()));
 			sysUser.setCreateTime(sysUser.getRegDate());
 			sysUser.setCreateUser(user.getUserId());
 			sysUserService.add(sysUser, roleIds);
+			if (fileName != null) {
+			    String[] fileNames = StringUtils.split(fileName, ",");
+			    String[] fileRealNames = StringUtils.split(fileRealName, ",");
+			    if (fileNames != null && fileNames.length > 0) {
+			        sysAnnexService.add("sysUser", sysUser.getUserId(), annexType, fileNames, fileRealNames);
+			    }
+			}
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -236,12 +249,11 @@ public class SysUserController extends AppWebController {
 			if (roleValue != null && !"".equals(roleValue)) {
 				roleIds = StringUtils.split(roleValue, ",");
 			}
-//			// 组织机构
+			// 组织机构
 //			SysUser user = getSysUser(request);
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否选择上级组织机构
 //				throw new RefusedException("不能选择上级机构！");
 //			}
-			
 			sysUser.setDept(dept);
 			sysUserService.edit(sysUser, roleIds);
 			message.setSuccess(true);
@@ -289,7 +301,10 @@ public class SysUserController extends AppWebController {
         try {
             if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
             String[] ids = StringUtils.split(id, ",");
-            sysUserService.resetPassword(ids, EncryptionUtil.encodeMD5("888888").toLowerCase());
+            String userPass = sysUserService.getDefaultUserPass();
+            for (String data : ids) {
+                sysUserService.resetPassword(data, userPass);
+            }
             message.setMsg(StatusCode.Sys.success);
             message.setSuccess(true);
         } catch (RefusedException e) {

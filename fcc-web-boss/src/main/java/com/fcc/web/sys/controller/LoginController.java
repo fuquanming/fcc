@@ -1,6 +1,7 @@
 package com.fcc.web.sys.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
@@ -51,6 +51,7 @@ public class LoginController extends AppWebController {
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
             @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode", defaultValue = "") String subCode) {
         //	    Assert.notNull(userId, LoginErrorEnums.usernameIsNull.getInfo());
+        System.out.println(request.getSession().getId());
         String sesCode = (String) request.getSession().getAttribute(Constants.RAND_CODE_KEY);
         Message message = new Message();
         try {
@@ -61,17 +62,26 @@ public class LoginController extends AppWebController {
                 if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
             }
             SysUser user = null;
-            password = EncryptionUtil.encodeMD5(password).toLowerCase();
             user = sysUserService.getLoninUser(userId, password);
             user.setIp(requestIpService.getRequestIp(request));
             logger.info("系统登录成功，userId:" + user.getUserId());
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
-//            CacheUtil.initLoginUser(request, user);
+            request.getSession().invalidate();
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    cookie.setMaxAge(0);
+                }
+            }
             setSysUser(user, request);
         } catch (RefusedException e) {
-            message.setMsg(e.getMessage());
-            message.setObj(e.getMessage());
+            if (e.getMsg() != null) {
+                message.setMsg(e.getMsg());
+                message.setObj(e.getCode());
+            } else {
+                message.setMsg(e.getMessage());
+                message.setObj(e.getMessage());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e);
@@ -94,6 +104,8 @@ public class LoginController extends AppWebController {
             userId = user.getUserId();
             logger.info("退出系统成功，userId:" + userId);
             message.setMsg(StatusCode.Sys.success);
+            message.setModule(Constants.Module.requestApp);
+            message.setOperate(Constants.Operate.logout);
         }
         request.getSession().invalidate();
         return getModelAndView(message);

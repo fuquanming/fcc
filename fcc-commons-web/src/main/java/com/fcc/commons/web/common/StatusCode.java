@@ -32,4 +32,19 @@ public interface StatusCode {
         /** 堆空间不足 sys_006 */
         String heapSpace = "sys_006";
     }
+    
+    public interface Treeable {
+        /** 节点名称为空 treeable_000 */
+        String emptyName = "treeable_000";
+        /** 上级为空 treeable_001 */
+        String emptyParent = "treeable_001";
+        /** 不能修改根节点 treeable_002 */
+        String errorRootId = "treeable_002";
+        /** 修改的节点不存在 treeable_003 */
+        String errorId = "treeable_003";
+        /** 上级节点不能是自己！ treeable_004 */
+        String errorParentOneself = "treeable_004";
+		/** 编码重复 treeable_005 */
+        String existCode = "treeable_005";
+    }
 }

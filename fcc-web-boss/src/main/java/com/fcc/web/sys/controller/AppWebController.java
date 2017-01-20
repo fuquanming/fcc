@@ -42,7 +42,9 @@ public class AppWebController extends BaseController {
             @Override
             public void run() {
                 cacheService.cleanModuleMap();
+                cacheService.cleanModuleUrlMap();
                 cacheService.getModuleMap();
+                cacheService.getModuleUrlMap();
             }
         });
     }

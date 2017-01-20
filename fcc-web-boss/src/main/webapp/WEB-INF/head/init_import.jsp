@@ -17,6 +17,7 @@ var importParam_queryImportUrl;// 查询导入数据URL
 var importDialog;
 var importDataFlag = false;
 var fileuploadTable;
+var fileupload_data;
 $(function() {
 	fileuploadTable = $('#fileuploadTable');
 	$('#fileupload').attr('data-url', importParam_importUrl);
@@ -33,12 +34,11 @@ $(function() {
             cleanFileuploadTable();
             $('<tr><td width="50%">' + fileName + '</td>' + 
                     '<td width="20%">' + fileSize.toFixed(2) + 'KB</td>' +
-                    '<td width="30%"><a href="javascript:void(0)" class="l-btn l-btn-small"><span class="l-btn-left"><span class="l-btn-text">上传文件</span></span></a></td></tr>')
+                    '<td width="30%"><a href="javascript:void(0)" onclick="importFileAction()" class="l-btn l-btn-small"><span class="l-btn-left"><span class="l-btn-text">上传文件</span></span></a></td></tr>')
             .appendTo(fileuploadTable)
             .click(function () {
                 //data.context = $('<p/>').text('上传中...').replaceAll($(this));
-                Tool.message.progress();
-                data.submit();
+            	fileupload_data = data;
             });                    
         },
         done: function (e, data) {
@@ -57,6 +57,11 @@ $(function() {
         title : '数据导入'
     }).dialog('close');
 });
+
+function importFileAction() {
+	Tool.message.progress();
+	fileupload_data.submit();
+}
 
 function importData() {
     if (importDataFlag == true) {

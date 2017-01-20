@@ -27,7 +27,13 @@
 			<#if column.isDateTimeColumn>
 			<input id="${column.columnNameLower}String" name="${column.columnNameLower}String" class="easyui-datetimebox" <#if !column.nullable>required="true"</#if>/>
 			<#else>
+			     <#if column.size gte minLine>
+			     <#if column.size lte maxLine>
+            <textarea rows="5" cols="40" id="${column.columnNameLower}" name="${column.columnNameLower}" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, ${column.size}]"></textarea>
+                 </#if>
+			     <#else>
 			<input id="${column.columnNameLower}" name="${column.columnNameLower}" type="text" class="easyui-validatebox easyui-textbox" maxlength="${column.size}" <#if !column.nullable>required="true" data-options="prompt:'请输入${column.columnAlias}...'"</#if>/>
+			     </#if>
 			</#if>
 			</td>
 		</tr>	

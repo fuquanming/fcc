@@ -16,12 +16,12 @@
     <table class="tableForm">
       <tr>
         <th>角色名称</th>
-        <td><input id="searchName" name="searchName" class="easyui-textbox" data-options="prompt:'请输入角色名称...'" style="width: 305px;" />
+        <td><input id="searchName" name="searchName" class="easyui-textbox" data-options="prompt:'请输入角色名称...'" style="width: 150px;" />
         </td>
         <c:if test="${not empty userList}">
         <th>创建者</th>
         <td>
-        <select name="createUser" id="createUser" style="width: 305px;" class="easyui-combobox">
+        <select name="createUser" id="createUser" style="width: 150px;" class="easyui-combobox">
         <option value="">--请选择--</option>
         <c:forEach items="${userList}" var="user">
         <option value="${user.userId }">${user.userId }</option>

@@ -1,6 +1,8 @@
 package com.fcc.web.sys.service.impl;
 
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,20 +11,31 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fcc.commons.coder.Coder;
+import com.fcc.commons.coder.CoderEnum;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.utils.EncryptionUtil;
+import com.fcc.commons.web.dao.TreeableDao;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.dao.RoleDao;
+import com.fcc.web.sys.dao.SysKeyDao;
 import com.fcc.web.sys.dao.SysUserDao;
+import com.fcc.web.sys.enums.SysDictType;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.model.SysDict;
+import com.fcc.web.sys.model.SysKey;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysUserService;
@@ -45,8 +58,56 @@ public class SysUserServiceImpl implements SysUserService {
     @Resource
     private SysUserDao sysUserDao;
     @Resource
+    private SysKeyDao sysKeyDao;
+    @Resource
+    private TreeableDao treeableDao;
+    @Resource
     private CacheService cacheService;
 	
+    @Override
+    @Transactional(readOnly = true)
+    public String getDefaultUserPass() {
+        String userPass = null;
+        SysDict sysDict = (SysDict)treeableDao.getTreeableByName(SysDict.class, SysDictType.userPassword.name());
+        if (sysDict != null) {
+            userPass = sysDict.getNodeCode();
+        } else {
+            userPass = Constants.defaultUserPass;
+        }
+        return userPass;
+    }
+    /**
+     * 数据库获取Key 
+     * @param userId
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    private Key getKey(String userId) {
+        Key key = null;
+        Map<String, Object> param = new HashMap<String, Object>(2);
+        param.put("linkType", SysDictType.userPassword.name());
+        param.put("linkId", userId);
+        List<SysKey> list = sysKeyDao.query(1, 1, param, false);
+        if (list.size() > 0) {
+            SysKey sysKey = list.get(0);
+            key = Coder.byteToKey(CoderEnum.DES3, EncryptionUtil.decodeBase64(sysKey.getKeyValue()));
+        } else {
+            SysKey sysKey = new SysKey();
+            sysKey.setLinkId(userId);
+            sysKey.setLinkType(SysDictType.userPassword.name());
+            key = EncryptionUtil.getKey3DES(userId + RandomStringUtils.random(5, true, true), Constants.ENCODING);
+            sysKey.setKeyValue(EncryptionUtil.encodeBase64(key.getEncoded()));
+            baseService.add(sysKey);
+        }
+        return key;
+    }
+    
+    private String getEncodePass(Key key, String userPass) {
+        if (userPass == null || "".equals(userPass)) userPass = getDefaultUserPass();
+        return EncryptionUtil.encodeMD5(EncryptionUtil.encrypt3DES(key, userPass, Constants.ENCODING));
+    }
+    
+    
 	/**
      * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#add(com.fcc.web.sys.model.SysUser, java.lang.String[])
@@ -54,6 +115,15 @@ public class SysUserServiceImpl implements SysUserService {
 	@Override
     @Transactional(rollbackFor = Exception.class)
 	public void add(SysUser data, String[] roleIds) {
+	    // 获取密码
+	    SysKey sysKey = new SysKey();
+	    sysKey.setLinkId(data.getUserId());
+	    sysKey.setLinkType(SysDictType.userPassword.name());
+	    Key key = EncryptionUtil.getKey3DES(data.getUserId() + RandomStringUtils.random(5, true, true), Constants.ENCODING);
+	    sysKey.setKeyValue(EncryptionUtil.encodeBase64(key.getEncoded()));
+	    
+	    baseService.add(sysKey);
+	    data.setPassword(getEncodePass(key, null));
 	    baseService.add(data);
 		addRole(data.getUserId(), roleIds);
 	}
@@ -100,8 +170,9 @@ public class SysUserServiceImpl implements SysUserService {
      **/
 	@Override
     @Transactional(rollbackFor = Exception.class)
-	public void resetPassword(String[] userIds, String userPass) {
-	    sysUserDao.resetPassword(userIds, userPass);
+	public void resetPassword(String userId, String userPass) {
+        userPass = getEncodePass(getKey(userId), userPass);
+        sysUserDao.resetPassword(userId, userPass);
 	}
 	
 	/**
@@ -113,6 +184,7 @@ public class SysUserServiceImpl implements SysUserService {
 	public void delete(String[] userIds) {
 	    sysUserDao.deleteUser(userIds);
 	    roleDao.deleteRoleByUserId(userIds);
+	    sysKeyDao.delete(SysDictType.userPassword.name(), userIds);
 	}
 	
 	/**
@@ -136,8 +208,39 @@ public class SysUserServiceImpl implements SysUserService {
 		if (sysUser == null) {
 			throw new RefusedException(Constants.StatusCode.Login.errorUserName);
 		} else {
-			if (!sysUser.getPassword().equals(password)) {
-				throw new RefusedException(Constants.StatusCode.Login.errorPassword);
+		    // 登录次数限制
+		    String loginCount = cacheService.getLoginCount(userId);
+		    String[] params = StringUtils.split(loginCount, ":");
+		    int count = 1;
+		    int maxCount = 3;
+		    SysDict sysDict = (SysDict) treeableDao.getTreeableByName(SysDict.class, SysDictType.userLoginCount.name());
+		    if (sysDict != null) {
+		        String nodeCode = sysDict.getNodeCode();
+		        if (StringUtils.isNotEmpty(nodeCode)) {
+		            try {
+                        maxCount = Integer.valueOf(nodeCode);
+                    } catch (NumberFormatException e) {
+                    }
+		        }
+		    }
+		    if (params.length == 2) {
+		        if (DateFormatUtils.format(new Date(), "yyyy-MM-dd").equals(params[0])) {
+		            count = Integer.valueOf(params[1]);
+		            if (count >= maxCount) {
+		                throw new RefusedException(Constants.StatusCode.Login.emptyLoginCount);
+		            }
+	                count++;
+		        }
+		    }
+		    // 判断密码
+			if (!getEncodePass(getKey(userId), password).equalsIgnoreCase(sysUser.getPassword())) {
+			    // 登录次数累加
+			    cacheService.updateLoginCount(userId, count);
+//				throw new RefusedException(Constants.StatusCode.Login.errorPassword);
+			    if (maxCount - count == 0) {
+			        throw new RefusedException(Constants.StatusCode.Login.emptyLoginCount);
+			    }
+			    throw new RefusedException(maxCount - count, Constants.StatusCode.Login.errorLoginCount);
 			}
 			sysUser.getRoles().size();
 		}
@@ -184,7 +287,6 @@ public class SysUserServiceImpl implements SysUserService {
      **/
 	@Override
     @Transactional(readOnly = true)
-	
 	public SysUser findByUsername(String userName) {
 	    return sysUserDao.findByUsername(userName);
 	}

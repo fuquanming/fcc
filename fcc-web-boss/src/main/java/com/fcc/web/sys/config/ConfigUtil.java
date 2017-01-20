@@ -37,5 +37,13 @@ public class ConfigUtil {
         }
         return false;
     }
+    /** 文件上传的物理路径 */
+    public static String getFileUploadPath() {
+        return Resources.CONFIG.getString("file.upload.path");
+    }
+    /** 文件访问的路径 */
+    public static String getFileAccessPath() {
+        return Resources.CONFIG.getString("file.access.path");
+    }
     
 }

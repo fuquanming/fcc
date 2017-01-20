@@ -16,35 +16,35 @@
     <form id="userForm" name="userForm" method="post">
       <input name="id" type="hidden" value=""/>
       <table class="tableForm" align="center">
-        <input name="parentId" type="hidden" value="${parent.organId }"/>
+        <input name="parentId" type="hidden" value="${parent.nodeId }"/>
         <tr>
           <th>上级组织机构</th>
-          <td colspan="3">${parent.organName }</td>
+          <td colspan="3">${parent.nodeName }</td>
         </tr>
         <tr>
           <th>组织机构名称</th>
-          <td><input name="organName" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
+          <td><input name="nodeNameStr" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构名称...'" required="true" maxlength="100"/></td>
         </tr>
         <tr>
           <th>组织机构编码</th>
-          <td><input name="organCode" type="text" class="easyui-validatebox easyui-textbox" maxlength="10"/>
+          <td><input name="nodeCode" type="text" class="easyui-validatebox easyui-textbox" maxlength="10"/>
           </td>
         </tr>
         <tr>
           <th>组织机构排序</th>
-          <td><input name="organSort" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
+          <td><input name="nodeSort" type="text" class="easyui-validatebox easyui-textbox" data-options="prompt:'请输入组织机构排序...'" required="true" validType="integer" maxlength="5"/>
           </td>
         </tr>
         <tr>
           <th>是否显示</th>
           <td>
-          <input id="organStatus" name="organStatus" style="width: 155px;" class="easyui-combobox"/>
+          <input id="nodeStatus" name="nodeStatus" style="width: 155px;" class="easyui-combobox"/>
           </td>
         </tr>
         <tr>
           <th>组织机构说明</th>
           <td>
-          <textarea rows="5" cols="40" name="organDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
+          <textarea rows="5" cols="40" name="nodeDesc" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea>
           </td>
         </tr>
         <tr>
@@ -64,8 +64,8 @@
 <%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
 $(function() {
-	var organStatus = getComboBoxByData({
-        id : 'organStatus',
+	var nodeStatus = getComboBoxByData({
+        id : 'nodeStatus',
         valueField : 'id',
         textField : 'text',
         data : [

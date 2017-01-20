@@ -50,6 +50,13 @@ public interface SysUserDao {
      * @param createUser
      */
     public Integer resetPassword(String[] userIds, String userPass);
+    /**
+     * 重置用户密码
+     * @param userId
+     * @param userPass
+     * @param createUser
+     */
+    public Integer resetPassword(String userId, String userPass);
     
     /**
      * 删除用户

@@ -8,9 +8,10 @@
 var treegridParam_id;// 用到的treegrid的ID
 var treegridParam_url;// 数据源url
 var treegridParam_idField;// treegrid表格的唯一标识
+var treegridParam_page = false;// 是否显示分页：true、false
 //var treegridParam_idField_checkbox = true;// 是否显示多选框
 var treegridParam_column_value;// 表格的列 [[{field:'userId',title:'用户ID'}]]
-//var treegridParam_queryParamName;// 查询的参数name ['userId','userName'];
+var treegridParam_queryParamName;// 查询的参数name ['userId','userName'];
 var treegridParam_confirm_beforeCallback;// 确认框操作前回调
 var treegridParam_confirm_afterCallback;// 确认框操作后回调
 
@@ -26,6 +27,10 @@ $(function() {
         animate : false,
         border : false,
         striped : true,
+        rownumbers : true,
+        pagination : treegridParam_page,
+        pageSize : 10,
+        pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
         idField : treegridParam_idField,
         treeField : 'text',
         frozenColumns : [ [ {
@@ -65,12 +70,56 @@ $(function() {
             if (flag != true || flag != false) {
                 return data;                                            
             }
+        },
+        onBeforeExpand : function(row) {
+            if (row) {
+            	$(this).treegrid('options').queryParams = {};
+            	$(this).treegrid('options').url = Tool.urlAddParam(treegridParam_url, 'parentId=' + row.id);
+            }
+            return true;
         }
     });
 })
 
 function searchFun() {
-	gridReload();
+	//gridReload();
+	var paramVals = {};
+    if (treegridParam_queryParamName) {
+        for (var i in treegridParam_queryParamName) {
+            var param = $('#toolbar input[name="' + treegridParam_queryParamName[i] + '"]');
+            var paramVal = '';
+            if (param.is('.easyui-datebox')) {
+                paramVal = param.datebox('getValue')
+            } else if (param.is('.easyui-datetimebox')) {
+                paramVal = param.datetimebox('getValue')
+            } else {
+                paramVal = param.val();
+                if (paramVal == undefined) {
+                    paramVal = $('#toolbar select[name="' + treegridParam_queryParamName[i] + '"]').val();
+                }
+            }
+            if (paramVal) paramVals[treegridParam_queryParamName[i]] = paramVal
+        }
+    }
+    var datagrid = initDatagrid();
+    //datagrid.datagrid('load', paramVals);
+    datagrid.treegrid({
+        url : Tool.urlAddParam(treegridParam_url, 'random=' + Math.random()),
+        queryParams : paramVals
+    })
+    datagrid.treegrid('clearSelections');
+}
+
+function clearFun() {
+    $('#toolbar input').val('');
+    $('#toolbar select').val('');
+    var datagrid = initDatagrid();
+    //datagrid.datagrid('load', {});
+    datagrid.treegrid({
+        url : Tool.urlAddParam(treegridParam_url, 'random=' + Math.random()),
+        queryParams : {}
+    })
+    datagrid.treegrid('clearSelections');
 }
 
 function initDatagrid() {
@@ -79,7 +128,8 @@ function initDatagrid() {
 }
 
 function gridReload() {
-	initDatagrid().treegrid('reload');
+	searchFun();// 有点击事件，url可能改变
+	//initDatagrid().treegrid('reload');
 }
 
 function gridUnselectAll() {

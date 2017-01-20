@@ -13,6 +13,8 @@ import com.fcc.web.sys.model.SysUser;
 
 public interface SysUserService {
 
+    String getDefaultUserPass();
+    
     void add(SysUser data, String[] roleIds);
 
     void addRole(String userId, String[] roleIds);
@@ -21,12 +23,18 @@ public interface SysUserService {
 
     void edit(SysUser data);
 
-    void resetPassword(String[] userIds, String userPass);
+    void resetPassword(String userId, String userPass);
 
     void delete(String[] userIds);
 
     Integer editStatus(String[] userIds, String userStatus);
-
+    /**
+     * 系统登录
+     * @param userId
+     * @param password
+     * @return
+     * @throws RefusedException     错误信息，登录次数限制等
+     */
     SysUser getLoninUser(String userId, String password) throws RefusedException;
 
     SysUser getUserWithRole(String userId);
