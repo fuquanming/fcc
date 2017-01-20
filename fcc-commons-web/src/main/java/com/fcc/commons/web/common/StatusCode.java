@@ -44,5 +44,7 @@ public interface StatusCode {
         String errorId = "treeable_003";
         /** 上级节点不能是自己！ treeable_004 */
         String errorParentOneself = "treeable_004";
+		/** 编码重复 treeable_005 */
+        String existCode = "treeable_005";
     }
 }

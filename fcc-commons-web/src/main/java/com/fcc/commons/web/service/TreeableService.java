@@ -45,6 +45,14 @@ public interface TreeableService {
      */
     void delete(Class<?> clazz, String nodeId);
     /**
+     * 检查是否存在code
+     * @param clazz
+     * @param nodeCode
+     * @param nodeId
+     * @return          true：存在，false：不存在
+     */
+    boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId);
+    /**
      * 查询下级
      * @param clazz
      * @param parentNodeId    

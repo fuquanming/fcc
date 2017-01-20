@@ -151,6 +151,7 @@ public class CodeController extends AppWebController {
             String outRoot = request.getParameter("outRoot");
             String tableName = request.getParameter("tableName");
             String className = request.getParameter("className");
+            String type = request.getParameter("type");
             
             GeneratorProperties.setProperty("basepackage", basepackage);
             GeneratorProperties.setProperty("namespace", namespace);
@@ -220,7 +221,13 @@ public class CodeController extends AppWebController {
             }
             GeneratorFacade g = new GeneratorFacade();
             StringBuilder sb = new StringBuilder();
-            sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append("WEB-INF").append(File.separatorChar).append("fcc_template").append(File.separatorChar);
+            sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append("WEB-INF").append(File.separatorChar);
+            if ("tree".equals(type)) {
+                sb.append("fcc_tree_template");
+            } else {
+                sb.append("fcc_template");
+            }
+            sb.append(File.separatorChar);
             g.generateByTable(tableName, className, sb.toString(), map);
             
             //打开文件夹

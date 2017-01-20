@@ -30,7 +30,6 @@ import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.model.Area;
-import com.fcc.web.sys.service.SysUserService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -48,8 +47,6 @@ public class AreaController extends AppWebController {
 	private Logger logger = Logger.getLogger(AreaController.class);
 	@Resource
 	private TreeableService treeableService;
-	@Resource
-	private SysUserService sysUserService;
 	
 	@ApiOperation(value = "显示地区列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
@@ -63,7 +60,7 @@ public class AreaController extends AppWebController {
 	@RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
 	@Permissions("add")
 	public String toAdd(HttpServletRequest request,
-	        @ApiParam(required = true, value = "父模块ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
+	        @ApiParam(required = true, value = "父ID") @RequestParam(name = "parentId", defaultValue = "") String parentId) {
 		try {
 			request.setAttribute("parent", treeableService.getTreeableById(Area.class, parentId));
 		} catch (Exception e) {
@@ -108,6 +105,9 @@ public class AreaController extends AppWebController {
                 parent = (Area) treeableService.getTreeableById(Area.class, parentId);
             }
 			if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
+			if (treeableService.checkNodeCode(Area.class, area.getNodeCode(), null) == true) {
+			    throw new RefusedException(StatusCode.Treeable.existCode);
+			}
 			
 			area.setNodeId(RandomStringUtils.random(6, true, true));
 			area.setParentId(parentId);
@@ -154,6 +154,9 @@ public class AreaController extends AppWebController {
 			
             Area data = (Area) treeableService.getTreeableById(Area.class, nodeId);
 			if (data == null) throw new RefusedException(StatusCode.Treeable.errorId);
+			if (treeableService.checkNodeCode(Area.class, area.getNodeCode(), data.getNodeId()) == true) {
+                throw new RefusedException(StatusCode.Treeable.existCode);
+            }
 			BeanUtils.copyProperties(area, data);
 			
 			data.setUpdateTime(new Date());

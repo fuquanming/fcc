@@ -70,6 +70,12 @@ public class TreeableServiceImpl implements TreeableService {
     public void delete(Class<?> clazz, String nodeId) {
         treeableDao.delete(clazz, nodeId);
     }
+    
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId) {
+        return treeableDao.checkNodeCode(clazz, nodeCode, nodeId);
+    }
 
     @Override
     @Transactional(readOnly = true)//只查事务申明

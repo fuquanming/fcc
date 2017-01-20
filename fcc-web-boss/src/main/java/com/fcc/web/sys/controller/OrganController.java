@@ -139,7 +139,10 @@ public class OrganController extends AppWebController {
                 parent = (Organization) treeableService.getTreeableById(Organization.class, parentId);    
             }
             if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
-            
+            String nodeCode = data.getNodeCode();
+            if (nodeCode != null && !"".equals(nodeCode) && treeableService.checkNodeCode(Organization.class, data.getNodeCode(), null) == true) {
+                throw new RefusedException(StatusCode.Treeable.existCode);
+            }
             data.setNodeId(RandomStringUtils.random(6, true, true));
             data.setParentId(parentId);
             data.setCreateUser(getSysUser(request).getUserId());
@@ -211,7 +214,10 @@ public class OrganController extends AppWebController {
                 parent = (Organization) treeableService.getTreeableById(Organization.class, parentId);
             }
             if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
-            
+            String nodeCode = organ.getNodeCode();
+            if (nodeCode != null && !"".equals(nodeCode) && treeableService.checkNodeCode(Organization.class, organ.getNodeCode(), organ.getNodeId()) == true) {
+                throw new RefusedException(StatusCode.Treeable.existCode);
+            }
             organ.setParentId(parentId);
             
             Organization data = (Organization) treeableService.getTreeableById(Organization.class, nodeId);

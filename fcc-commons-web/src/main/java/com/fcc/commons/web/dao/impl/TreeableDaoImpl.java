@@ -71,6 +71,25 @@ public class TreeableDaoImpl implements TreeableDao {
         sb.append("update ").append(className).append(" set nodeStatus=:nodeStatus where nodeId in(:nodeId)");
         return baseDao.executeHql(sb.toString(), params);
     }
+    
+    @Override
+    public boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId) {
+        String className = clazz.getName();
+        StringBuilder sb = new StringBuilder();
+        Map<String, Object> params = null;
+        sb.append("from ").append(className).append(" where nodeCode=:nodeCode");
+        if (nodeId == null || "".equals(nodeId)) {// 新增
+            params = new HashMap<String, Object>(1);
+            params.put("nodeCode", nodeCode);
+        } else {// 修改
+            params = new HashMap<String, Object>(2);
+            params.put("nodeCode", nodeCode);
+            params.put("nodeId", nodeId);
+            sb.append(" and nodeId !=:nodeId");
+        }
+        List<Object> list = baseDao.find(sb.toString(), params);
+        return list.size() > 0;
+    }
 
     @Override
     public List<Treeable> getChilds(Class<?> clazz, String parentNodeId, boolean allChildren, boolean parent) {

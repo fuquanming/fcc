@@ -39,6 +39,14 @@ public interface TreeableDao {
      */
     Integer editNodeStatus(Class<?> clazz, String[] ids, boolean nodeStatus);
     /**
+     * 检查是否存在code
+     * @param clazz
+     * @param nodeCode
+     * @param nodeId
+     * @return          true：存在，false：不存在
+     */
+    boolean checkNodeCode(Class<?> clazz, String nodeCode, String nodeId);
+    /**
      * 查询子节点
      * @param clazz
      * @param parentNodeId      父ID

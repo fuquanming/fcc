@@ -43,6 +43,7 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
                 cacheService.getModuleMap();
                 cacheService.getRoleModuleRightMap();
                 cacheService.getOperateMap();
+                cacheService.getModuleUrlMap();
             }
         });
 		event.getServletContext().setAttribute("APP_NAME", configService.getAppName());

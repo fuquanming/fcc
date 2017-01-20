@@ -27,7 +27,7 @@
         properties="hostName=localhost, port=40001,socketTimeoutMillis=2000" />
     -->
     <!-- 系统模块缓存  不过期 -->
-    <cache name="fcc:moduleMapCache"
+    <cache name="fcc:moduleMapCache:0"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
            eternal="false"
@@ -43,7 +43,7 @@
     </cache> 
     
     <!-- 系统模块URL缓存  不过期 -->
-    <cache name="fcc:moduleUrlMapCache"
+    <cache name="fcc:moduleUrlMapCache:0"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
            eternal="false"
@@ -59,7 +59,7 @@
     </cache> 
     
     <!-- 系统权限缓存  不过期 -->
-    <cache name="fcc:roleModuleRightMapCache"
+    <cache name="fcc:roleModuleRightMapCache:0"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
            eternal="false"
@@ -75,7 +75,7 @@
     </cache> 
     
     <!-- 系统模块操作  不过期 -->
-    <cache name="fcc:operateMapCache"
+    <cache name="fcc:operateMapCache:0"
            maxEntriesLocalHeap="10000"
            overflowToDisk="false"
            eternal="false"
