@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -51,6 +51,8 @@ import com.fcc.web.sys.model.SysAnnex;
 import com.fcc.web.sys.service.SysAnnexService;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import net.coobird.thumbnailator.Thumbnails;
 //import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -154,7 +156,7 @@ public class SysAnnexController extends AppWebController {
         FileOutputStream fos = null;
         MultipartFile file = null;
         try {
-            String prefix = request.getParameter("fid");
+            String prefix = request.getParameter("annexType");
             file = ((MultipartHttpServletRequest) request).getFile(prefix + "-upload");
             if (file != null && file.isEmpty() == false) {
                 logger.info("上传文件的大小：" + file.getSize());
@@ -170,7 +172,7 @@ public class SysAnnexController extends AppWebController {
                 String fileSuffix = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                 // 保存文件
                 String saveFilePath = new StringBuilder().append(DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS"))
-                .append("-").append(getSysUser(request).getUserId())
+                .append(Constants.uploadFileNameSplit).append(getSysUser(request).getUserId())
                 .append(fileSuffix).toString();
                 
                 fos = new FileOutputStream(new File(files, saveFilePath));
@@ -201,7 +203,7 @@ public class SysAnnexController extends AppWebController {
         return getModelAndView(message);
     }
     
-    /** 删除上传附件 */
+    /** 删除上传的临时附件 */
     @ApiOperation(value = "删除上传附件")
     @RequestMapping(value = "/delFile.do", method = {RequestMethod.POST})
     public ModelAndView delFile(HttpServletRequest request) {
@@ -224,6 +226,77 @@ public class SysAnnexController extends AppWebController {
         } finally {
         }
         return getModelAndView(message);
+    }
+    
+    /** 获取缩略图 */
+    @ApiOperation(value = "获取缩略图")
+    @RequestMapping(value = "/image.do", method = {RequestMethod.GET})
+    public void image(
+            @ApiParam(required = true, value = "图片ID") @RequestParam(name = "id", defaultValue = "") String id,
+            @ApiParam(required = false, value = "图片宽度") @RequestParam(name = "width", defaultValue = "-1") int width,
+            @ApiParam(required = false, value = "图片高度") @RequestParam(name = "height", defaultValue = "-1") int height,
+            @ApiParam(required = false, value = "图片比例") @RequestParam(name = "scale", defaultValue = "-1") float scale,
+            HttpServletRequest request, HttpServletResponse response) {
+        if (StringUtils.isEmpty(id)) return;
+        SysAnnex sysAnnex = null;
+        try {
+            sysAnnex = (SysAnnex) baseService.get(SysAnnex.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (sysAnnex == null) return;
+        String fileType = sysAnnex.getFileType();
+        if ("jpg".equals(fileType) || "jpeg".equals(fileType) || "png".equals(fileType) || "gif".equals(fileType)) {
+        } else {
+            return;
+        }
+        File file = new File(sysAnnex.getFilePath());
+        if (file.exists()) {
+            File parentFile = file.getParentFile();
+            String oldFileName = file.getName().substring(0, file.getName().lastIndexOf("."));
+            if (width > 0 && height > 0) {// 输入宽度、高度
+                try {
+                    StringBuilder nameSb = new StringBuilder();
+                    nameSb.append(oldFileName).append(Constants.uploadFileNameSplit)
+                    .append(width).append("X").append(height).append(".").append(sysAnnex.getFileType());
+                    String fileName = nameSb.toString();
+                    File newFile = new File(parentFile, fileName);
+                    if (newFile.exists() == false) {
+                        Thumbnails.of(file).size(width, height).toFile(newFile);
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(ConfigUtil.getFileAccessPath()).append(sysAnnex.getFileUrl()).append("/").append(fileName);
+                    response.sendRedirect(sb.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } 
+            } else if (scale > 0) {// 输入比例
+                try {
+                    StringBuilder nameSb = new StringBuilder();
+                    nameSb.append(oldFileName).append(Constants.uploadFileNameSplit)
+                    .append(scale).append(".").append(sysAnnex.getFileType());
+                    String fileName = nameSb.toString();
+                    File newFile = new File(parentFile, fileName);
+                    if (newFile.exists() == false) {
+                        Thumbnails.of(file).scale(scale).toFile(newFile);
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(ConfigUtil.getFileAccessPath()).append(sysAnnex.getFileUrl()).append("/").append(fileName);
+                    response.sendRedirect(sb.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append(ConfigUtil.getFileAccessPath()).append(sysAnnex.getFileUrl()).append("/").append(file.getName());
+                try {
+                    response.sendRedirect(sb.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return;
     }
     
     /** 新增 */
@@ -296,7 +369,7 @@ public class SysAnnexController extends AppWebController {
         try {
             if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
             String[] ids = StringUtils.split(id, ",");
-            baseService.deleteById(SysAnnex.class, ids, "annexId");
+            sysAnnexService.delete(ids);
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
         } catch (RefusedException e) {

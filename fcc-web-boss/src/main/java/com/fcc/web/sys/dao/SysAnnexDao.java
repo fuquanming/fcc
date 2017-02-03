@@ -11,6 +11,14 @@ import com.fcc.web.sys.model.SysAnnex;
  */
 public interface SysAnnexDao {
     /**
+     * 查询附件
+     * @param linkId
+     * @param linkType
+     * @param annexType
+     * @return
+     */
+    List<SysAnnex> query(String linkId, String linkType, String annexType);
+    /**
      * 分页查询
      * @return
      */

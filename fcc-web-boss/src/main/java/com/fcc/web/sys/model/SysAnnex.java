@@ -1,8 +1,12 @@
 package com.fcc.web.sys.model;
 
+import java.io.File;
+
 import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import com.fcc.web.sys.config.ConfigUtil;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -92,9 +96,12 @@ public class SysAnnex implements java.io.Serializable{
     // 不再限制长度  
     private java.util.Date updateTime;
     //columns END
+    /** web访问的地址 */
+    private String url;
+    /** 物理访问的地址 */
+    private String filePath;
 
-
-	public SysAnnex(){
+    public SysAnnex(){
 	}
 
 	public SysAnnex(
@@ -242,6 +249,34 @@ public class SysAnnex implements java.io.Serializable{
     
     public void setUpdateTime(java.util.Date value) {
         this.updateTime = value;
+    }
+    
+    @Transient
+    public String getUrl() {
+        if (this.url == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(ConfigUtil.getFileAccessPath()).append(this.fileUrl).append("/").append(this.fileName);
+            this.url = sb.toString();
+        }
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    @Transient
+    public String getFilePath() {
+        if (this.filePath == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(ConfigUtil.getFileUploadPath()).append(this.fileUrl).append(File.separatorChar).append(this.fileName);
+            this.filePath = sb.toString();
+        }
+        return this.filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
     
 

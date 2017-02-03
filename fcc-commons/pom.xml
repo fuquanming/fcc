@@ -20,11 +20,11 @@
 	</properties>
 	
     <dependencies>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.fcc.commons</groupId>
             <artifactId>fcc-commons-config</artifactId>
             <version>${env}-${fcc-commons-config.version}</version>
-        </dependency>
+        </dependency> -->
     
         <dependency>
             <groupId>commons-io</groupId>

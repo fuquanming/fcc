@@ -148,7 +148,14 @@ public class SysUser implements java.io.Serializable {
     private boolean admin = false;
     // 角色ID
     private Set<String> roleIds;
-
+    /** 附件关联类型 */
+    public static String ANNEX_LINK_TYPE = "sysUser";
+    
+    public interface AnnexType {
+        /** 头像 */
+        String logo = "logo";
+    }
+    
     public SysUser() {
     }
 

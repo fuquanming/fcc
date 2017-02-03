@@ -131,7 +131,7 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames) {
+    public boolean add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames) {
         Date now = new Date();
         String timePath = DateFormatUtils.format(now, "yyyyMMdd");
         int length = uploadFileNames.length;
@@ -153,7 +153,9 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
         String urlPath = fileUrlSb.toString();
         File parentFile = new File(parentPath);
         if (parentFile.exists() == false) parentFile.mkdirs();
+        boolean flag = true;
         for (int i = 0; i < length; i++) {
+            boolean temp = false;
             String fileName = uploadFileNames[i];
             String fileRealName = uploadFileRealNames[i];
             File file = new File(tempParentPath, fileRealName);
@@ -172,11 +174,57 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     sysAnnex.setFileUrl(urlPath);
                     sysAnnex.setCreateTime(now);
                     baseService.add(sysAnnex);
+                    temp = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            if (temp == false) {
+                flag = false;
+            }
         }
+        return flag;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(String[] annexIds) {
+        if (annexIds == null || annexIds.length == 0) return;
+        // 删除附件
+        List<String> idList = new ArrayList<String>();
+        for (String annexId : annexIds) {
+            idList.add(annexId);
+        }
+        List<SysAnnex> dataList = baseService.get(SysAnnex.class, idList, "annexId");
+        for (SysAnnex data : dataList) {
+            deleteFile(data);
+        }
+        baseService.deleteById(SysAnnex.class, annexIds, "annexId");
+    }
+    
+    public void deleteFile(SysAnnex sysAnnex) {
+        String fileName = sysAnnex.getFileName();
+        String fileUrl = sysAnnex.getFileUrl();
+        StringBuilder sb = new StringBuilder();
+        sb.append(ConfigUtil.getFileUploadPath()).append(fileUrl).append(File.separatorChar).append(fileName);
+        File file = new File(sb.toString());
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(SysAnnex sysAnnex) {
+        deleteFile(sysAnnex);
+        baseService.delete(sysAnnex);
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<SysAnnex> query(String linkId, String linkType, String annexType) {
+        return sysAnnexDao.query(linkId, linkType, annexType);
     }
     
     @Transactional(readOnly = true)

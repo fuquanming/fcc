@@ -14,6 +14,7 @@
     <fieldset>
     <legend>修改用户</legend>
     <form id="userForm" name="userForm" method="post">
+      <input name="ids" type="hidden" value="${sysAnnex.annexId }"/>
       <input name="userId" type="hidden" value="${data.userId }"/>
       <input name="roleValue" type="hidden" value=""/>
       <table class="tableForm" align="center">
@@ -50,6 +51,17 @@
           <th>备注</th>
           <td colspan="3"><textarea rows="5" cols="40" name="remark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]">${data.remark }</textarea>
           </td>
+        </tr>
+        <tr>
+             <th>头像：</th>
+             <td width="350px;">
+             <%-- ${filePath }${sysAnnex.fileUrl }/${sysAnnex.fileName} --%>
+             <%-- <img id="userLogo" src="${sysAnnex.url }" width="60px" height="80px"/>
+             <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small l-btn-plain" iconcls="icon-remove" onclick="delFile();" plain="true">删除</a>
+             <br/> --%>
+             <tool:fileShow linkType="${linkType }" annexType="${annexType }" linkId="${data.userId }"></tool:fileShow>
+             <tool:fileUpload linkType="${linkType }" annexType="${annexType }" fileType="gif|jpg|jpeg|png"></tool:fileUpload>
+             </td>
         </tr>
         <tr>
           <th></th>
@@ -96,7 +108,7 @@ saveParam_form = 'userForm';
 saveParam_saveUrl = '${basePath}manage/sys/user/edit.do';
 saveParam_backUrl = '${basePath}manage/sys/user/view.do';
 saveParam_beforeCallback = function() {
-	var roleIds = [];
+    var roleIds = [];
     $('#selecetRole').children().each(function(){
         roleIds.push($(this).val());
     });

@@ -21,6 +21,12 @@ public class SysAnnexDaoImpl implements SysAnnexDao {
     @Resource
     private BaseDao baseDao;
     
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<SysAnnex> query(String linkId, String linkType, String annexType) {
+        return baseDao.find("from SysAnnex where linkId=? and linkType=? and annexType=?", linkId, linkType, annexType);
+    }
+    
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
         StringBuilder cHql = new StringBuilder("select count(t) from SysAnnex t where 1=1 ");
         StringBuilder bHql = new StringBuilder("select t from SysAnnex t where 1=1 ");
@@ -114,6 +120,9 @@ public class SysAnnexDaoImpl implements SysAnnexDao {
             if(param.get("annexName") != null) {
                 bHql.append(" and  t.annexName = :annexName ");
             }
+            if(param.get("annexType") != null) {
+                bHql.append(" and  t.annexType = :annexType ");
+            }
             if(param.get("fileName") != null) {
                 bHql.append(" and  t.fileName = :fileName ");
             }
@@ -185,6 +194,10 @@ public class SysAnnexDaoImpl implements SysAnnexDao {
             if(param.get("annexName") != null) {
                 bHql.append(" and  t.annexName = :annexName ");
                 cHql.append(" and  t.annexName = :annexName ");
+            }
+            if(param.get("annexType") != null) {
+                bHql.append(" and  t.annexType = :annexType ");
+                cHql.append(" and  t.annexType = :annexType ");
             }
             if(param.get("fileName") != null) {
                 bHql.append(" and  t.fileName = :fileName ");

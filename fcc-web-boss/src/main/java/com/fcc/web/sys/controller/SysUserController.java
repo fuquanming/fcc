@@ -1,8 +1,8 @@
 package com.fcc.web.sys.controller;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +36,7 @@ import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Organization;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.model.SysAnnex;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.RoleModuleRightService;
 import com.fcc.web.sys.service.RoleService;
@@ -146,6 +147,9 @@ public class SysUserController extends AppWebController {
 	            param.put("createUser", getSysUser(request).getUserId());
 			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
+			// 用户头像附件
+			request.setAttribute("linkType", SysUser.ANNEX_LINK_TYPE);
+            request.setAttribute("annexType", SysUser.AnnexType.logo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载新增用户页面数据失败！", e);
@@ -174,6 +178,9 @@ public class SysUserController extends AppWebController {
 	            param.put("createUser", data.getCreateUser());
 			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
+			
+			request.setAttribute("linkType", SysUser.ANNEX_LINK_TYPE);
+			request.setAttribute("annexType", SysUser.AnnexType.logo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载显示修改用户页面数据失败！", e);
@@ -201,10 +208,6 @@ public class SysUserController extends AppWebController {
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否删除上级组织机构
 //				throw new RefusedException("不能选择上级机构！");
 //			}
-			// 附件
-			String annexType = request.getParameter("annexType");// 附件类型
-            String fileName = request.getParameter(annexType + "-uploadFileName");// 提交的文件名
-            String fileRealName = request.getParameter(annexType + "-uploadFileRealName");// 保存的文件名
 			
 			// 判断userId
 			SysUser tempUser = (SysUser) baseService.get(SysUser.class, userId);
@@ -212,17 +215,13 @@ public class SysUserController extends AppWebController {
 			
 			sysUser.setUserStatus(UserStatus.normal.name());
 			sysUser.setDept(dept);
-			sysUser.setRegDate(new Timestamp(System.currentTimeMillis()));
+			sysUser.setRegDate(new Date());
 			sysUser.setCreateTime(sysUser.getRegDate());
 			sysUser.setCreateUser(user.getUserId());
 			sysUserService.add(sysUser, roleIds);
-			if (fileName != null) {
-			    String[] fileNames = StringUtils.split(fileName, ",");
-			    String[] fileRealNames = StringUtils.split(fileRealName, ",");
-			    if (fileNames != null && fileNames.length > 0) {
-			        sysAnnexService.add("sysUser", sysUser.getUserId(), annexType, fileNames, fileRealNames);
-			    }
-			}
+			
+			addUploadFile(sysUser.getUserId(), request);
+			
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {
@@ -249,6 +248,7 @@ public class SysUserController extends AppWebController {
 			if (roleValue != null && !"".equals(roleValue)) {
 				roleIds = StringUtils.split(roleValue, ",");
 			}
+            
 			// 组织机构
 //			SysUser user = getSysUser(request);
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否选择上级组织机构
@@ -256,6 +256,17 @@ public class SysUserController extends AppWebController {
 //			}
 			sysUser.setDept(dept);
 			sysUserService.edit(sysUser, roleIds);
+			
+			// 获取logo附件
+			List<SysAnnex> annexList = sysAnnexService.query(sysUser.getUserId(), SysUser.ANNEX_LINK_TYPE, SysUser.AnnexType.logo);
+			if (addUploadFile(sysUser.getUserId(), request)) {
+			    // 删除原来logo文件
+			    if (annexList != null && annexList.size() > 0) {
+			        for (SysAnnex annex : annexList) 
+			            sysAnnexService.delete(annex);
+			    }
+			}
+            
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {

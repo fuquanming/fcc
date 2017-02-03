@@ -26,6 +26,8 @@ public interface Constants {
     String uploadFileTempPath = "temp";
     /** 上传附件文件目录 */
     String uploadFilePath = "fcc";
+    /** 上传附件文件名分割符号 */
+    String uploadFileNameSplit = "-";
     /**
      * 当前登录的用户
      */

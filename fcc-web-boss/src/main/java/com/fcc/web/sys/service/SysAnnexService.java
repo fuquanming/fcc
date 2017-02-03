@@ -19,7 +19,25 @@ public interface SysAnnexService {
      * @param uploadFileNames       上传附件的名称
      * @param uploadFileRealNames   上传附件的真实名称
      */
-    void add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames);
+    boolean add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames);
+    /**
+     * 删除附件
+     * @param annexIds
+     */
+    void delete(String[] annexIds);
+    /**
+     * 删除附件
+     * @param sysAnnex
+     */
+    void delete(SysAnnex sysAnnex);
+    /**
+     * 查询附件
+     * @param linkId
+     * @param linkType
+     * @param annexType
+     * @return
+     */
+    List<SysAnnex> query(String linkId, String linkType, String annexType);
 	/**
 	 * 分页查询
 	 * @return

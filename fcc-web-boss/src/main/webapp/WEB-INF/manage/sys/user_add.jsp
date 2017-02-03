@@ -15,8 +15,6 @@
     <legend>新增用户</legend>
     <form id="userForm" name="userForm" method="post">
       <input name="roleValue" type="hidden" value=""/>
-      <input name="annexType" type="hidden" value="logo"/>
-      <input name="linkType" type="hidden" value="user"/>
       <table class="tableForm" align="center">
         <tr>
           <th>帐号</th>
@@ -50,9 +48,9 @@
           </td>
         </tr>
         <tr>
-             <th>上传附件：</th>
+             <th>头像：</th>
              <td width="350px;">
-             <tool:fileUpload linkType="user" fid="logo" maxFileTotal="5" fileType="jpg|png"></tool:fileUpload>
+             <tool:fileUpload linkType="${linkType }" annexType="${annexType }" fileType="gif|jpeg|jpg|png"></tool:fileUpload>
              </td>
         </tr>
         <tr>
