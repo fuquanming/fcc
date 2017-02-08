@@ -14,9 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysUserService;
 
@@ -57,14 +56,14 @@ public class UserPasswordController extends AppWebController {
             @ApiParam(required = true, value = "确认码") @RequestParam(name = "confirmPassword") String confirmPassword) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(oldPassword)) throw new RefusedException(Constants.StatusCode.UserPassword.emptyOldPassword);
-			if (StringUtils.isEmpty(newPassword)) throw new RefusedException(Constants.StatusCode.UserPassword.emptyNewPassword);
-			if (StringUtils.isEmpty(confirmPassword)) throw new RefusedException(Constants.StatusCode.UserPassword.emptyConfirmPassword);
-			if (!newPassword.equals(confirmPassword)) throw new RefusedException(Constants.StatusCode.UserPassword.errorPasswordConsistent);
+			if (StringUtils.isEmpty(oldPassword)) throw new RefusedException(StatusCode.UserPassword.emptyOldPassword);
+			if (StringUtils.isEmpty(newPassword)) throw new RefusedException(StatusCode.UserPassword.emptyNewPassword);
+			if (StringUtils.isEmpty(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.emptyConfirmPassword);
+			if (!newPassword.equals(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.errorPasswordConsistent);
 			SysUser user = getSysUser(request);
 			String password = user.getPassword();
 			if (!EncryptionUtil.encodeMD5(oldPassword).toLowerCase().equals(password)) {
-			    throw new RefusedException(Constants.StatusCode.UserPassword.errorOldPassword);
+			    throw new RefusedException(StatusCode.UserPassword.errorOldPassword);
 			}
 			sysUserService.updatePassword(user.getUserId(), EncryptionUtil.encodeMD5(newPassword).toLowerCase());
 			message.setSuccess(true);

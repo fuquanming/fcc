@@ -27,6 +27,7 @@ import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.dao.TreeableDao;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.dao.RoleDao;
 import com.fcc.web.sys.dao.SysKeyDao;
 import com.fcc.web.sys.dao.SysUserDao;
@@ -95,7 +96,7 @@ public class SysUserServiceImpl implements SysUserService {
             SysKey sysKey = new SysKey();
             sysKey.setLinkId(userId);
             sysKey.setLinkType(SysDictType.userPassword.name());
-            key = EncryptionUtil.getKey3DES(userId + RandomStringUtils.random(5, true, true), Constants.ENCODING);
+            key = EncryptionUtil.getKey3DES(userId + RandomStringUtils.random(5, true, true), Constants.encode);
             sysKey.setKeyValue(EncryptionUtil.encodeBase64(key.getEncoded()));
             baseService.add(sysKey);
         }
@@ -104,12 +105,11 @@ public class SysUserServiceImpl implements SysUserService {
     
     private String getEncodePass(Key key, String userPass) {
         if (userPass == null || "".equals(userPass)) userPass = getDefaultUserPass();
-        return EncryptionUtil.encodeMD5(EncryptionUtil.encrypt3DES(key, userPass, Constants.ENCODING));
+        return EncryptionUtil.encodeMD5(EncryptionUtil.encrypt3DES(key, userPass, Constants.encode));
     }
     
     
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#add(com.fcc.web.sys.model.SysUser, java.lang.String[])
      **/
 	@Override
@@ -119,7 +119,7 @@ public class SysUserServiceImpl implements SysUserService {
 	    SysKey sysKey = new SysKey();
 	    sysKey.setLinkId(data.getUserId());
 	    sysKey.setLinkType(SysDictType.userPassword.name());
-	    Key key = EncryptionUtil.getKey3DES(data.getUserId() + RandomStringUtils.random(5, true, true), Constants.ENCODING);
+	    Key key = EncryptionUtil.getKey3DES(data.getUserId() + RandomStringUtils.random(5, true, true), Constants.encode);
 	    sysKey.setKeyValue(EncryptionUtil.encodeBase64(key.getEncoded()));
 	    
 	    baseService.add(sysKey);
@@ -129,7 +129,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#addRole(java.lang.String, java.lang.String[])
      **/
 	@Override
@@ -144,7 +143,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#edit(com.fcc.web.sys.model.SysUser, java.lang.String[])
      **/
 	@Override
@@ -155,7 +153,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#edit(com.fcc.web.sys.model.SysUser)
      **/
 	@Override
@@ -165,7 +162,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#resetPassword(java.lang.String[], java.lang.String)
      **/
 	@Override
@@ -176,7 +172,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#delete(java.lang.String[])
      **/
 	@Override
@@ -188,7 +183,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#editStatus(java.lang.String[], java.lang.String)
      **/
 	@Override
@@ -198,7 +192,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#getLoninUser(java.lang.String, java.lang.String)
      **/
 	@Override
@@ -206,7 +199,7 @@ public class SysUserServiceImpl implements SysUserService {
 	public SysUser getLoninUser(String userId, String password) throws RefusedException {
 		SysUser sysUser = (SysUser) baseService.get(SysUser.class, userId);
 		if (sysUser == null) {
-			throw new RefusedException(Constants.StatusCode.Login.errorUserName);
+			throw new RefusedException(StatusCode.Login.errorUserName);
 		} else {
 		    // 登录次数限制
 		    String loginCount = cacheService.getLoginCount(userId);
@@ -227,7 +220,7 @@ public class SysUserServiceImpl implements SysUserService {
 		        if (DateFormatUtils.format(new Date(), "yyyy-MM-dd").equals(params[0])) {
 		            count = Integer.valueOf(params[1]);
 		            if (count >= maxCount) {
-		                throw new RefusedException(Constants.StatusCode.Login.emptyLoginCount);
+		                throw new RefusedException(StatusCode.Login.emptyLoginCount);
 		            }
 	                count++;
 		        }
@@ -236,11 +229,11 @@ public class SysUserServiceImpl implements SysUserService {
 			if (!getEncodePass(getKey(userId), password).equalsIgnoreCase(sysUser.getPassword())) {
 			    // 登录次数累加
 			    cacheService.updateLoginCount(userId, count);
-//				throw new RefusedException(Constants.StatusCode.Login.errorPassword);
+//				throw new RefusedException(StatusCode.Login.errorPassword);
 			    if (maxCount - count == 0) {
-			        throw new RefusedException(Constants.StatusCode.Login.emptyLoginCount);
+			        throw new RefusedException(StatusCode.Login.emptyLoginCount);
 			    }
-			    throw new RefusedException(maxCount - count, Constants.StatusCode.Login.errorLoginCount);
+			    throw new RefusedException(maxCount - count, StatusCode.Login.errorLoginCount);
 			}
 			sysUser.getRoles().size();
 		}
@@ -248,7 +241,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#getUserWithRole(java.lang.String)
      **/
 	@Override
@@ -262,7 +254,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#updatePassword(java.lang.String, java.lang.String)
      **/
 	@Override
@@ -272,7 +263,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#getUserByRoleIds(java.util.List)
      **/
 	@Override
@@ -282,7 +272,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#findByUsername(java.lang.String)
      **/
 	@Override
@@ -293,7 +282,6 @@ public class SysUserServiceImpl implements SysUserService {
 	
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#findStringRoles(com.fcc.web.sys.model.SysUser)
      **/
 	@Override
@@ -311,7 +299,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#queryPage(int, int, java.util.Map)
      **/
 	@Override
@@ -345,7 +332,6 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * //TODO 添加override说明
      * @see com.fcc.web.sys.service.SysUserService#getSysUserMenu(com.fcc.web.sys.model.SysUser)
      **/
 	@Override

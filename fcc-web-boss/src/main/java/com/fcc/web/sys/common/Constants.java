@@ -17,30 +17,16 @@ import java.util.Map;
  * @version 
  * @author 傅泉明
  */
-public interface Constants {
+public interface Constants extends com.fcc.commons.web.common.Constants {
     
-    public static final String ENCODING = "UTF-8";
     /** 用户默认密码 */
     String defaultUserPass = "888888";
-    /** 上传附件临时文件目录 */
-    String uploadFileTempPath = "temp";
-    /** 上传附件文件目录 */
-    String uploadFilePath = "fcc";
-    /** 上传附件文件名分割符号 */
-    String uploadFileNameSplit = "-";
+    
     /**
      * 当前登录的用户
      */
-    String CURRENT_USER = "user";
-    String CURRENT_USERNAME = "username";
-    /** 验证码 */
-    String RAND_CODE_KEY = "rand_code_key";
-    /** 系统提供导出数据下载文件夹 */
-    String EXPORT_DATA_FILENAME = "exportData";
-    /** 系统提供导入数据文件夹 */
-    String IMPORT_DATA_FILENAME = "importData";
-    /** 系统提供导出数据每次查询数据量 */
-    int EXPORT_DATA_PAGE_SIZE = 5000;
+    String currentUser = "user";
+    String currentUserName = "username";
     
     /** 系统用户session中的变量 */
     public interface SysUserSession {
@@ -106,134 +92,6 @@ public interface Constants {
                 TEXT_MAP.put(login, "登录");
                 TEXT_MAP.put(logout, "退出");
             }
-        }
-    }
-    
-    
-    public interface StatusCode {
-//        /** 系统 */
-//        public interface Sys {
-//            /** 成功 sys_000 */
-//            String success = "sys_000";
-//            /** 失败 sys_001 */
-//            String fail = "sys_001";
-//            /** 修改记录时，ID为空 sys_002 */
-//            String emptyUpdateId = "sys_002";
-//            /** 删除记录时，ID为空 sys_003 */
-//            String emptyDeleteId = "sys_003";
-//            /** session过期 sys_004 */
-//            String sessionTimeout = "sys_004";
-//            /** 无权限 sys_005 */
-//            String noPermissions = "sys_005";
-//            /** 堆空间不足 sys_006 */
-//            String heapSpace = "sys_006";
-//        }
-        
-        /** 上传文件 */
-        public interface Import {
-            /** 已上传成功！系统正在导入数据... import_000 */
-            String importNow = "import_000";
-            /** 系统正在执行上次导入数据，请稍后... import_001 */
-            String importBusy = "import_001";
-            /** 请选择上传文件 import_002 */
-            String emptyFile = "import_002";
-        }
-        
-        /** 导出文件 */
-        public interface Export {
-            /** 系统正在导出数据... export_000 */
-            String exportNow = "export_000";
-            /** 系统正在执行上次导出数据，请稍后... export_001 */
-            String exportBusy = "export_001";
-        }
-        
-        /** 用户登录 */
-        public interface Login {
-            /** 用户名为空 login_000 */
-            String emptyUserName = "login_000";
-            /** 密码为空 login_001 */
-            String emptyPassword = "login_001";
-            /** 验证码为空 login_002 */
-            String emptyRandCode = "login_002";
-            /** 验证码错误 login_003 */
-            String errorRandCode = "login_003";
-            /** 用户名不存在 login_004 */
-            String errorUserName = "login_004";
-            /** 密码错误 login_005 */
-            String errorPassword = "login_005";
-            /** 用户锁定 login_006 */
-            String lockUserName = "login_006";
-            /** 登录次数限制 login_007 */
-            String errorLoginCount = "login_007";
-            /** 无登录次数 login_007 */
-            String emptyLoginCount = "login_008";
-        }
-        
-        public interface Module {
-            /** 模块名称为空 module_000 */
-            String emptyModuleName = "module_000";
-            /** 父模块为空 module_001 */
-            String emptyParentModule = "module_001";
-            /** 不能修改根节点 module_002 */
-            String errorRootModuleId = "module_002";
-            /** 修改的模块不存在 module_003 */
-            String errorModuleId = "module_003";
-        }
-        
-        public interface Operate {
-            /** 操作ID为空 operate_000 */
-            String emptyOperateId = "operate_000";
-            /** 操作名称为空 operate_001 */
-            String emptyOperateName = "operate_001";
-            /** 操作ID已存在 operate_002 */
-            String exitsOperateId = "operate_002";
-            /** 超过最大操作个数 operate_003 */
-            String maxOperateValue = "operate_003";
-        }
-        
-        public interface Role {
-            /** 角色名称为空 role_000 */
-            String emptyRoleName = "role_000";
-            /** 不是自己创建的角色 role_001 */
-            String errorMySelfRoleId = "role_001";
-        }
-        
-        public interface Organization {
-            /** 机构名称为空 organization_000 */
-            String emptyOrganizationName = "organization_000";
-            /** 父机构为空 organization_001 */
-            String emptyParentOrganization = "organization_001";
-            /** 不能修改根节点 organization_002 */
-            String errorRootOrganizationId = "organization_002";
-            /** 修改的机构不存在 organization_003 */
-            String errorOrganizationId = "organization_003";
-            /** 该组织机构下有人员！ organization_004 */
-            String hasUser = "organization_004";
-            /** 上级机构不能是自己！ organization_005 */
-            String errorParentOneself = "organization_005";
-        }
-        
-        public interface SysUser {
-            /** 用户账号为空 sysUser_000 */
-            String emptyUserId = "sysUser_000";
-            /** 机构ID为空 sysUser_001 */
-            String emptyOrganID = "sysUser_001";
-            /** 用户账号已存在 sysUser_002 */
-            String exitsUserId = "sysUser_002";
-        }
-        
-        /** 用户密码 */
-        public interface UserPassword {
-            /** 旧密码为空 userPassword_000 */
-            String emptyOldPassword = "userPassword_000";
-            /** 新密码为空 userPassword_001 */
-            String emptyNewPassword = "userPassword_001";
-            /** 确认码为空 userPassword_002 */
-            String emptyConfirmPassword = "userPassword_002";
-            /** 旧密码错误 userPassword_003 */
-            String errorOldPassword = "userPassword_003";
-            /** 新密码和确认码不一致 userPassword_004 */
-            String errorPasswordConsistent = "userPassword_004";
         }
     }
 }

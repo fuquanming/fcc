@@ -11,6 +11,7 @@
 }
 </style>
 <script type="text/javascript">
+var importParam_importFileType;
 var importParam_importUrl;// 导入数据URL
 var importParam_queryImportUrl;// 查询导入数据URL
 
@@ -20,10 +21,16 @@ var fileuploadTable;
 var fileupload_data;
 $(function() {
 	fileuploadTable = $('#fileuploadTable');
+	if (importParam_importFileType) {
+		importParam_importFileType = /(\.|\/)( + importParam_importFileType + )$/i;
+	} else {
+		importParam_importFileType = /(\.|\/)(jpg|png)$/i;
+	}
+	console.log(importParam_importFileType)
 	$('#fileupload').attr('data-url', importParam_importUrl);
 	$('#fileupload').fileupload({
-        dataType: 'json',
-        acceptFileTypes:  /(\.|\/)(xls|xlsx)$/i,// 文件类型
+        dataType: 'json', // xls|xlsx
+        acceptFileTypes:  importParam_importFileType,// 文件类型
         maxFileSize: 52428800,// 50M
         maxNumberOfFiles : 1,// 上传一个文件
         add: function (e, data) {
@@ -38,8 +45,8 @@ $(function() {
             .appendTo(fileuploadTable)
             .click(function () {
                 //data.context = $('<p/>').text('上传中...').replaceAll($(this));
-            	fileupload_data = data;
-            });                    
+            });    
+            fileupload_data = data;
         },
         done: function (e, data) {
         	Tool.message.progress('close');

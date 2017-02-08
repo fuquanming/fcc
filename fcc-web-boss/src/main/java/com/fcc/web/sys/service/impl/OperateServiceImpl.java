@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.dao.OperateDao;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.service.OperateService;
@@ -51,7 +51,7 @@ public class OperateServiceImpl implements OperateService {
 		synchronized (factorialPop) {
 		    Operate oldOperate = (Operate) baseService.get(Operate.class, o.getOperateId());
 			if (oldOperate != null) {
-				throw new RefusedException(Constants.StatusCode.Operate.exitsOperateId);
+				throw new RefusedException(StatusCode.Operate.exitsOperateId);
 			}
 			OperateValueCount ov = operateDao.getMaxOperateValueAndCount();
 			long count = ov.getCount();
@@ -61,7 +61,7 @@ public class OperateServiceImpl implements OperateService {
 			}
 			int maxCount = 63;
 			if (count >= maxCount) {
-				throw new RefusedException(Constants.StatusCode.Operate.maxOperateValue);
+				throw new RefusedException(StatusCode.Operate.maxOperateValue);
 			} else if ((value > Long.MAX_VALUE && count < maxCount)) {
 				List<Operate> list = baseService.getAll(Operate.class);
 				Long o_value = null;

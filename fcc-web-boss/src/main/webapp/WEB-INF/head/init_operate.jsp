@@ -64,8 +64,10 @@ $(function() {
 	if (operateParam_delUrl || operateParam_del_beforeCallback || operateParam_del_afterCallback) $('#del_button').removeClass(hiddenCss);
 	try {
 		if ($.isFunction(exportData)) $('#export_button').removeClass(hiddenCss);
-		if ($.isFunction(importData)) $('#import_button').removeClass(hiddenCss);
 	} catch (e) {}
+	try {
+        if ($.isFunction(importData)) $('#import_button').removeClass(hiddenCss);
+    } catch (e) {}
 	if (operateParam_reportUrl) $('#report_button').removeClass(hiddenCss);
 })
 

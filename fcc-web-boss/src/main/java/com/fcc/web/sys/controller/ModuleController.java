@@ -21,11 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
@@ -139,14 +138,14 @@ public class ModuleController extends AppWebController {
 	        @ApiParam(required = false, value = "模块排序") @RequestParam(name = "moduleSort", defaultValue = "1") int moduleSort) {
 		Message message = new Message();
 		try {
-			if (StringUtils.isEmpty(moduleName)) throw new RefusedException(Constants.StatusCode.Module.emptyModuleName);
+			if (StringUtils.isEmpty(moduleName)) throw new RefusedException(StatusCode.Module.emptyModuleName);
 			if (StringUtils.isEmpty(parentId)) parentId = Module.ROOT.getModuleId();
 			String[] operateIds = null;
 			if (!StringUtils.isEmpty(operateValue)) {
 				operateIds = StringUtils.split(operateValue, ",");
 			}
 			Module parentModule = moduleService.getModuleById(parentId);
-			if (parentModule == null) throw new RefusedException(Constants.StatusCode.Module.emptyParentModule);
+			if (parentModule == null) throw new RefusedException(StatusCode.Module.emptyParentModule);
 			
 			Module data = new Module();
 			if (Module.ROOT.getModuleId().equals(parentId)) {
@@ -194,15 +193,15 @@ public class ModuleController extends AppWebController {
 		Message message = new Message();
 		try {
 			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
-			if (moduleName == null || "".equals(moduleName)) throw new RefusedException(Constants.StatusCode.Module.emptyModuleName);
-			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
+			if (moduleName == null || "".equals(moduleName)) throw new RefusedException(StatusCode.Module.emptyModuleName);
+			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(StatusCode.Module.errorRootModuleId);
 			
 			if (StringUtils.isEmpty(parentId)) parentId = Module.ROOT.getModuleId();
 			Module parentModule = moduleService.getModuleById(parentId);
-            if (parentModule == null) throw new RefusedException(Constants.StatusCode.Module.emptyParentModule);
+            if (parentModule == null) throw new RefusedException(StatusCode.Module.emptyParentModule);
             
 			Module data = moduleService.getModuleById(moduleId);
-			if (data == null) throw new RefusedException(Constants.StatusCode.Module.errorModuleId);
+			if (data == null) throw new RefusedException(StatusCode.Module.errorModuleId);
 			
 			if (Module.ROOT.getModuleId().equals(parentId)) {
 			    data.setParentId(Module.ROOT.getModuleId());
@@ -245,7 +244,7 @@ public class ModuleController extends AppWebController {
 		Message message = new Message();
 		try {
 			if (StringUtils.isEmpty(moduleId)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
-			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(Constants.StatusCode.Module.errorRootModuleId);
+			if (Module.ROOT.getModuleId().equals(moduleId)) throw new RefusedException(StatusCode.Module.errorRootModuleId);
 			moduleService.delete(moduleId);
 			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);

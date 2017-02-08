@@ -4,21 +4,16 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
 
 import com.fcc.commons.web.controller.BaseController;
-import com.fcc.commons.web.service.ConfigService;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysAnnexService;
 
-@Controller
 public class AppWebController extends BaseController {
 
-    @Resource
-    ConfigService configService;
     @Resource
     CacheService cacheService;
     @Resource
@@ -37,10 +32,6 @@ public class AppWebController extends BaseController {
     
     public SysUser getSysUser(HttpServletRequest request) {
         return cacheService.getSysUser(request);
-    }
-    
-    public void execute(Runnable runnable) {
-        configService.getThreadPool().execute(runnable);
     }
     
     public boolean isGroup() {

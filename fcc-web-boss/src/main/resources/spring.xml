@@ -22,6 +22,7 @@
                 <value>classpath:config/config.properties</value>
                 <value>classpath:config/email.properties</value>
                 <value>classpath:config/redis.properties</value>
+                <value>classpath:config/activiti.properties</value>
             </list>
         </property>
     </bean>
@@ -35,6 +36,8 @@
     
     <import resource="spring/spring-redis.xml" />
     <import resource="spring/spring-session.xml" />
+    
+    <import resource="spring/spring-activiti.xml" />
     
     <!-- <import resource="spring/spring-ehcache.xml" /> -->
     <!-- <import resource="spring/spring-simple-shiro.xml" /> -->

@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysUserService;
@@ -52,14 +52,14 @@ public class LoginController extends AppWebController {
             @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode", defaultValue = "") String subCode) {
         //	    Assert.notNull(userId, LoginErrorEnums.usernameIsNull.getInfo());
         System.out.println(request.getSession().getId());
-        String sesCode = (String) request.getSession().getAttribute(Constants.RAND_CODE_KEY);
+        String sesCode = (String) request.getSession().getAttribute(Constants.randCodeKey);
         Message message = new Message();
         try {
-            if (StringUtils.isEmpty(userId)) throw new RefusedException(Constants.StatusCode.Login.emptyUserName);
-            if (StringUtils.isEmpty(password)) throw new RefusedException(Constants.StatusCode.Login.emptyPassword);
-            if (StringUtils.isEmpty(subCode))  throw new RefusedException(Constants.StatusCode.Login.emptyRandCode);
+            if (StringUtils.isEmpty(userId)) throw new RefusedException(StatusCode.Login.emptyUserName);
+            if (StringUtils.isEmpty(password)) throw new RefusedException(StatusCode.Login.emptyPassword);
+            if (StringUtils.isEmpty(subCode))  throw new RefusedException(StatusCode.Login.emptyRandCode);
             if (!ConfigUtil.isDev()) {
-                if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(Constants.StatusCode.Login.errorRandCode);
+                if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(StatusCode.Login.errorRandCode);
             }
             SysUser user = null;
             user = sysUserService.getLoninUser(userId, password);

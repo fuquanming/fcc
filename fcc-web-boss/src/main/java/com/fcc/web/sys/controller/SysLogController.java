@@ -31,7 +31,6 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
 import com.fcc.commons.web.task.ExportTask;
@@ -45,6 +44,7 @@ import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.web.view.ReportInfo;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.model.SysLog;
@@ -485,7 +485,7 @@ public class SysLogController extends AppWebController {
 		        if (exportTask == null) exportTask = new ExportTask();
 		        if (exportDataPath == null) {
 		            StringBuilder sb = new StringBuilder();
-	                sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.EXPORT_DATA_FILENAME)
+	                sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.exportDataFileName)
 	                .append(File.separatorChar).append("sysLogExport").append(File.separatorChar);
 	                exportDataPath = sb.toString();
 		        }
@@ -500,7 +500,7 @@ public class SysLogController extends AppWebController {
                 titleList.add(SysLog.ALIAS_EVENT_PARAM);
                 titleList.add(SysLog.ALIAS_EVENT_OBJECT);
                 titleList.add(SysLog.ALIAS_EVENT_RESULT);
-                Object[] paramObject = new Object[]{1, Constants.EXPORT_DATA_PAGE_SIZE, getParams(request), false};
+                Object[] paramObject = new Object[]{1, Constants.exportDataPageSize, getParams(request), false};
                 exportTask.setRunningKey("sysLog");
                 exportTask.setTitleList(titleList);
                 exportTask.setExportDataPath(exportDataPath);
@@ -512,9 +512,9 @@ public class SysLogController extends AppWebController {
                 exportTask.init();
 		        execute(exportTask);
 		        message.setSuccess(true);
-                message.setMsg(Constants.StatusCode.Export.exportNow);
+                message.setMsg(StatusCode.Export.exportNow);
 		    } else {
-		        message.setMsg(Constants.StatusCode.Export.exportBusy);
+		        message.setMsg(StatusCode.Export.exportBusy);
 		    }
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -563,7 +563,7 @@ public class SysLogController extends AppWebController {
 					
 					if (importDataPath == null) {
                         StringBuilder sb = new StringBuilder();
-                        sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.EXPORT_DATA_FILENAME)
+                        sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.importDataFileName)
                                 .append(File.separatorChar).append("sysLogImport").append(File.separatorChar);
                         importDataPath = sb.toString();
 	                }
@@ -575,12 +575,12 @@ public class SysLogController extends AppWebController {
                     importTask.init();
                     execute(importTask);
                     message.setSuccess(true);
-                    message.setMsg(Constants.StatusCode.Import.importNow);
+                    message.setMsg(StatusCode.Import.importNow);
 				} else {
-					message.setMsg(Constants.StatusCode.Import.emptyFile);
+					message.setMsg(StatusCode.Import.emptyFile);
 				}
 			} else {
-				message.setMsg(Constants.StatusCode.Import.importBusy);
+				message.setMsg(StatusCode.Import.importBusy);
 			}
 		} catch (Exception e) {
 			message.setMsg(StatusCode.Sys.fail);

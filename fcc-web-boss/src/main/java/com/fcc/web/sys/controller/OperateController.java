@@ -19,11 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
-import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.model.Operate;
 import com.fcc.web.sys.service.OperateService;
 
@@ -60,8 +59,8 @@ public class OperateController extends AppWebController {
 	public ModelAndView add(HttpServletRequest request, Operate operate) {
 		Message message = new Message();
 		try {
-		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateId);
-		    if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
+		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(StatusCode.Operate.emptyOperateId);
+		    if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(StatusCode.Operate.emptyOperateName);
 			operateService.add(operate);
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
@@ -83,7 +82,7 @@ public class OperateController extends AppWebController {
 		Message message = new Message();
 		try {
 		    if (StringUtils.isEmpty(operate.getOperateId())) throw new RefusedException(StatusCode.Sys.emptyUpdateId);
-            if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(Constants.StatusCode.Operate.emptyOperateName);
+            if (StringUtils.isEmpty(operate.getOperateName())) throw new RefusedException(StatusCode.Operate.emptyOperateName);
             operateService.edit(operate);
             reloadOperateCache();
             reloadModuleCache();

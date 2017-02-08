@@ -25,13 +25,13 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeGridModule;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
@@ -141,7 +141,7 @@ public class RoleController extends AppWebController {
 	        @ApiParam(required = false, value = "角色备注") @RequestParam(name = "roleDesc", defaultValue = "") String roleDesc) {
 		Message message = new Message();
 		try {
-			if (roleName == null || "".equals(roleName)) throw new RefusedException(Constants.StatusCode.Role.emptyRoleName);
+			if (roleName == null || "".equals(roleName)) throw new RefusedException(StatusCode.Role.emptyRoleName);
 			Role role = new Role();
 			role.setRoleId(UUID.randomUUID().toString().substring(0, 6));
 			role.setRoleName(roleName);
@@ -177,7 +177,7 @@ public class RoleController extends AppWebController {
 		Message message = new Message();
 		try {
 			String roleName = role.getRoleName();
-			if (roleName == null || "".equals(roleName)) throw new RefusedException(Constants.StatusCode.Role.emptyRoleName);
+			if (roleName == null || "".equals(roleName)) throw new RefusedException(StatusCode.Role.emptyRoleName);
 			Role dbRole = null;
 			String roleId = role.getRoleId();
 			if (StringUtils.isNotEmpty(roleId)) {
@@ -192,7 +192,7 @@ public class RoleController extends AppWebController {
 			if (!user.isAdmin()) {
 				// 不能修改其他人创建的用户
 				if (!user.getUserId().equals(dbRole.getCreateUser())) {
-					throw new RefusedException(Constants.StatusCode.Role.errorMySelfRoleId);
+					throw new RefusedException(StatusCode.Role.errorMySelfRoleId);
 				}
 			}
 			

@@ -24,13 +24,13 @@ import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
-import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.service.TreeableService;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.EasyuiTreeNode;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.common.StatusCode;
 import com.fcc.web.sys.enums.UserStatus;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Organization;
@@ -201,8 +201,8 @@ public class SysUserController extends AppWebController {
 				roleIds = StringUtils.split(roleValue, ",");
 			}
 			String userId = sysUser.getUserId();
-			if (userId == null || "".equals(userId)) throw new RefusedException(Constants.StatusCode.SysUser.emptyUserId);
-			if (dept == null || "".equals(dept)) throw new RefusedException(Constants.StatusCode.SysUser.emptyOrganID);
+			if (userId == null || "".equals(userId)) throw new RefusedException(StatusCode.SysUser.emptyUserId);
+			if (dept == null || "".equals(dept)) throw new RefusedException(StatusCode.SysUser.emptyOrganID);
 			SysUser user = getSysUser(request);
 //			// 组织机构
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否删除上级组织机构
@@ -211,7 +211,7 @@ public class SysUserController extends AppWebController {
 			
 			// 判断userId
 			SysUser tempUser = (SysUser) baseService.get(SysUser.class, userId);
-			if (tempUser != null) throw new RefusedException(Constants.StatusCode.SysUser.exitsUserId);
+			if (tempUser != null) throw new RefusedException(StatusCode.SysUser.exitsUserId);
 			
 			sysUser.setUserStatus(UserStatus.normal.name());
 			sysUser.setDept(dept);
@@ -243,7 +243,7 @@ public class SysUserController extends AppWebController {
 	        @ApiParam(required = true, value = "角色权限，模块ID:权值,模块ID:权值") @RequestParam(name = "roleValue", defaultValue = "") String roleValue) {
 		Message message = new Message();
 		try {
-		    if (dept == null || "".equals(dept)) throw new RefusedException(Constants.StatusCode.SysUser.emptyOrganID);
+		    if (dept == null || "".equals(dept)) throw new RefusedException(StatusCode.SysUser.emptyOrganID);
 			String[] roleIds = null;
 			if (roleValue != null && !"".equals(roleValue)) {
 				roleIds = StringUtils.split(roleValue, ",");
