@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.web.sys.dao.RoleModuleRightDao;
 import com.fcc.web.sys.model.RoleModuleRight;
+import com.fcc.web.sys.service.CacheService;
 
 /**
  *
@@ -32,6 +33,9 @@ public class RoleModuleRightDaoImpl implements RoleModuleRightDao {
 
     @Resource
     private BaseDao baseDao;
+    @Resource
+    private CacheService cacheService;
+    
     /**
      * 
      * @see com.fcc.web.sys.dao.RoleModuleRightDao#deleteByRoleIds(java.lang.String[])
@@ -45,7 +49,9 @@ public class RoleModuleRightDaoImpl implements RoleModuleRightDao {
 
     @Override
     public Integer deleteByModuleId(String moduleId) {
-        return baseDao.executeHql("delete from RoleModuleRight where moduleId like ?", moduleId + "%");
+//        return baseDao.executeHql("delete from RoleModuleRight where moduleId like ?", moduleId + "%");
+        String parentIds = cacheService.getModuleMap().get(moduleId).getParentIds();
+        return baseDao.executeHql("delete from RoleModuleRight where moduleId in(select moduleId from Module where parentIds like ?)", parentIds + "%");
     }
     
     @Override

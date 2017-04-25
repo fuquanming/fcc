@@ -60,7 +60,7 @@ public class UserPasswordController extends AppWebController {
 			if (StringUtils.isEmpty(newPassword)) throw new RefusedException(StatusCode.UserPassword.emptyNewPassword);
 			if (StringUtils.isEmpty(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.emptyConfirmPassword);
 			if (!newPassword.equals(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.errorPasswordConsistent);
-			SysUser user = getSysUser(request);
+			SysUser user = getSysUser();
 			String password = user.getPassword();
 			if (!EncryptionUtil.encodeMD5(oldPassword).toLowerCase().equals(password)) {
 			    throw new RefusedException(StatusCode.UserPassword.errorOldPassword);

@@ -9,6 +9,9 @@
  */
 package com.fcc.web.sys.config;
 
+import java.io.File;
+
+import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.config.Resources;
 
 /**
@@ -18,6 +21,14 @@ import com.fcc.commons.web.config.Resources;
  */
 public class ConfigUtil {
 
+    /** webRealPath / */
+    public static String WEB_REAL_PATH = "";
+    /** 文件上传临时路径 */
+    private static String uploadFileTempPath = null;
+    /** excel导入文件夹 */
+    private static String excelImportFilePath = null;
+    /** excel导出文件夹 */
+    private static String execlExportFilePath = null;
     /**
      * 是否是开发模式
      * @return
@@ -45,5 +56,32 @@ public class ConfigUtil {
     public static String getFileAccessPath() {
         return Resources.CONFIG.getString("file.access.path");
     }
-    
+    /** 文件上传临时路径 */
+    public static String getUploadFileTempPath() {
+        if (uploadFileTempPath == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(ConfigUtil.getFileUploadPath())
+                    .append(File.separatorChar).append(Constants.uploadFileTempPath).append(File.separatorChar);
+            uploadFileTempPath  = sb.toString();
+        }
+        return uploadFileTempPath;
+    }
+    /** excel导入文件夹 */
+    public static String getExcelImportFilePath() {
+        if (excelImportFilePath == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(WEB_REAL_PATH).append(Constants.importDataFileName);
+            excelImportFilePath  = sb.toString();
+        }
+        return excelImportFilePath;
+    }
+    /** excel导出文件夹 */
+    public static String getExcelExportFilePath() {
+        if (execlExportFilePath == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(WEB_REAL_PATH).append(Constants.exportDataFileName);
+            execlExportFilePath  = sb.toString();
+        }
+        return execlExportFilePath;
+    }
 }

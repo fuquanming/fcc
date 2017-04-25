@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.interceptor.BaseInterceptor;
 import com.fcc.commons.web.view.Message;
+import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
@@ -78,6 +79,7 @@ public class SessionInterceptor extends BaseInterceptor {
 	    }
         
 	    SysUser user = cacheService.getSysUser(request);
+	    SysUserAuthentication.setSysUser(user);
 //	    // uploadify-3.2.1 使用flash上传文件 没有携带cookie 代码绑定 原来sessionId
 //		HttpSession session = request.getSession();
 //	    if (user == null) {
@@ -99,12 +101,12 @@ public class SessionInterceptor extends BaseInterceptor {
                 Message message = new Message();
                 message.setMsg(StatusCode.Sys.sessionTimeout);
                 message.setObj(StatusCode.Sys.sessionTimeout);
-                boolean flag = output(request, response, handlerMethod, message, filterMsg, goPage);
-                if (flag) return false;
+                output(request, response, handlerMethod, message, filterMsg, goPage);
+                return false;
             }
 //	        response.sendRedirect(basePath + "/overtime.jsp");
-            goPage(request, response, filterMsg, goPage);
-            return false;
+//            goPage(request, response, filterMsg, goPage);
+//            return false;
 		}
 		return true;
 	}

@@ -111,7 +111,6 @@ public class OperateController extends AppWebController {
 			reloadModuleCache();
 			message.setMsg(StatusCode.Sys.success);
 			message.setSuccess(true);
-			reloadModuleCache();
 		} catch (RefusedException e) {
 			message.setMsg(e.getMessage());
 		} catch (Exception e) {

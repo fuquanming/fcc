@@ -106,7 +106,7 @@ public class OrganController extends AppWebController {
                 parentId = Treeable.ROOT.getNodeId();
                 parent = Treeable.ROOT;
             } else {
-                parent = (Organization) treeableService.getTreeableById(Organization.class, parentId);    
+                parent = (Treeable) treeableService.getTreeableById(Organization.class, parentId);    
             }
             if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
             String nodeCode = data.getNodeCode();
@@ -115,7 +115,7 @@ public class OrganController extends AppWebController {
             }
             data.setNodeId(RandomStringUtils.random(6, true, true));
             data.setParentId(parentId);
-            data.setCreateUser(getSysUser(request).getUserId());
+            data.setCreateUser(getSysUser().getUserId());
             data.setCreateTime(new Date());
             
             treeableService.add(data, parent);
@@ -169,7 +169,7 @@ public class OrganController extends AppWebController {
             BeanUtils.copyProperties(organ, data);
             
             data.setUpdateTime(new Date());
-            data.setUpdateUser(getSysUser(request).getUserId());
+            data.setUpdateUser(getSysUser().getUserId());
             
             treeableService.edit(data, parent);
             message.setSuccess(true);
@@ -294,7 +294,7 @@ public class OrganController extends AppWebController {
                 params.put("parentId", parentId);
             } else {
                 if (isGroup()) {
-                    parentId = getSysUser(request).getDept();
+                    parentId = getSysUser().getDept();
                 }
             }
             if (searchFlag) {
@@ -332,7 +332,7 @@ public class OrganController extends AppWebController {
 		List<EasyuiTreeNode> nodeList = null;
 		try {
 		    if (isGroup()) {
-		        SysUser sysUser = getSysUser(request);
+		        SysUser sysUser = getSysUser();
 		        nodeId = sysUser.getDept();
 		    }
 //		    nodeList = organService.getOrganTree(sysUser);

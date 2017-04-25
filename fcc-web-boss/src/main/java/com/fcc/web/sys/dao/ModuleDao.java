@@ -29,18 +29,18 @@ public interface ModuleDao {
     /**
      * 删除模块
      * @param moduleId
-     * @param isAll     true:及子模块
+     * @param children     true:及子模块
      * @return
      */
-    public Integer delete(String moduleId, boolean isAll);
+    public Integer delete(String moduleId, boolean children);
     
     /**
      * 删除模块操作
      * @param moduleId
-     * @param isAll     true:及子模块操作
+     * @param children     true:及子模块操作
      * @return
      */
-    public Integer deleteOperate(String moduleId, boolean isAll);
+    public Integer deleteOperate(String moduleId, boolean children);
     
     /**
      * 更新模块是否显示

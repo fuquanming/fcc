@@ -120,7 +120,7 @@ public class SysUserDaoImpl implements SysUserDao {
         return null;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
         StringBuilder cHql = new StringBuilder();
@@ -131,21 +131,27 @@ public class SysUserDaoImpl implements SysUserDao {
         if (param != null) {
             String userId = (String) param.get("userId");
             if (userId != null && !"".equals(userId)) {
-                map.put("userId", "%" + userId + "%");
+                map.put("userId", userId + "%");
                 cHql.append(" and r.userId like:userId");
                 bHql.append(" and r.userId like:userId");
             }
             String userName = (String) param.get("userName");
             if (userName != null && !"".equals(userName)) {
-                map.put("userName", "%" + userName + "%");
+                map.put("userName", userName + "%");
                 cHql.append(" and r.userName like:userName");
                 bHql.append(" and r.userName like:userName");
             }
             String dept = (String) param.get("dept");
             if (dept != null && !"".equals(dept)) {
-                map.put("dept", dept + "%");
-                cHql.append(" and r.dept like:dept");
-                bHql.append(" and r.dept like:dept");
+                map.put("dept", dept);
+                cHql.append(" and r.dept =:dept");
+                bHql.append(" and r.dept =:dept");
+            }
+            List deptList = (List) param.get("deptList");
+            if (deptList != null && !"".equals(deptList)) {
+                map.put("deptList", deptList);
+                cHql.append(" and r.dept in(:deptList)");
+                bHql.append(" and r.dept in(:deptList)");
             }
             String createUser = (String) param.get("createUser");
             if (createUser != null && !"".equals(createUser)) {

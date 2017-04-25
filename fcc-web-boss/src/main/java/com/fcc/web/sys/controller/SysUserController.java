@@ -79,7 +79,7 @@ public class SysUserController extends AppWebController {
 	public String view(HttpServletRequest request) {
 		// 判断当前用户是否是管理员
 	    if (isGroup()) {
-	        if (getSysUser(request).isAdmin()) {
+	        if (getSysUser().isAdmin()) {
 	            // 获取所有有该权限的用户列表，可以根据创建者查询其创建的用户
 	            String servletPath = request.getServletPath();
 	            if (servletPath.substring(0, 1).equals("/")) servletPath = servletPath.substring(1);
@@ -109,7 +109,7 @@ public class SysUserController extends AppWebController {
 		request.setAttribute("userStatusLock", UserStatus.locked.name());
 		request.setAttribute("userStatusActivation", UserStatus.normal.name());
 		request.setAttribute("userStatusOff", UserStatus.off.name());
-		request.setAttribute("sysUser", getSysUser(request));// 当前用户
+		request.setAttribute("sysUser", getSysUser());// 当前用户
 		return "manage/sys/user_list";
 	}
 	
@@ -144,7 +144,7 @@ public class SysUserController extends AppWebController {
 			Map<String, Object> param = null;
 			if (isGroup()) {
 			    param = new HashMap<String, Object>(1);
-	            param.put("createUser", getSysUser(request).getUserId());
+	            param.put("createUser", getSysUser().getUserId());
 			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 			// 用户头像附件
@@ -203,7 +203,7 @@ public class SysUserController extends AppWebController {
 			String userId = sysUser.getUserId();
 			if (userId == null || "".equals(userId)) throw new RefusedException(StatusCode.SysUser.emptyUserId);
 			if (dept == null || "".equals(dept)) throw new RefusedException(StatusCode.SysUser.emptyOrganID);
-			SysUser user = getSysUser(request);
+			SysUser user = getSysUser();
 //			// 组织机构
 //			if (OrganUtil.checkParent(user, dept)) {// 判断是否删除上级组织机构
 //				throw new RefusedException("不能选择上级机构！");
@@ -244,7 +244,7 @@ public class SysUserController extends AppWebController {
 		Message message = new Message();
 		try {
 		    if (dept == null || "".equals(dept)) throw new RefusedException(StatusCode.SysUser.emptyOrganID);
-			String[] roleIds = null;
+            String[] roleIds = null;
 			if (roleValue != null && !"".equals(roleValue)) {
 				roleIds = StringUtils.split(roleValue, ",");
 			}
@@ -373,10 +373,10 @@ public class SysUserController extends AppWebController {
 			param.put("dept", organId);
 			param.put("userName", userName);
 			if (isGroup()) {
-			    if (getSysUser(request).isAdmin()) {
+			    if (getSysUser().isAdmin()) {
 	                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);
 	            } else {
-	                param.put("createUser", getSysUser(request).getUserId());
+	                param.put("createUser", getSysUser().getUserId());
 	            }
 			}
 			ListPage listPage = sysUserService.queryPage(dg.getPage(), dg.getRows(), param);

@@ -118,7 +118,7 @@ public class SysDictController extends AppWebController {
             
             sysDict.setNodeId(RandomStringUtils.random(6, true, true));
             sysDict.setParentId(parentId);
-            sysDict.setCreateUser(getSysUser(request).getUserId());
+            sysDict.setCreateUser(getSysUser().getUserId());
             sysDict.setCreateTime(new Date());
             
             treeableService.add(sysDict, parent);
@@ -166,7 +166,7 @@ public class SysDictController extends AppWebController {
             BeanUtils.copyProperties(sysDict, data);
             
             data.setUpdateTime(new Date());
-            data.setUpdateUser(getSysUser(request).getUserId());
+            data.setUpdateUser(getSysUser().getUserId());
             
             treeableService.edit(data, parent);
             message.setSuccess(true);

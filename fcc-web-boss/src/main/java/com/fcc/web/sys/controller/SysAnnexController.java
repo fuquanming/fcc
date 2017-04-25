@@ -80,13 +80,6 @@ public class SysAnnexController extends AppWebController {
     @Resource
     private SysAnnexService sysAnnexService;
     
-    private String getFileUploadPath() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(ConfigUtil.getFileUploadPath())
-                .append(File.separatorChar).append(Constants.uploadFileTempPath).append(File.separatorChar);
-        return sb.toString();
-    }
-    
     /** 显示列表 */
     @ApiOperation(value = "显示SysAnnex列表页面")
     @RequestMapping(value = "/view.do", method = RequestMethod.GET)
@@ -164,7 +157,7 @@ public class SysAnnexController extends AppWebController {
                 logger.info("上传文件的名称：" + file.getOriginalFilename());
                 logger.info("上传表单的名称：" + file.getName());
                 String fileName = file.getOriginalFilename();
-                File files = new File(getFileUploadPath());
+                File files = new File(ConfigUtil.getUploadFileTempPath());
                 if (files.exists() == false) {
                     files.mkdirs();
                 }
@@ -172,7 +165,7 @@ public class SysAnnexController extends AppWebController {
                 String fileSuffix = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
                 // 保存文件
                 String saveFilePath = new StringBuilder().append(DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS"))
-                .append(Constants.uploadFileNameSplit).append(getSysUser(request).getUserId())
+                .append(Constants.uploadFileNameSplit).append(getSysUser().getUserId())
                 .append(fileSuffix).toString();
                 
                 fos = new FileOutputStream(new File(files, saveFilePath));
@@ -210,7 +203,7 @@ public class SysAnnexController extends AppWebController {
         Message message = new Message();
         try {
             String[] fileNames = request.getParameterValues("fileName");
-            File file = new File(getFileUploadPath());
+            File file = new File(ConfigUtil.getUploadFileTempPath());
             if (file.exists() == false) file.mkdirs();
             for (String fileName : fileNames) {
                 File files = new File(file, fileName);
@@ -307,7 +300,7 @@ public class SysAnnexController extends AppWebController {
         Message message = new Message();
         try {
             sysAnnex.setCreateTime(new Date());
-            sysAnnex.setCreateUser(getSysUser(request).getUserId());
+            sysAnnex.setCreateUser(getSysUser().getUserId());
             baseService.add(sysAnnex);
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
@@ -337,7 +330,7 @@ public class SysAnnexController extends AppWebController {
                 sysAnnex.setCreateUser(dbSysAnnex.getCreateUser());
                 BeanUtils.copyProperties(sysAnnex, dbSysAnnex);
                 dbSysAnnex.setUpdateTime(new Date());
-                dbSysAnnex.setUpdateUser(getSysUser(request).getUserId());
+                dbSysAnnex.setUpdateUser(getSysUser().getUserId());
                 baseService.edit(dbSysAnnex);
                 // 更新
                 message.setSuccess(true);

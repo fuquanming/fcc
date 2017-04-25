@@ -1,5 +1,6 @@
 package com.fcc.web.sys.listener;
 
+import java.io.FileNotFoundException;
 import java.util.Date;
 
 import javax.servlet.ServletContextEvent;
@@ -10,11 +11,13 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.web.util.WebUtils;
 
 import com.fcc.commons.web.service.ConfigService;
 import com.fcc.commons.web.util.SpringContextUtil;
 import com.fcc.web.sys.cache.QueueUtil;
 import com.fcc.web.sys.common.Constants;
+import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysLog;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
@@ -46,6 +49,11 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
                 cacheService.getModuleUrlMap();
             }
         });
+		try {
+            ConfigUtil.WEB_REAL_PATH = WebUtils.getRealPath(event.getServletContext(), "/");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 		event.getServletContext().setAttribute("APP_NAME", configService.getAppName());
 	}
 	
@@ -76,6 +84,5 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 				logger.error(e);
 			}
 		}
-		session.getServletContext().removeAttribute(event.getSession().getId());
 	}
 }

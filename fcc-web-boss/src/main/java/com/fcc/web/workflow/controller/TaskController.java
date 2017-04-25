@@ -1,18 +1,15 @@
-package com.fcc.web.sys.controller;
+package com.fcc.web.workflow.controller;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.engine.impl.identity.Authentication;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,27 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.core.service.BaseService;
-import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
-import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.StatusCode;
-import com.fcc.commons.web.util.ModelAndViewUtil;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.workflow.common.WorkflowDefinitionKey;
 import com.fcc.commons.workflow.controller.WorkflowController;
-import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
-import com.fcc.commons.workflow.model.WorkflowBean;
-import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
 import com.fcc.commons.workflow.query.WorkflowTaskQuery;
-import com.fcc.commons.workflow.view.ProcessInstanceInfo;
-import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
-import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
 import com.fcc.web.sys.cache.SysUserAuthentication;
-import com.fcc.web.sys.service.CacheService;
 
 import io.swagger.annotations.ApiParam;
 
@@ -52,7 +39,7 @@ import io.swagger.annotations.ApiParam;
  */
 
 @Controller
-@RequestMapping(value={"/manage/sys/task"} )
+@RequestMapping(value={"/manage/workflow/task"} )
 @SuppressWarnings("unused")
 public class TaskController extends WorkflowController {
 	
@@ -60,8 +47,6 @@ public class TaskController extends WorkflowController {
 	@Resource
 	private BaseService baseService;
 	//默认多列排序,example: username desc,createTime asc
-	@Resource
-	private CacheService cacheService;
 	
     public TaskController() {
 	}
@@ -71,7 +56,7 @@ public class TaskController extends WorkflowController {
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
 	    request.setAttribute("definitionKeyMap", WorkflowDefinitionKey.definitionKeyMap);
-		return "manage/sys/task/task_list";
+		return "manage/workflow/task/task_list";
 	}
 	
 	/** 跳转 */
@@ -80,11 +65,11 @@ public class TaskController extends WorkflowController {
     public String toView(HttpServletRequest request,
             @ApiParam(required = false, value = "流程实例ID") @RequestParam(name = "id", defaultValue = "") String processInstanceId) {
         try {
-            getProcessHistory(request, processInstanceId);
+            setProcessHistory(request, processInstanceId);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "manage/sys/task/task_view";
+        return "manage/workflow/task/task_view";
     }
 	
 	/** 跳转 */
@@ -115,7 +100,7 @@ public class TaskController extends WorkflowController {
 			e.printStackTrace();
 			logger.error(e);
 		}
-		return "manage/sys/task/task_edit";
+		return "manage/workflow/task/task_edit";
 	}
 	
 	/** 修改-签收，办理任务 */
@@ -130,7 +115,7 @@ public class TaskController extends WorkflowController {
 		// taskClaim，任务签收，taskExecute 执行任务
 		if ("taskClaim".equals(type)) {
 			try {
-				this.taskClaim(taskId, cacheService.getSysUser(request).getUserId());
+				this.taskClaim(taskId, SysUserAuthentication.getSysUser().getUserId());
 				message.setSuccess(true);
 				message.setMsg(StatusCode.Sys.success);
 			} catch (Exception e) {
@@ -149,32 +134,8 @@ public class TaskController extends WorkflowController {
                 Map<String, Object> variables = new HashMap<String, Object>(1);
                 variables.put(conditionKey, conditionValue);
 //                this.taskComplete(taskId, processInstanceId, variables, msg);
-                workflowService.taskComplete(cacheService.getSysUser(request).getUserId(),
+                workflowService.taskComplete(SysUserAuthentication.getSysUser().getUserId(),
                         taskId, processInstanceId, variables, msg, request);
-
-//				AmountApply amountApply = null;
-//				String processInstanceId = request.getParameter("processInstanceId");
-//				String readonly = request.getParameter("readonly");
-//				String msg = request.getParameter("message");
-//				Long amountApplyId = Long.valueOf(request.getParameter("amountApplyId"));
-//				Map<String, Object> variables = new HashMap<String, Object>();
-//				variables.put(request.getParameter("conditionKey"), request.getParameter("conditionValue"));
-//				if ("false".equalsIgnoreCase(readonly)) {
-//					// 修改申请
-//					amountApply = (AmountApply) baseService.get(AmountApply.class, amountApplyId);
-//					amountApply.setUserName(request.getParameter("userName"));
-//					amountApply.setApplyRemark(request.getParameter("applyRemark"));
-//					amountApply.setPrimaryAmount(Double.valueOf(request.getParameter("primaryAmount")));
-//				}
-//				variables.put(AmountApplyEnum.amount.toString(), Double.valueOf(request.getParameter("primaryAmount")));
-//				variables.put(AmountApplyEnum.standard.toString(), Double.valueOf("100000"));
-//				// 设置风控人员提交金额
-//				String memberAmountStr = request.getParameter("memberAmount");
-//				if (StringUtils.isNotEmpty(memberAmountStr)) {
-//					String taskDefinitionKey = request.getParameter("taskDefinitionKey");
-//					variables.put(taskDefinitionKey + "_amount", memberAmountStr);
-//				}
-//				amountApplyWorkflowService.taskComplete(taskId, processInstanceId, variables, msg, amountApply);
 				message.setSuccess(true);
 				message.setMsg(StatusCode.Sys.success);
 			} catch (Exception e) {

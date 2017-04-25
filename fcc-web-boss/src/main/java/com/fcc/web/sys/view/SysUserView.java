@@ -1,6 +1,6 @@
 package com.fcc.web.sys.view;
 
-import java.sql.Timestamp;
+import java.util.Date;
 /**
  * <p>Description:显示系统用户列表</p>
  * <p>Copyright:Copyright (c) 2009 </p>
@@ -14,7 +14,7 @@ public class SysUserView {
 	private String email;//
 	private String mobile;//
 	private String userStatus;
-	private Timestamp regDate;//注册时间
+	private Date createTime;//注册时间
 	
 	private String createUser;
     private String roleIds;
@@ -44,11 +44,11 @@ public class SysUserView {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
-	public Timestamp getRegDate() {
-		return regDate;
+	public Date getCreateTime() {
+		return createTime;
 	}
-	public void setRegDate(Timestamp regDate) {
-		this.regDate = regDate;
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 	public String getRoleIds() {
 		return roleIds;

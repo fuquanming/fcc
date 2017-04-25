@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.log4j.Logger;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -146,39 +145,39 @@ public class CacheService {
     }
     
     /**
-     * 清除模块缓存 
+     * 更新模块缓存 
      */
-    @CacheEvict(value = {"fcc:moduleMapCache:0"}, allEntries = true)
-    public void cleanModuleMap() {
+    @CachePut(value = {"fcc:moduleMapCache:0"}, key = "'fcc:moduleMapCache'")
+//    @CacheEvict(value = {"fcc:moduleMapCache:0"}, allEntries = true)
+    public Map<String, Module> updateModuleMap() {
+        return getModuleMap();
     }
     
     /**
-     * 清除模块URL缓存 
+     * 更新模块URL缓存 
      */
-    @CacheEvict(value = {"fcc:moduleUrlMapCache:0"}, allEntries = true)
-    public void cleanModuleUrlMap() {
+    @CachePut(value = {"fcc:moduleUrlMapCache:0"}, key = "'fcc:moduleUrlMapCache'")
+//    @CacheEvict(value = {"fcc:moduleUrlMapCache:0"}, allEntries = true)
+    public Map<String, String> updateModuleUrlMap() {
+        return getModuleUrlMap();
     }
     
     /**
-     * 清除角色模块权限缓存
+     * 更新角色模块权限缓存
      */
-    @CacheEvict(value = {"fcc:roleModuleRightMapCache:0"}, allEntries = true)
-    public void cleanRoleModuleRightMap() {
+    @CachePut(value = {"fcc:roleModuleRightMapCache:0"}, key = "'fcc:roleModuleRightMapCache'")
+//    @CacheEvict(value = {"fcc:roleModuleRightMapCache:0"}, allEntries = true)
+    public Map<String, Map<String, RoleModuleRight>> updateRoleModuleRightMap() {
+        return getRoleModuleRightMap();
     }
     
     /**
-     * 清除操作缓存
+     * 更新操作缓存
      */
-    @CacheEvict(value = {"fcc:operateMapCache:60"}, allEntries = true)
-    public void cleanOperateMap() {
-    }
-    
-    /**
-     * 清除登录次数缓存
-     */
-    @CacheEvict(value = {"fcc:loginCountCache:86400"}, allEntries = true)
-    public String cleanLoginCount() {
-        return "";
+    @CachePut(value = {"fcc:operateMapCache:0"}, key = "'fcc:operateMapCache'")
+//    @CacheEvict(value = {"fcc:operateMapCache:60"}, allEntries = true)
+    public Map<String, Operate> updateOperateMap() {
+        return getOperateMap();
     }
 
 }

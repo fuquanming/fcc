@@ -317,6 +317,10 @@ public class SysUserServiceImpl implements SysUserService {
             Set<String> moduleIdSet = rightMap.keySet();
             for (String moduleId : moduleIdSet) {
                 Module module = cacheService.getModuleMap().get(moduleId);
+                if (module == null) {
+                    System.out.println("null=" + moduleId);
+                    continue;
+                }
                 if (module.getModuleStatus()) {
                     Module parentModule = cacheService.getModuleMap().get(module.getParentId());
                     if (parentModule != null && parentModule.getModuleStatus() == true) {

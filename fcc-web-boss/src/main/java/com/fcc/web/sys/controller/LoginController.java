@@ -96,7 +96,7 @@ public class LoginController extends AppWebController {
     @ApiOperation(value = "用户退出")
     @RequestMapping(value = {"/logout.do"}, method = RequestMethod.GET)
     public ModelAndView logout(HttpServletRequest request) throws Exception {
-        SysUser user = getSysUser(request);
+        SysUser user = getSysUser();
         String userId = null;
         Message message = new Message();
         message.setSuccess(true);

@@ -102,7 +102,7 @@ public class AreaController extends AppWebController {
 			    parentId = Treeable.ROOT.getNodeId();
 			    parent = Treeable.ROOT;
             } else {
-                parent = (Area) treeableService.getTreeableById(Area.class, parentId);
+                parent = treeableService.getTreeableById(Area.class, parentId);
             }
 			if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
 			if (treeableService.checkNodeCode(Area.class, area.getNodeCode(), null) == true) {
@@ -111,7 +111,7 @@ public class AreaController extends AppWebController {
 			
 			area.setNodeId(RandomStringUtils.random(6, true, true));
 			area.setParentId(parentId);
-			area.setCreateUser(getSysUser(request).getUserId());
+			area.setCreateUser(getSysUser().getUserId());
 			area.setCreateTime(new Date());
 			
 			treeableService.add(area, parent);
@@ -148,7 +148,7 @@ public class AreaController extends AppWebController {
 			    parentId = Treeable.ROOT.getNodeId();
 			    parent = Treeable.ROOT;
 			} else {
-			    parent = (Area) treeableService.getTreeableById(Area.class, parentId);
+			    parent = treeableService.getTreeableById(Area.class, parentId);
 			}
             if (parent == null) throw new RefusedException(StatusCode.Treeable.emptyParent);
 			
@@ -160,7 +160,7 @@ public class AreaController extends AppWebController {
 			BeanUtils.copyProperties(area, data);
 			
 			data.setUpdateTime(new Date());
-			data.setUpdateUser(getSysUser(request).getUserId());
+			data.setUpdateUser(getSysUser().getUserId());
 			
 			treeableService.edit(data, parent);
 			message.setSuccess(true);

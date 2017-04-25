@@ -115,7 +115,7 @@ public class ModuleController extends AppWebController {
 	/** 为当前用户添加该模块权限 */
 	private void updateUserModule(String[] operateIds, Module data, HttpServletRequest request) {
 		// 为当前用户添加该模块权限
-		SysUser sysUser = getSysUser(request);
+		SysUser sysUser = getSysUser();
 		Iterator<Role> it = sysUser.getRoles().iterator();
 		Role role = null;
 		if (it.hasNext()) {

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fcc.commons.web.controller.BaseController;
+import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.model.SysUser;
@@ -30,8 +31,9 @@ public class AppWebController extends BaseController {
         request.getSession().setAttribute(Constants.SysUserSession.loginUser, sysUser);
     }
     
-    public SysUser getSysUser(HttpServletRequest request) {
-        return cacheService.getSysUser(request);
+    public SysUser getSysUser() {
+//        return cacheService.getSysUser(request);
+        return SysUserAuthentication.getSysUser();
     }
     
     public boolean isGroup() {
@@ -71,34 +73,34 @@ public class AppWebController extends BaseController {
     
     /** 重载模块缓存 */
     public void reloadModuleCache() {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                cacheService.cleanModuleMap();
-                cacheService.cleanModuleUrlMap();
-                cacheService.getModuleMap();
-                cacheService.getModuleUrlMap();
-            }
-        });
+//        execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                cacheService.updateModuleMap();
+//                cacheService.updateModuleUrlMap();
+//            }
+//        });
+        cacheService.updateModuleMap();
+        cacheService.updateModuleUrlMap();
     }
     /** 重载角色模块权限缓存 */
     public void reloadRoleModuleRightCache() {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                cacheService.cleanRoleModuleRightMap();
-                cacheService.getRoleModuleRightMap();
-            }
-        });
+//        execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                cacheService.updateRoleModuleRightMap();
+//            }
+//        });
+        cacheService.updateRoleModuleRightMap();
     }
     /** 重载操作缓存 */
     public void reloadOperateCache() {
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                cacheService.cleanOperateMap();
-                cacheService.getOperateMap();
-            }
-        });
+//        execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                cacheService.updateOperateMap();
+//            }
+//        });
+        cacheService.updateOperateMap();
     }
 }

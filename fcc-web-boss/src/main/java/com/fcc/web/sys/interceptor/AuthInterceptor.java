@@ -130,6 +130,7 @@ public class AuthInterceptor extends BaseInterceptor {
                             message.setMsg(StatusCode.Sys.noPermissions);
                             message.setObj(module.getModuleName() + "：" + operateName);
                             output(request, response, handlerMethod, message, "right", goPage);
+                            return false;
                         }
                     }
                 }

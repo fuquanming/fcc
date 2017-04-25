@@ -42,7 +42,7 @@ public class UserInfoController extends AppWebController {
 	@RequestMapping(value = {"/view.do"}, method = RequestMethod.GET)
 	@Permissions("view")
 	public String view(HttpServletRequest request) {
-		SysUser user = getSysUser(request);
+		SysUser user = getSysUser();
 		request.setAttribute("data", user);
 		return "manage/sys/user_info";
 	}
@@ -54,7 +54,7 @@ public class UserInfoController extends AppWebController {
 	public ModelAndView edit(HttpServletRequest request, SysUser sysUser) {
 		Message message = new Message();
 		try {
-			SysUser user = getSysUser(request);
+			SysUser user = getSysUser();
 			Set<Role> roles = user.getRoles();
 			sysUserService.edit(sysUser);
 			BeanUtils.copyProperties(sysUser, user);

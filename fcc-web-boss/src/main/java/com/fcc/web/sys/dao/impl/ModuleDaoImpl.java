@@ -23,6 +23,7 @@ import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.web.sys.dao.ModuleDao;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Operate;
+import com.fcc.web.sys.service.CacheService;
 
 /**
  *
@@ -35,6 +36,8 @@ public class ModuleDaoImpl implements ModuleDao {
 
     @Resource
     private BaseDao baseDao;
+    @Resource
+    private CacheService cacheService;
     
     @Override
     public void addOperate(String moduleId, String[] operateIds) {
@@ -47,23 +50,21 @@ public class ModuleDaoImpl implements ModuleDao {
         }
     }
     
-    /**
-     * 
-     * @see com.fcc.web.sys.dao.ModuleDao#delete(java.lang.String)
-     **/
     @Override
-    public Integer delete(String moduleId, boolean isAll) {
-        if (isAll) {
-            return baseDao.executeHql("delete from Module where moduleId like ?", moduleId + "%");    
+    public Integer delete(String moduleId, boolean children) {
+        if (children) {
+            Module module = cacheService.getModuleMap().get(moduleId);
+            return baseDao.executeSql("delete from sys_rbac_module where module_Id in(select a.module_Id from(select module_Id from sys_rbac_module where parent_Ids like (?)) a)", module.getParentIds() + "%");
         } else {
             return baseDao.executeHql("delete from Module where moduleId = ?", moduleId);
         }
     }
 
     @Override
-    public Integer deleteOperate(String moduleId, boolean isAll) {
-        if (isAll) {
-            return baseDao.executeSql("delete from sys_rbac_mod2op where module_Id like ?", moduleId + "%");
+    public Integer deleteOperate(String moduleId, boolean children) {
+        if (children) {
+            String parentIds = cacheService.getModuleMap().get(moduleId).getParentIds();
+            return baseDao.executeSql("delete from sys_rbac_mod2op where module_Id in(select module_Id from sys_rbac_module where parent_ids like ?)", parentIds + "%");
         } else {
             return baseDao.executeSql("delete from sys_rbac_mod2op where module_Id = ?", moduleId);
         }

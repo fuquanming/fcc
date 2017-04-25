@@ -65,7 +65,7 @@ public class OperateDaoImpl implements OperateDao {
         if (param != null) {
             String operateName = (String) param.get("operateName");
             if (operateName != null && !"".equals(operateName)) {
-                map.put("operateName", "%" + operateName + "%");
+                map.put("operateName", operateName + "%");
                 cHql.append(" and r.operateName like:operateName");
                 bHql.append(" and r.operateName like:operateName");
             }

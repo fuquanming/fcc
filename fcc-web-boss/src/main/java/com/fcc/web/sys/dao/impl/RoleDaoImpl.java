@@ -83,7 +83,7 @@ public class RoleDaoImpl implements RoleDao {
         if (param != null) {
             String roleName = (String) param.get("roleName");
             if (roleName != null && !"".equals(roleName)) {
-                map.put("roleName", "%" + roleName + "%");
+                map.put("roleName", roleName + "%");
                 cHql.append(" and r.roleName like:roleName");
                 bHql.append(" and r.roleName like:roleName");
             }

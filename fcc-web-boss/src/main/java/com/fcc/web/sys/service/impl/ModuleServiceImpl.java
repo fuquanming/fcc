@@ -50,10 +50,6 @@ public class ModuleServiceImpl implements ModuleService {
     @Resource
     private RbacPermissionService rbacPermissionService;
 
-    /**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.ModuleService#add(com.fcc.web.sys.model.Module, java.lang.String[])
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void add(Module data, String[] operateIds) {
@@ -61,10 +57,6 @@ public class ModuleServiceImpl implements ModuleService {
         addOperate(data.getModuleId(), operateIds);
     }
 
-    /**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.ModuleService#edit(com.fcc.web.sys.model.Module, java.lang.String[])
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void edit(Module data, String[] operateIds) {
@@ -72,25 +64,17 @@ public class ModuleServiceImpl implements ModuleService {
         addOperate(data.getModuleId(), operateIds);
     }
 
-    /**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.ModuleService#delete(java.lang.String)
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(String moduleId) {
-        // 删除模块
-        moduleDao.delete(moduleId, true);
-        // 删除模块操作
-        moduleDao.deleteOperate(moduleId, true);
         // 删除模块对于的所有角色
         roleModuleRightDao.deleteByModuleId(moduleId);
+        // 删除模块操作
+        moduleDao.deleteOperate(moduleId, true);
+        // 删除模块
+        moduleDao.delete(moduleId, true);
     }
 
-    /**
-     * //TODO 添加override说明
-     * @see com.fcc.web.sys.service.ModuleService#addOperate(java.lang.String, java.lang.String[])
-     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addOperate(String moduleId, String[] operateIds) {
