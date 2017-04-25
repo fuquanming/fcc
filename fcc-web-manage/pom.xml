@@ -1,0 +1,221 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.fcc.commons</groupId>
+		<artifactId>fcc-commons-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../fcc-commons-parent</relativePath>
+	</parent>
+
+	<artifactId>fcc-web-manage</artifactId>
+	<version>${fcc-web-manage.version}</version>
+	<packaging>jar</packaging>
+
+	<name>fcc-web-manage</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+    <dependencies>
+        <!-- -->
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons</artifactId>
+            <version>${fcc-commons.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-core</artifactId>
+            <version>${fcc-commons-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-web</artifactId>
+            <version>${fcc-commons-web.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-config</artifactId>
+            <version>${env}-${fcc-commons-config.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-workflow</artifactId>
+            <version>${fcc-commons-workflow.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+        </dependency>
+
+        <!-- apache shiro begin -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-aspectj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-ehcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+        </dependency>
+        <!-- apache shiro end -->
+
+        <!-- Others Begin -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.log4jdbc</groupId>
+            <artifactId>log4jdbc4</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        
+        <!-- el 表达式 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+        </dependency>
+        <!-- Others End -->
+
+        <!-- encache 相关jar包 -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-web</artifactId>
+        </dependency>
+
+        <!-- 验证码 begin <dependency> <groupId>com.octo.captcha</groupId> <artifactId>jcaptcha-all</artifactId> 
+            </dependency> -->
+        <!-- 验证码 end -->
+
+        <!-- Mysql Driver Begin -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!-- Mysql Driver End -->
+
+        <!-- swagger api begin -->
+        <!-- <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency> -->
+        <!-- swagger api end -->
+        
+        <!-- hightchar 导出图片 begin -->
+        <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdf</groupId>
+            <artifactId>pdf-transcoder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </dependency>
+        <!-- hightchar 导出图片 end -->
+
+        <!-- code begin -->
+        <dependency>
+            <groupId>com.fcc</groupId>
+            <artifactId>fcc-code</artifactId>
+        </dependency>
+        <!-- code end -->
+    </dependencies>
+    
+    <build>
+        <finalName>fcc-web-manage</finalName>
+        <resources>
+            <!-- 先指定 src/main/resources下所有文件及文件夹为资源文件 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/classes</targetPath>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+
+	<!-- 构件部署仓库 -->
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<name>发布版本仓库</name>
+			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>快照版本仓库</name>
+			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>

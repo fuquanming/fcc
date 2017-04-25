@@ -45,6 +45,9 @@
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
 		<fcc-commons-workflow.version>1.0-SNAPSHOT</fcc-commons-workflow.version>
+		
+		<fcc-web-manage.version>1.0-SNAPSHOT</fcc-web-manage.version>
+		<fcc-web-workflow.version>1.0-SNAPSHOT</fcc-web-workflow.version>
 		<fcc-web.version>1.0-SNAPSHOT</fcc-web.version>
 		<fcc-web-api.version>1.0-SNAPSHOT</fcc-web-api.version>
 
