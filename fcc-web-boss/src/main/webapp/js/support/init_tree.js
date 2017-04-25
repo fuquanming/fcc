@@ -40,10 +40,11 @@ function getTree(param) {
             window.location.href = overUrl;
         },
         loadFilter : function(data) {
-            var flag = Tool.operate.check(data);
+            var flag = Tool.operate.check({'data':data});
             if (flag != true || flag != false) {
                 return data;                                            
             }
+            return {};
         }
     });
 }

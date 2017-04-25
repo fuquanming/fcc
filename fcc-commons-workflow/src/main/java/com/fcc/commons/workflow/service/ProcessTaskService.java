@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.workflow.query.WorkflowTaskQuery;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
 
@@ -37,7 +38,7 @@ public interface ProcessTaskService {
 	 * @param taskId		任务ID
 	 * @return
 	 */
-	Map<String,Object> getVariables(String taskId);
+	Map<String, Object> getVariables(String taskId);
 	
 	/**
 	 * 获取任务变量
@@ -59,25 +60,40 @@ public interface ProcessTaskService {
 	 * @param taskId
 	 * @param variables
 	 */
-	void complete(String taskId, String processInstanceId, Map<String, Object> variables, String message);
+	void complete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message);
+	
+	/**
+     * 查询一个任务
+     * @param param
+     * @return
+     */
+    ProcessTaskInfo getProcessTask(String taskId);
+    
+    /**
+     * 流程当前任务
+     * @param processInstanceId
+     * @return
+     */
+    ProcessTaskInfo getCurrentTask(String processInstanceId);
 	
 	/**
 	 * 查询所有任务
-	 * @param param
+	 * @param workflowTaskQuery
 	 * @return
 	 */
-	public List<ProcessTaskInfo> queryList(Map<String, Object> param);
+	List<ProcessTaskInfo> queryList(WorkflowTaskQuery workflowTaskQuery);
 	
 	/**
-	 * 查询 总数
-	 * @return Long
+	 * 查询任务总数
+	 * @param workflowTaskQuery
+	 * @return
 	 */
-	Long queryPageCount(Map<String, Object> param);
+	Long queryProcessTaskCount(WorkflowTaskQuery workflowTaskQuery);
 	
 	/**
 	 * 分页查询
 	 * @return ProcessTaskInfo
 	 */
-	ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
+	ListPage queryPage(int pageNo, int pageSize, WorkflowTaskQuery workflowTaskQuery);
 	
 }

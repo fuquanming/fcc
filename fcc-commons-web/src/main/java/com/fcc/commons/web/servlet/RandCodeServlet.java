@@ -78,7 +78,7 @@ public class RandCodeServlet extends HttpServlet {
         //        responseOutputStream.flush();
         //        responseOutputStream.close();
         CodeImage instance = new CodeImage(120, 40, 4, 50, CodeImage.FONT_FILLING_SOLID, Color.BLACK);
-        request.getSession().setAttribute(Constants.RAND_CODE_KEY, instance.getCode());
+        request.getSession().setAttribute(Constants.randCodeKey, instance.getCode());
         instance.write(response.getOutputStream());
     }
 

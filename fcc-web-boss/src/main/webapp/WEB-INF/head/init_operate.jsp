@@ -90,10 +90,10 @@ function view() {
         Tool.message.alert(Lang.tip, Lang.recordSelectedMore.format(names.join(','),rows.length), Tool.icon.info, true);
     } else if (rows.length == 1) {
     	if (operateParam_view_beforeCallback) {
-    		if (operateParam_view_beforeCallback() == false) return;
+    		if (operateParam_view_beforeCallback(rows[0]) == false) return;
     	}
         if (operateParam_viewUrl) {
-        	window.location.href = Tool.urlAddParam(operateParam_viewUrl, "id=" + rows[0][operateParam_dataId]);
+        	Tool.goNewPage(Tool.urlAddParam(operateParam_viewUrl, "id=" + rows[0][operateParam_dataId]));
         }
     } else {
         Tool.message.alert(Lang.tip, Lang.recordSelectedOne, Tool.icon.info, true);
@@ -111,7 +111,7 @@ function add() {
 		if (operateParam_add_beforeCallback(row) == false) return;
 	}
 	if (operateParam_addUrl) {
-		window.location.href = operateParam_addUrl;
+		Tool.goNewPage(operateParam_addUrl);
 	}
 }
 </fcc:permission>
@@ -129,7 +129,7 @@ function edit() {
             if (operateParam_edit_beforeCallback(rows[0]) == false) return;
         }
     	if (operateParam_editUrl) {
-            window.location.href = Tool.urlAddParam(operateParam_editUrl, "id=" + rows[0][operateParam_dataId]);
+            Tool.goNewPage(Tool.urlAddParam(operateParam_editUrl, "id=" + rows[0][operateParam_dataId]));
         }
     } else {
         Tool.message.alert(Lang.tip, Lang.recordSelectedOne, Tool.icon.info, true);
@@ -159,7 +159,7 @@ function del() {
 </fcc:permission>
 <fcc:permission operateId="report">
 function report()　{
-    if (operateParam_reportUrl) window.location.href = operateParam_reportUrl;
+    if (operateParam_reportUrl) Tool.goNewPage(operateParam_reportUrl);
 }
 </fcc:permission>
 </script>

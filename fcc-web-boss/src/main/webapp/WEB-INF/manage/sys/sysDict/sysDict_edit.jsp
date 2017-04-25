@@ -13,7 +13,7 @@
   <div id="toolbar" class="datagrid-toolbar" style="height: auto;">
   	<br/>
     <fieldset>
-    <legend>修改SysDict</legend>
+    <legend>修改数据字典</legend>
     <form id="userForm" name="userForm" method="post">
       <input name="id" type="hidden" value="${data.nodeId}" />
       <input name="parentId" type="hidden" value="${data.parentId}" />
@@ -25,19 +25,19 @@
         <tr>    
             <th><span class="required">*</span>名称：</th>       
             <td>
-            <input id="nodeNameStr" name="nodeNameStr" type="text" value="${data.nodeName}" class="easyui-validatebox easyui-textbox" maxlength="50" required="true" data-options="prompt:'请输入地区名称...'"/>
+            <input id="nodeNameStr" name="nodeNameStr" type="text" value="${data.nodeName}" class="easyui-validatebox easyui-textbox" maxlength="50" required="true" data-options="prompt:'请输入名称...'"/>
             </td>
         </tr>   
         <tr>    
             <th><span class="required">*</span>编码：</th>       
             <td>
-            <input id="nodeCode" name="nodeCode" type="text" value="${data.nodeCode}" class="easyui-validatebox easyui-textbox" maxlength="50" required="true" data-options="prompt:'请输入地区编码...'"/>
+            <input id="nodeCode" name="nodeCode" type="text" value="${data.nodeCode}" class="easyui-validatebox easyui-textbox" maxlength="50" required="true" data-options="prompt:'请输入编码...'"/>
             </td>
         </tr>   
         <tr>    
             <th><span class="required">*</span>排序：</th>       
             <td>
-            <input id="nodeSort" name="nodeSort" type="text" value="${data.nodeSort}" class="easyui-validatebox easyui-textbox" maxlength="10" required="true" data-options="prompt:'请输入地区排序...'"/>
+            <input id="nodeSort" name="nodeSort" type="text" value="${data.nodeSort}" class="easyui-validatebox easyui-textbox" maxlength="10" required="true" data-options="prompt:'请输入排序...'"/>
             </td>
         </tr>   
         <tr>

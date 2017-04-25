@@ -77,6 +77,7 @@ public class MemoryInterceptor extends BaseInterceptor {
                     }
                 }
 	        }
+//	        flag = true;
 	        if (flag) {
 	            String info = "freeMemory=%d,maxMemory=%d,totalFileSize=%d,%f";
 	            logger.info(String.format(info, freeMemory, maxMemory, totalFileSize, ((float)freeMemory / (float)maxMemory)));

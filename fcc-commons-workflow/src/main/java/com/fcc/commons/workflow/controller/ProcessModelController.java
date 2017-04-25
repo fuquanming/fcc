@@ -3,7 +3,6 @@ package com.fcc.commons.workflow.controller;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -26,11 +25,13 @@ import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.config.Resources;
-import com.fcc.commons.web.controller.BaseController;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
+import com.fcc.commons.workflow.query.WorkflowModelQuery;
 import com.fcc.commons.workflow.service.ProcessModelService;
+
+import io.swagger.annotations.ApiParam;
 
 /**
  * <p>Description: 工作流-流程模型管理</p>
@@ -40,7 +41,7 @@ import com.fcc.commons.workflow.service.ProcessModelService;
  */
 @Controller
 @RequestMapping("/manage/sys/workflow/processModel")
-public class ProcessModelController extends BaseController {
+public class ProcessModelController extends WorkflowController {
 
 	private Logger logger = Logger.getLogger(ProcessModelController.class);
 	
@@ -205,19 +206,22 @@ public class ProcessModelController extends BaseController {
 	@RequestMapping("/datagrid")
 	@ResponseBody
 	@Permissions("view")
-	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
+	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
+	        @ApiParam(required = false, value = "模型名称") @RequestParam(name = "modelName", defaultValue = "") String modelName,
+            @ApiParam(required = false, value = "模型KEY") @RequestParam(name = "modelKey", defaultValue = "") String modelKey
+            ) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
-			String modelName = request.getParameter("modelName");
-			String modelKey = request.getParameter("modelKey");
-			Map<String, Object> param = new HashMap<String, Object>();
+		    WorkflowModelQuery query = null;
 			if (StringUtils.isNotEmpty(modelName)) {
-				param.put("modelName", modelName);
+			    query = workflowService.createModelQuery();
+			    query.modelNameLike(modelName);
 			}
 			if (StringUtils.isNotEmpty(modelKey)) {
-				param.put("modelKey", modelKey);
+			    if (query == null) query = workflowService.createModelQuery();
+				query.modelKey(modelKey);
 			}
-			ListPage listPage = processModelService.queryPage(dg.getPage(), dg.getRows(), param);
+			ListPage listPage = processModelService.queryPage(dg.getPage(), dg.getRows(), query);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			json.setRows(listPage.getDataList());
 		} catch (Exception e) {

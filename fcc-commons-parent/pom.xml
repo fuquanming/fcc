@@ -44,6 +44,7 @@
 		<fcc-commons-config.version>1.1-SNAPSHOT</fcc-commons-config.version>
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
+		<fcc-commons-workflow.version>1.0-SNAPSHOT</fcc-commons-workflow.version>
 		<fcc-web.version>1.0-SNAPSHOT</fcc-web.version>
 		<fcc-web-api.version>1.0-SNAPSHOT</fcc-web-api.version>
 
@@ -82,6 +83,9 @@
 
 		<ehcache.core.version>2.6.11</ehcache.core.version>
 		<ehcache.web.version>2.0.4</ehcache.web.version>
+		
+		<!-- activiti  5.15.1 5.22.0-->
+		<activiti.version>5.22.0</activiti.version>
 	</properties>
 
 	<dependencies>
@@ -192,7 +196,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.1</version>
+				<version>3.5</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-logging</groupId>
@@ -495,7 +499,7 @@
 			<dependency>
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis</artifactId>
-				<version>3.2.2</version>
+				<version>3.2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mybatis</groupId>
@@ -720,6 +724,56 @@
 				<version>1.0</version>
 			</dependency>
 			<!-- code end -->
+			
+			<!-- activiti begin -->
+			<dependency>
+			    <groupId>org.activiti</groupId>
+			    <artifactId>activiti-bpmn-model</artifactId>
+			    <version>${activiti.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.activiti</groupId>
+			    <artifactId>activiti-bpmn-converter</artifactId>
+			    <version>${activiti.version}</version>
+			</dependency>
+			<dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-bpmn-layout</artifactId>
+                <version>${activiti.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-engine</artifactId>
+                <version>${activiti.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-json-converter</artifactId>
+                <version>${activiti.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-process-validation</artifactId>
+                <version>${activiti.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.activiti</groupId>
+                <artifactId>activiti-spring</artifactId>
+                <version>${activiti.version}</version>
+            </dependency>
+            
+            <dependency>
+			    <groupId>joda-time</groupId>
+			    <artifactId>joda-time</artifactId>
+			    <version>2.9.7</version>
+			</dependency>
+            <!-- 转化模型 -->
+            <dependency>
+			    <groupId>math.geom2d</groupId>
+			    <artifactId>javaGeom</artifactId>
+			    <version>0.11.1</version>
+			</dependency>
+			<!-- activiti end -->
 		</dependencies>
 	</dependencyManagement>
 

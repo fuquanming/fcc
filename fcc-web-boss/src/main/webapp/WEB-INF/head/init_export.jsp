@@ -26,6 +26,7 @@ function exportData() {
     	} else {
     		exportDataFlag = false;
     	}
+    	return false;
     }
     save();
     /*${basePath}manage/sys/sysLog/export.do*/
@@ -47,7 +48,7 @@ function queryExportDataSize() {
                 } else if (d.fileName != null) {
                     exportInfo.html(Lang.exportEnd.format(d.currentSize, 'exportData/' + exportParam_model + 'Export/' + d.fileName, d.fileName))
                     exportDataFlag = false;
-                    window.location.href = 'exportData/' + exportParam_model + 'Export/' + d.fileName;
+                    Tool.goPage('exportData/' + exportParam_model + 'Export/' + d.fileName);
                 } else if (d.error == true) {
                     exportInfo.html(Lang.exportError);
                     exportDataFlag = false;
@@ -65,7 +66,7 @@ function queryExportDataSize() {
                 console.log(e)
                 exportDataFlag = false;
                 $('#exportWaitImg').hide();
-                window.location.href = overUrl;
+                Tool.goPage(overUrl);
             }
         }
     });

@@ -31,7 +31,7 @@ function view() {
         }
         Tool.message.alert(Lang.tip, Lang.recordSelectedMore.format(names.join(','),rows.length), Tool.icon.info, true);
     } else if (rows.length == 1) {
-        window.location.href = "${param.initViewUrl}?id=" + rows[0].${param.initDataId};
+        Tool.goNewPage("${param.initViewUrl}?id=" + rows[0].${param.initDataId});
     } else {
     	Tool.message.alert(Lang.tip, Lang.recordSelectedOne, Tool.icon.info, true);
     }
@@ -39,7 +39,7 @@ function view() {
 </c:if>
 <c:if test="${not empty param.initAddUrl}">
 function add() {
-    window.location.href = "${param.initAddUrl}";
+    Tool.goNewPage("${param.initAddUrl}");
 }
 </c:if>
 <c:if test="${not empty param.initEditUrl}">
@@ -52,7 +52,7 @@ function edit() {
         }
         Tool.message.alert(Lang.tip, Lang.recordSelectedMore.format(names.join(','),rows.length), Tool.icon.info, true);
     } else if (rows.length == 1) {
-        window.location.href = "${param.initEditUrl}?id=" + rows[0].${param.initDataId};
+        Tool.goNewPage("${param.initEditUrl}?id=" + rows[0].${param.initDataId});
     } else {
         Tool.message.alert(Lang.tip, Lang.recordSelectedOne, Tool.icon.info, true);
     }
@@ -79,11 +79,12 @@ function del() {
                     success : function(data) {
                         try {
                             Tool.message.progress('close');
-                            if (Tool.operate.check(data, true)) {
+                            if (Tool.operate.check({'data':data})) {
                                 searchFun();
                             }
                         } catch(e) {
-                            window.location.href = overUrl;
+                        	console.log(e);
+                            Tool.goPage(overUrl);
                         }
                     }
                 });
@@ -110,7 +111,7 @@ function clearFun() {
 }
 <c:if test="${not empty param.initReportUrl}">
 function report()　{
-    window.location.href = "${param.initReportUrl}";
+    Tool.goNewPage("${param.initReportUrl}");
 }
 </c:if>
 $(function() {

@@ -47,6 +47,12 @@
             <version>${env}-${fcc-commons-config.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-workflow</artifactId>
+            <version>${fcc-commons-workflow.version}</version>
+        </dependency>
+        
         <!-- Spring Dependency Begin -->
         <!-- <dependency>
             <groupId>org.springframework</groupId>
@@ -330,6 +336,37 @@
             <artifactId>fcc-code</artifactId>
         </dependency>
         <!-- code end -->
+        
+        <!-- activiti begin -->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-converter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-layout</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-converter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-process-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-spring</artifactId>
+        </dependency>
+        <!-- activiti end -->
     </dependencies>
 	
 	

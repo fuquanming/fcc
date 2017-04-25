@@ -199,6 +199,12 @@ Tool.isFlash = function() {
     }
     return iFlash;
 }
+Tool.goPage = function(page) {
+	window.location.href = page;
+}
+Tool.goNewPage = function(page) {
+	window.location.href = page;
+}
 /** url添加参数 */
 Tool.urlAddParam = function(url, param) {
 	if (url.indexOf("?") == -1) {
@@ -258,10 +264,20 @@ Tool.message.alert = function(title, msg, icon, autoClose, fn) {
 	//var interval;  
 	var time = 1000;
 	var x = 3;    //设置时间3s
-	if (autoClose) {
+	if (autoClose == true) {
 		interval_alert = setInterval(fun, time);
+		var buttonStr = '';
+		try {
+			buttonStr = $(".dialog-button span span").html();
+			$(".dialog-button span span").html(buttonStr + '(' + x + ')')
+		} catch (e) {
+			console.log(e);
+		}
 		function fun() {  
-			--x;  
+			--x;
+			try {
+				$(".dialog-button span span").html(buttonStr + '(' + x + ')')
+			} catch (e) {console.log(e)}
 			if(x == 0) {  
 		       clearInterval(interval_alert);
 		       $(".messager-body").window('close');
@@ -275,15 +291,27 @@ Tool.message.confirm = function(title, msg, fn) {
 }
 
 Tool.operate = function() {}
-/** session检查、操作权限检查 */
-Tool.operate.check = function(data, autoClose) {
+/** session检查、操作权限检查 
+ *  param={'data':data,'message':true,'close':true}
+ *  data=json数据，
+ *  message=成功是否提示，默认true
+ *  close=提示信息自动关闭时间，默认true，false不关闭
+ *  data, autoClose
+ **/
+Tool.operate.check = function(param) {
+	var data = param.data;
+	console.log(param);
 	var d = $.parseJSON(data);
 	if (!d) {// 转化成功为json对象、form提交返回需要转化
 		d = data;// 已经转化过
 	}
 	var msg = StatusCode.msg(d.msg);
 	if (d.success == true) {
-		Tool.message.alert(Lang.tip, msg, Tool.icon.info, autoClose);
+		if (param.message != false) param.message = true;
+		if (param.message == true) {
+			if (param.close != false) param.close = true;
+			Tool.message.alert(Lang.tip, msg, Tool.icon.info, param.close);
+		}
     	return true;
     } else if (d.success == false) {
         if (d.msg == 'sys_004') {

@@ -1,9 +1,11 @@
 package com.fcc.commons.workflow.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
+import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 
 /**
@@ -33,16 +35,30 @@ public interface ProcessInstanceService {
 	void deleteProcessInstance(String id, String info);
 	
 	/**
+     * 流程实例评论
+     * @param processInstanceId
+     * @return
+     */
+    List<ProcessTaskInfo> getProcessInstanceCommentWithTasks(String processInstanceId);
+	
+	/**
 	 * 流程实例评论
 	 * @param processInstanceId
 	 * @return
 	 */
-	List<ProcessTaskInfo> getProcessInstanceComments(String processInstanceId);
+	List<ProcessTaskCommentInfo> getProcessInstanceComments(String processInstanceId);
+	
+	/**
+	 * 获取流程实例
+	 * @param instaceId
+	 * @return
+	 */
+	ProcessInstanceInfo getProcessInstace(String instaceId);
 	
 	/**
 	 * 分页查询
 	 * @return
 	 */
-	ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
+	ListPage queryPage(int pageNo, int pageSize, WorkflowInstanceQuery workflowInstanceQuery);
 	
 }

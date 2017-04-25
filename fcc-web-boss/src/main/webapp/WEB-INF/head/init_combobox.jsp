@@ -29,10 +29,11 @@ function getComboBoxByUrl(param) {
             console.log(e)
         },
         loadFilter : function(data) {
-            var flag = Tool.operate.check(data);
+            var flag = Tool.operate.check({'data':data});
             if (flag != true || flag != false) {
                 return data;                                            
             }
+            return {};
         }
     });
 }

@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.common.Constants;
-import com.fcc.commons.workflow.common.WorkflowModelQueryEnum;
+import com.fcc.commons.workflow.query.WorkflowModelQuery;
 import com.fcc.commons.workflow.service.ProcessModelService;
 /**
  * 
- * <p>Description:</p>
+ * <p>Description:流程模型</p>
  * <p>Copyright:Copyright (c) 2009 </p>
  * @author 傅泉明
  * @version v1.0
@@ -122,14 +122,14 @@ public class ProcessModelServiceImpl implements ProcessModelService {
 	
 	@Transactional(readOnly = true)//只查事务申明
 	public ListPage queryPage(int pageNo, int pageSize,
-			Map<String, Object> param) {
+	        WorkflowModelQuery workflowModelQuery) {
 		ModelQuery query = repositoryService.createModelQuery();
-		if (param != null) {
-			String modelName = (String)param.get(WorkflowModelQueryEnum.modelName.toString());
+		if (workflowModelQuery != null) {
+			String modelName = workflowModelQuery.modelNameLike(null);
             if (modelName != null) {
             	query.modelNameLike("%" + modelName + "%");
             }
-            String modelKey = (String)param.get(WorkflowModelQueryEnum.modelKey.toString());
+            String modelKey = workflowModelQuery.modelKey(null);
             if (modelKey != null) {
             	query.modelKey(modelKey);
             }

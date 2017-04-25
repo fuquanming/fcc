@@ -1,9 +1,9 @@
 package com.fcc.commons.workflow.service;
 
 import java.util.Date;
-import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 
 /**
  * <p>Description:流程定义</p>
@@ -49,6 +49,6 @@ public interface ProcessDefinitionService {
 	 * 分页查询
 	 * @return
 	 */
-	ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
+	ListPage queryPage(int pageNo, int pageSize, WorkflowDefinitionQuery workflowDefinitionQuery);
 	
 }

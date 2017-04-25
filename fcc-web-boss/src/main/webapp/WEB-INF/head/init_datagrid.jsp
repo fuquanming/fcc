@@ -16,6 +16,21 @@ var datagridParam_confirm_beforeCallback;// 确认框操作前回调
 var datagridParam_confirm_afterCallback;// 确认框操作后回调
 
 $(function() {
+	var frozenColumns;
+	if (datagridParam_idField_checkbox == true) {
+		frozenColumns = [ [ 
+	        {
+	            field : 'id',
+	            width : 50,
+	            checkbox : datagridParam_idField_checkbox
+	        }, {
+	                field : datagridParam_idField,
+	                hidden : true
+	        } 
+        ] ]
+	} else {
+		frozenColumns = [[]];
+	}
 	datagrid = $('#' + datagridParam_id).datagrid({
         url : Tool.urlAddParam(datagridParam_url, 'random=' + Math.random()),
         toolbar : '#toolbar',
@@ -30,17 +45,9 @@ $(function() {
         fitColumns : true,
         nowrap : false,
         border : false,
+        singleSelect : datagridParam_idField_checkbox == true ? false : true,
         idField : datagridParam_idField,
-        frozenColumns : [ [ 
-        {
-            field : 'id',
-            width : 50,
-            checkbox : datagridParam_idField_checkbox
-        }, {
-                field : datagridParam_idField,
-                hidden : true
-        } 
-        ] ],
+        frozenColumns : frozenColumns,
         columns :datagridParam_column_value,
         onRowContextMenu : function(e, rowIndex, rowData) {
             e.preventDefault();
@@ -52,7 +59,7 @@ $(function() {
             });
         },
         onLoadError : function(data) {
-        	console.log(data);
+        	console.log('error datagrid');
             //window.location.href = overUrl;
         },
         onLoadSuccess : function(data) {
@@ -63,10 +70,11 @@ $(function() {
             }
         },
         loadFilter : function(data) {
-            var flag = Tool.operate.check(data);
-            if (flag != true || flag != false) {
+            var flag = Tool.operate.check({'data':data});
+            if (flag != false) {
                 return data;                         
             }
+            return {'total':0,'rows':[],footer:null};
         }
     });
 })
@@ -157,6 +165,7 @@ function gridConfirm(params) {
                 
                 saveParam_form = params.userFormId;
                 saveParam_saveUrl = params.operateUrl;
+                saveParam_closeWin = true;
                 saveParam_afterCallback = function(data, success) {
                     if (params.afterCallback) params.afterCallback(data, success);
                     return false;

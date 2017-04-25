@@ -55,11 +55,7 @@
         <tr>
              <th>头像：</th>
              <td width="350px;">
-             <%-- ${filePath }${sysAnnex.fileUrl }/${sysAnnex.fileName} --%>
-             <%-- <img id="userLogo" src="${sysAnnex.url }" width="60px" height="80px"/>
-             <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small l-btn-plain" iconcls="icon-remove" onclick="delFile();" plain="true">删除</a>
-             <br/> --%>
-             <tool:fileShow linkType="${linkType }" annexType="${annexType }" linkId="${data.userId }"></tool:fileShow>
+             <tool:fileShow linkType="${linkType }" annexType="${annexType }" linkId="${data.userId }" ></tool:fileShow>
              <tool:fileUpload linkType="${linkType }" annexType="${annexType }" fileType="gif|jpg|jpeg|png"></tool:fileUpload>
              </td>
         </tr>

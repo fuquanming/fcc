@@ -129,7 +129,7 @@ datagridParam_column_value = [ [ {
     title : 'Email',
     width : 150
 } , {
-    field : 'regDate',
+    field : 'createTime',
     title : '注册时间',
     width : 150,
     formatter : function(value, rowData, rowIndex) {

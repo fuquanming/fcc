@@ -1,8 +1,6 @@
 package com.fcc.commons.workflow.controller;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,7 +20,10 @@ import com.fcc.commons.web.common.StatusCode;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
+import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
 import com.fcc.commons.workflow.service.ProcessInstanceService;
+
+import io.swagger.annotations.ApiParam;
 
 /**
  * <p>Description: 工作流-流程实例管理</p>
@@ -45,14 +47,28 @@ public class ProcessInstanceController extends WorkflowController {
 		return "manage/sys/workflow/processInstance_list";
 	}
 	
+	/** 显示流程实例详情 */
+    @RequestMapping("/toView.do")
+    @Permissions("view")
+    public String toView(HttpServletRequest request,
+            @ApiParam(required = false, value = "流程实例ID") @RequestParam(name = "id", defaultValue = "") String processInstanceId) {
+        try {
+            setProcessHistory(request, processInstanceId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "manage/sys/workflow/processInstance_view";
+    }
+	
 	/** 挂起、激活流程定义 */
 	@RequestMapping("/edit.do")
 	@Permissions("edit")
-	public ModelAndView edit(HttpServletRequest request) {
+	public ModelAndView edit(HttpServletRequest request,
+	        @ApiParam(required = true, value = "状态名称") @RequestParam(name = "status") String status,
+	        @ApiParam(required = true, value = "流程实例ID") @RequestParam(name = "processInstanceId") String processInstanceId
+            ) {
 		Message message = new Message();
 		try {
-			String status = request.getParameter("status");
-			String processInstanceId = request.getParameter("processInstanceId");
 			if (StringUtils.isEmpty(status)) {
 				throw new RefusedException("请输入状态名称！");
 			}
@@ -114,19 +130,22 @@ public class ProcessInstanceController extends WorkflowController {
 	@RequestMapping("/datagrid.do")
 	@ResponseBody
 	@Permissions("view")
-	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
+	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
+	        @ApiParam(required = false, value = "流程业务ID") @RequestParam(name = "businessKey", defaultValue = "") String businessKey,
+	        @ApiParam(required = false, value = "流程定义ID") @RequestParam(name = "definitionKey", defaultValue = "") String definitionKey
+            ) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
-			String businessKey = request.getParameter("businessKey");
-			String definitionKey = request.getParameter("definitionKey");
-			Map<String, Object> param = new HashMap<String, Object>();
+		    WorkflowInstanceQuery query = null;
 			if (StringUtils.isNotEmpty(businessKey)) {
-				param.put("businessKey", businessKey);
+			    query = workflowService.createInstanceQuery();
+				query.processInstanceBusinessKey(businessKey);
 			}
 			if (StringUtils.isNotEmpty(definitionKey)) {
-				param.put("definitionKey", definitionKey);
+			    if (query == null) query = workflowService.createInstanceQuery();
+				query.processDefinitionKey(definitionKey);
 			}
-			ListPage listPage = processInstanceService.queryPage(dg.getPage(), dg.getRows(), param);
+			ListPage listPage = processInstanceService.queryPage(dg.getPage(), dg.getRows(), query);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			json.setRows(listPage.getDataList());
 		} catch (Exception e) {

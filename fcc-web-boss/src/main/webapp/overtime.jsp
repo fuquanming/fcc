@@ -34,7 +34,7 @@
 			}
 		}
 		
-		<c:if test="${filterMsg != 'right'}">
+		<c:if test="${filterMsg != 'right' && filterMsg != 'heapSpace'}">
 		window.setInterval(function(){
 			var time = $('#timeSpan').text();
 			$('#timeSpan').html(parseInt(time) - 1);
@@ -55,6 +55,9 @@
 			<c:when test="${filterMsg == 'right'}">
 			<br/>您不具备对该项的操作权限，您可以和系统管理员联系；
 			</c:when>
+			<c:when test="${filterMsg == 'heapSpace'}">
+            <br/>系统忙，请稍后再试！
+            </c:when>
 			<c:otherwise>
 			<br/>未登录用户或用户访问已超时，您可以重新登陆；
 			<br/><br/><a id="loginA" href="login.jsp" target="_top">>>点击这里重新登录 </a>

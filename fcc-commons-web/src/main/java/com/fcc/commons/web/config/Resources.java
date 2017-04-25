@@ -27,6 +27,8 @@ public final class Resources {
     public static final ResourceBundle EMAIL = ResourceBundle.getBundle("config/email");
     /** 系统配置 */
     public static final ResourceBundle CONFIG = ResourceBundle.getBundle("config/config");
+    /** activiti */
+    public static final ResourceBundle ACTIVITI = ResourceBundle.getBundle("config/activiti");
     
     
 }

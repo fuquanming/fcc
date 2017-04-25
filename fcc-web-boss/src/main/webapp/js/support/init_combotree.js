@@ -36,10 +36,11 @@ function getComboTree(param) {
             //window.location.href = overUrl;
         },
         loadFilter : function(data) {
-            var flag = Tool.operate.check(data);
-            if (flag != true || flag != false) {
+            var flag = Tool.operate.check({'data':data});
+            if (flag != false) {
                 return data;                                            
             }
+            return {};
         }
     });
 }

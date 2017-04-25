@@ -7,7 +7,6 @@
 <%@ attribute name="fileType" required="false" type="java.lang.String" description="上传文件类型：xls|jpg|png"%>
 <%@ attribute name="maxFileSize" required="false" type="java.lang.String" description="上传文件大小：单位字节"%>
 <%@ attribute name="maxFileTotal" required="false" type="java.lang.String" description="上传文件总数"%>
-<%-- <%@ include file="/WEB-INF/head/upload_js.jsp"%> --%>
 <script type="text/javascript"
     src="js/jQuery-File-Upload-9.12.6/js/vendor/jquery.ui.widget.js"></script>
 <script type="text/javascript"
@@ -80,9 +79,19 @@ var ${annexType }_fileupload = {
             $('#' + this.uploadFileNameId).val(uploadFileName.join(','));
             //console.log($('#' + this.uploadFileNameId).val());
         },
+        appendWaitImg : function(index) {
+        	// 上传文件
+            $('<img id="${annexType }-importWaitImg-' + index + '" src="images/wait1.gif"/>')
+            .appendTo($('#${annexType }-fileuploadTdName-' + index));
+        },
+        removeWaitImg : function(index) {
+            // 上传文件
+            $('#${annexType }-importWaitImg-' + index).remove();
+        },
         importFile : function(index) {// 上传文件
             if (index >= 0) {// 选择文件上传
-                Tool.message.progress();
+            	this.appendWaitImg(index);
+                //Tool.message.progress();
                 this.currentUploadIndex = index;
                 this.fileuploadAll = false;
                 this.fileuploadData.files[0] = this.fileuploadFiles[index];
@@ -100,7 +109,8 @@ var ${annexType }_fileupload = {
                     }
                 }
                 if (current_upload_index != -1) {
-                    Tool.message.progress();
+                	this.appendWaitImg(current_upload_index);
+                    //Tool.message.progress();
                     this.fileuploadAll = true;
                     this.fileuploadData.files[0] = this.fileuploadFiles[current_upload_index];
                     this.currentUploadIndex = current_upload_index;
@@ -132,6 +142,7 @@ var ${annexType }_fileupload = {
         	if (index >= 0) {
                 var fileName = $('#${annexType }-fileuploadRealName-' + index).attr('filename');
                 str = fileName;
+                this.appendWaitImg(index);
         	} else {
         		var length = this.fileuploadRealName.length;
         		var fileName = [];
@@ -139,19 +150,20 @@ var ${annexType }_fileupload = {
         			var temp = this.fileuploadRealName[i];
         			if (temp && temp != null) {
         				fileName.push(temp);
+        				this.appendWaitImg(i);
         			}
         		}
         		str = fileName.join('&fileName=');
         	}
         	if (str == '') return;
-        	Tool.message.progress();
+        	//Tool.message.progress();
         	$.ajax({
                 url : Tool.urlAddParam('manage/sys/sysAnnex/delFile.do?fileName=' + str, 'random=' + Math.random()),
                 cache : false,
                 dataType : "json",
                 success : function(d) {
-                    Tool.message.progress('close');
-                    if (Tool.operate.check(d, true) == true) {
+                    //Tool.message.progress('close');
+                    if (Tool.operate.check({'data':d,'message':false}) == true) {
                         if (index  >= 0) {
                         	$('#${annexType }-fileuploadTr-' + index).remove();
                             ${annexType }_fileupload.fileuploadName[index] = null;
@@ -221,12 +233,13 @@ $(function() {
             // fileupload_data.originalFiles 文件
         }, */
         done: function (e, data) {
-            Tool.message.progress('close');
-            if (Tool.operate.check(data.result, true) == true) {
+            //Tool.message.progress('close');
+            if (Tool.operate.check({'data':data.result,'message':false}) == true) {
             	var cIndex = ${annexType }_fileupload.currentUploadIndex;
             	// 移除上传、取消按钮
             	$('#${annexType }-fileuploadBtn-' + cIndex).remove();
                 $('#${annexType }-filecancelBtn-' + cIndex).remove();
+                ${annexType }_fileupload.removeWaitImg(cIndex);// 移除等待图片
                 // 添加删除按钮
                 $('<a id="${annexType }-filedelBtn-' + cIndex + '" href="javascript:void(0)" index="' + cIndex + '" class="l-btn l-btn-small"><span class="l-btn-left"><span class="l-btn-text">删除</span></span></a>')
                 .appendTo($('#${annexType }-fileuploadTdBtn-' + cIndex));

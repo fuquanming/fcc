@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.stream.XMLInputFactory;
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.common.Constants;
-import com.fcc.commons.workflow.common.WorkflowDefinitionQueryEnum;
+import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.service.ProcessDefinitionService;
 import com.fcc.commons.workflow.view.ProcessDefinitionInfo;
 
@@ -105,17 +104,17 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)//只查事务申明
-	public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
+	public ListPage queryPage(int pageNo, int pageSize, WorkflowDefinitionQuery workflowDefinitionQuery) {
 		ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery();
-		if (param != null) {
-			String definitionName = (String) param.get(WorkflowDefinitionQueryEnum.definitionName.toString());
-            if (definitionName != null) {
-            	query.processDefinitionNameLike("%" + definitionName + "%");
-            }
-            String definitionKey = (String) param.get(WorkflowDefinitionQueryEnum.definitionKey.toString());
-            if (definitionKey != null) {
-            	query.processDefinitionKey(definitionKey);
-            }
+		if (workflowDefinitionQuery != null) {
+		    String definitionName = workflowDefinitionQuery.processDefinitionNameLike(null);
+	        if (definitionName != null) {
+	            query.processDefinitionNameLike("%" + definitionName + "%");
+	        }
+	        String definitionKey = workflowDefinitionQuery.processDefinitionKey(null);
+	        if (definitionKey != null) {
+	            query.processDefinitionKey(definitionKey);
+	        }
 		}
 		query.orderByDeploymentId().desc();
 		ListPage listPage = processBaseService.queryPage(pageNo, pageSize, query);

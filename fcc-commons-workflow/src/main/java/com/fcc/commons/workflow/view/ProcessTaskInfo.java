@@ -42,16 +42,23 @@ public class ProcessTaskInfo {
 	private Integer processDefinitionVersion;
 	/** 流程定义名称 */
 	private String processDefinitionName;
+	/** 流程定义KEY */
+	private String processDefinitionKey;
 	
-	// 任务评论
+	// 历史任务使用字段 begin
+	/** 任务开始的时间. */
 	private Date startTime;
-	
+	/** 任务被删除或完成的时间。*/
 	private Date endTime;
-	
+	/** {@link #getEndTime（）}与{@link #getStartTime（）}之间的差异（以毫秒为单位）。  */
+    private Long durationInMillis;
+    // 历史任务使用字段 end
+    
+    /** 超时时间 */
 	private Date claimTime;
-	
+	/** 评论内容 */
 	private String comment;
-	
+	/** 评论时间 */
 	private Date commentTime;
 	
 	
@@ -139,6 +146,12 @@ public class ProcessTaskInfo {
 	public void setProcessDefinitionName(String processDefinitionName) {
 		this.processDefinitionName = processDefinitionName;
 	}
+	public String getProcessDefinitionKey() {
+        return processDefinitionKey;
+    }
+    public void setProcessDefinitionKey(String processDefinitionKey) {
+        this.processDefinitionKey = processDefinitionKey;
+    }
 	public String getExecutionId() {
 		return executionId;
 	}
@@ -157,6 +170,12 @@ public class ProcessTaskInfo {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
+	public Long getDurationInMillis() {
+        return durationInMillis;
+    }
+    public void setDurationInMillis(Long durationInMillis) {
+        this.durationInMillis = durationInMillis;
+    }
 	public Date getClaimTime() {
 		return claimTime;
 	}

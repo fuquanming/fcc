@@ -44,15 +44,15 @@
     <table class="tableForm" style="width: 400px; height: 200px;" align="center">
       <tr>
         <th>模型KEY</th>
-        <td><input id="modelKey" name="modelKey" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td><input id="modelKey" name="modelKey" class="easyui-validatebox easyui-textbox" required="true" maxlength="100"/></td>
       </tr>
       <tr>
         <th>模型名称</th>
-        <td><input id="modelName" name="modelName" class="easyui-validatebox" required="true" maxlength="100"/></td>
+        <td><input id="modelName" name="modelName" class="easyui-validatebox easyui-textbox" required="true" maxlength="100"/></td>
       </tr>
       <tr>
         <th>模型描述</th>
-        <td><textarea id="modelDescription" name="modelDescription" rows="5" cols="20"></textarea> </td>
+        <td><textarea id="modelDescription" name="modelDescription" rows="5" cols="20" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 200]"></textarea> </td>
       </tr>
     </table>
   </form>
@@ -113,47 +113,6 @@ function deploy(id) {
             save();
         }
     });
-	return;
-    var ids = [];
-    var rows = datagrid.datagrid('getSelections');
-    if (rows.length > 0) {
-        $.messager.confirm('请确认', '您要部署当前所选记录？', function(r) {
-            if (r) {
-                for ( var i = 0; i < rows.length; i++) {
-                    ids.push(rows[i].id);
-                }
-                var idsVal = ids.join(',');
-                userForm.find('[name=ids]').val(idsVal);
-                userForm.form('submit', {
-                    url : '<%=basePath%>manage/sys/workflow/processModel/deploy.do',
-                    onSubmit : function() {
-                        $.messager.progress({
-                            text : '数据处理中，请稍后....'
-                        });
-                        return true;
-                    },
-                    success : function(data) {
-                        try {
-                            $.messager.progress('close');
-                            var d = $.parseJSON(data);
-                            $.messager.show({
-                                msg : d.msg,
-                                title : '提示'
-                            });
-                            if (d.success) {
-                                datagrid.datagrid('unselectAll');
-                                searchFun();
-                            }
-                        } catch(e) {
-                            window.location.href = overUrl;
-                        }
-                    }
-                });
-            }
-        });
-    } else {
-        $.messager.alert('提示', '请选择要部署的记录！', 'error');
-    }
 }
 
 datagridParam_id = 'datagrid';// 用到的datagrid的ID

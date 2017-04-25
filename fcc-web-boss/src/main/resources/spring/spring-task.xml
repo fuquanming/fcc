@@ -36,4 +36,10 @@
 			method="executeQueue" cron="0/5 * * * * ?" />
 	</task:scheduled-tasks>
 	
+	<!-- 每天1点清除临时文件 -->
+    <task:scheduled-tasks>
+        <task:scheduled ref="fileClearServiceImpl"
+            method="executeQueue" cron="0 0 1 * * ?" />
+    </task:scheduled-tasks>
+	
 </beans>

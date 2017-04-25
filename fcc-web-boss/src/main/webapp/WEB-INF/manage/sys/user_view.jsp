@@ -39,14 +39,10 @@
         </tr>
         <tr>
 			<th>组织机构：</th>
-			<td>${organ.organName }</td>
+			<td>${organ.nodeName }</td>
 		</tr>
         <tr>
           <th>备注：</th>
-          <td colspan="3">${data.remark }</td>
-        </tr>
-        <tr>
-          <th>角色：</th>
           <td colspan="3">${data.remark }</td>
         </tr>
         <tr>
@@ -70,6 +66,6 @@
 </html>
 <script type="text/javascript" charset="UTF-8">
 function toBack() {
-    window.location.href = '${basePath}manage/sys/user/view.do';
+	Tool.goPage('${basePath}manage/sys/user/view.do');
 }
 </script>

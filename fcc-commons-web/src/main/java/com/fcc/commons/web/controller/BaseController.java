@@ -9,6 +9,7 @@
  */
 package com.fcc.commons.web.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fcc.commons.web.service.ConfigService;
 import com.fcc.commons.web.util.ModelAndViewUtil;
 import com.fcc.commons.web.view.Message;
 
@@ -29,6 +31,13 @@ import com.fcc.commons.web.view.Message;
  * @author 傅泉明
  */
 public abstract class BaseController {
+    
+    @Resource
+    ConfigService configService;
+    
+    public void execute(Runnable runnable) {
+        configService.getThreadPool().execute(runnable);
+    }
     
     /**
      * 获取JacksonJsonView

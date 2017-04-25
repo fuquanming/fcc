@@ -21,14 +21,14 @@ function save() {
                 try {
                 	saveParam_async = true;
                     Tool.message.progress('close');
-                    var success = Tool.operate.check(data, saveParam_closeWin);
+                    var success = Tool.operate.check({'data':data,'message':true,'close':saveParam_closeWin});
                     if (saveParam_afterCallback) {
                         if (saveParam_afterCallback(data, success) == false) return;
                     }
                     if (saveParam_backUrl) setTimeout(function() {toBack();}, 3000);
                 } catch(e) {
                     console.log(e)
-                    window.location.href = overUrl;
+                    Tool.goPage(overUrl);
                 }
             },
             onSubmit : function() {
@@ -64,14 +64,14 @@ function save() {
                 	try {
                 		saveParam_async = true;
                         Tool.message.progress('close');
-                        var success = Tool.operate.check(data, saveParam_closeWin);
+                        var success = Tool.operate.check({'data':data,'message':saveParam_closeWin});
                         if (saveParam_afterCallback) {
                             if (saveParam_afterCallback(data, success) == false) return;
                         }
                         if (saveParam_backUrl) setTimeout(function() {toBack();}, 3000);
                     } catch(e) {
                         console.log(e)
-                        window.location.href = overUrl;
+                        Tool.goPage(overUrl);
                     }
                 } catch(e) {
                     console.log(e)
@@ -81,6 +81,6 @@ function save() {
     }
 }
 function toBack() {
-    if (saveParam_backUrl) window.location.href = saveParam_backUrl;
+    if (saveParam_backUrl) Tool.goPage(saveParam_backUrl);
 }
 </script>

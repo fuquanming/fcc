@@ -9,29 +9,29 @@ import java.util.Date;
  * @version v1.0
  */
 public class ProcessInstanceInfo {
-	// ID
+	/** ID */
 	private String id;
-	// 流程实例ID
+	/** 流程实例ID */
 	private String processInstanceId;
-	// 流程定义ID
+	/** 流程定义ID */
 	private String processDefinitionId;
-	// 业务ID
+	/** 业务ID */
 	private String businessKey;
-	// 当前节点-任务名称
+	/** 当前节点-任务名称 */
 	private String currentNodeName;
-	// 是否结束
+	/** 是否结束 */
 	private boolean ended;
-	// 是否挂起
+	/** 是否挂起 */
 	private boolean suspended;
-	// 流程定义KEY
+	/** 流程定义KEY */
 	private String definitionKey;
-	// 流程定义名称
+	/** 流程定义名称 */
 	private String definitionName;
-	// 任务创建时间
+	/** 任务创建时间 */
 	private Date taskCreateTime;
-	// 任务当前处理人
+	/** 任务当前处理人 */
 	private String taskAssignee;
-	// 流程定义版本号
+	/** 流程定义版本号 */
 	private Integer processDefinitionVersion;
 	
 

@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -24,11 +27,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.common.WorkflowVariableEnum;
+import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
+import com.fcc.commons.workflow.filter.WorkflowTaskEditDataFilter;
 import com.fcc.commons.workflow.model.WorkflowBean;
+import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
+import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
+import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
+import com.fcc.commons.workflow.query.WorkflowModelQuery;
+import com.fcc.commons.workflow.query.WorkflowTaskQuery;
+import com.fcc.commons.workflow.query.impl.WorkflowDefinitionQueryImpl;
+import com.fcc.commons.workflow.query.impl.WorkflowHistoryQueryImpl;
+import com.fcc.commons.workflow.query.impl.WorkflowInstanceQueryImpl;
+import com.fcc.commons.workflow.query.impl.WorkflowModelQueryImpl;
+import com.fcc.commons.workflow.query.impl.WorkflowTaskQueryImpl;
 import com.fcc.commons.workflow.service.ProcessHistoryService;
 import com.fcc.commons.workflow.service.ProcessInstanceService;
 import com.fcc.commons.workflow.service.ProcessTaskService;
 import com.fcc.commons.workflow.service.WorkflowService;
+import com.fcc.commons.workflow.view.ProcessHistoryInfo;
+import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
 
@@ -42,8 +60,8 @@ import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
 @SuppressWarnings("unchecked")
 public class WorkflowServiceImpl implements WorkflowService {
 
-//	@Autowired
-//	private IdentityService identityService;
+    @Resource
+	private IdentityService identityService;
 	@Resource
 	private RuntimeService runtimeService;
 	@Resource
@@ -56,8 +74,39 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private ProcessHistoryService processHistoryService;
 	@Resource
 	private ProcessTaskService processTaskService;
+	@Resource
+	private TaskService taskService;
 //	@Resource
 //	private ProcessDiagramGenerator processDiagramGenerator;
+	
+	private List<WorkflowTaskBusinessDataFilter> taskBusinessDataList;
+	
+	private List<WorkflowTaskEditDataFilter> taskEditDataList;
+	
+    @Override
+    public WorkflowTaskQuery createTaskQuery() {
+        return new WorkflowTaskQueryImpl();
+    }
+	
+	@Override
+    public WorkflowDefinitionQuery createDefinitionQuery() {
+        return new WorkflowDefinitionQueryImpl();
+    }
+	
+	@Override
+    public WorkflowInstanceQuery createInstanceQuery() {
+        return new WorkflowInstanceQueryImpl();
+    }
+	
+	@Override
+    public WorkflowHistoryQuery createHistoryQuery() {
+        return new WorkflowHistoryQueryImpl();
+    }
+	
+	@Override
+    public WorkflowModelQuery createModelQuery() {
+        return new WorkflowModelQueryImpl();
+    }
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public String startWorkflow(WorkflowBean workflowBean, String userId, String userName, Map<String, Object> variables) {
@@ -70,13 +119,21 @@ public class WorkflowServiceImpl implements WorkflowService {
 		ProcessInstance processInstance = null;
 		try {
 //			// 用来设置启动流程的人员ID，引擎会自动把用户ID保存到activiti:initiator中
-//            identityService.setAuthenticatedUserId(sysUser.getUserId());
+            identityService.setAuthenticatedUserId(userId);
 			processInstance = runtimeService.startProcessInstanceByKey(workflowBean.getDefinitionKey(), workflowBean.getBusinessKey(), variables);
 		} finally {
 //			identityService.setAuthenticatedUserId(null);
 		}
+		workflowBean.setProcessDefinitionId(processInstance.getProcessDefinitionId());
+		workflowBean.setProcessInstanceId(processInstance.getProcessInstanceId());
 		return processInstance.getId();
 	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+    public ProcessTaskInfo getCurrentTask(String processInstanceId) {
+        return processTaskService.getCurrentTask(processInstanceId);
+    }
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void taskClaim(String taskId, String userId) {
@@ -84,9 +141,18 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void taskComplete(String taskId, String processInstanceId, Map<String, Object> variables, String message) {
-		processTaskService.complete(taskId, processInstanceId, variables, message);
+	public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message) {
+		processTaskService.complete(userId, taskId, processInstanceId, variables, message);
 	}
+	
+	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
+    public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message, HttpServletRequest request) {
+	    processTaskService.complete(userId, taskId, processInstanceId, variables, message);
+	    for (WorkflowTaskEditDataFilter filter : taskEditDataList) {
+           filter.edit(request, variables);
+        }
+    }
 	
 	@Transactional(readOnly = true) //只查事务申明
 	public InputStream trace(String processInstanceId, String businessKey, String definitionKey) {
@@ -121,26 +187,55 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return processTaskService.getTaskOutSequenceFlow(processTaskInfo);
 	}
 	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+	public List<ProcessTaskInfo> getTaskComments(String processInstanceId) {
+	    return processInstanceService.getProcessInstanceCommentWithTasks(processInstanceId);
+	}
+	
 	@Transactional(readOnly = true) //只查事务申明	
-	public List<ProcessTaskInfo> getComments(String processInstanceId) {
+	public List<ProcessTaskCommentInfo> getComments(String processInstanceId) {
 		return processInstanceService.getProcessInstanceComments(processInstanceId);
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明
 	public ListPage queryPageProcessInstance(int pageNo, int pageSize,
-			Map<String, Object> param) {
-		return processInstanceService.queryPage(pageNo, pageSize, param);
+			WorkflowInstanceQuery workflowInstanceQuery) {
+		return processInstanceService.queryPage(pageNo, pageSize, workflowInstanceQuery);
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明	
 	public ListPage queryPageProcessHistory(int pageNo, int pageSize,
-			Map<String, Object> param) {
-		return processHistoryService.queryPage(pageNo, pageSize, param);
+			WorkflowHistoryQuery workflowHistoryQuery) {
+		return processHistoryService.queryPage(pageNo, pageSize, workflowHistoryQuery);
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明
-	public List<ProcessTaskInfo> queryList(Map<String, Object> param) {
-		List<ProcessTaskInfo> infoList = processTaskService.queryList(param);
+	@Override
+    public ProcessTaskInfo getProcessTask(String taskId) {
+	    List<String> processVariablesList = new ArrayList<String>(2);
+        processVariablesList.add(WorkflowVariableEnum.requestUserId.toString());
+        processVariablesList.add(WorkflowVariableEnum.requestUserName.toString());
+        ProcessTaskInfo info = processTaskService.getProcessTask(taskId);
+        info.setProcessVariables(processTaskService.getVariables(info.getId(), processVariablesList));
+	    return info;
+    }
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+    public ProcessInstanceInfo getProcessInstace(String instaceId) {
+        return processInstanceService.getProcessInstace(instaceId);
+    }
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+	public ProcessHistoryInfo getHistoricProcessInstance(String instaceId) {
+	    return processHistoryService.getProcessInstace(instaceId);
+	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+	public List<ProcessTaskInfo> queryProcessTask(WorkflowTaskQuery processTaskQuery) {
+		List<ProcessTaskInfo> infoList = processTaskService.queryList(processTaskQuery);
 		// 设置变量
 		for (ProcessTaskInfo info : infoList) {
 			info.setProcessVariables(processTaskService.getVariables(info.getId()));
@@ -149,15 +244,14 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明	
-	public Long queryPageCount(Map<String, Object> param) {
-		return processTaskService.queryPageCount(param);
+	public Long queryProcessTaskCount(WorkflowTaskQuery processTaskQuery) {
+		return processTaskService.queryProcessTaskCount(processTaskQuery);
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明	
-	public ListPage queryPageProcessTask(int pageNo, int pageSize,
-			Map<String, Object> param) {
+	public ListPage queryPageProcessTask(int pageNo, int pageSize, WorkflowTaskQuery processTaskQuery) {
 		// 添加变量
-		ListPage listPage = processTaskService.queryPage(pageNo, pageSize, param);
+		ListPage listPage = processTaskService.queryPage(pageNo, pageSize, processTaskQuery);
 		List<ProcessTaskInfo> infoList = listPage.getDataList();
 		
 		List<String> processVariablesList = new ArrayList<String>(2);
@@ -170,5 +264,33 @@ public class WorkflowServiceImpl implements WorkflowService {
 		
 		return listPage;
 	}
+	
+	@Transactional(readOnly = true) //只查事务申明 
+	@Override
+    public Map<String, Object> getTaskBusinessData(ProcessTaskInfo taskInfo, String businessKey) {
+	    for (WorkflowTaskBusinessDataFilter filter : taskBusinessDataList) {
+            Map<String, Object> map = filter.filter(taskInfo, businessKey);
+            if (map != null) {
+                return map;
+            }
+        }
+        return null;
+    }
+	
+	public List<WorkflowTaskBusinessDataFilter> getTaskBusinessDataList() {
+        return taskBusinessDataList;
+    }
+
+    public void setTaskBusinessDataList(List<WorkflowTaskBusinessDataFilter> taskBusinessDataList) {
+        this.taskBusinessDataList = taskBusinessDataList;
+    }
+    
+    public List<WorkflowTaskEditDataFilter> getTaskEditDataList() {
+        return taskEditDataList;
+    }
+
+    public void setTaskEditDataList(List<WorkflowTaskEditDataFilter> taskEditDataList) {
+        this.taskEditDataList = taskEditDataList;
+    }
 }
 

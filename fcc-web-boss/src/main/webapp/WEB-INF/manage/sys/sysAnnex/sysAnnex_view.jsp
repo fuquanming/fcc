@@ -61,6 +61,6 @@
 </html>
 <script type="text/javascript" charset="UTF-8">
 function toBack() {
-    window.location.href = 'manage/sys/sysAnnex/view.do';
+	Tool.goPage('manage/sys/sysAnnex/view.do');
 }
 </script>

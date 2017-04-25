@@ -3,6 +3,7 @@ package com.fcc.commons.workflow.service;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.workflow.query.WorkflowModelQuery;
 
 /**
  * <p>Description:流程模型</p>
@@ -43,6 +44,6 @@ public interface ProcessModelService {
 	 * 分页查询
 	 * @return
 	 */
-	ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
+	ListPage queryPage(int pageNo, int pageSize, WorkflowModelQuery workflowModelQuery);
 	
 }

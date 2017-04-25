@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipInputStream;
 
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,13 +33,15 @@ import com.fcc.commons.execption.RefusedException;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.common.StatusCode;
-import com.fcc.commons.web.controller.BaseController;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
+import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.service.ProcessDefinitionService;
 import com.fcc.commons.workflow.view.ProcessDefinitionInfo;
+
+import io.swagger.annotations.ApiParam;
 
 /**
  * <p>Description: 工作流-流程定义管理</p>
@@ -52,7 +51,7 @@ import com.fcc.commons.workflow.view.ProcessDefinitionInfo;
  */
 @Controller
 @RequestMapping("/manage/sys/workflow/processDefinition")
-public class ProcessDefinitionController extends BaseController {
+public class ProcessDefinitionController extends WorkflowController {
 
 	private Logger logger = Logger.getLogger(ProcessDefinitionController.class);
 	
@@ -142,11 +141,12 @@ public class ProcessDefinitionController extends BaseController {
 	/** 挂起、激活流程定义 */
 	@RequestMapping("/edit.do")
 	@Permissions("edit")
-	public ModelAndView edit(HttpServletRequest request) {
+	public ModelAndView edit(HttpServletRequest request,
+	        @ApiParam(required = false, value = "状态名称") @RequestParam(name = "status", defaultValue = "") String status,
+            @ApiParam(required = true, value = "流程定义ID") @RequestParam(name = "processDefinitionId", defaultValue = "") String processDefinitionId
+            ) {
 		Message message = new Message();
 		try {
-			String status = request.getParameter("status");
-			String processDefinitionId = request.getParameter("processDefinitionId");
 			if (StringUtils.isEmpty(status)) {
 				throw new RefusedException("请输入状态名称！");
 			}
@@ -166,8 +166,8 @@ public class ProcessDefinitionController extends BaseController {
 			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("操作失败！");
+			logger.error("挂起、激活流程失败！", e);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -194,8 +194,8 @@ public class ProcessDefinitionController extends BaseController {
 			message.setObj(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e);
-			message.setMsg("删除失败！");
+			logger.error("删除流程定义失败！", e);
+			message.setMsg(StatusCode.Sys.fail);
 			message.setObj(e.getMessage());
 		}
 		return getModelAndView(message);
@@ -208,19 +208,22 @@ public class ProcessDefinitionController extends BaseController {
 	@RequestMapping("/datagrid.do")
 	@ResponseBody
 	@Permissions("view")
-	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request) {
+	public EasyuiDataGridJson datagrid(EasyuiDataGrid dg, HttpServletRequest request,
+	        @ApiParam(required = false, value = "流程定义名称") @RequestParam(name = "definitionName", defaultValue = "") String definitionName,
+            @ApiParam(required = false, value = "流程定义KEY") @RequestParam(name = "definitionKey", defaultValue = "") String definitionKey
+            ) {
 		EasyuiDataGridJson json = new EasyuiDataGridJson();
 		try {
-			String definitionName = request.getParameter("definitionName");
-			String definitionKey = request.getParameter("definitionKey");
-			Map<String, Object> param = new HashMap<String, Object>();
+		    WorkflowDefinitionQuery query = null;
 			if (StringUtils.isNotEmpty(definitionName)) {
-				param.put("definitionName", definitionName);
+			    query = workflowService.createDefinitionQuery();
+				query.processDefinitionNameLike(definitionName);
 			}
 			if (StringUtils.isNotEmpty(definitionKey)) {
-				param.put("definitionKey", definitionKey);
+			    if (query == null)  query = workflowService.createDefinitionQuery();
+				query.processDefinitionKey(definitionKey);
 			}
-			ListPage listPage = processDefinitionService.queryPage(dg.getPage(), dg.getRows(), param);
+			ListPage listPage = processDefinitionService.queryPage(dg.getPage(), dg.getRows(), query);
 			json.setTotal(Long.valueOf(listPage.getTotalSize()));
 			json.setRows(listPage.getDataList());
 		} catch (Exception e) {
@@ -316,15 +319,15 @@ public class ProcessDefinitionController extends BaseController {
 				// 读取文件
 				try {
 					fis = new FileInputStream(saveFile);
-					Deployment deployment = null;
+//					Deployment deployment = null;
 					
 					String fileName = saveFile.getName().toLowerCase();
 					String extension = FilenameUtils.getExtension(fileName).toLowerCase();
 					if (extension.equals("zip") || extension.equals("bar")) { // 压缩包
 						ZipInputStream zip = new ZipInputStream(fis);
-		                deployment = repositoryService.createDeployment().addZipInputStream(zip).deploy();
+						repositoryService.createDeployment().addZipInputStream(zip).deploy();
 		            } else {
-		                deployment = repositoryService.createDeployment().addInputStream(fileName, fis).deploy();
+		                repositoryService.createDeployment().addInputStream(fileName, fis).deploy();
 		            }
 					totalSize ++;
 				} catch (Exception e) {

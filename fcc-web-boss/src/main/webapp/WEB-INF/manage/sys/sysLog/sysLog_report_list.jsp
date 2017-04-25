@@ -122,7 +122,7 @@ $(function() {
     })
 })    
 function toBack() {
-    window.location.href = "${basePath}manage/sys/sysLog/view.do";
+	Tool.goPage("${basePath}manage/sys/sysLog/view.do");
 } 
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
 datagridParam_url = '${basePath}manage/sys/sysLog/report/datagrid.do';// 数据源url

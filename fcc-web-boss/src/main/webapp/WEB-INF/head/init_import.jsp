@@ -50,7 +50,7 @@ $(function() {
         },
         done: function (e, data) {
         	Tool.message.progress('close');
-        	if (Tool.operate.check(data.result, true) == true) {
+        	if (Tool.operate.check({'data':data.result}) == true) {
                 cleanFileuploadTable();
                 $('<tr><td id="importWatiImgTd"><img id="importWaitImg" src="images/wait.gif"/></td><td id="importDataTd" style="color:red;"></td></tr>').appendTo(fileuploadTable)
                 queryImportDataSize();
@@ -99,7 +99,7 @@ function queryImportDataSize() {
             } catch(e) {
             	console.log(e);
                 importDataFlag = false;
-                window.location.href = overUrl;
+                Tool.goPage(overUrl);
             }
         }
     });

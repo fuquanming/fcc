@@ -74,6 +74,6 @@
 </html>
 <script type="text/javascript" charset="UTF-8">
 function toBack() {
-    window.location.href = '${basePath}manage/sys/sysLog/view.do';
+	Tool.goPage('${basePath}manage/sys/sysLog/view.do');
 }
 </script>

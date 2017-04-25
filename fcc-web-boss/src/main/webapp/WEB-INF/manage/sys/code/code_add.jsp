@@ -167,7 +167,7 @@ function queryColumn() {
         dataType : "json",
         success : function(d) {
             try {
-            	var success = Tool.operate.check(d, true);
+            	var success = Tool.operate.check({'data':data});
             	if (success) {
             	} else {
             		for (var i in d) {

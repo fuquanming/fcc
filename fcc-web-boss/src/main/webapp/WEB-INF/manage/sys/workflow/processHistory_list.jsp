@@ -4,172 +4,9 @@
 <html>
 <head>
 <%-- 流程历史管理 --%>
-<%@ include file="/head/base.jsp" %>
-<%@ include file="/head/meta.jsp" %>
-<%@ include file="/head/easyui.jsp" %>
-<%@ include file="/head/upload_js.jsp" %>
-<script type="text/javascript" charset="UTF-8">
-	var datagrid;
-	var userForm;
-	var userDialog;
-	var importDataFlag = false;
-	$(function() {
-
-		userForm = $('#userForm').form();
-
-		datagrid = $('#datagrid').datagrid({
-			url : '<%=basePath%>manage/sys/workflow/processHistory/datagrid.do?random=' + Math.random(),
-			toolbar : '#toolbar',
-			title : '',
-			iconCls : 'icon-save',
-			pagination : true,
-			rownumbers:true,
-			striped:true,
-			pageSize : 10,
-			pageList : [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 ],
-			fit : true,
-			fitColumns : true,
-			nowrap : false,
-			border : false,
-			idField : 'id',
-			frozenColumns : [ [ 
-			{
-				field : 'id',
-				width : 50,
-				checkbox : true,
-			}, {
-					field : 'id',
-					hidden : true
-			} 
-			 ] ],
-			columns : [ [ 
-				{
-					field : 'businessKey',
-					title : '流程业务ID',
-					width : 100
-				} ,
-				{
-					field : 'processDefinitionId',
-					title : '流程定义ID',
-					width : 100
-				} ,
-				{
-					field : 'startTime',
-					title : '开始时间',
-					width : 100,
-					formatter : function(value, rowData, rowIndex) {
-						return Tool.dateFormat({'value' : value, 'format' : 'yyyy-MM-dd HH:mm:ss'});
-					}
-				} ,
-				{
-					field : 'endTime',
-					title : '结束时间',
-					width : 100,
-					formatter : function(value, rowData, rowIndex) {
-						return Tool.dateFormat({'value' : value, 'format' : 'yyyy-MM-dd HH:mm:ss'});
-					}
-				} ,
-				{
-					field : 'durationInMillis',
-					title : '持续时间',
-					width : 100,
-					formatter : function(value, rowData, rowIndex) {
-						return Tool.dateFormat({'value' : value, 'interval' : true});
-					}
-				}  ,
-				{
-					field : 'deleteReason',
-					title : '流程结束原因',
-					width : 100,
-					formatter : function(value, rowData, rowIndex) {
-						return (value == null || "" == value) ? '正常结束' : value;
-					}
-				} ,
-				{
-					field : 'processDefinitionVersion',
-					title : '流程定义版本号',
-					width : 50
-				} 
-			] ],
-			onRowContextMenu : function(e, rowIndex, rowData) {
-				e.preventDefault();
-				$(this).datagrid('unselectAll');
-				$(this).datagrid('selectRow', rowIndex);
-				$('#menu').menu('show', {
-					left : e.pageX,
-					top : e.pageY
-				});
-			},
-			onLoadError : function(e) {
-				window.location.href = overUrl;
-			},
-			onLoadSuccess : function(data) {
-				if (data.msg && data.msg != '') {
-					$.messager.show({
-						msg : '数据库异常！',
-						title : '提示'
-					});
-				}
-			}
-		});
-		
-	});
-	
-	function del() {
-		var ids = [];
-		var rows = datagrid.datagrid('getSelections');
-		if (rows.length > 0) {
-			$.messager.confirm('请确认', '您要删除当前所选记录？', function(r) {
-				if (r) {
-					for ( var i = 0; i < rows.length; i++) {
-						ids.push(rows[i].id);
-					}
-					var idsVal = ids.join(',');
-					userForm.find('[name=ids]').val(idsVal);
-					userForm.form('submit', {
-						url : '<%=basePath%>manage/sys/workflow/processHistory/delete.do',
-						onSubmit : function() {
-							$.messager.progress({
-								text : '数据处理中，请稍后....'
-							});
-							return true;
-						},
-						success : function(data) {
-							try {
-								$.messager.progress('close');
-								var d = $.parseJSON(data);
-								$.messager.show({
-									msg : d.msg,
-									title : '提示'
-								});
-								if (d.success) {
-									datagrid.datagrid('unselectAll');
-									searchFun();
-								}
-							} catch(e) {
-								window.location.href = overUrl;
-							}
-						}
-					});
-				}
-			});
-		} else {
-			$.messager.alert('提示', '请选择要删除的记录！', 'error');
-		}
-	}
-	
-	function searchFun() {
-		datagrid.datagrid('load', {
-				businessKey : $('#toolbar input[name=businessKey]').val(),
-				definitionKey  : $('#toolbar input[name=definitionKey]').val()
-		});
-	}
-	function clearFun() {
-		$('#toolbar input').val('');
-		datagrid.datagrid('load', {});
-	}
-	
-</script>
+<%@ include file="/WEB-INF/head/base.jsp" %>
+<%@ include file="/WEB-INF/head/meta.jsp" %>
+<%@ include file="/WEB-INF/head/easyui.jsp" %>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
@@ -182,12 +19,20 @@
     	<tr>	
 			<th>流程定义KEY</th>	
 			<td colspan="2">
-				<input id="definitionKey" name="definitionKey" maxlength="20"  style="width: 120px;"/>
+				<input id="definitionKey" name="definitionKey" maxlength="20"  style="width: 120px;" class="easyui-textbox"  data-options="prompt:'请输入流程定义KEY...'"/>
 			</td>
 			<th>流程业务ID</th>	
 			<td colspan="2">
-				<input id="businessKey" name="businessKey" maxlength="20"  style="width: 120px;"/>
+				<input id="businessKey" name="businessKey" maxlength="20"  style="width: 120px;" class="easyui-textbox"  data-options="prompt:'请输入流程业务ID...'"/>
 			</td>
+			<th>用户发起的流程</th> 
+            <td colspan="2">
+                <input id="startedBy" name="startedBy" maxlength="20"  style="width: 150px;" class="easyui-textbox"  data-options="prompt:'请输入用户名...'"/>
+            </td>
+            <th>用户参与的流程</th> 
+            <td colspan="2">
+                <input id="involvedUser" name="involvedUser" maxlength="20"  style="width: 150px;" class="easyui-textbox"  data-options="prompt:'请输入用户名...'"/>
+            </td>
 		</tr>	
 		<tr>
 	        <td colspan="3" align="center">
@@ -199,16 +44,91 @@
 	</table>
 	</form>
     </fieldset>
-    <div> 
-    <fcc:permission moduleId="${rightModuleId}" operateId="delete">
-    <a class="easyui-linkbutton" iconCls="icon-remove" onClick="del();" plain="true" href="javascript:void(0);">删除</a>  
-    </fcc:permission>
-    <a class="easyui-linkbutton" iconCls="icon-undo" onClick="datagrid.datagrid('unselectAll');" plain="true" href="javascript:void(0);">取消选中</a> 
-    <span id="expordDataSizeSpan" style="color: red; font-weight: bolder;"></span>
-    </div>
+    <div id="operateDiv"></div>
   </div>
   <table id="datagrid">
   </table>
 </div>
 </body>
 </html>
+<%@ include file="/WEB-INF/head/init_save.jsp" %>
+<%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
+<%@ include file="/WEB-INF/head/init_operate.jsp" %>
+<script type="text/javascript">
+datagridParam_id = 'datagrid';// 用到的datagrid的ID
+datagridParam_url = '${basePath}manage/sys/workflow/processHistory/datagrid.do';// 数据源url
+datagridParam_idField = 'processInstanceId';// datagrid表格的唯一标识
+datagridParam_idField_checkbox = true;// 是否显示多选框
+datagridParam_column_value = [ [ 
+    {
+        field : 'businessKey',
+        title : '流程业务ID',
+        width : 80
+    } ,
+    {
+        field : 'processDefinitionId',
+        title : '流程定义ID',
+        width : 60
+    } ,
+    {
+        field : 'processDefinitionKey',
+        title : '流程定义KEY',
+        width : 60
+    } ,
+    {
+        field : 'processDefinitionName',
+        title : '流程定义名称',
+        width : 60
+    } ,
+    {
+        field : 'startUserId',
+        title : '发起人',
+        width : 60
+    } ,
+    {
+        field : 'startTime',
+        title : '开始时间',
+        width : 75,
+        formatter : function(value, rowData, rowIndex) {
+            return Tool.dateFormat({'value' : value, 'format' : 'yyyy-MM-dd HH:mm:ss'});
+        }
+    } ,
+    {
+        field : 'endTime',
+        title : '结束时间',
+        width : 75,
+        formatter : function(value, rowData, rowIndex) {
+            return Tool.dateFormat({'value' : value, 'format' : 'yyyy-MM-dd HH:mm:ss'});
+        }
+    } ,
+    {
+        field : 'durationInMillis',
+        title : '持续时间',
+        width : 70,
+        formatter : function(value, rowData, rowIndex) {
+            return Tool.dateFormat({'value' : value, 'interval' : true});
+        }
+    }  ,
+    {
+        field : 'deleteReason',
+        title : '结束原因',
+        width : 50,
+        formatter : function(value, rowData, rowIndex) {
+            return (value == null || "" == value) ? '正常结束' : value;
+        }
+    } ,
+    {
+        field : 'processDefinitionVersion',
+        title : '版本号',
+        width : 30
+    } 
+] ];// 表格的列
+datagridParam_queryParamName = ['definitionKey', 'businessKey', 'startedBy', 'involvedUser'];
+
+operateParam_form = 'userForm';
+operateParam_operateDiv = 'operateDiv';
+operateParam_dataId = 'processInstanceId';
+operateParam_dataName = 'processDefinitionId';
+operateParam_viewUrl = '${basePath}manage/sys/workflow/processHistory/toView.do';
+operateParam_delUrl = '${basePath}manage/sys/workflow/processHistory/delete.do';
+</script>
