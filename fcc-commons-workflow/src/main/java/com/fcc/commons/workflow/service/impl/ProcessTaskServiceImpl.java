@@ -28,6 +28,7 @@ import com.fcc.commons.workflow.service.ProcessTaskService;
 import com.fcc.commons.workflow.util.ProcessDefinitionCache;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * 
@@ -91,11 +92,17 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
 	}
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
-	public void complete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message) {
+	public void complete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, List<ProcessTaskAttachmentInfo> attachmentList, String message) {
 	    // 设置当前用户，用户评论绑定userId
         Authentication.setAuthenticatedUserId(userId);
 		if (StringUtils.isNotEmpty(message)) {
 			taskService.addComment(taskId, processInstanceId, message);
+		}
+		if (attachmentList != null && attachmentList.size() > 0) {
+		    for (ProcessTaskAttachmentInfo attachment : attachmentList) {
+		        taskService.createAttachment(attachment.getAttachmentType(), taskId, processInstanceId, 
+		                attachment.getAttachmentName(), attachment.getAttachmentDescription(), attachment.getUrl());    
+		    }
 		}
 		taskService.complete(taskId, variables);
 	}

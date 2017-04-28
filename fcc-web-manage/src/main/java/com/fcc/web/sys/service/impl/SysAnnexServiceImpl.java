@@ -131,7 +131,7 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
     
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames) {
+    public List<SysAnnex> add(String linkType, String linkId, String annexType, String[] uploadFileNames, String[] uploadFileRealNames) {
         Date now = new Date();
         String timePath = DateFormatUtils.format(now, "yyyyMMdd");
         int length = uploadFileNames.length;
@@ -153,7 +153,7 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
         String urlPath = fileUrlSb.toString();
         File parentFile = new File(parentPath);
         if (parentFile.exists() == false) parentFile.mkdirs();
-        boolean flag = true;
+        List<SysAnnex> list = new ArrayList<SysAnnex>(length);
         for (int i = 0; i < length; i++) {
             boolean temp = false;
             String fileName = uploadFileNames[i];
@@ -174,16 +174,15 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     sysAnnex.setFileUrl(urlPath);
                     sysAnnex.setCreateTime(now);
                     baseService.add(sysAnnex);
-                    temp = true;
+                    list.add(sysAnnex);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             if (temp == false) {
-                flag = false;
             }
         }
-        return flag;
+        return list;
     }
     
     @SuppressWarnings("unchecked")

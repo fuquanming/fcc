@@ -105,8 +105,8 @@ public class WorkflowController extends BaseController {
      * @param processInstanceId
      * @return
      */
-    public List<ProcessTaskInfo> getTaskComments(String processInstanceId) {
-        return workflowService.getTaskComments(processInstanceId);
+    public List<ProcessTaskInfo> getTasks(String processInstanceId) {
+        return workflowService.getTasks(processInstanceId);
     }
     
     /**

@@ -18,6 +18,7 @@ import com.fcc.commons.workflow.view.ProcessInstanceInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * <p>Description:工作流</p>
@@ -84,11 +85,12 @@ public interface WorkflowService {
 	
 	/**
      * 完成任务
-     * @param taskId
-     * @param variables
+	 * @param taskId
+	 * @param variables
+	 * @param attachmentList TODO
      */
     void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message,
-            HttpServletRequest request);
+            List<ProcessTaskAttachmentInfo> attachmentList, HttpServletRequest request);
     
 	/**
 	 * 流程跟踪
@@ -107,11 +109,11 @@ public interface WorkflowService {
 	List<ProcessTaskSequenceFlowInfo> getTaskOutSequenceFlow(ProcessTaskInfo processTaskInfo);
 
 	/**
-     * 流程实例评论
-     * @param processInstanceId
-     * @return
-     */
-    List<ProcessTaskInfo> getTaskComments(String processInstanceId);
+	 * 流程实例任务、评论、附件
+	 * @param processInstanceId
+	 * @return
+	 */
+	List<ProcessTaskInfo> getTasks(String processInstanceId);
 	
 	/**
 	 * 流程实例评论

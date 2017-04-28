@@ -259,7 +259,8 @@ public class SysUserController extends AppWebController {
 			
 			// 获取logo附件
 			List<SysAnnex> annexList = sysAnnexService.query(sysUser.getUserId(), SysUser.ANNEX_LINK_TYPE, SysUser.AnnexType.logo);
-			if (addUploadFile(sysUser.getUserId(), request)) {
+			List<SysAnnex> list = addUploadFile(sysUser.getUserId(), request);
+			if (list != null && list.size() > 0) {
 			    // 删除原来logo文件
 			    if (annexList != null && annexList.size() > 0) {
 			        for (SysAnnex annex : annexList) 

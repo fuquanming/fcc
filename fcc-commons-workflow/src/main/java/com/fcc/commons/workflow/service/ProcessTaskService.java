@@ -8,6 +8,7 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.query.WorkflowTaskQuery;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * 
@@ -59,8 +60,9 @@ public interface ProcessTaskService {
 	 * 完成任务
 	 * @param taskId
 	 * @param variables
+	 * @param attachmentList TODO
 	 */
-	void complete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message);
+	void complete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, List<ProcessTaskAttachmentInfo> attachmentList, String message);
 	
 	/**
      * 查询一个任务

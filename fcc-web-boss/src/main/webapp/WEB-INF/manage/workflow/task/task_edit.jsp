@@ -35,13 +35,30 @@
 			<textarea rows="5" cols="40" id="message" name="message" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 500]"></textarea>
 			</td>
 		</tr>
+		<tr>  
+            <th>附件：</th>      
+            <td>
+            <tool:fileUpload linkType="${linkType }" annexType="${annexType }" maxFileTotal="2" ></tool:fileUpload>
+            </td>
+        </tr>
 		<c:forEach items="${commentList}" var="task">
+		<c:if test="${task.id != taskInfo.id  && task.durationInMillis > 2000}">
 		<tr>	
 			<th>${task.name }(${task.assignee })：<%-- <br/><fmt:formatDate value="${task.commentTime}" pattern="yyyy-MM-dd HH:mm:ss"/> --%></th>		
 			<td>
-			${task.comment }
+			<table>
+			<tr>
+				<td>${task.comment }</td>
+				<td>
+				<c:forEach items="${task.attachmentList}" var="attachment">
+	            <a href="<tool:fileUrl />${attachment.url }" target="_blank" >${attachment.attachmentName }</a>
+	            </c:forEach>
+				</td>
+			</tr>
+			</table>
 			</td>
 		</tr>
+		</c:if>
 		</c:forEach>
         <tr>
           <td colspan="2" align="center">

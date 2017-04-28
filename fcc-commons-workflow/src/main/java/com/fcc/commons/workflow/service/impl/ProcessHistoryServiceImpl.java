@@ -7,23 +7,24 @@ import javax.annotation.Resource;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.activiti.engine.task.Comment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
 import com.fcc.commons.workflow.service.ProcessHistoryService;
+import com.fcc.commons.workflow.service.ProcessInstanceService;
 import com.fcc.commons.workflow.service.ProcessTaskService;
 import com.fcc.commons.workflow.util.ProcessDefinitionCache;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
+import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 /**
  * <p>Description:流程历史</p>
@@ -38,8 +39,10 @@ public class ProcessHistoryServiceImpl implements ProcessHistoryService {
 	private RepositoryService repositoryService;
     @Resource
 	private HistoryService historyService;
+//    @Resource
+//    private TaskService taskService;
     @Resource
-    private TaskService taskService;
+    private ProcessInstanceService processInstanceService;
     @Resource
     private ProcessTaskService processTaskService;
     @Resource
@@ -122,8 +125,9 @@ public class ProcessHistoryServiceImpl implements ProcessHistoryService {
 	    List<ProcessTaskInfo> taskList = new ArrayList<ProcessTaskInfo>(list.size());
 	    ProcessDefinitionCache.setRepositoryService(repositoryService);
 	    // 获取评论
-	    List<Comment> commentList = taskService.getProcessInstanceComments(processInstanceId);
-	    
+	    List<ProcessTaskCommentInfo> commentList = processInstanceService.getProcessInstanceComments(processInstanceId);
+	    // 任务附件
+	    List<ProcessTaskAttachmentInfo> attachmentList = processInstanceService.getProcessInstanceAttachments(processInstanceId);
 	    for (HistoricTaskInstance task : list) {
 	        ProcessTaskInfo info = new ProcessTaskInfo();
 	        // 流程定义KEY definitionKey, 流程定义Name
@@ -148,12 +152,31 @@ public class ProcessHistoryServiceImpl implements ProcessHistoryService {
 	        info.setEndTime(task.getEndTime());
 	        info.setDurationInMillis(task.getDurationInMillis());
 	        
-	        for (Comment comment : commentList) {
+	        for (ProcessTaskCommentInfo comment : commentList) {
 	            if (comment.getTaskId().equals(info.getId())) {
-	                info.setComment(comment.getFullMessage());
+	                info.setComment(comment.getComment());
 	                info.setCommentTime(comment.getTime());
 	            }
 	        }
+	        
+	        for (ProcessTaskAttachmentInfo attachment : attachmentList) {
+                if (attachment.getTaskId().equals(info.getId())) {
+                    List<ProcessTaskAttachmentInfo> taskAttachmentInfoList = info.getAttachmentList();
+                    if (taskAttachmentInfoList == null) taskAttachmentInfoList = new ArrayList<ProcessTaskAttachmentInfo>();
+                    ProcessTaskAttachmentInfo attachmentInfo = new ProcessTaskAttachmentInfo();
+                    
+                    attachmentInfo.setAttachmentDescription(attachment.getAttachmentDescription());
+                    attachmentInfo.setAttachmentName(attachment.getAttachmentName());
+                    attachmentInfo.setAttachmentType(attachment.getAttachmentType());
+                    attachmentInfo.setTaskId(info.getId());
+                    attachmentInfo.setUrl(attachment.getUrl());
+                    attachmentInfo.setProcessInstanceId(processInstanceId);
+                    
+                    taskAttachmentInfoList.add(attachmentInfo);
+                    info.setAttachmentList(taskAttachmentInfoList);
+                }
+            }
+	        
 	        taskList.add(info);
 	    }
 	    return taskList;

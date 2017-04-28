@@ -5,8 +5,8 @@ import java.util.List;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
 import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
-import com.fcc.commons.workflow.view.ProcessTaskInfo;
 
 /**
  * <p>Description:流程实例</p>
@@ -35,19 +35,17 @@ public interface ProcessInstanceService {
 	void deleteProcessInstance(String id, String info);
 	
 	/**
-     * 流程实例评论
-     * @param processInstanceId
-     * @return
-     */
-    List<ProcessTaskInfo> getProcessInstanceCommentWithTasks(String processInstanceId);
-	
-	/**
 	 * 流程实例评论
 	 * @param processInstanceId
 	 * @return
 	 */
 	List<ProcessTaskCommentInfo> getProcessInstanceComments(String processInstanceId);
 	
+	/**
+	 * 流程实例附件
+	 * @return
+	 */
+	List<ProcessTaskAttachmentInfo> getProcessInstanceAttachments(String processInstanceId);
 	/**
 	 * 获取流程实例
 	 * @param instaceId

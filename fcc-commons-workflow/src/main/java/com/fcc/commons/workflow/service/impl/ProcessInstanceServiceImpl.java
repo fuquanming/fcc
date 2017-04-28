@@ -9,10 +9,10 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
+import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,8 @@ import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
 import com.fcc.commons.workflow.service.ProcessInstanceService;
 import com.fcc.commons.workflow.util.ProcessDefinitionCache;
 import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
-import com.fcc.commons.workflow.view.ProcessTaskInfo;
 /**
  * <p>Description:流程实例</p>
  * <p>Copyright:Copyright (c) 2009 </p>
@@ -61,37 +61,6 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明
-	@Override
-	public List<ProcessTaskInfo> getProcessInstanceCommentWithTasks(String processInstanceId) {
-	    List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
-        List<ProcessTaskInfo> list = new ArrayList<ProcessTaskInfo>(comments.size());
-        for (Comment comment : comments) {
-            HistoricTaskInstance task = historyService
-              .createHistoricTaskInstanceQuery()
-              .taskId(comment.getTaskId()).singleResult();
-            
-            ProcessTaskInfo info = new ProcessTaskInfo();
-            info.setComment(comment.getFullMessage());
-            info.setCommentTime(comment.getTime());
-            info.setProcessInstanceId(comment.getProcessInstanceId());
-            
-            info.setId(task.getId());
-            info.setAssignee(task.getAssignee());
-            info.setCreateTime(task.getCreateTime());
-            info.setDescription(task.getDescription());
-            info.setDueDate(task.getDueDate());
-            info.setName(task.getName());
-            info.setOwner(task.getOwner());
-            info.setPriority(task.getPriority());
-            info.setProcessDefinitionId(task.getProcessDefinitionId());
-            info.setTaskDefinitionKey(task.getTaskDefinitionKey());
-            info.setExecutionId(task.getExecutionId());
-            list.add(info);
-        }
-        return list;
-	}
-	
-	@Transactional(readOnly = true) //只查事务申明
 	public List<ProcessTaskCommentInfo> getProcessInstanceComments(String processInstanceId) {
 	    // 流程附件
 //		List<Attachment> attachments = taskService.getProcessInstanceAttachments(processInstanceId);
@@ -105,13 +74,9 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 //			map.put("comment", comment.getDescription());
 //			list.add(map);
 //		}
-		List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId);
+		List<Comment> comments = taskService.getProcessInstanceComments(processInstanceId, "comment");
 		List<ProcessTaskCommentInfo> list = new ArrayList<ProcessTaskCommentInfo>(comments.size());
 		for (Comment comment : comments) {
-//			HistoricTaskInstance task = historyService
-//			.createHistoricTaskInstanceQuery()
-//			.taskId(comment.getTaskId()).singleResult();
-			
 		    ProcessTaskCommentInfo info = new ProcessTaskCommentInfo();
 		    info.setComment(comment.getFullMessage());
 		    info.setId(comment.getId());
@@ -123,6 +88,25 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 		}
 		return list;
 	}
+	
+	@Override
+	@Transactional(readOnly = true) //只查事务申明
+    public List<ProcessTaskAttachmentInfo> getProcessInstanceAttachments(String processInstanceId) {
+        // 流程附件
+        List<Attachment> attachments = taskService.getProcessInstanceAttachments(processInstanceId);
+        List<ProcessTaskAttachmentInfo> list = new ArrayList<ProcessTaskAttachmentInfo>(attachments.size());
+        for (Attachment attachment : attachments) {
+            ProcessTaskAttachmentInfo info = new ProcessTaskAttachmentInfo();
+            info.setAttachmentDescription(attachment.getDescription());
+            info.setAttachmentName(attachment.getName());
+            info.setAttachmentType(attachment.getType());
+            info.setProcessInstanceId(attachment.getProcessInstanceId());
+            info.setTaskId(attachment.getTaskId());
+            info.setUrl(attachment.getUrl());
+            list.add(info);
+        }
+        return list;
+    }
 	
 	@Transactional(readOnly = true)//只查事务申明
 	@Override

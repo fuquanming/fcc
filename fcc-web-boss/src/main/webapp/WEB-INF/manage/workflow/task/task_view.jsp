@@ -29,7 +29,7 @@
     </form>
     </fieldset>
   </div>
-  <jsp:include page="../workflow/processHistory_task_view.jsp">
+  <jsp:include page="../../sys/workflow/processHistory_task_view.jsp">
     <jsp:param value="${param.id }" name="processInstanceId"/>
   </jsp:include>
 </div>

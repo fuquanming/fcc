@@ -1,5 +1,7 @@
 package com.fcc.web.sys.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +11,7 @@ import com.fcc.commons.web.controller.BaseController;
 import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
+import com.fcc.web.sys.model.SysAnnex;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysAnnexService;
@@ -45,13 +48,12 @@ public class AppWebController extends BaseController {
      * @param request
      * @return
      */
-    public boolean addUploadFile(String linkId, HttpServletRequest request) {
+    public List<SysAnnex> addUploadFile(String linkId, HttpServletRequest request) {
         // 附件
         String[] linkType = request.getParameterValues("linkType");// 附件关联类型
         String[] annexType = request.getParameterValues("annexType");// 附件类型
-        boolean flag = true;
+        List<SysAnnex> list = null;
         if (linkType != null) {
-            boolean temp = false;
             int length = linkType.length;
             for (int i = 0; i < length; i++) {
                 String link = linkType[i];
@@ -63,12 +65,11 @@ public class AppWebController extends BaseController {
                 String[] fileNames = StringUtils.split(fName, ",");
                 String[] fileRealNames = StringUtils.split(frName, ",");
                 if (fileNames != null && fileNames.length > 0) {
-                    temp = sysAnnexService.add(link, linkId, annex, fileNames, fileRealNames);
+                    list = sysAnnexService.add(link, linkId, annex, fileNames, fileRealNames);
                 }
-                if (temp == false) flag = false;
             }
         }
-        return flag;
+        return list;
     }
     
     /** 重载模块缓存 */

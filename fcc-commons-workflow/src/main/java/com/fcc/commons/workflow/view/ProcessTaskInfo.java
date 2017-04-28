@@ -1,6 +1,7 @@
 package com.fcc.commons.workflow.view;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,8 +62,10 @@ public class ProcessTaskInfo {
 	/** 评论时间 */
 	private Date commentTime;
 	
+	/** 任务附件 */
+	private List<ProcessTaskAttachmentInfo> attachmentList;
 	
-	public String getId() {
+    public String getId() {
 		return Id;
 	}
 	public void setId(String id) {
@@ -194,5 +197,10 @@ public class ProcessTaskInfo {
 	public void setCommentTime(Date commentTime) {
 		this.commentTime = commentTime;
 	}
-	
+	public List<ProcessTaskAttachmentInfo> getAttachmentList() {
+        return attachmentList;
+    }
+    public void setAttachmentList(List<ProcessTaskAttachmentInfo> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
 }

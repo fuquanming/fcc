@@ -49,6 +49,7 @@ import com.fcc.commons.workflow.view.ProcessInstanceInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * <p>Description:</p>
@@ -142,13 +143,13 @@ public class WorkflowServiceImpl implements WorkflowService {
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message) {
-		processTaskService.complete(userId, taskId, processInstanceId, variables, message);
+		processTaskService.complete(userId, taskId, processInstanceId, variables, null, message);
 	}
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	@Override
-    public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message, HttpServletRequest request) {
-	    processTaskService.complete(userId, taskId, processInstanceId, variables, message);
+    public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message, List<ProcessTaskAttachmentInfo> attachmentList, HttpServletRequest request) {
+	    processTaskService.complete(userId, taskId, processInstanceId, variables, attachmentList, message);
 	    for (WorkflowTaskEditDataFilter filter : taskEditDataList) {
            filter.edit(request, variables);
         }
@@ -188,10 +189,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明
-	@Override
-	public List<ProcessTaskInfo> getTaskComments(String processInstanceId) {
-	    return processInstanceService.getProcessInstanceCommentWithTasks(processInstanceId);
-	}
+    @Override
+    public List<ProcessTaskInfo> getTasks(String processInstanceId) {
+	    return processHistoryService.query(processInstanceId);
+    }
 	
 	@Transactional(readOnly = true) //只查事务申明	
 	public List<ProcessTaskCommentInfo> getComments(String processInstanceId) {
@@ -214,8 +215,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Override
     public ProcessTaskInfo getProcessTask(String taskId) {
 	    List<String> processVariablesList = new ArrayList<String>(2);
-        processVariablesList.add(WorkflowVariableEnum.requestUserId.toString());
-        processVariablesList.add(WorkflowVariableEnum.requestUserName.toString());
+        processVariablesList.add(WorkflowVariableEnum.requestUserId.name());
+        processVariablesList.add(WorkflowVariableEnum.requestUserName.name());
         ProcessTaskInfo info = processTaskService.getProcessTask(taskId);
         info.setProcessVariables(processTaskService.getVariables(info.getId(), processVariablesList));
 	    return info;

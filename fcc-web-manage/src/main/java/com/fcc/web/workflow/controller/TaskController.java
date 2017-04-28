@@ -1,14 +1,18 @@
 package com.fcc.web.workflow.controller;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +31,11 @@ import com.fcc.commons.workflow.common.WorkflowDefinitionKey;
 import com.fcc.commons.workflow.controller.WorkflowController;
 import com.fcc.commons.workflow.query.WorkflowTaskQuery;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 import com.fcc.web.sys.cache.SysUserAuthentication;
+import com.fcc.web.sys.controller.AppWebController;
+import com.fcc.web.sys.model.SysAnnex;
+import com.fcc.web.sys.service.SysAnnexService;
 
 import io.swagger.annotations.ApiParam;
 
@@ -46,6 +54,8 @@ public class TaskController extends WorkflowController {
 	private static Logger logger = Logger.getLogger(TaskController.class);
 	@Resource
 	private BaseService baseService;
+	@Resource
+	private SysAnnexService sysAnnexService;
 	//默认多列排序,example: username desc,createTime asc
 	
     public TaskController() {
@@ -84,7 +94,7 @@ public class TaskController extends WorkflowController {
                 request.setAttribute("taskInfo", taskInfo);// 任务信息
                 request.setAttribute("flowList", getTaskOutSequenceFlow(taskInfo));// 构建按钮
                 // 审批意见
-                request.setAttribute("commentList", this.getTaskComments(taskInfo.getProcessInstanceId()));
+                request.setAttribute("commentList", this.getTasks(taskInfo.getProcessInstanceId()));
                 // 流程业务ID
                 String businessKey = workflowService.getProcessInstace(taskInfo.getProcessInstanceId()).getBusinessKey();
                 // 获取流程数据
@@ -95,6 +105,10 @@ public class TaskController extends WorkflowController {
                         request.setAttribute(key, map.get(key));// 绑定数据，页面等
                     }
                 }
+                request.setAttribute("dataId", businessKey);
+                // 附件类型
+                request.setAttribute("linkType", "workflowFile");
+                request.setAttribute("annexType", "workflowFile");
             }
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,13 +143,28 @@ public class TaskController extends WorkflowController {
                 String processInstanceId = request.getParameter("processInstanceId");
                 String readonly = request.getParameter("readonly");
                 String msg = request.getParameter("message");
-                String leaveId = request.getParameter("leaveId");
+                String dataId = request.getParameter("dataId");
                 String processDefinitionKey = request.getParameter("processDefinitionKey");// 流程定义KEY
                 Map<String, Object> variables = new HashMap<String, Object>(1);
                 variables.put(conditionKey, conditionValue);
-//                this.taskComplete(taskId, processInstanceId, variables, msg);
+                
+                // 上传附件
+                List<SysAnnex> annexList = addUploadFile(taskId, request);
+                List<ProcessTaskAttachmentInfo> attachmentList = null;
+                if (annexList != null && annexList.size() > 0) {
+                    attachmentList = new ArrayList<ProcessTaskAttachmentInfo>(annexList.size());
+                    for (SysAnnex annex : annexList) {
+                        ProcessTaskAttachmentInfo taskAttachment = new ProcessTaskAttachmentInfo();
+                        taskAttachment.setAttachmentName(annex.getAnnexName());
+                        taskAttachment.setAttachmentType(annex.getFileType());
+                        taskAttachment.setAttachmentDescription(annex.getFileName());
+                        taskAttachment.setUrl(annex.getFileUrl() + File.separatorChar + annex.getFileName());
+                        attachmentList.add(taskAttachment);
+                    }
+                }
+                
                 workflowService.taskComplete(SysUserAuthentication.getSysUser().getUserId(),
-                        taskId, processInstanceId, variables, msg, request);
+                        taskId, processInstanceId, variables, msg, attachmentList, request);
 				message.setSuccess(true);
 				message.setMsg(StatusCode.Sys.success);
 			} catch (Exception e) {
@@ -188,5 +217,34 @@ public class TaskController extends WorkflowController {
 		return json;
 	}
 	
+	/**
+     * 保存上传的文件
+     * @param linkId    关联ID
+     * @param request
+     * @return
+     */
+    public List<SysAnnex> addUploadFile(String linkId, HttpServletRequest request) {
+        // 附件
+        String[] linkType = request.getParameterValues("linkType");// 附件关联类型
+        String[] annexType = request.getParameterValues("annexType");// 附件类型
+        List<SysAnnex> list = null;
+        if (linkType != null) {
+            int length = linkType.length;
+            for (int i = 0; i < length; i++) {
+                String link = linkType[i];
+                String annex = annexType[i];
+                String[] fileName = request.getParameterValues(annex + "-uploadFileName");// 提交的文件名
+                String[] fileRealName = request.getParameterValues(annex + "-uploadFileRealName");// 保存的文件名
+                String fName = fileName[i];
+                String frName = fileRealName[i];
+                String[] fileNames = StringUtils.split(fName, ",");
+                String[] fileRealNames = StringUtils.split(frName, ",");
+                if (fileNames != null && fileNames.length > 0) {
+                    list = sysAnnexService.add(link, linkId, annex, fileNames, fileRealNames);
+                }
+            }
+        }
+        return list;
+    }
 }
 
