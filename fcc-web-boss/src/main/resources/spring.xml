@@ -38,7 +38,6 @@
     <import resource="spring/spring-session.xml" />
     
     <import resource="spring/spring-activiti.xml" />
-    <import resource="spring/spring-workflow.xml" />
     
     <!-- <import resource="spring/spring-ehcache.xml" /> -->
     <!-- <import resource="spring/spring-simple-shiro.xml" /> -->

@@ -12,26 +12,38 @@
   <div id="toolbar" class="datagrid-toolbar" style="height: auto;">
   	<br/>
     <fieldset>
-    <legend>新增Leave</legend>
+    <legend>新增AmountApply</legend>
     <form id="userForm" name="userForm" method="post">
       <input type="hidden" id="operate" name="operate" value="save"/>
       <table class="tableForm" align="center">
 		<tr>	
-			<th>开始时间：</th>		
+			<th>借款人ID（会员）：</th>		
 			<td>
-			<input id="startTimeString" name="startTimeString" class="easyui-datetimebox" />
+			<input id="userId" name="userId" type="text" class="easyui-validatebox easyui-textbox" maxlength="19" />
 			</td>
 		</tr>	
 		<tr>	
-			<th>结束时间：</th>		
+			<th>会员账号名称：</th>		
 			<td>
-			<input id="endTimeString" name="endTimeString" class="easyui-datetimebox" />
+			<input id="userName" name="userName" type="text" class="easyui-validatebox easyui-textbox" maxlength="20" />
 			</td>
 		</tr>	
 		<tr>	
-			<th>内容：</th>		
+			<th>发起人申请的额度：</th>		
 			<td>
-            <textarea rows="5" cols="40" id="content" name="content" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 500]"></textarea>
+			<input id="primaryAmount" name="primaryAmount" type="text" class="easyui-validatebox easyui-textbox" maxlength="11" />
+			</td>
+		</tr>	
+		<tr>	
+			<th>申请备注：</th>		
+			<td>
+            <textarea rows="5" cols="40" id="applyRemark" name="applyRemark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 4000]"></textarea>
+			</td>
+		</tr>	
+		<tr>	
+			<th>申请时间：</th>		
+			<td>
+			<input id="applyTimeString" name="applyTimeString" class="easyui-datetimebox" />
 			</td>
 		</tr>	
         <tr>
@@ -51,8 +63,8 @@
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 saveParam_form = 'userForm';// 提交的Form
-saveParam_saveUrl = 'manage/workflow/leave/add.do';// 保存URL地址
-saveParam_backUrl = 'manage/workflow/leave/view.do';// 跳转地址
+saveParam_saveUrl = 'manage/workflow/amountApply/add.do';// 保存URL地址
+saveParam_backUrl = 'manage/workflow/amountApply/view.do';// 跳转地址
 saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转
 }

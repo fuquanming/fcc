@@ -17,13 +17,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Table(name = "oa_leave")
-public class Leave extends WorkflowBean implements java.io.Serializable{
+public class Leave extends WorkflowBean implements java.io.Serializable {
+    private static final long serialVersionUID = 5454155825314635342L;
     
     public static final String processDefinitionKey = "leave";
     
-    public static final String processDefinitionName = "请假流程";
-    
-    private static final long serialVersionUID = 5454155825314635342L;
+    public static final String processDefinitionName = "请假";
     
 
     //可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
@@ -48,8 +47,6 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
      */     
     // 不再限制长度  @Length(max=500)
     private java.lang.String content;
-    
-    private String initiatorUserId;
     //columns END
 
 
@@ -74,8 +71,7 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
         return this.leaveId;
     }
     
-            
-    @Column(name = "START_TIME", unique = false, nullable = true, insertable = true, updatable = true)//, length = 19
+    @Column(name = "START_TIME", unique = false, nullable = true, insertable = true, updatable = true)//, length = 0
     public java.util.Date getStartTime() {
         return this.startTime;
     }
@@ -83,9 +79,7 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
     public void setStartTime(java.util.Date value) {
         this.startTime = value;
     }
-    
-            
-    @Column(name = "END_TIME", unique = false, nullable = true, insertable = true, updatable = true)//, length = 19
+    @Column(name = "END_TIME", unique = false, nullable = true, insertable = true, updatable = true)//, length = 0
     public java.util.Date getEndTime() {
         return this.endTime;
     }
@@ -93,8 +87,6 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
     public void setEndTime(java.util.Date value) {
         this.endTime = value;
     }
-    
-            
     @Column(name = "CONTENT", unique = false, nullable = true, insertable = true, updatable = true)//, length = 500
     public java.lang.String getContent() {
         return this.content;
@@ -103,23 +95,21 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
     public void setContent(java.lang.String value) {
         this.content = value;
     }
-    
-    @Column(name = "INITIATOR_USER_ID", unique = false, nullable = true, insertable = true, updatable = true)//, length = 20
-    public java.lang.String getInitiatorUserId() {
-        return this.initiatorUserId;
-    }
-    
-    public void setInitiatorUserId(java.lang.String value) {
-        this.initiatorUserId = value;
-    }
-            
+
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("LeaveId",getLeaveId())
             .append("StartTime",getStartTime())
             .append("EndTime",getEndTime())
             .append("Content",getContent())
+            .append("ProcessInstanceId",getProcessInstanceId())
+            .append("ProcessDefinitionId",getProcessDefinitionId())
+            .append("ProcessNodeName",getProcessNodeName())
             .append("Status",getStatus())
+            .append("CreateUser",getCreateUser())
+            .append("CreateTime",getCreateTime())
+            .append("UpdateUser",getUpdateUser())
+            .append("UpdateTime",getUpdateTime())
             .toString();
     }
     
@@ -137,7 +127,7 @@ public class Leave extends WorkflowBean implements java.io.Serializable{
             .append(getLeaveId(),other.getLeaveId())
             .isEquals();
     }
-
+    
     @Transient
     @Override
     public String getBusinessKey() {

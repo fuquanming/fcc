@@ -1,9 +1,12 @@
 package com.fcc.commons.workflow.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
+import com.fcc.commons.core.model.BaseModel;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
 import com.fcc.commons.workflow.view.ProcessInstanceInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
@@ -17,7 +20,7 @@ import com.fcc.commons.workflow.view.ProcessTaskInfo;
  */
 @MappedSuperclass
 @SuppressWarnings("unused")
-public abstract class WorkflowBean {
+public abstract class WorkflowBean extends BaseModel {
 
 	/** 流程定义的id,请假流程leave */
 	private String definitionKey;

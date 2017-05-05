@@ -9,6 +9,7 @@ var datagridParam_id;// 用到的datagrid的ID
 var datagridParam_url;// 数据源url
 var datagridParam_idField;// datagrid表格的唯一标识
 var datagridParam_idField_checkbox = true;// 是否显示多选框
+var datagridParam_page = true;// 是否显示分页
 var datagridParam_column_value;// 表格的列 [[{field:'userId',title:'用户ID'}]]
 var datagridParam_queryParamName;// 查询的参数name ['userId','userName'];
 var datagridParam_load_beforeCallback;// 加载数据回调函数
@@ -36,7 +37,7 @@ $(function() {
         toolbar : '#toolbar',
         title : '',
         iconCls : 'icon-save',
-        pagination : true,
+        pagination : datagridParam_page,
         rownumbers : true,
         striped : true,
         pageSize : 10,

@@ -189,12 +189,14 @@ public class RoleController extends AppWebController {
 				throw new RefusedException(StatusCode.Sys.emptyUpdateId);
 			}
 			
-			SysUser user = getSysUser();
-			if (!user.isAdmin()) {
-				// 不能修改其他人创建的用户
-				if (!user.getUserId().equals(dbRole.getCreateUser())) {
-					throw new RefusedException(StatusCode.Role.errorMySelfRoleId);
-				}
+			if (isGroup()) {
+			    SysUser user = getSysUser();
+	            if (!user.isAdmin()) {
+	                // 不能修改其他人创建的用户
+	                if (!user.getUserId().equals(dbRole.getCreateUser())) {
+	                    throw new RefusedException(StatusCode.Role.errorMySelfRoleId);
+	                }
+	            }
 			}
 			
 			if (rightValue == null || "".equals(rightValue)) {

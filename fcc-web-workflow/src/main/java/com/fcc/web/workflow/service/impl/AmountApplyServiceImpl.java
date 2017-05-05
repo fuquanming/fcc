@@ -26,22 +26,22 @@ import com.fcc.commons.workflow.service.WorkflowService;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.web.sys.model.SysUser;
 
-import com.fcc.web.workflow.model.Leave;
-import com.fcc.web.workflow.dao.LeaveDao;
-import com.fcc.web.workflow.service.LeaveService;
-import com.fcc.web.workflow.service.LeaveWorkflowService;
+import com.fcc.web.workflow.model.AmountApply;
+import com.fcc.web.workflow.dao.AmountApplyDao;
+import com.fcc.web.workflow.service.AmountApplyService;
+import com.fcc.web.workflow.service.AmountApplyWorkflowService;
 /**
- * <p>Description:Leave</p>
+ * <p>Description:AmountApply</p>
  */
 
 @Service
-public class LeaveServiceImpl implements LeaveService, ExportService, ImportService, WorkflowTaskBusinessDataFilter {
+public class AmountApplyServiceImpl implements AmountApplyService, ExportService, ImportService, WorkflowTaskBusinessDataFilter {
     @Resource
-    private LeaveDao leaveDao;
+    private AmountApplyDao amountApplyDao;
     @Resource
     private BaseService baseService;
     @Resource
-    private LeaveWorkflowService leaveWorkflowService;
+    private AmountApplyWorkflowService amountApplyWorkflowService;
     @Resource
     private WorkflowService workflowService;
     
@@ -53,12 +53,14 @@ public class LeaveServiceImpl implements LeaveService, ExportService, ImportServ
     @Override
     public List<String> dataConver(Object converObj) {
         List<String> dataList = new ArrayList<String>();
-        if (converObj instanceof Leave) {
-            Leave data = (Leave) converObj;
-            dataList.add(DataFormater.noNullValue(data.getLeaveId()));
-            dataList.add(DataFormater.noNullValue(data.getStartTime(), "yyyy-MM-dd HH:mm:ss"));
-            dataList.add(DataFormater.noNullValue(data.getEndTime(), "yyyy-MM-dd HH:mm:ss"));
-            dataList.add(DataFormater.noNullValue(data.getContent()));
+        if (converObj instanceof AmountApply) {
+            AmountApply data = (AmountApply) converObj;
+            dataList.add(DataFormater.noNullValue(data.getAmountApplyId()));
+            dataList.add(DataFormater.noNullValue(data.getUserId()));
+            dataList.add(DataFormater.noNullValue(data.getUserName()));
+            dataList.add(DataFormater.noNullValue(data.getPrimaryAmount()));
+            dataList.add(DataFormater.noNullValue(data.getApplyRemark()));
+            dataList.add(DataFormater.noNullValue(data.getApplyTime(), "yyyy-MM-dd HH:mm:ss"));
             dataList.add(DataFormater.noNullValue(data.getProcessInstanceId()));
             dataList.add(DataFormater.noNullValue(data.getProcessDefinitionId()));
             dataList.add(DataFormater.noNullValue(data.getProcessNodeName()));
@@ -76,57 +78,65 @@ public class LeaveServiceImpl implements LeaveService, ExportService, ImportServ
         Row row = (Row) src;
         Cell cell = row.getCell(0);
         if (cell == null) return null;
-        Leave leave = new Leave();
+        AmountApply amountApply = new AmountApply();
         try {
-            leave.setLeaveId(UUID.randomUUID().toString().replaceAll("-", ""));
-            Cell startTimeCell = row.getCell(0);
-            startTimeCell.setCellType(Cell.CELL_TYPE_STRING);
-            String startTimeValue = startTimeCell.getStringCellValue();
-            leave.setStartTime(format.parse(startTimeValue));
-            Cell endTimeCell = row.getCell(1);
-            endTimeCell.setCellType(Cell.CELL_TYPE_STRING);
-            String endTimeValue = endTimeCell.getStringCellValue();
-            leave.setEndTime(format.parse(endTimeValue));
-            Cell contentCell = row.getCell(2);
-            contentCell.setCellType(Cell.CELL_TYPE_STRING);
-            String contentValue = contentCell.getStringCellValue();
-            leave.setContent(java.lang.String.valueOf(contentValue));
-            Cell processInstanceIdCell = row.getCell(3);
+            amountApply.setAmountApplyId(UUID.randomUUID().toString().replaceAll("-", ""));
+            Cell userIdCell = row.getCell(0);
+            userIdCell.setCellType(Cell.CELL_TYPE_STRING);
+            String userIdValue = userIdCell.getStringCellValue();
+            amountApply.setUserId(java.lang.Long.valueOf(userIdValue));
+            Cell userNameCell = row.getCell(1);
+            userNameCell.setCellType(Cell.CELL_TYPE_STRING);
+            String userNameValue = userNameCell.getStringCellValue();
+            amountApply.setUserName(java.lang.String.valueOf(userNameValue));
+            Cell primaryAmountCell = row.getCell(2);
+            primaryAmountCell.setCellType(Cell.CELL_TYPE_STRING);
+            String primaryAmountValue = primaryAmountCell.getStringCellValue();
+            amountApply.setPrimaryAmount(java.lang.Double.valueOf(primaryAmountValue));
+            Cell applyRemarkCell = row.getCell(3);
+            applyRemarkCell.setCellType(Cell.CELL_TYPE_STRING);
+            String applyRemarkValue = applyRemarkCell.getStringCellValue();
+            amountApply.setApplyRemark(java.lang.String.valueOf(applyRemarkValue));
+            Cell applyTimeCell = row.getCell(4);
+            applyTimeCell.setCellType(Cell.CELL_TYPE_STRING);
+            String applyTimeValue = applyTimeCell.getStringCellValue();
+            amountApply.setApplyTime(format.parse(applyTimeValue));
+            Cell processInstanceIdCell = row.getCell(5);
             processInstanceIdCell.setCellType(Cell.CELL_TYPE_STRING);
             String processInstanceIdValue = processInstanceIdCell.getStringCellValue();
-            leave.setProcessInstanceId(java.lang.String.valueOf(processInstanceIdValue));
-            Cell processDefinitionIdCell = row.getCell(4);
+            amountApply.setProcessInstanceId(java.lang.String.valueOf(processInstanceIdValue));
+            Cell processDefinitionIdCell = row.getCell(6);
             processDefinitionIdCell.setCellType(Cell.CELL_TYPE_STRING);
             String processDefinitionIdValue = processDefinitionIdCell.getStringCellValue();
-            leave.setProcessDefinitionId(java.lang.String.valueOf(processDefinitionIdValue));
-            Cell processNodeNameCell = row.getCell(5);
+            amountApply.setProcessDefinitionId(java.lang.String.valueOf(processDefinitionIdValue));
+            Cell processNodeNameCell = row.getCell(7);
             processNodeNameCell.setCellType(Cell.CELL_TYPE_STRING);
             String processNodeNameValue = processNodeNameCell.getStringCellValue();
-            leave.setProcessNodeName(java.lang.String.valueOf(processNodeNameValue));
-            Cell statusCell = row.getCell(6);
+            amountApply.setProcessNodeName(java.lang.String.valueOf(processNodeNameValue));
+            Cell statusCell = row.getCell(8);
             statusCell.setCellType(Cell.CELL_TYPE_STRING);
             String statusValue = statusCell.getStringCellValue();
-            leave.setStatus(java.lang.String.valueOf(statusValue));
-            Cell createUserCell = row.getCell(7);
+            amountApply.setStatus(java.lang.String.valueOf(statusValue));
+            Cell createUserCell = row.getCell(9);
             createUserCell.setCellType(Cell.CELL_TYPE_STRING);
             String createUserValue = createUserCell.getStringCellValue();
-            leave.setCreateUser(java.lang.String.valueOf(createUserValue));
-            Cell createTimeCell = row.getCell(8);
+            amountApply.setCreateUser(java.lang.String.valueOf(createUserValue));
+            Cell createTimeCell = row.getCell(10);
             createTimeCell.setCellType(Cell.CELL_TYPE_STRING);
             String createTimeValue = createTimeCell.getStringCellValue();
-            leave.setCreateTime(format.parse(createTimeValue));
-            Cell updateUserCell = row.getCell(9);
+            amountApply.setCreateTime(format.parse(createTimeValue));
+            Cell updateUserCell = row.getCell(11);
             updateUserCell.setCellType(Cell.CELL_TYPE_STRING);
             String updateUserValue = updateUserCell.getStringCellValue();
-            leave.setUpdateUser(java.lang.String.valueOf(updateUserValue));
-            Cell updateTimeCell = row.getCell(10);
+            amountApply.setUpdateUser(java.lang.String.valueOf(updateUserValue));
+            Cell updateTimeCell = row.getCell(12);
             updateTimeCell.setCellType(Cell.CELL_TYPE_STRING);
             String updateTimeValue = updateTimeCell.getStringCellValue();
-            leave.setUpdateTime(format.parse(updateTimeValue));
+            amountApply.setUpdateTime(format.parse(updateTimeValue));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return leave;
+        return amountApply;
     }
     
     @Override
@@ -137,16 +147,16 @@ public class LeaveServiceImpl implements LeaveService, ExportService, ImportServ
     
     @Transactional(rollbackFor = Exception.class)//事务申明
     @Override
-    public void add(Leave leave) {
-        baseService.add(leave);
-        leaveWorkflowService.startWorkflow(leave.getLeaveId());
+    public void add(AmountApply amountApply) {
+        baseService.add(amountApply);
+        amountApplyWorkflowService.startWorkflow(amountApply.getAmountApplyId());
     }
     
     @Transactional(rollbackFor = Exception.class)//事务申明
     @Override
-    public void edit(Leave leave) {
-        baseService.edit(leave);
-        leaveWorkflowService.startWorkflow(leave.getLeaveId());
+    public void edit(AmountApply amountApply) {
+        baseService.edit(amountApply);
+        amountApplyWorkflowService.startWorkflow(amountApply.getAmountApplyId());
     }
     
     @Transactional(rollbackFor = Exception.class)//事务申明
@@ -155,40 +165,40 @@ public class LeaveServiceImpl implements LeaveService, ExportService, ImportServ
         Map<String, Object> param = new HashMap<String, Object>(2);
         param.put("status", status);
         param.put("dataId", dataId);
-        baseService.executeHql("update Leave set status=:status where leaveId=:dataId", param);
+        baseService.executeHql("update AmountApply set status=:status where amountApplyId=:dataId", param);
     }
     
     @Transactional(readOnly = true)
     @Override
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
-        return leaveDao.queryPage(pageNo, pageSize, param, isSQL);
+        return amountApplyDao.queryPage(pageNo, pageSize, param, isSQL);
     }
     
     @Transactional(readOnly = true)
     @Override
-    public List<Leave> query(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
-        return leaveDao.query(pageNo, pageSize, param, isSQL);
+    public List<AmountApply> query(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
+        return amountApplyDao.query(pageNo, pageSize, param, isSQL);
     }
     
     @Transactional(readOnly = true)
     @Override
     public ListPage report(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL) {
-        return leaveDao.report(pageNo, pageSize, param, isSQL);
+        return amountApplyDao.report(pageNo, pageSize, param, isSQL);
     }
     
     @Transactional(readOnly = true)
     @Override
     public Map<String, Object> filter(ProcessTaskInfo taskInfo, String businessKey) {
         Map<String, Object> map = null;
-        if (Leave.processDefinitionKey.equals(taskInfo.getProcessDefinitionKey())) {
+        if (AmountApply.processDefinitionKey.equals(taskInfo.getProcessDefinitionKey())) {
             map = new HashMap<String, Object>(3);
-            Leave data = (Leave) baseService.get(Leave.class, businessKey);
+            AmountApply data = (AmountApply) baseService.get(AmountApply.class, businessKey);
             map.put("requestUserName", ((SysUser)baseService.get(SysUser.class, data.getCreateUser())).getUserName());
             map.put("data", data);
-            map.put(WorkflowVariableEnum.editTaskPage.name(), "/WEB-INF/manage/workflow/leave/leave_task_edit.jsp");
+            map.put(WorkflowVariableEnum.editTaskPage.name(), "/WEB-INF/manage/workflow/amountApply/amountApply_task_edit.jsp");
             // 判断是否可以修改绑定数据用于重新提交申请
             boolean readonly = true; 
-            if ("leave_audit".equals(taskInfo.getTaskDefinitionKey())) {// 申请的流程ID，可以修改数据
+            if ("amountApply_audit".equals(taskInfo.getTaskDefinitionKey())) {// 申请的流程ID，可以修改数据
                 readonly = false;
             }
             map.put("readonly", readonly);

@@ -19,13 +19,13 @@ import com.fcc.commons.data.DataFormater;
 
 import com.fcc.web.sys.cache.SysUserAuthentication;
 
-import com.fcc.web.workflow.model.Leave;
+import com.fcc.web.workflow.model.AmountApply;
 /**
- * <p>Description:Leave</p>
+ * <p>Description:AmountApply</p>
  */
 
 @Service
-public class LeaveTaskEditDataServiceImpl implements WorkflowTaskEditDataFilter {
+public class AmountApplyTaskEditDataServiceImpl implements WorkflowTaskEditDataFilter {
     @Resource
     private BaseService baseService;
     @Resource
@@ -40,19 +40,20 @@ public class LeaveTaskEditDataServiceImpl implements WorkflowTaskEditDataFilter 
     public void edit(HttpServletRequest request, Map<String, Object> variables) {
         String processDefinitionKey = request.getParameter("processDefinitionKey");// 流程定义KEY
         String readonly = request.getParameter("readonly");// 是否只读
-        if (Leave.processDefinitionKey.equals(processDefinitionKey)) {
+        if (AmountApply.processDefinitionKey.equals(processDefinitionKey)) {
             // 保存数据
-            String leaveId = request.getParameter("dataId");
-            Leave leave = (Leave) baseService.get(Leave.class, leaveId);
+            String amountApplyId = request.getParameter("dataId");
+            AmountApply amountApply = (AmountApply) baseService.get(AmountApply.class, amountApplyId);
             if ("false".equalsIgnoreCase(readonly)) {
                 try {
-                    String startTimeString = request.getParameter("startTimeString");
-                    leave.setStartTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeString));
-                    String endTimeString = request.getParameter("endTimeString");
-                    leave.setEndTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeString));
-                    leave.setContent(DataFormater.noNullValue((request.getParameter("content"))));
-                    leave.setUpdateTime(new Date());
-                    leave.setUpdateUser(SysUserAuthentication.getSysUser().getUserId());
+                    amountApply.setUserId(java.lang.Long.valueOf((request.getParameter("userId"))));
+                    amountApply.setUserName(DataFormater.noNullValue((request.getParameter("userName"))));
+                    amountApply.setPrimaryAmount(java.lang.Double.valueOf((request.getParameter("primaryAmount"))));
+                    amountApply.setApplyRemark(DataFormater.noNullValue((request.getParameter("applyRemark"))));
+                    String applyTimeString = request.getParameter("applyTimeString");
+                    amountApply.setApplyTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(applyTimeString));
+                    amountApply.setUpdateTime(new Date());
+                    amountApply.setUpdateUser(SysUserAuthentication.getSysUser().getUserId());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -60,8 +61,8 @@ public class LeaveTaskEditDataServiceImpl implements WorkflowTaskEditDataFilter 
             ProcessTaskInfo task = workflowService.getCurrentTask(request.getParameter("processInstanceId"));
             String taskName = "";
             if (task != null) taskName = task.getName();
-            leave.setProcessNodeName(taskName);
-            baseService.edit(leave);
+            amountApply.setProcessNodeName(taskName);
+            baseService.edit(amountApply);
         }
     }
 }

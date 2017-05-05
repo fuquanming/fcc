@@ -47,22 +47,22 @@ import com.fcc.commons.workflow.common.WorkflowStatus;
 import com.fcc.commons.workflow.controller.WorkflowController;
 import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
-import com.fcc.web.workflow.model.Leave;
-import com.fcc.web.workflow.service.LeaveService;
+import com.fcc.web.workflow.model.AmountApply;
+import com.fcc.web.workflow.service.AmountApplyService;
 
 import io.swagger.annotations.ApiOperation;
 //import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
- * <p>Description:Leave</p>
+ * <p>Description:AmountApply</p>
  */
 
 @Controller
-@RequestMapping(value={"/manage/workflow/leave"} )
-public class LeaveController extends WorkflowController {
+@RequestMapping(value={"/manage/workflow/amountApply"} )
+public class AmountApplyController extends WorkflowController {
     
-    private Logger logger = Logger.getLogger(LeaveController.class);
+    private Logger logger = Logger.getLogger(AmountApplyController.class);
     
     private ExportTask exportTask;
     private ImportTask importTask;
@@ -76,99 +76,97 @@ public class LeaveController extends WorkflowController {
     private BaseService baseService;
     //默认多列排序,example: username desc,createTime asc
     @Resource
-    private LeaveService leaveService;
+    private AmountApplyService amountApplyService;
     
-    public LeaveController() {
-        WorkflowDefinitionKey.definitionKeyMap.put(Leave.processDefinitionKey, Leave.processDefinitionName);
+    public AmountApplyController() {
+        WorkflowDefinitionKey.definitionKeyMap.put(AmountApply.processDefinitionKey, AmountApply.processDefinitionName);
     }
     
     /** 显示列表 */
-    @ApiOperation(value = "显示Leave列表页面")
+    @ApiOperation(value = "显示AmountApply列表页面")
     @RequestMapping(value = "/view.do", method = RequestMethod.GET)
     @Permissions("view")
     public String view(HttpServletRequest request) {
         setWorkflowStatus(request);
-        return "/manage/workflow/leave/leave_list";
+        return "/manage/workflow/amountApply/amountApply_list";
     }
     
     /** 显示统计报表 */
-    @ApiOperation(value = "显示Leave统计列表页面")
+    @ApiOperation(value = "显示AmountApply统计列表页面")
     @RequestMapping(value = "/report/view.do", method = RequestMethod.GET)
     @Permissions("report")
     public String reportView(HttpServletRequest request) {
-        return "/manage/workflow/leave/leave_report_list";
+        return "/manage/workflow/amountApply/amountApply_report_list";
     }
     
     /** 跳转到查看页面 */
-    @ApiOperation(value = "显示Leave查看页面")
+    @ApiOperation(value = "显示AmountApply查看页面")
     @RequestMapping(value = "/toView.do", method = RequestMethod.GET)
     @Permissions("view")
     public String toView(HttpServletRequest request) {
         String id = request.getParameter("id");
         if (StringUtils.isNotEmpty(id)) {
             try {
-                Leave leave = (Leave) baseService.get(Leave.class, java.lang.String.valueOf(id));
-                setProcessHistory(request, leave.getProcessInstanceId());
+                AmountApply amountApply = (AmountApply) baseService.get(AmountApply.class, java.lang.String.valueOf(id));
+                setProcessHistory(request, amountApply.getProcessInstanceId());
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("查看Leave详情页数据加载失败！", e);
+                logger.error("查看AmountApply详情页数据加载失败！", e);
             }
         }
-        return "/manage/workflow/leave/leave_view";
+        return "/manage/workflow/amountApply/amountApply_view";
     }
     
     /** 跳转到新增页面 */
-    @ApiOperation(value = "显示Leave新增页面")
+    @ApiOperation(value = "显示AmountApply新增页面")
     @RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
     @Permissions("add")
     public String toAdd(HttpServletRequest request, HttpServletResponse response) {
-        return "/manage/workflow/leave/leave_add";
+        return "/manage/workflow/amountApply/amountApply_add";
     }
     
     /** 跳转到修改页面 */
-    @ApiOperation(value = "显示Leave修改页面")
+    @ApiOperation(value = "显示AmountApply修改页面")
     @RequestMapping(value = "/toEdit.do", method = RequestMethod.GET)
     @Permissions("edit")
     public String toEdit(HttpServletRequest request, HttpServletResponse response) {
         String id = request.getParameter("id");
         if (StringUtils.isNotEmpty(id)) {
             try {
-                Leave leave = (Leave) baseService.get(Leave.class, java.lang.String.valueOf(id));
-                request.setAttribute("leave", leave);
+                AmountApply amountApply = (AmountApply) baseService.get(AmountApply.class, java.lang.String.valueOf(id));
+                request.setAttribute("amountApply", amountApply);
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.error("修改Leave详情页数据加载失败！", e);
+                logger.error("修改AmountApply详情页数据加载失败！", e);
             }
         }
-        return "/manage/workflow/leave/leave_edit";
+        return "/manage/workflow/amountApply/amountApply_edit";
     }
     
     /** 新增 */
-    @ApiOperation(value = "新增Leave")
+    @ApiOperation(value = "新增AmountApply")
     @RequestMapping(value = "/add.do", method = RequestMethod.POST)
     @Permissions("add")
-    public ModelAndView add(Leave leave, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView add(AmountApply amountApply, HttpServletRequest request, HttpServletResponse response) {
         Message message = new Message();
         try {
-            String startTimeString = request.getParameter("startTimeString");
-            leave.setStartTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeString));
-            String endTimeString = request.getParameter("endTimeString");
-            leave.setEndTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeString));
-            leave.setStatus(WorkflowStatus.unstart.name());
-            leave.setCreateTime(new Date());
-            leave.setCreateUser(SysUserAuthentication.getSysUser().getUserId());
+            String applyTimeString = request.getParameter("applyTimeString");
+            amountApply.setApplyTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(applyTimeString));
+            amountApply.setStatus(WorkflowStatus.unstart.name());
+            amountApply.setCreateTime(new Date());
+            amountApply.setCreateUser(SysUserAuthentication.getSysUser().getUserId());
             String operate = request.getParameter("operate");
             if ("save".equals(operate)) {// 保存
-                baseService.add(leave);
+                baseService.add(amountApply);
             } else if ("start".equals(operate)) {// 保存、启动流程
                 // 启动流程
-                leaveService.add(leave);
+                amountApplyService.add(amountApply);
             }
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("保存Leave失败！", e);
+            logger.error("保存AmountApply失败！", e);
             message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         }
@@ -176,33 +174,34 @@ public class LeaveController extends WorkflowController {
     }
     
     /** 修改 */
-    @ApiOperation(value = "修改Leave")
+    @ApiOperation(value = "修改AmountApply")
     @RequestMapping(value = "/edit.do", method = RequestMethod.POST)
     @Permissions("edit")
-    public ModelAndView edit(Leave leave, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView edit(AmountApply amountApply, HttpServletRequest request, HttpServletResponse response) {
         Message message = new Message();
         try {
-            Leave dbLeave = null;
-            String leaveId = request.getParameter("leaveId");
-            if (StringUtils.isNotEmpty(leaveId)) {
-                dbLeave = (Leave) baseService.get(Leave.class, leaveId);
+            AmountApply dbAmountApply = null;
+            String amountApplyId = request.getParameter("amountApplyId");
+            if (StringUtils.isNotEmpty(amountApplyId)) {
+                dbAmountApply = (AmountApply) baseService.get(AmountApply.class, amountApplyId);
             }
-            if (dbLeave != null) {
+            if (dbAmountApply != null) {
                 // 未启动状态可以修改
-                if (WorkflowStatus.unstart.name().equals(dbLeave.getStatus())) {
-                    String startTimeString = request.getParameter("startTimeString");
-                    dbLeave.setStartTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTimeString));
-                    String endTimeString = request.getParameter("endTimeString");
-                    dbLeave.setEndTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTimeString));
-                    if (leave.getContent() != null) dbLeave.setContent(leave.getContent());
-                    dbLeave.setUpdateTime(new Date());
-                    dbLeave.setUpdateUser(SysUserAuthentication.getSysUser().getUserId());
+                if (WorkflowStatus.unstart.name().equals(dbAmountApply.getStatus())) {
+                    if (amountApply.getUserId() != null) dbAmountApply.setUserId(amountApply.getUserId());
+                    if (amountApply.getUserName() != null) dbAmountApply.setUserName(amountApply.getUserName());
+                    if (amountApply.getPrimaryAmount() != null) dbAmountApply.setPrimaryAmount(amountApply.getPrimaryAmount());
+                    if (amountApply.getApplyRemark() != null) dbAmountApply.setApplyRemark(amountApply.getApplyRemark());
+                    String applyTimeString = request.getParameter("applyTimeString");
+                    dbAmountApply.setApplyTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(applyTimeString));
+                    dbAmountApply.setUpdateTime(new Date());
+                    dbAmountApply.setUpdateUser(SysUserAuthentication.getSysUser().getUserId());
                     String operate = request.getParameter("operate");
                     if ("save".equals(operate)) {// 保存
-                        baseService.edit(dbLeave);
+                        baseService.edit(dbAmountApply);
                     } else if ("start".equals(operate)) {// 保存、启动流程
                         // 启动流程
-                        leaveService.edit(dbLeave);
+                        amountApplyService.edit(dbAmountApply);
                     }
                     // 更新
                     message.setSuccess(true);
@@ -217,7 +216,7 @@ public class LeaveController extends WorkflowController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("修改Leave失败！", e);
+            logger.error("修改AmountApply失败！", e);
             message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         }
@@ -228,7 +227,7 @@ public class LeaveController extends WorkflowController {
      * 删除
      * @return
      */
-    @ApiOperation("删除Leave")
+    @ApiOperation("删除AmountApply")
     @RequestMapping(value = "/delete.do", method = RequestMethod.POST)
     @Permissions("delete")
     public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
@@ -237,14 +236,14 @@ public class LeaveController extends WorkflowController {
         try {
             if (id == null || "".equals(id)) throw new RefusedException(StatusCode.Sys.emptyDeleteId);
             String[] ids = StringUtils.split(id, ",");
-            baseService.deleteById(Leave.class, ids, "leaveId");
+            baseService.deleteById(AmountApply.class, ids, "amountApplyId");
             message.setSuccess(true);
             message.setMsg(StatusCode.Sys.success);
         } catch (RefusedException e) {
             message.setMsg(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("删除Leave失败！", e);
+            logger.error("删除AmountApply失败！", e);
             message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         }
@@ -255,7 +254,7 @@ public class LeaveController extends WorkflowController {
      * 列表 返回json 给 easyUI 
      * @return
      */
-    @ApiOperation(value = "查询Leave")
+    @ApiOperation(value = "查询AmountApply")
     @RequestMapping(value = "/datagrid.do", method = RequestMethod.POST)
     @ResponseBody
     @Permissions("view")
@@ -263,14 +262,14 @@ public class LeaveController extends WorkflowController {
         EasyuiDataGridJson json = new EasyuiDataGridJson();
         try {
             Map<String, Object> param = getParams(request);
-            ListPage listPage = leaveService.queryPage(dg.getPage(), dg.getRows(), param, false);
+            ListPage listPage = amountApplyService.queryPage(dg.getPage(), dg.getRows(), param, false);
             json.setTotal(Long.valueOf(listPage.getTotalSize()));
             json.setRows(listPage.getDataList());
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("加载查询Leave数据失败！", e);
+            logger.error("加载查询AmountApply数据失败！", e);
             json.setTotal(0L);
-            json.setRows(new ArrayList<Leave>());
+            json.setRows(new ArrayList<AmountApply>());
             json.setMsg(e.getMessage());
         }
         return json;
@@ -287,7 +286,7 @@ public class LeaveController extends WorkflowController {
             String reportGroupName = request.getParameter("reportGroupName");
             if (StringUtils.isNotEmpty(reportGroupName)) {
                 param.put("reportGroupName", reportGroupName);
-                ListPage listPage = leaveService.report(dg.getPage(), dg.getRows(), param, false);
+                ListPage listPage = amountApplyService.report(dg.getPage(), dg.getRows(), param, false);
                 json.setTotal(Long.valueOf(listPage.getTotalSize()));
                 json.setRows(listPage.getDataList());
             } else {
@@ -296,7 +295,7 @@ public class LeaveController extends WorkflowController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("查询Leave报表数据失败！", e);
+            logger.error("查询AmountApply报表数据失败！", e);
             json.setTotal(0L);
             json.setRows(new ArrayList<ReportInfo>());
             json.setMsg(e.getMessage());
@@ -308,29 +307,33 @@ public class LeaveController extends WorkflowController {
         Map<String, Object> param = new HashMap<String, Object>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            String leaveId = request.getParameter("leaveId");
-            if (StringUtils.isNotEmpty(leaveId)) {
-                param.put("leaveId", leaveId);
+            String amountApplyId = request.getParameter("amountApplyId");
+            if (StringUtils.isNotEmpty(amountApplyId)) {
+                param.put("amountApplyId", amountApplyId);
             }
-            String startTimeBegin = request.getParameter("startTimeBegin");
-            if (StringUtils.isNotEmpty(startTimeBegin)) {
-                param.put("startTimeBegin", format.parse(startTimeBegin + " 00:00:00"));
+            String userId = request.getParameter("userId");
+            if (StringUtils.isNotEmpty(userId)) {
+                param.put("userId", userId);
             }
-            String startTimeEnd = request.getParameter("startTimeEnd");
-            if (StringUtils.isNotEmpty(startTimeEnd)) {
-                param.put("startTimeEnd", format.parse(startTimeEnd + " 23:59:59"));
+            String userName = request.getParameter("userName");
+            if (StringUtils.isNotEmpty(userName)) {
+                param.put("userName", userName);
             }
-            String endTimeBegin = request.getParameter("endTimeBegin");
-            if (StringUtils.isNotEmpty(endTimeBegin)) {
-                param.put("endTimeBegin", format.parse(endTimeBegin + " 00:00:00"));
+            String primaryAmount = request.getParameter("primaryAmount");
+            if (StringUtils.isNotEmpty(primaryAmount)) {
+                param.put("primaryAmount", primaryAmount);
             }
-            String endTimeEnd = request.getParameter("endTimeEnd");
-            if (StringUtils.isNotEmpty(endTimeEnd)) {
-                param.put("endTimeEnd", format.parse(endTimeEnd + " 23:59:59"));
+            String applyRemark = request.getParameter("applyRemark");
+            if (StringUtils.isNotEmpty(applyRemark)) {
+                param.put("applyRemark", applyRemark);
             }
-            String content = request.getParameter("content");
-            if (StringUtils.isNotEmpty(content)) {
-                param.put("content", content);
+            String applyTimeBegin = request.getParameter("applyTimeBegin");
+            if (StringUtils.isNotEmpty(applyTimeBegin)) {
+                param.put("applyTimeBegin", format.parse(applyTimeBegin + " 00:00:00"));
+            }
+            String applyTimeEnd = request.getParameter("applyTimeEnd");
+            if (StringUtils.isNotEmpty(applyTimeEnd)) {
+                param.put("applyTimeEnd", format.parse(applyTimeEnd + " 23:59:59"));
             }
             String processInstanceId = request.getParameter("processInstanceId");
             if (StringUtils.isNotEmpty(processInstanceId)) {
@@ -360,18 +363,6 @@ public class LeaveController extends WorkflowController {
             if (StringUtils.isNotEmpty(createTimeEnd)) {
                 param.put("createTimeEnd", format.parse(createTimeEnd + " 23:59:59"));
             }
-            String updateUser = request.getParameter("updateUser");
-            if (StringUtils.isNotEmpty(updateUser)) {
-                param.put("updateUser", updateUser);
-            }
-            String updateTimeBegin = request.getParameter("updateTimeBegin");
-            if (StringUtils.isNotEmpty(updateTimeBegin)) {
-                param.put("updateTimeBegin", format.parse(updateTimeBegin + " 00:00:00"));
-            }
-            String updateTimeEnd = request.getParameter("updateTimeEnd");
-            if (StringUtils.isNotEmpty(updateTimeEnd)) {
-                param.put("updateTimeEnd", format.parse(updateTimeEnd + " 23:59:59"));
-            }
             String sortColumns = request.getParameter("sort");
             if (StringUtils.isNotEmpty(sortColumns)) {
                 param.put("sortColumns", sortColumns);
@@ -399,32 +390,32 @@ public class LeaveController extends WorkflowController {
                 if (exportDataPath == null) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.exportDataFileName)
-                    .append(File.separatorChar).append("leaveExport").append(File.separatorChar);
+                    .append(File.separatorChar).append("amountApplyExport").append(File.separatorChar);
                     exportDataPath = sb.toString();
                 }
                 List<String> titleList = new ArrayList<String>();
-                titleList.add("主键");
-                titleList.add("开始时间");
-                titleList.add("结束时间");
-                titleList.add("内容");
+                titleList.add("借款额度申请ID");
+                titleList.add("借款人ID（会员）");
+                titleList.add("会员账号名称");
+                titleList.add("发起人申请的额度");
+                titleList.add("申请备注");
+                titleList.add("申请时间");
                 titleList.add("流程实例ID");
                 titleList.add("流程定义ID");
                 titleList.add("当前节点名称");
                 titleList.add("状态");
                 titleList.add("创建者");
                 titleList.add("创建时间");
-                titleList.add("更新者");
-                titleList.add("更新时间");
                 
                 Object[] paramObject = new Object[]{1, Constants.exportDataPageSize, getParams(request), false};
-                exportTask.setRunningKey("leave");
+                exportTask.setRunningKey("amountApply");
                 exportTask.setTitleList(titleList);
                 exportTask.setExportDataPath(exportDataPath);
-                exportTask.setQueryService(leaveService);
+                exportTask.setQueryService(amountApplyService);
                 exportTask.setQueryServiceMethodName("query");
                 exportTask.setPageNoSub(0);
                 exportTask.setQueryParams(paramObject);
-                exportTask.setExportService((ExportService) leaveService);
+                exportTask.setExportService((ExportService) amountApplyService);
                 exportTask.init();
                 
                 execute(exportTask);
@@ -435,7 +426,7 @@ public class LeaveController extends WorkflowController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("导出Leave失败！", e);
+            logger.error("导出AmountApply失败！", e);
             message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
         } finally {
@@ -463,7 +454,7 @@ public class LeaveController extends WorkflowController {
     @ApiIgnore
     @RequestMapping(value = "/import.do", method = RequestMethod.POST)
     @Permissions("import")
-    public ModelAndView importLeave(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView importAmountApply(HttpServletRequest request, HttpServletResponse response) {
         Message message = new Message();
         lockImportData.lock();
         FileOutputStream fos = null;
@@ -482,13 +473,13 @@ public class LeaveController extends WorkflowController {
                     if (importDataPath == null) {
                         StringBuilder sb = new StringBuilder();
                         sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append(Constants.importDataFileName)
-                                .append(File.separatorChar).append("leaveImport").append(File.separatorChar);
+                                .append(File.separatorChar).append("amountApplyImport").append(File.separatorChar);
                         importDataPath = sb.toString();
                     }
-                    importTask.setRunningKey("leave");
+                    importTask.setRunningKey("amountApply");
                     importTask.setImportDataPath(importDataPath);
                     importTask.setFile(file);
-                    importTask.setImportService((ImportService) leaveService);
+                    importTask.setImportService((ImportService) amountApplyService);
                     importTask.setBeginRowNum(2);
                     importTask.init();
                     execute(importTask);
@@ -503,7 +494,7 @@ public class LeaveController extends WorkflowController {
         } catch (Exception e) {
             message.setMsg(StatusCode.Sys.fail);
             message.setObj(e.getMessage());
-            logger.error("上传Leave失败！", e);
+            logger.error("上传AmountApply失败！", e);
             e.printStackTrace();
         } finally {
             try {

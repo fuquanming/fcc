@@ -16,19 +16,26 @@
   	<input name="ids" type="hidden" value=""/>
     <table class="tableForm">
 		<tr>	
-			<th>开始时间</th>	
+			<th>借款人ID（会员）</th>	
 			<td colspan="2">
-				<input value="" class="easyui-datebox" style="width: 120px;" id="startTimeBegin" name="startTimeBegin"   />
-				<input value="" class="easyui-datebox" style="width: 120px;" id="startTimeEnd" name="startTimeEnd"   />
+				<input id="userId" name="userId" maxlength="19"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入借款人ID（会员）...'"/>
 			</td>
-			<th>结束时间</th>	
+			<th>会员账号名称</th>	
 			<td colspan="2">
-				<input value="" class="easyui-datebox" style="width: 120px;" id="endTimeBegin" name="endTimeBegin"   />
-				<input value="" class="easyui-datebox" style="width: 120px;" id="endTimeEnd" name="endTimeEnd"   />
+				<input id="userName" name="userName" maxlength="20"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入会员账号名称...'"/>
 			</td>
-			<th>内容</th>	
+			<th>发起人申请的额度</th>	
 			<td colspan="2">
-				<input id="content" name="content" maxlength="500"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入内容...'"/>
+				<input id="primaryAmount" name="primaryAmount" maxlength="11"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入发起人申请的额度...'"/>
+			</td>
+			<th>申请备注</th>	
+			<td colspan="2">
+				<input id="applyRemark" name="applyRemark" maxlength="4000"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入申请备注...'"/>
+			</td>
+			<th>申请时间</th>	
+			<td colspan="2">
+				<input value="" class="easyui-datebox" style="width: 120px;" id="applyTimeBegin" name="applyTimeBegin"   />
+				<input value="" class="easyui-datebox" style="width: 120px;" id="applyTimeEnd" name="applyTimeEnd"   />
 			</td>
 		</tr>	
 		<tr>	
@@ -65,33 +72,42 @@
 <script type="text/javascript">
 
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
-datagridParam_url = 'manage/workflow/leave/datagrid.do';// 数据源url
-datagridParam_idField = 'leaveId';// datagrid表格的唯一标识
+datagridParam_url = 'manage/workflow/amountApply/datagrid.do';// 数据源url
+datagridParam_idField = 'amountApplyId';// datagrid表格的唯一标识
 datagridParam_idField_checkbox = true;// 是否显示多选框
 datagridParam_column_value = [ [ 
         {
-            field : 'startTime',
-            title : '开始时间',
-            sortable:true,
-            width : 100,
-            formatter : function(value, rowData, rowIndex) {
-            	return Tool.dateFormat({'value':value, 'format':'yyyy-MM-dd HH:mm:ss'});
-            }
-        } ,
-        {
-            field : 'endTime',
-            title : '结束时间',
-            sortable:true,
-            width : 100,
-            formatter : function(value, rowData, rowIndex) {
-            	return Tool.dateFormat({'value':value, 'format':'yyyy-MM-dd HH:mm:ss'});
-            }
-        } ,
-        {
-            field : 'content',
-            title : '内容',
+            field : 'userId',
+            title : '借款人ID（会员）',
             sortable:true,
             width : 100
+        } ,
+        {
+            field : 'userName',
+            title : '会员账号名称',
+            sortable:true,
+            width : 100
+        } ,
+        {
+            field : 'primaryAmount',
+            title : '发起人申请的额度',
+            sortable:true,
+            width : 100
+        } ,
+        {
+            field : 'applyRemark',
+            title : '申请备注',
+            sortable:true,
+            width : 100
+        } ,
+        {
+            field : 'applyTime',
+            title : '申请时间',
+            sortable:true,
+            width : 100,
+            formatter : function(value, rowData, rowIndex) {
+            	return Tool.dateFormat({'value':value, 'format':'yyyy-MM-dd HH:mm:ss'});
+            }
         } ,
     {
         field : 'processNodeName',
@@ -115,9 +131,11 @@ datagridParam_column_value = [ [
     } 
 ] ];// 表格的列
 datagridParam_queryParamName = [
-        'startTimeBegin','startTimeEnd',
-        'endTimeBegin','endTimeEnd',
-        'content',
+        'userId',
+        'userName',
+        'primaryAmount',
+        'applyRemark',
+        'applyTimeBegin','applyTimeEnd',
         'processInstanceId',
         'processDefinitionId',
         'processNodeName',
@@ -130,13 +148,13 @@ datagridParam_queryParamName = [
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';
-operateParam_dataId = 'leaveId';
-operateParam_dataName = 'startTime';
-operateParam_viewUrl = 'manage/workflow/leave/toView.do';
-operateParam_addUrl = 'manage/workflow/leave/toAdd.do';
-operateParam_editUrl = 'manage/workflow/leave/toEdit.do';
-operateParam_delUrl = 'manage/workflow/leave/delete.do';
-operateParam_reportUrl = 'manage/workflow/leave/report/view.do';
+operateParam_dataId = 'amountApplyId';
+operateParam_dataName = 'userId';
+operateParam_viewUrl = 'manage/workflow/amountApply/toView.do';
+operateParam_addUrl = 'manage/workflow/amountApply/toAdd.do';
+operateParam_editUrl = 'manage/workflow/amountApply/toEdit.do';
+operateParam_delUrl = 'manage/workflow/amountApply/delete.do';
+operateParam_reportUrl = 'manage/workflow/amountApply/report/view.do';
 operateParam_edit_beforeCallback = function(row) {
     if (row.status == 'unstart') {
         return true;
@@ -147,10 +165,10 @@ operateParam_edit_beforeCallback = function(row) {
 }
 
 exportParam_form = 'userForm';
-exportParam_exportUrl = "manage/workflow/leave/export.do";// 导出数据URL
-exportParam_queryExportUrl = "manage/workflow/leave/queryExport.do";// 查询导出数据URL
-exportParam_model = "leave";// 模块
+exportParam_exportUrl = "manage/workflow/amountApply/export.do";// 导出数据URL
+exportParam_queryExportUrl = "manage/workflow/amountApply/queryExport.do";// 查询导出数据URL
+exportParam_model = "amountApply";// 模块
 
-importParam_importUrl = "manage/workflow/leave/import.do";// 导入数据URL
-importParam_queryImportUrl = "manage/workflow/leave/queryImport.do";// 查询导入数据URL
+importParam_importUrl = "manage/workflow/amountApply/import.do";// 导入数据URL
+importParam_queryImportUrl = "manage/workflow/amountApply/queryImport.do";// 查询导入数据URL
 </script>

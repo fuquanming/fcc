@@ -234,12 +234,12 @@ $(function() {
         }, */
         done: function (e, data) {
             //Tool.message.progress('close');
+            var cIndex = ${annexType }_fileupload.currentUploadIndex;
+            ${annexType }_fileupload.removeWaitImg(cIndex);// 移除等待图片
             if (Tool.operate.check({'data':data.result,'message':false}) == true) {
-            	var cIndex = ${annexType }_fileupload.currentUploadIndex;
             	// 移除上传、取消按钮
             	$('#${annexType }-fileuploadBtn-' + cIndex).remove();
                 $('#${annexType }-filecancelBtn-' + cIndex).remove();
-                ${annexType }_fileupload.removeWaitImg(cIndex);// 移除等待图片
                 // 添加删除按钮
                 $('<a id="${annexType }-filedelBtn-' + cIndex + '" href="javascript:void(0)" index="' + cIndex + '" class="l-btn l-btn-small"><span class="l-btn-left"><span class="l-btn-text">删除</span></span></a>')
                 .appendTo($('#${annexType }-fileuploadTdBtn-' + cIndex));

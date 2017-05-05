@@ -118,7 +118,7 @@ public class ProcessTaskServiceImpl implements ProcessTaskService {
 	@Transactional(readOnly = true) //只查事务申明
 	@Override
 	public ProcessTaskInfo getCurrentTask(String processInstanceId) {
-	    return buildProcessTaskInfo(taskService.createTaskQuery().processInstanceId(processInstanceId).active().orderByTaskCreateTime().desc().singleResult());
+	    return buildProcessTaskInfo(taskService.createTaskQuery().processInstanceId(processInstanceId).active().orderByTaskCreateTime().desc().listPage(0, 1).get(0));
 	}
 	
 	@Transactional(readOnly = true) //只查事务申明

@@ -3,8 +3,10 @@ package com.fcc.commons.workflow.service.impl;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -46,10 +48,10 @@ import com.fcc.commons.workflow.service.ProcessTaskService;
 import com.fcc.commons.workflow.service.WorkflowService;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
 import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
-import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * <p>Description:</p>
@@ -80,9 +82,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 //	@Resource
 //	private ProcessDiagramGenerator processDiagramGenerator;
 	
-	private List<WorkflowTaskBusinessDataFilter> taskBusinessDataList;
+	private Set<WorkflowTaskBusinessDataFilter> taskBusinessDataSet = new HashSet<WorkflowTaskBusinessDataFilter>();
 	
-	private List<WorkflowTaskEditDataFilter> taskEditDataList;
+	private Set<WorkflowTaskEditDataFilter> taskEditDataSet = new HashSet<WorkflowTaskEditDataFilter>();
 	
     @Override
     public WorkflowTaskQuery createTaskQuery() {
@@ -149,10 +151,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	@Override
     public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message, List<ProcessTaskAttachmentInfo> attachmentList, HttpServletRequest request) {
-	    processTaskService.complete(userId, taskId, processInstanceId, variables, attachmentList, message);
-	    for (WorkflowTaskEditDataFilter filter : taskEditDataList) {
-           filter.edit(request, variables);
+	    for (WorkflowTaskEditDataFilter filter : taskEditDataSet) {
+            filter.edit(request, variables);
         }
+	    processTaskService.complete(userId, taskId, processInstanceId, variables, attachmentList, message);
     }
 	
 	@Transactional(readOnly = true) //只查事务申明
@@ -214,11 +216,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(readOnly = true) //只查事务申明
 	@Override
     public ProcessTaskInfo getProcessTask(String taskId) {
-	    List<String> processVariablesList = new ArrayList<String>(2);
-        processVariablesList.add(WorkflowVariableEnum.requestUserId.name());
-        processVariablesList.add(WorkflowVariableEnum.requestUserName.name());
         ProcessTaskInfo info = processTaskService.getProcessTask(taskId);
-        info.setProcessVariables(processTaskService.getVariables(info.getId(), processVariablesList));
+        info.setProcessVariables(processTaskService.getVariables(info.getId()));
 	    return info;
     }
 	
@@ -269,7 +268,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(readOnly = true) //只查事务申明 
 	@Override
     public Map<String, Object> getTaskBusinessData(ProcessTaskInfo taskInfo, String businessKey) {
-	    for (WorkflowTaskBusinessDataFilter filter : taskBusinessDataList) {
+	    for (WorkflowTaskBusinessDataFilter filter : taskBusinessDataSet) {
             Map<String, Object> map = filter.filter(taskInfo, businessKey);
             if (map != null) {
                 return map;
@@ -278,20 +277,20 @@ public class WorkflowServiceImpl implements WorkflowService {
         return null;
     }
 	
-	public List<WorkflowTaskBusinessDataFilter> getTaskBusinessDataList() {
-        return taskBusinessDataList;
+	public Set<WorkflowTaskBusinessDataFilter> getTaskBusinessDataSet() {
+        return taskBusinessDataSet;
     }
 
-    public void setTaskBusinessDataList(List<WorkflowTaskBusinessDataFilter> taskBusinessDataList) {
-        this.taskBusinessDataList = taskBusinessDataList;
+    public void setTaskBusinessDataSet(Set<WorkflowTaskBusinessDataFilter> taskBusinessDataSet) {
+        this.taskBusinessDataSet = taskBusinessDataSet;
     }
     
-    public List<WorkflowTaskEditDataFilter> getTaskEditDataList() {
-        return taskEditDataList;
+    public Set<WorkflowTaskEditDataFilter> getTaskEditDataSet() {
+        return taskEditDataSet;
     }
 
-    public void setTaskEditDataList(List<WorkflowTaskEditDataFilter> taskEditDataList) {
-        this.taskEditDataList = taskEditDataList;
+    public void setTaskEditDataSet(Set<WorkflowTaskEditDataFilter> taskEditDataSet) {
+        this.taskEditDataSet = taskEditDataSet;
     }
 }
 

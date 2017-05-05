@@ -14,7 +14,7 @@
 <%@ attribute name="imageWidth" required="false" type="java.lang.Integer" description="图片宽度"%>
 <%@ attribute name="imageHeight" required="false" type="java.lang.Integer" description="图片高度"%>
 <%@ attribute name="imageScale" required="false" type="java.lang.Float" description="图片比例"%>
-
+<%@ attribute name="deleteFlag" required="false" type="java.lang.Boolean" description="删除按钮"%>
 
 <%
 SysAnnexService sysAnnexService = SpringContextUtil.getBean(SysAnnexService.class);
@@ -61,7 +61,9 @@ request.setAttribute("annexList", list);
            <%
        }
        %>
+       <% if (deleteFlag == null || deleteFlag == true) { %>
            <a href="javascript:void(0)" class="l-btn l-btn-small fileShowButton" iconcls="icon-remove" onclick="javascript:${annexType }_file.delFile('<%=i%>')"><span class="l-btn-left"><span class="l-btn-text">删除</span></span></a><br/></div>
+       <% } %>
        <%
    }
 %>

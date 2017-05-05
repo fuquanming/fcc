@@ -3,10 +3,13 @@ package com.fcc.commons.workflow.service;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
+import com.fcc.commons.workflow.filter.WorkflowTaskEditDataFilter;
 import com.fcc.commons.workflow.model.WorkflowBean;
 import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
@@ -15,10 +18,10 @@ import com.fcc.commons.workflow.query.WorkflowModelQuery;
 import com.fcc.commons.workflow.query.WorkflowTaskQuery;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
 import com.fcc.commons.workflow.view.ProcessInstanceInfo;
+import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
-import com.fcc.commons.workflow.view.ProcessTaskAttachmentInfo;
 
 /**
  * <p>Description:工作流</p>
@@ -191,6 +194,16 @@ public interface WorkflowService {
 	 */
 	Long queryProcessTaskCount(WorkflowTaskQuery processTaskQuery);
 	
-	
+	/**
+	 * 办理任务-绑定数据
+	 * @return
+	 */
+	public Set<WorkflowTaskBusinessDataFilter> getTaskBusinessDataSet();
+
+	/**
+	 * 任务-修改数据
+	 * @return
+	 */
+    public Set<WorkflowTaskEditDataFilter> getTaskEditDataSet();
 	
 }

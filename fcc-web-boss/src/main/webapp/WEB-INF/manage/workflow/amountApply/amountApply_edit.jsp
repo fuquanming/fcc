@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,26 +13,39 @@
   <div id="toolbar" class="datagrid-toolbar" style="height: auto;">
   	<br/>
     <fieldset>
-    <legend>新增Leave</legend>
+    <legend>修改AmountApply</legend>
     <form id="userForm" name="userForm" method="post">
       <input type="hidden" id="operate" name="operate" value="save"/>
+	  <input name="amountApplyId" type="hidden" value="${amountApply.amountApplyId}" />
       <table class="tableForm" align="center">
-		<tr>	
-			<th>开始时间：</th>		
+        <tr>	
+			<th>借款人ID（会员）：</th>		
 			<td>
-			<input id="startTimeString" name="startTimeString" class="easyui-datetimebox" />
+            <input id="userId" name="userId" type="text" value="${amountApply.userId}" class="easyui-validatebox easyui-textbox" maxlength="19" />
 			</td>
 		</tr>	
-		<tr>	
-			<th>结束时间：</th>		
+        <tr>	
+			<th>会员账号名称：</th>		
 			<td>
-			<input id="endTimeString" name="endTimeString" class="easyui-datetimebox" />
+            <input id="userName" name="userName" type="text" value="${amountApply.userName}" class="easyui-validatebox easyui-textbox" maxlength="20" />
 			</td>
 		</tr>	
-		<tr>	
-			<th>内容：</th>		
+        <tr>	
+			<th>发起人申请的额度：</th>		
 			<td>
-            <textarea rows="5" cols="40" id="content" name="content" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 500]"></textarea>
+            <input id="primaryAmount" name="primaryAmount" type="text" value="${amountApply.primaryAmount}" class="easyui-validatebox easyui-textbox" maxlength="11" />
+			</td>
+		</tr>	
+        <tr>	
+			<th>申请备注：</th>		
+			<td>
+            <textarea rows="5" cols="40" id="applyRemark" name="applyRemark" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 4000]">${amountApply.applyRemark}</textarea>
+			</td>
+		</tr>	
+        <tr>	
+			<th>申请时间：</th>		
+			<td>
+			<input id="applyTimeString" name="applyTimeString" class="easyui-datetimebox"  value="<fmt:formatDate value="${amountApply.applyTime}" pattern="yyyy-MM-dd HH:mm:ss"/>"/>
 			</td>
 		</tr>	
         <tr>
@@ -51,10 +65,10 @@
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 saveParam_form = 'userForm';// 提交的Form
-saveParam_saveUrl = 'manage/workflow/leave/add.do';// 保存URL地址
-saveParam_backUrl = 'manage/workflow/leave/view.do';// 跳转地址
+saveParam_saveUrl = 'manage/workflow/amountApply/edit.do';// 保存URL地址
+saveParam_backUrl = 'manage/workflow/amountApply/view.do';// 跳转地址
 saveParam_afterCallback = function(data, success) {
-    return false;// 不执行自动跳转
+    if (success == false) return false;// 失败，不执行自动跳转
 }
 function start(start) {
     $('#operate').val(start);

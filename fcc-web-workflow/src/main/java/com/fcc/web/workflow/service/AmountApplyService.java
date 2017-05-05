@@ -5,23 +5,23 @@ import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
 
-import com.fcc.web.workflow.model.Leave;
+import com.fcc.web.workflow.model.AmountApply;
 
 /**
- * <p>Description:Leave</p>
+ * <p>Description:AmountApply</p>
  */
 
-public interface LeaveService {
+public interface AmountApplyService {
     /**
      * 新增,启动流程
-     * @param leave
+     * @param amountApply
      */
-    void add(Leave leave);
+    void add(AmountApply amountApply);
     /**
      * 修改，启动流程
-     * @param leave
+     * @param amountApply
      */
-    void edit(Leave leave);
+    void edit(AmountApply amountApply);
     /**
      * 更新状态
      * @param dataId
@@ -37,7 +37,7 @@ public interface LeaveService {
 	 * 分页查询
 	 * @return
 	 */
-	List<Leave> query(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL);
+	List<AmountApply> query(int pageNo, int pageSize, Map<String, Object> param, boolean isSQL);
 	/**
 	 * 报表
 	 * @return

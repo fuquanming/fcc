@@ -38,5 +38,5 @@
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <script type="text/javascript">
-saveParam_backUrl = 'manage/workflow/leave/view.do';// 跳转地址
+saveParam_backUrl = 'manage/workflow/amountApply/view.do';// 跳转地址
 </script>

@@ -8,6 +8,7 @@ datagridParam_id = 'datagrid';// 用到的datagrid的ID
 datagridParam_url = 'manage/sys/workflow/processHistory/viewDatagrid.do?processInstanceId=${param.processInstanceId}';// 数据源url
 datagridParam_idField = 'id';// datagrid表格的唯一标识
 datagridParam_idField_checkbox = false;// 是否显示多选框
+datagridParam_page = false;// 不显示分页
 datagridParam_column_value = [ [ 
     {
         field : 'processDefinitionName',
