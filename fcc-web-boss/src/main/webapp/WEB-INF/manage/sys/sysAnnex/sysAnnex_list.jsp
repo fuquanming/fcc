@@ -48,7 +48,6 @@
 <%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
-
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
 datagridParam_url = 'manage/sys/sysAnnex/datagrid.do';// 数据源url
 datagridParam_idField = 'annexId';// datagrid表格的唯一标识
@@ -64,13 +63,13 @@ datagridParam_column_value = [ [
             field : 'linkType',
             title : '关联类型',
             sortable:true,
-            width : 100
+            width : 80
         } ,
         {
             field : 'annexName',
             title : '附件名称',
             sortable:true,
-            width : 100
+            width : 80
         } ,
         {
             field : 'fileName',
@@ -82,7 +81,7 @@ datagridParam_column_value = [ [
             field : 'fileType',
             title : '文件类型',
             sortable:true,
-            width : 100
+            width : 50
         } ,
         {
             field : 'fileUrl',
@@ -94,13 +93,16 @@ datagridParam_column_value = [ [
             field : 'fileSize',
             title : '文件大小',
             sortable:true,
-            width : 100
+            width : 80
         } ,
         {
             field : 'remark',
             title : '文件备注',
             sortable:true,
-            width : 100
+            width : 100,
+            formatter : function(value, rowData, rowIndex) {
+            	return '<a href="<tool:fileUrl />' + rowData.fileUrl + '\\' + rowData.fileName + '" target="_blank" >' + rowData.annexName + '</a>';
+            }
         } 
 ] ];// 表格的列
 datagridParam_queryParamName = [
@@ -112,17 +114,6 @@ operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';
 operateParam_dataId = 'annexId';
 operateParam_dataName = 'linkId';
-operateParam_viewUrl = 'manage/sys/sysAnnex/toView.do';
-operateParam_addUrl = 'manage/sys/sysAnnex/toAdd.do';
-operateParam_editUrl = 'manage/sys/sysAnnex/toEdit.do';
 operateParam_delUrl = 'manage/sys/sysAnnex/delete.do';
-operateParam_reportUrl = 'manage/sys/sysAnnex/report/view.do';
 
-exportParam_form = 'userForm';
-exportParam_exportUrl = "manage/sys/sysAnnex/export.do";// 导出数据URL
-exportParam_queryExportUrl = "manage/sys/sysAnnex/queryExport.do";// 查询导出数据URL
-exportParam_model = "sysAnnex";// 模块
-
-importParam_importUrl = "manage/sys/sysAnnex/import.do";// 导入数据URL
-importParam_queryImportUrl = "manage/sys/sysAnnex/queryImport.do";// 查询导入数据URL
 </script>

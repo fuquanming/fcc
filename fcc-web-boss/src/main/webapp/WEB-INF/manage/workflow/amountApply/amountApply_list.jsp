@@ -28,10 +28,6 @@
 			<td colspan="2">
 				<input id="primaryAmount" name="primaryAmount" maxlength="11"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入发起人申请的额度...'"/>
 			</td>
-			<th>申请备注</th>	
-			<td colspan="2">
-				<input id="applyRemark" name="applyRemark" maxlength="4000"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入申请备注...'"/>
-			</td>
 			<th>申请时间</th>	
 			<td colspan="2">
 				<input value="" class="easyui-datebox" style="width: 120px;" id="applyTimeBegin" name="applyTimeBegin"   />

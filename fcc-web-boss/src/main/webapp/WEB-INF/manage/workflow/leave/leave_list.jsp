@@ -26,10 +26,6 @@
 				<input value="" class="easyui-datebox" style="width: 120px;" id="endTimeBegin" name="endTimeBegin"   />
 				<input value="" class="easyui-datebox" style="width: 120px;" id="endTimeEnd" name="endTimeEnd"   />
 			</td>
-			<th>内容</th>	
-			<td colspan="2">
-				<input id="content" name="content" maxlength="500"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入内容...'"/>
-			</td>
 		</tr>	
 		<tr>	
 			<th>状态</th>	
