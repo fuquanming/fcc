@@ -41,12 +41,13 @@ import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.web.view.ReportInfo;
-import com.fcc.commons.workflow.common.StatusCode;
+import com.fcc.commons.workflow.controller.WorkflowController;
 import com.fcc.commons.workflow.common.WorkflowDefinitionKey;
 import com.fcc.commons.workflow.common.WorkflowStatus;
-import com.fcc.commons.workflow.controller.WorkflowController;
+import com.fcc.commons.workflow.common.StatusCode;
 import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
+
 import com.fcc.web.workflow.model.AmountApply;
 import com.fcc.web.workflow.service.AmountApplyService;
 
@@ -87,7 +88,7 @@ public class AmountApplyController extends WorkflowController {
     @RequestMapping(value = "/view.do", method = RequestMethod.GET)
     @Permissions("view")
     public String view(HttpServletRequest request) {
-        setWorkflowStatus(request);
+        setWorkflowInfo(request, AmountApply.processDefinitionKey);
         return "/manage/workflow/amountApply/amountApply_list";
     }
     
@@ -363,6 +364,18 @@ public class AmountApplyController extends WorkflowController {
             if (StringUtils.isNotEmpty(createTimeEnd)) {
                 param.put("createTimeEnd", format.parse(createTimeEnd + " 23:59:59"));
             }
+            String updateUser = request.getParameter("updateUser");
+            if (StringUtils.isNotEmpty(updateUser)) {
+                param.put("updateUser", updateUser);
+            }
+            String updateTimeBegin = request.getParameter("updateTimeBegin");
+            if (StringUtils.isNotEmpty(updateTimeBegin)) {
+                param.put("updateTimeBegin", format.parse(updateTimeBegin + " 00:00:00"));
+            }
+            String updateTimeEnd = request.getParameter("updateTimeEnd");
+            if (StringUtils.isNotEmpty(updateTimeEnd)) {
+                param.put("updateTimeEnd", format.parse(updateTimeEnd + " 23:59:59"));
+            }
             String sortColumns = request.getParameter("sort");
             if (StringUtils.isNotEmpty(sortColumns)) {
                 param.put("sortColumns", sortColumns);
@@ -406,6 +419,8 @@ public class AmountApplyController extends WorkflowController {
                 titleList.add("状态");
                 titleList.add("创建者");
                 titleList.add("创建时间");
+                titleList.add("更新者");
+                titleList.add("更新时间");
                 
                 Object[] paramObject = new Object[]{1, Constants.exportDataPageSize, getParams(request), false};
                 exportTask.setRunningKey("amountApply");

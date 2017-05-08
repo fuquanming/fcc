@@ -87,7 +87,7 @@ public class LeaveController extends WorkflowController {
     @RequestMapping(value = "/view.do", method = RequestMethod.GET)
     @Permissions("view")
     public String view(HttpServletRequest request) {
-        setWorkflowStatus(request);
+        setWorkflowInfo(request, Leave.processDefinitionKey);
         return "/manage/workflow/leave/leave_list";
     }
     

@@ -54,6 +54,11 @@ function formartStatus(value) {
     }
     return str;
 }
+// 显示流程
+function showProcess() {
+	var str = '<%=basePath%>manage/sys/workflow/processDefinition/resource/read.do?processDefinitionId=${processDefinitionId}&resourceType=image';
+	window.open(str,'windName')
+}
 </script>
 <div id="activitiImgDialog" style="margin: 0 auto; overflow: hidden; display: none;">
 	<img id="processInstanceImg" name="processInstanceImg" src="" style="display: none;"/>

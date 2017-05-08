@@ -52,6 +52,7 @@
 	</form>
     </fieldset>
     <div id="operateDiv"></div>
+    <a id="viewProcess_button" class="easyui-linkbutton operate_button" iconCls="icon-search" onClick="showProcess();" plain="true" href="javascript:void(0);" >显示流程</a>
   </div>
   <table id="datagrid">
   </table>
@@ -66,7 +67,9 @@
 <%@ include file="/WEB-INF/head/init_combotree.jsp" %>
 <%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript">
-
+$(function() {
+    $('#refresh_button').after($('#viewProcess_button'));
+})
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
 datagridParam_url = 'manage/workflow/amountApply/datagrid.do';// 数据源url
 datagridParam_idField = 'amountApplyId';// datagrid表格的唯一标识
@@ -130,7 +133,6 @@ datagridParam_queryParamName = [
         'userId',
         'userName',
         'primaryAmount',
-        'applyRemark',
         'applyTimeBegin','applyTimeEnd',
         'processInstanceId',
         'processDefinitionId',

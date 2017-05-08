@@ -14,7 +14,9 @@ public enum AmountApplyEnum {
 	/** 随机分配风控人员 */
 	randomMember("randomMember"),
 	/** 风控人员设置金额 */
-	memberAmountList("memberAmountList");
+	memberAmountList("memberAmountList"),
+	/** 限制额度金额 */
+	standardNum("100000");
 	
 	private String value;
 
