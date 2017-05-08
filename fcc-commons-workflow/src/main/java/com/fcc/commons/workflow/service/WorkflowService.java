@@ -153,6 +153,15 @@ public interface WorkflowService {
      */
     Map<String, Object> getTaskBusinessData(ProcessTaskInfo taskInfo, String businessKey);
     
+    /**
+     * 查询-流程定义
+     * @param pageNo
+     * @param pageSize
+     * @param workflowDefinitionQuery
+     * @return
+     */
+    public ListPage queryPageProcessDefinition(int pageNo, int pageSize, WorkflowDefinitionQuery workflowDefinitionQuery);
+    
 	/**
 	 * 查询-流程实例
 	 * @param pageNo

@@ -41,6 +41,7 @@ import com.fcc.commons.workflow.query.impl.WorkflowHistoryQueryImpl;
 import com.fcc.commons.workflow.query.impl.WorkflowInstanceQueryImpl;
 import com.fcc.commons.workflow.query.impl.WorkflowModelQueryImpl;
 import com.fcc.commons.workflow.query.impl.WorkflowTaskQueryImpl;
+import com.fcc.commons.workflow.service.ProcessDefinitionService;
 import com.fcc.commons.workflow.service.ProcessHistoryService;
 import com.fcc.commons.workflow.service.ProcessInstanceService;
 import com.fcc.commons.workflow.service.ProcessTaskService;
@@ -70,6 +71,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private RepositoryService repositoryService;
 	@Autowired
 	private ProcessEngineFactoryBean processEngine;
+	@Resource
+	private ProcessDefinitionService processDefinitionService;
 	@Resource
 	private ProcessInstanceService processInstanceService;
 	@Resource
@@ -200,6 +203,12 @@ public class WorkflowServiceImpl implements WorkflowService {
 	public List<ProcessTaskCommentInfo> getComments(String processInstanceId) {
 		return processInstanceService.getProcessInstanceComments(processInstanceId);
 	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+    public ListPage queryPageProcessDefinition(int pageNo, int pageSize,
+            WorkflowDefinitionQuery workflowDefinitionQuery) {
+        return processDefinitionService.queryPage(pageNo, pageSize, workflowDefinitionQuery);
+    }
 	
 	@Transactional(readOnly = true) //只查事务申明
 	public ListPage queryPageProcessInstance(int pageNo, int pageSize,

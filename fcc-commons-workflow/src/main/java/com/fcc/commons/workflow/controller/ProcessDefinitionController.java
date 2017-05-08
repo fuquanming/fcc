@@ -270,7 +270,7 @@ public class ProcessDefinitionController extends WorkflowController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/resource/read.do")
-	@Permissions("add")
+//	@Permissions("add")
 	public void resourceRead(@RequestParam("processDefinitionId") String processDefinitionId, @RequestParam("resourceType") String resourceType,
                                  HttpServletResponse response) throws Exception {
         try {

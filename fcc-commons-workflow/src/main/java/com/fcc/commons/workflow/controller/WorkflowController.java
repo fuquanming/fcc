@@ -15,9 +15,12 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.controller.BaseController;
 import com.fcc.commons.workflow.common.WorkflowStatus;
+import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.service.WorkflowService;
+import com.fcc.commons.workflow.view.ProcessDefinitionInfo;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
 import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
@@ -132,15 +135,22 @@ public class WorkflowController extends BaseController {
     }
     
     /**
-     * 设置 流程状态值
+     * 设置 流程状态值、流程图片
      * @param request
+     * @param processDefinitionKey   流程定义KEY
      */
-    public void setWorkflowStatus(HttpServletRequest request) {
+    public void setWorkflowInfo(HttpServletRequest request, String processDefinitionKey) {
         request.setAttribute(WorkflowStatus.unstart.name(), WorkflowStatus.unstart);
         request.setAttribute(WorkflowStatus.start.name(), WorkflowStatus.start);
         request.setAttribute(WorkflowStatus.success.name(), WorkflowStatus.success);
         request.setAttribute(WorkflowStatus.fail.name(), WorkflowStatus.fail);
         request.setAttribute(WorkflowStatus.cannel.name(), WorkflowStatus.cannel);
+        
+        WorkflowDefinitionQuery workflowDefinitionQuery = workflowService.createDefinitionQuery();
+        workflowDefinitionQuery.processDefinitionKey(processDefinitionKey);
+        ListPage listPage = workflowService.queryPageProcessDefinition(1, 1, workflowDefinitionQuery);
+        if (listPage.getDataSize() > 0) {
+            request.setAttribute("processDefinitionId", ((ProcessDefinitionInfo)listPage.getDataList().get(0)).getProcessDefinitionId());
+        }
     }
-	
 }
