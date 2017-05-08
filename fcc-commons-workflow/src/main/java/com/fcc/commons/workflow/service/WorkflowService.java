@@ -8,8 +8,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fcc.commons.data.ListPage;
-import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
-import com.fcc.commons.workflow.filter.WorkflowTaskEditDataFilter;
+import com.fcc.commons.workflow.listener.TaskListener;
 import com.fcc.commons.workflow.model.WorkflowBean;
 import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
@@ -195,15 +194,8 @@ public interface WorkflowService {
 	Long queryProcessTaskCount(WorkflowTaskQuery processTaskQuery);
 	
 	/**
-	 * 办理任务-绑定数据
-	 * @return
-	 */
-	public Set<WorkflowTaskBusinessDataFilter> getTaskBusinessDataSet();
-
-	/**
-	 * 任务-修改数据
-	 * @return
-	 */
-    public Set<WorkflowTaskEditDataFilter> getTaskEditDataSet();
-	
+     * 任务监听器
+     * @return
+     */
+    public Set<TaskListener> getTaskListeners();
 }

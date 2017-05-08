@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -20,11 +19,7 @@ import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
-import com.fcc.commons.workflow.common.WorkflowVariableEnum;
-import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
 import com.fcc.commons.workflow.service.WorkflowService;
-import com.fcc.commons.workflow.view.ProcessTaskInfo;
-import com.fcc.web.sys.model.SysUser;
 
 import com.fcc.web.workflow.model.AmountApply;
 import com.fcc.web.workflow.dao.AmountApplyDao;
@@ -35,7 +30,7 @@ import com.fcc.web.workflow.service.AmountApplyWorkflowService;
  */
 
 @Service
-public class AmountApplyServiceImpl implements AmountApplyService, ExportService, ImportService, WorkflowTaskBusinessDataFilter {
+public class AmountApplyServiceImpl implements AmountApplyService, ExportService, ImportService {
     @Resource
     private AmountApplyDao amountApplyDao;
     @Resource
@@ -44,11 +39,6 @@ public class AmountApplyServiceImpl implements AmountApplyService, ExportService
     private AmountApplyWorkflowService amountApplyWorkflowService;
     @Resource
     private WorkflowService workflowService;
-    
-    @PostConstruct
-    public void init() {
-        workflowService.getTaskBusinessDataSet().add(this);
-    }
     
     @Override
     public List<String> dataConver(Object converObj) {
@@ -186,23 +176,4 @@ public class AmountApplyServiceImpl implements AmountApplyService, ExportService
         return amountApplyDao.report(pageNo, pageSize, param, isSQL);
     }
     
-    @Transactional(readOnly = true)
-    @Override
-    public Map<String, Object> filter(ProcessTaskInfo taskInfo, String businessKey) {
-        Map<String, Object> map = null;
-        if (AmountApply.processDefinitionKey.equals(taskInfo.getProcessDefinitionKey())) {
-            map = new HashMap<String, Object>(3);
-            AmountApply data = (AmountApply) baseService.get(AmountApply.class, businessKey);
-            map.put("requestUserName", ((SysUser)baseService.get(SysUser.class, data.getCreateUser())).getUserName());
-            map.put("data", data);
-            map.put(WorkflowVariableEnum.editTaskPage.name(), "/WEB-INF/manage/workflow/amountApply/amountApply_task_edit.jsp");
-            // 判断是否可以修改绑定数据用于重新提交申请
-            boolean readonly = true; 
-            if ("amountApply_audit".equals(taskInfo.getTaskDefinitionKey())) {// 申请的流程ID，可以修改数据
-                readonly = false;
-            }
-            map.put("readonly", readonly);
-        }
-        return map;
-    }
 }

@@ -29,8 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.common.WorkflowVariableEnum;
-import com.fcc.commons.workflow.filter.WorkflowTaskBusinessDataFilter;
-import com.fcc.commons.workflow.filter.WorkflowTaskEditDataFilter;
+import com.fcc.commons.workflow.listener.TaskListener;
 import com.fcc.commons.workflow.model.WorkflowBean;
 import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
 import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
@@ -82,10 +81,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 //	@Resource
 //	private ProcessDiagramGenerator processDiagramGenerator;
 	
-	private Set<WorkflowTaskBusinessDataFilter> taskBusinessDataSet = new HashSet<WorkflowTaskBusinessDataFilter>();
-	
-	private Set<WorkflowTaskEditDataFilter> taskEditDataSet = new HashSet<WorkflowTaskEditDataFilter>();
-	
+	private Set<TaskListener> taskListeners = new HashSet<TaskListener>();
+
     @Override
     public WorkflowTaskQuery createTaskQuery() {
         return new WorkflowTaskQueryImpl();
@@ -151,10 +148,13 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	@Override
     public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message, List<ProcessTaskAttachmentInfo> attachmentList, HttpServletRequest request) {
-	    for (WorkflowTaskEditDataFilter filter : taskEditDataSet) {
-            filter.edit(request, variables);
+	    for (TaskListener task : taskListeners) {
+	        task.beforeComplete(request, variables);
         }
 	    processTaskService.complete(userId, taskId, processInstanceId, variables, attachmentList, message);
+	    for (TaskListener task : taskListeners) {
+	        task.afterComplete(request, variables);
+        }
     }
 	
 	@Transactional(readOnly = true) //只查事务申明
@@ -268,8 +268,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(readOnly = true) //只查事务申明 
 	@Override
     public Map<String, Object> getTaskBusinessData(ProcessTaskInfo taskInfo, String businessKey) {
-	    for (WorkflowTaskBusinessDataFilter filter : taskBusinessDataSet) {
-            Map<String, Object> map = filter.filter(taskInfo, businessKey);
+	    for (TaskListener task : taskListeners) {
+            Map<String, Object> map = task.getBusinessData(taskInfo, businessKey);
             if (map != null) {
                 return map;
             }
@@ -277,20 +277,13 @@ public class WorkflowServiceImpl implements WorkflowService {
         return null;
     }
 	
-	public Set<WorkflowTaskBusinessDataFilter> getTaskBusinessDataSet() {
-        return taskBusinessDataSet;
+	@Override
+    public Set<TaskListener> getTaskListeners() {
+        return taskListeners;
     }
 
-    public void setTaskBusinessDataSet(Set<WorkflowTaskBusinessDataFilter> taskBusinessDataSet) {
-        this.taskBusinessDataSet = taskBusinessDataSet;
-    }
-    
-    public Set<WorkflowTaskEditDataFilter> getTaskEditDataSet() {
-        return taskEditDataSet;
-    }
-
-    public void setTaskEditDataSet(Set<WorkflowTaskEditDataFilter> taskEditDataSet) {
-        this.taskEditDataSet = taskEditDataSet;
+    public void setTaskListeners(Set<TaskListener> taskListeners) {
+        this.taskListeners = taskListeners;
     }
 }
 

@@ -13,7 +13,7 @@ import com.fcc.commons.workflow.common.WorkflowStatus;
 import com.fcc.commons.workflow.service.WorkflowService;
 import com.fcc.commons.workflow.view.ProcessTaskInfo;
 import com.fcc.web.sys.model.SysUser;
-
+import com.fcc.web.workflow.common.AmountApplyEnum;
 import com.fcc.web.workflow.model.AmountApply;
 import com.fcc.web.workflow.service.AmountApplyWorkflowService;
 /**
@@ -50,6 +50,9 @@ public class AmountApplyWorkflowServiceImpl implements AmountApplyWorkflowServic
         // 开始下个流程
         variables.clear();
         variables.put("action", "apply");// 设置下个流转
+        
+        variables.put(AmountApplyEnum.amount.toString(), data.getPrimaryAmount());// 申请金额
+        variables.put(AmountApplyEnum.standard.toString(), Double.valueOf(AmountApplyEnum.standardNum.getValue()));// 限制金额
         workflowService.taskComplete(sysUser.getUserId(), task.getId(), processInstanceId, variables, null);
         task = workflowService.getCurrentTask(processInstanceId);
         if (task != null) data.setProcessNodeName(task.getName());
