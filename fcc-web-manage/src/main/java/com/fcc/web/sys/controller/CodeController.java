@@ -224,8 +224,10 @@ public class CodeController extends AppWebController {
             sb.append(WebUtils.getRealPath(request.getServletContext(), "/")).append("WEB-INF").append(File.separatorChar);
             if ("tree".equals(type)) {
                 sb.append("fcc_tree_template");
-            } else {
+            } else if ("table".equals(type)) {
                 sb.append("fcc_template");
+            } else if ("workflow".equals(type)) {
+                sb.append("fcc_workflow_template");
             }
             sb.append(File.separatorChar);
             g.generateByTable(tableName, className, sb.toString(), map);

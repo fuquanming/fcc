@@ -56,6 +56,7 @@
             <th colspan="3">是否tree：</th>        
             <td align="left">
             <input type="radio" name="type" value="tree" />tree<input type="radio" name="type" value="table" checked="checked"/>table
+            <input type="radio" name="type" value="workflow" />workflow
             </td>
         </tr>
 		<tr>  
@@ -167,7 +168,7 @@ function queryColumn() {
         dataType : "json",
         success : function(d) {
             try {
-            	var success = Tool.operate.check({'data':data});
+            	var success = Tool.operate.check({'data':d});
             	if (success) {
             	} else {
             		for (var i in d) {

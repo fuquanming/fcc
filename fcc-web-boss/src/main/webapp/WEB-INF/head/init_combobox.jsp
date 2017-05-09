@@ -46,7 +46,7 @@ function getComboBoxByData(param) {
         valueField : param.valueField,
         textField : param.textField,
         editable : editable,
-        panelHeight : 'auto',
+        //panelHeight : 'auto',
         onLoadSuccess : function(node, data) {
         	$('#' + id).combobox('setValue', param.selectValue);
         }

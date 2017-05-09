@@ -119,6 +119,11 @@ public class WorkflowController extends BaseController {
      */
     public void setProcessHistory(HttpServletRequest request, String processInstanceId) {
         ProcessHistoryInfo instanceInfo = workflowService.getHistoricProcessInstance(processInstanceId);
+        if (instanceInfo == null) {
+//            Leave data = (Leave) baseService.get(Leave.class, businessKey);
+//            request.setAttribute("data", data);
+            return;
+        }
         // 流程业务ID
         String businessKey = instanceInfo.getBusinessKey();
         ProcessTaskInfo taskInfo = new ProcessTaskInfo();

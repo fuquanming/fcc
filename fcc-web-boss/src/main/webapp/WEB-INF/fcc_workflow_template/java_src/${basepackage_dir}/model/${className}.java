@@ -1,0 +1,221 @@
+<#include "/macro.include"/>
+<#assign className = table.className>   
+<#assign classNameLower = className?uncap_first> 
+package ${basepackage}.model;
+
+import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+
+import com.fcc.commons.workflow.model.WorkflowBean;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+/**
+ * <p>Description:${table.tableAlias}</p>
+ */
+
+@Entity
+@Table(name = "${table.sqlName}")
+public class ${className} extends WorkflowBean implements java.io.Serializable {
+    private static final long serialVersionUID = 5454155825314635342L;
+    
+    public static final String processDefinitionKey = "${classNameLower}";
+    
+    public static final String processDefinitionName = "${table.tableAlias}";
+    
+    <@generateFields/>
+    <@generateCompositeIdConstructorIfis/>
+    <@generatePkProperties/>
+    <@generateNotPkProperties/>
+    <@generateJavaOneToMany/>
+    <@generateJavaManyToOne/>
+
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        <#list table.columns as column>
+            <#if !table.compositeId>
+            .append("${column.columnName}",get${column.columnName}())
+            </#if>
+        </#list>
+            .toString();
+    }
+    
+    public int hashCode() {
+        return new HashCodeBuilder()
+        <#list table.pkColumns as column>
+            <#if !table.compositeId>
+            .append(get${column.columnName}())
+            </#if>
+        </#list>
+            .toHashCode();
+    }
+    
+    public boolean equals(Object obj) {
+        if(obj instanceof ${className} == false) return false;
+        if(this == obj) return true;
+        ${className} other = (${className})obj;
+        return new EqualsBuilder()
+            <#list table.pkColumns as column>
+                <#if !table.compositeId>
+            .append(get${column.columnName}(),other.get${column.columnName}())
+                </#if>
+            </#list>
+            .isEquals();
+    }
+    
+    @Transient
+    @Override
+    public String getBusinessKey() {
+        <#list table.pkColumns as column>
+        return this.${column.columnNameLower};
+        </#list>
+    }
+
+    @Transient
+    @Override
+    public String getDefinitionKey() {
+        return processDefinitionKey;
+    }
+}
+
+<#macro generateFields>
+
+<#if table.compositeId>
+    private ${className}Id id;
+    <#list table.columns as column>
+        <#if !column.pk>
+    private ${column.javaType} ${column.columnNameLower};
+        </#if>
+    </#list>
+<#else>
+    //可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
+    //columns START
+    <#list table.columns as column>
+    <#if column.columnNameLower != "createTime" && column.columnNameLower != "createUser" && column.columnNameLower != "updateTime" && column.columnNameLower != "updateUser" && column.columnNameLower != "status" && column.columnNameLower != "processInstanceId" && column.columnNameLower != "processDefinitionId" && column.columnNameLower != "processNodeName">  
+    /**
+     * ${column.columnAlias!}       db_column: ${column.sqlName} 
+     */     
+    // 不再限制长度  ${column.hibernateValidatorExprssion}
+    private ${column.javaType} ${column.columnNameLower};
+    </#if>
+    </#list>
+    //columns END
+</#if>
+
+</#macro>
+
+<#macro generateCompositeIdConstructorIfis>
+
+    <#if table.compositeId>
+    public ${className}() {
+    }
+    public ${className}(${className}Id id) {
+        this.id = id;
+    }
+    <#else>
+    <@generateConstructor className/>
+    </#if>
+    
+</#macro>
+
+<#macro generatePkProperties>
+    <#if table.compositeId>
+    @EmbeddedId
+    public ${className}Id getId() {
+        return this.id;
+    }
+    
+    public void setId(${className}Id id) {
+        this.id = id;
+    }
+    <#else>
+        <#list table.columns as column>
+            <#if column.pk>
+
+    public void set${column.columnName}(${column.javaType} value) {
+        this.${column.columnNameLower} = value;
+    }
+                <#if column.isStringColumn>
+    @Id @GeneratedValue(generator="paymentableGenerator")
+    @GenericGenerator(name="paymentableGenerator", strategy = "uuid")
+                </#if>
+                <#if column.isNumberColumn>
+    @Id 
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE,generator="mySeqGenerator")
+    //@SequenceGenerator(name = "mySeqGenerator", sequenceName = "t_teacher_sequence", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(generator = "paymentableGenerator") 
+    @GenericGenerator(name = "paymentableGenerator", strategy = "native")// 数据库实现，对于 oracle 采用 Sequence 方式，对于MySQL 和 SQL Server 采用identity（自增主键生成机制）
+                </#if>
+    @Column(name = "${column.sqlName}", unique = ${column.unique?string}, nullable = ${column.nullable?string}, insertable = true, updatable = true)//, length = ${column.size}
+    public ${column.javaType} get${column.columnName}() {
+        return this.${column.columnNameLower};
+    }
+            </#if>
+        </#list>
+    </#if>
+    
+</#macro>
+
+<#macro generateNotPkProperties>
+    <#list table.columns as column>
+        <#if !column.pk>
+        <#if column.columnNameLower != "createTime" && column.columnNameLower != "createUser" && column.columnNameLower != "updateTime" && column.columnNameLower != "updateUser" && column.columnNameLower != "status" && column.columnNameLower != "processInstanceId" && column.columnNameLower != "processDefinitionId" && column.columnNameLower != "processNodeName">  
+    @Column(name = "${column.sqlName}", unique = ${column.unique?string}, nullable = ${column.nullable?string}, insertable = true, updatable = true)//, length = ${column.size}
+    public ${column.javaType} get${column.columnName}() {
+        return this.${column.columnNameLower};
+    }
+    
+    public void set${column.columnName}(${column.javaType} value) {
+        this.${column.columnNameLower} = value;
+    }
+        </#if>
+        </#if>
+    </#list>
+</#macro>
+
+<#macro generateJavaOneToMany>
+    <#list table.exportedKeys.associatedTables?values as foreignKey>
+    <#assign fkSqlTable = foreignKey.sqlTable>
+    <#assign fkTable    = fkSqlTable.className>
+    <#assign fkPojoClass = fkSqlTable.className>
+    <#assign fkPojoClassVar = fkPojoClass?uncap_first>
+    
+    private Set ${fkPojoClassVar}s = new HashSet(0);
+    public void set${fkPojoClass}s(Set<${fkPojoClass}> ${fkPojoClassVar}){
+        this.${fkPojoClassVar}s = ${fkPojoClassVar};
+    }
+    
+    @OneToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "${classNameLower}")
+    public Set<${fkPojoClass}> get${fkPojoClass}s() {
+        return ${fkPojoClassVar}s;
+    }
+    </#list>
+</#macro>
+
+<#macro generateJavaManyToOne>
+    <#list table.importedKeys.associatedTables?values as foreignKey>
+    <#assign fkSqlTable = foreignKey.sqlTable>
+    <#assign fkTable    = fkSqlTable.className>
+    <#assign fkPojoClass = fkSqlTable.className>
+    <#assign fkPojoClassVar = fkPojoClass?uncap_first>
+    
+    private ${fkPojoClass} ${fkPojoClassVar};
+    public void set${fkPojoClass}(${fkPojoClass} ${fkPojoClassVar}){
+        this.${fkPojoClassVar} = ${fkPojoClassVar};
+    }
+    
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumns({
+    <#list foreignKey.parentColumns?values as fkColumn>
+        @JoinColumn(name = "${fkColumn}",nullable = false, insertable = false, updatable = false) <#if fkColumn_has_next>,</#if>
+    </#list>
+    })
+    public ${fkPojoClass} get${fkPojoClass}() {
+        return ${fkPojoClassVar};
+    }
+    </#list>
+</#macro>
