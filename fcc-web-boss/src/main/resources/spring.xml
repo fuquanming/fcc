@@ -52,7 +52,6 @@
         <property name="threadPoolSize" value="${thread.pool.size}"></property>
     </bean>
 
-    <!-- <bean id="lock" class="com.fcc.commons.web.locks.DbLock" /> -->
     <bean id="lock" class="com.fcc.commons.locks.SimpleLock"/>
     <!-- 开启切面注解 -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
