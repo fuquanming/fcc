@@ -116,6 +116,12 @@ public class RoleServiceImpl implements RoleService {
         }
         return role;
     };
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Role> getRoleByUserType(String userType) {
+        return roleDao.getRoleByUserType(userType);
+    }
 
     /**
      * //TODO 添加override说明

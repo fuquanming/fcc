@@ -26,6 +26,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.internal.SessionImpl;
+import org.hibernate.transform.Transformers;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -173,7 +174,7 @@ public class BaseDaoImpl implements BaseDao {
                     }
                     ps.addBatch();
                     index = 1;
-                    if (i % 1000 == 0) {
+                    if (i % 100 == 0) {
                         ps.executeBatch();
                         conn.commit();
                         ps.clearBatch();
@@ -242,6 +243,24 @@ public class BaseDaoImpl implements BaseDao {
 		launchParamValues(q, param);
 		return q.list();
 	}
+	
+	public List findSQL(Class<?> c, String sql, Object... param) {
+        Query q = this.getCurrentSession().createSQLQuery(sql);
+        if (param != null && param.length > 0) {
+            for (int i = 0; i < param.length; i++) {
+                q.setParameter(i, param[i]);
+            }
+        }
+        q.setResultTransformer(Transformers.aliasToBean(c));
+        return q.list();
+    }
+    
+    public List findSQL(Class<?> c, String sql, Map<String, Object> param) {
+        Query q = this.getCurrentSession().createSQLQuery(sql);
+        launchParamValues(q, param);
+        q.setResultTransformer(Transformers.aliasToBean(c));
+        return q.list();
+    }
 
     public ListPage queryPage(int pageNo, int pageSize, String cHql,
 			String bHql, Map<String, Object> param, boolean isSQL) {

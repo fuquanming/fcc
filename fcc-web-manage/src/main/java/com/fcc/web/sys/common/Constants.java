@@ -28,6 +28,9 @@ public interface Constants extends com.fcc.commons.web.common.Constants {
     String currentUser = "user";
     String currentUserName = "username";
     
+    /** 系统用户类型 */
+    public Map<String, String> userTypes = new HashMap<String, String>();
+    
     /** 系统用户session中的变量 */
     public interface SysUserSession {
         /** 登陆系统的用户 */

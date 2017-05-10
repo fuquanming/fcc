@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.commons.data.ListPage;
@@ -120,8 +121,9 @@ public class SysUserDaoImpl implements SysUserDao {
         return null;
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     @Override
+    @Transactional(readOnly = true)
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
         StringBuilder cHql = new StringBuilder();
         StringBuilder bHql = new StringBuilder();
@@ -153,6 +155,12 @@ public class SysUserDaoImpl implements SysUserDao {
                 cHql.append(" and r.dept in(:deptList)");
                 bHql.append(" and r.dept in(:deptList)");
             }
+            String userType = (String) param.get("userType");
+            if (userType != null && !"".equals(userType)) {
+                map.put("userType", userType);
+                cHql.append(" and r.userType =:userType");
+                bHql.append(" and r.userType =:userType");
+            }
             String createUser = (String) param.get("createUser");
             if (createUser != null && !"".equals(createUser)) {
                 map.put("createUser", createUser);
@@ -169,10 +177,6 @@ public class SysUserDaoImpl implements SysUserDao {
         }
         bHql.append(" order by userId desc");
         ListPage listPage = baseDao.queryPage(pageNo, pageSize, cHql.toString(), bHql.toString(), map, false);
-        List<SysUser> dataList = listPage.getDataList();
-        for (SysUser data : dataList) {
-            data.getRoles().size();
-        }
         return listPage;
     }
 }

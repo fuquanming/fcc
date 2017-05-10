@@ -11,6 +11,7 @@ package com.fcc.web.sys.dao.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.fcc.commons.core.dao.BaseDao;
 import com.fcc.commons.data.ListPage;
 import com.fcc.web.sys.dao.RoleDao;
+import com.fcc.web.sys.model.Role;
 
 /**
  * 
@@ -43,6 +45,17 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
     
+    @Override
+    public void addUserTypeRole(String userType, String[] roleIds) {
+        int length = roleIds.length;
+        for (int i = 0; i < length; i++) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("insert into sys_rbac_usertype_role (user_type, role_id) values('")
+            .append(userType).append("','").append(roleIds[i]).append("')");
+            baseDao.executeSql(sb.toString());
+        }
+    }
+    
     /**
      * //TODO 添加override说明
      * @see com.fcc.web.sys.dao.RoleDao#deleteRoleByUserId(java.lang.String)
@@ -50,6 +63,11 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public Integer deleteRoleByUserId(String userId) {
         return baseDao.executeSql("delete from sys_rbac_usertorole where user_id =?", userId);
+    }
+    
+    @Override
+    public Integer deleteRoleByUserType(String userType) {
+        return baseDao.executeSql("delete from sys_rbac_usertype_role where user_type =?", userType);
     }
 
     @Override
@@ -71,6 +89,12 @@ public class RoleDaoImpl implements RoleDao {
         Map<String, Object> param = new HashMap<String, Object>(1);
         param.put("roleId", roleIds);
         return baseDao.executeHql("delete from Role where roleId in(:roleId)", param);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Role> getRoleByUserType(String userType) {
+        return baseDao.findSQL(Role.class, "select r.role_id as roleId, r.role_name as roleName, r.role_orderno as roleOrderno, r.role_desc as roleDesc, r.create_time as createTime, r.create_user as createUser from sys_rbac_role r left join sys_rbac_usertype_role t on r.role_id=t.role_id where t.user_type=?", userType);
     }
     
     @Override

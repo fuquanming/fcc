@@ -18,6 +18,8 @@ public interface SysUserService {
     void add(SysUser data, String[] roleIds);
 
     void addRole(String userId, String[] roleIds);
+    
+    void addUserTypeRole(String userType, String[] roleIds);
 
     void edit(SysUser data, String[] roleIds);
 
@@ -26,6 +28,8 @@ public interface SysUserService {
     void resetPassword(String userId, String userPass);
 
     void delete(String[] userIds);
+    
+    void deleteUserTypeRole(String[] userTypes);
 
     Integer editStatus(String[] userIds, String userStatus);
     /**
@@ -35,7 +39,7 @@ public interface SysUserService {
      * @return
      * @throws RefusedException     错误信息，登录次数限制等
      */
-    SysUser getLoninUser(String userId, String password) throws RefusedException;
+    SysUser getLoginUser(String userId, String password) throws RefusedException;
 
     SysUser getUserWithRole(String userId);
 
@@ -49,6 +53,7 @@ public interface SysUserService {
 
     ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
 
+    ListPage queryUserTypePage(int pageNo, int pageSize, String userType);
     /**
      * 用户模块
      * @param sysUser

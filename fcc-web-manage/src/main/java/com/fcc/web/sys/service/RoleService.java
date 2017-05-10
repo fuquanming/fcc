@@ -1,5 +1,6 @@
 package com.fcc.web.sys.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
@@ -50,6 +51,13 @@ public interface RoleService {
      * @return
      */
     Role getRoleWithModuleRight(String roleId);
+    
+    /**
+     * 通过用户类型获取角色
+     * @param userType
+     * @return
+     */
+    List<Role> getRoleByUserType(String userType);
     /**
      * 分页查询角色
      * @param pageNo

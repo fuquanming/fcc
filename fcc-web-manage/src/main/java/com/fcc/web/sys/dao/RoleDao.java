@@ -9,9 +9,11 @@
  */
 package com.fcc.web.sys.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
+import com.fcc.web.sys.model.Role;
 
 /**
  * 系统角色
@@ -26,10 +28,22 @@ public interface RoleDao {
      */
     public void addRole(String userId, String[] roleIds);
     /**
+     * 添加用户类型角色
+     * @param userType
+     * @param roleIds
+     */
+    public void addUserTypeRole(String userType, String[] roleIds);
+    /**
      * 删除用户角色 
      * @param userId
      */
     public Integer deleteRoleByUserId(String userId);
+    /**
+     * 删除用户类型角色
+     * @param userType
+     * @return
+     */
+    public Integer deleteRoleByUserType(String userType);
     /**
      * 删除用户角色 
      * @param userId
@@ -46,6 +60,12 @@ public interface RoleDao {
      * @param userId
      */
     public Integer delete(String[] roleIds);
+    /**
+     * 通过用户类型获取角色
+     * @param userType
+     * @return
+     */
+    public List<Role> getRoleByUserType(String userType);
     
     public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
     

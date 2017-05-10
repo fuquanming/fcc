@@ -34,7 +34,10 @@ import com.fcc.web.sys.enums.UserStatus;
 @Table(name = "sys_rbac_user")
 public class SysUser implements java.io.Serializable {
     private static final long serialVersionUID = 5454155825314635342L;
-
+    /** 系统用户默认用户类型为：sys */
+    public final static String userTypeKey = "sysUser";
+    /** 系统用户默认用户类型名称：系统用户 */
+    public final static String userTypeName = "系统用户";
     //可以直接使用: @Length(max=50,message="用户名长度不能大于50")显示错误消息
     //columns START
     /**
@@ -63,6 +66,11 @@ public class SysUser implements java.io.Serializable {
 //    @Enumerated(EnumType.STRING)
     private String userStatus = UserStatus.normal.name();
 
+    /**
+     * 用户类型：系统       db_column: USER_TYPE
+     */
+    private String userType = userTypeKey;
+    
     /**
      * 工号       db_column: USER_CODE 
      */
@@ -139,8 +147,10 @@ public class SysUser implements java.io.Serializable {
 
     private Date loginTime;
     //columns END
-
+    /** 用户角色 */
     private Set<Role> roles;
+    /** 用户类型角色 */
+    private Set<Role> userTypeRoles;
 
     // 没有数据库映射
     private String ip;
@@ -149,7 +159,7 @@ public class SysUser implements java.io.Serializable {
     // 角色ID
     private Set<String> roleIds;
     /** 附件关联类型 */
-    public static String ANNEX_LINK_TYPE = "sysUser";
+    public final static String annexLinkType = "sysUser";
     
     public interface AnnexType {
         /** 头像 */
@@ -209,6 +219,15 @@ public class SysUser implements java.io.Serializable {
 
     public void setUserStatus(String userStatus) {
         this.userStatus = userStatus;
+    }
+    
+    @Column(name = "USER_TYPE", unique = false, nullable = true, insertable = true, updatable = true)
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     @Column(name = "USER_CODE", unique = false, nullable = true, insertable = true, updatable = true, length = 255)
@@ -377,12 +396,24 @@ public class SysUser implements java.io.Serializable {
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "SYS_RBAC_USERTOROLE", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+    // 关联 user_id,role_id,查询值用主键
     public Set<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+    
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "SYS_RBAC_USERTYPE_ROLE", joinColumns = { @JoinColumn(name = "user_type", referencedColumnName = "user_type") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+    // 关联 user_type,role_id,查询值用user_type,单个查询可以，列表查询，需要多个不同的userType值，才可以加载
+    public Set<Role> getUserTypeRoles() {
+        return userTypeRoles;
+    }
+
+    public void setUserTypeRoles(Set<Role> userTypeRoles) {
+        this.userTypeRoles = userTypeRoles;
     }
 
     @Transient

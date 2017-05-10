@@ -62,7 +62,7 @@ public class LoginController extends AppWebController {
                 if (!subCode.equalsIgnoreCase(sesCode)) throw new RefusedException(StatusCode.Login.errorRandCode);
             }
             SysUser user = null;
-            user = sysUserService.getLoninUser(userId, password);
+            user = sysUserService.getLoginUser(userId, password);
             user.setIp(requestIpService.getRequestIp(request));
             logger.info("系统登录成功，userId:" + user.getUserId());
             message.setSuccess(true);

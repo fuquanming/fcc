@@ -112,6 +112,24 @@ public interface BaseService {
 	public List findSQL(String sql, Map<String, Object> param);
 	
 	/**
+     * 查找对象集合, 不支持 in(?) 语法
+     * 
+     * @param hql
+     * @param param
+     * @return List<T>
+     */
+    public List findSQL(Class<?> c, String sql, Object... param);
+
+    /**
+     * 查找对象集合
+     * 
+     * @param hql
+     * @param param
+     * @return List<T>
+     */
+    public List findSQL(Class<?> c, String sql, Map<String, Object> param);
+	
+	/**
 	 * 分页查询
 	 * @param pageNo	第几页
 	 * @param pageSize	每页数据大小

@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ import com.fcc.web.sys.model.SysKey;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysUserService;
+import com.fcc.web.sys.view.SysUserType;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
@@ -142,6 +144,17 @@ public class SysUserServiceImpl implements SysUserService {
     	}
 	}
 	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void addUserTypeRole(String userType, String[] roleIds) {
+	    // 删除所有操作
+        roleDao.deleteRoleByUserType(userType);
+        if (roleIds == null || roleIds.length == 0) {
+        } else {// 更新操作
+            roleDao.addUserTypeRole(userType, roleIds);
+        }
+	}
+	
 	/**
      * @see com.fcc.web.sys.service.SysUserService#edit(com.fcc.web.sys.model.SysUser, java.lang.String[])
      **/
@@ -182,6 +195,14 @@ public class SysUserServiceImpl implements SysUserService {
 	    sysKeyDao.delete(SysDictType.userPassword.name(), userIds);
 	}
 	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void deleteUserTypeRole(String[] userTypes) {
+	    for (String userType : userTypes) {
+	        roleDao.deleteRoleByUserType(userType);
+	    }
+	}
+	
 	/**
      * @see com.fcc.web.sys.service.SysUserService#editStatus(java.lang.String[], java.lang.String)
      **/
@@ -192,11 +213,11 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 	
 	/**
-     * @see com.fcc.web.sys.service.SysUserService#getLoninUser(java.lang.String, java.lang.String)
+     * @see com.fcc.web.sys.service.SysUserService#getLoginUser(java.lang.String, java.lang.String)
      **/
 	@Override
     @Transactional(readOnly = true)
-	public SysUser getLoninUser(String userId, String password) throws RefusedException {
+	public SysUser getLoginUser(String userId, String password) throws RefusedException {
 		SysUser sysUser = (SysUser) baseService.get(SysUser.class, userId);
 		if (sysUser == null) {
 			throw new RefusedException(StatusCode.Login.errorUserName);
@@ -235,7 +256,9 @@ public class SysUserServiceImpl implements SysUserService {
 			    }
 			    throw new RefusedException(maxCount - count, StatusCode.Login.errorLoginCount);
 			}
+			sysUser.getUserTypeRoles().size();
 			sysUser.getRoles().size();
+			sysUser.getRoles().addAll(sysUser.getUserTypeRoles());
 		}
 		return sysUser;
 	}
@@ -301,10 +324,63 @@ public class SysUserServiceImpl implements SysUserService {
 	/**
      * @see com.fcc.web.sys.service.SysUserService#queryPage(int, int, java.util.Map)
      **/
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
     @Transactional(readOnly = true)
 	public ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param) {
-		return sysUserDao.queryPage(pageNo, pageSize, param);
+	    ListPage listPage = sysUserDao.queryPage(pageNo, pageSize, param);
+	    List<SysUser> dataList = listPage.getDataList();
+	    Map<String, Set<Role>> userTypeRoleMap = new HashMap<String, Set<Role>>(Constants.userTypes.size());
+	    Set<Role> userTypeRoles = null;
+        for (SysUser data : dataList) {
+            data.getRoles().size();
+            try {
+                userTypeRoles = data.getUserTypeRoles();
+                userTypeRoles.size();
+            } catch (Exception e) {
+                userTypeRoles = null;
+            }
+            if (userTypeRoles != null) {
+                userTypeRoleMap.put(data.getUserType(), userTypeRoles);
+            }
+        }
+        for (SysUser data : dataList) {
+            Set<Role> roles = userTypeRoleMap.get(data.getUserType());
+            if (roles != null) data.getRoles().addAll(roles);
+        }
+		return listPage;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ListPage queryUserTypePage(int pageNo, int pageSize, String userType) {
+	    ListPage listPage = new ListPage();
+	    List<SysUserType> dataList = null;
+	    if (StringUtils.isNotEmpty(userType)) {
+	        dataList = new ArrayList<SysUserType>(1);
+	    } else {
+	        dataList = new ArrayList<SysUserType>(Constants.userTypes.size());
+	    }
+	    for (String key : Constants.userTypes.keySet()) {
+	        if (StringUtils.isNotEmpty(userType)) {
+	            if (!key.equals(userType)) {
+	                continue;
+	            }
+	        }
+	        SysUserType type = new SysUserType();
+	        type.setUserType(key);
+	        type.setUserTypeName(Constants.userTypes.get(key));
+	        List<Role> roleList = roleDao.getRoleByUserType(key);
+	        Set<Role> roles = new HashSet<Role>(roleList.size());
+	        roles.addAll(roleList);
+	        type.setRoles(roles);
+	        dataList.add(type);
+	    }
+	    listPage.setDataList(dataList);
+	    listPage.setTotalSize(dataList.size());
+	    listPage.setCurrentPageNo(1);
+	    listPage.setCurrentPageSize(dataList.size());
+	    return listPage;
 	}
 	
 	@Override

@@ -72,6 +72,11 @@ public class SysUserController extends AppWebController {
 	@Resource
 	private SysAnnexService sysAnnexService;
 	
+	public SysUserController() {
+	    // 添加用户类型
+	    Constants.userTypes.put(SysUser.userTypeKey, SysUser.userTypeName);
+    }
+	
 	/** 显示系统用户列表 */
 	@ApiOperation(value = "显示用户列表页面")
 	@RequestMapping(value = "/view.do", method = RequestMethod.GET)
@@ -148,7 +153,7 @@ public class SysUserController extends AppWebController {
 			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 			// 用户头像附件
-			request.setAttribute("linkType", SysUser.ANNEX_LINK_TYPE);
+			request.setAttribute("linkType", SysUser.annexLinkType);
             request.setAttribute("annexType", SysUser.AnnexType.logo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -179,7 +184,7 @@ public class SysUserController extends AppWebController {
 			}
 			request.setAttribute("roleList", roleService.queryPage(1, 0, param).getDataList());
 			
-			request.setAttribute("linkType", SysUser.ANNEX_LINK_TYPE);
+			request.setAttribute("linkType", SysUser.annexLinkType);
 			request.setAttribute("annexType", SysUser.AnnexType.logo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -258,7 +263,7 @@ public class SysUserController extends AppWebController {
 			sysUserService.edit(sysUser, roleIds);
 			
 			// 获取logo附件
-			List<SysAnnex> annexList = sysAnnexService.query(sysUser.getUserId(), SysUser.ANNEX_LINK_TYPE, SysUser.AnnexType.logo);
+			List<SysAnnex> annexList = sysAnnexService.query(sysUser.getUserId(), SysUser.annexLinkType, SysUser.AnnexType.logo);
 			List<SysAnnex> list = addUploadFile(sysUser.getUserId(), request);
 			if (list != null && list.size() > 0) {
 			    // 删除原来logo文件
@@ -373,6 +378,8 @@ public class SysUserController extends AppWebController {
 			param.put("userId", userId);
 			param.put("dept", organId);
 			param.put("userName", userName);
+			// 默认查询系统用户
+			param.put("userType", SysUser.userTypeKey);
 			if (isGroup()) {
 			    if (getSysUser().isAdmin()) {
 	                param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);

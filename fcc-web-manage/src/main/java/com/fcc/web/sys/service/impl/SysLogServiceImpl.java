@@ -181,6 +181,7 @@ public class SysLogServiceImpl implements SysLogService, ImportService, ExportSe
     @Transactional(rollbackFor = Exception.class)
     public void addData(List<Object> dataList) {
         this.baseService.addListBatch(dataList);
+//        this.baseService.addList(dataList);
     }
     
     @Transactional(readOnly = true)

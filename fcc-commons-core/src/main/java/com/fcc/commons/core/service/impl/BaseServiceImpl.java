@@ -72,6 +72,19 @@ public class BaseServiceImpl implements BaseService {
 	public List findSQL(String sql, Map<String, Object> param) {
 		return baseDao.findSQL(sql, param);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)//只查事务申明
+	public List findSQL(Class<?> c, String sql, Map<String, Object> param) {
+	    return baseDao.findSQL(c, sql, param);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)//只查事务申明
+	public List findSQL(Class<?> c, String sql, Object... param) {
+	    return baseDao.findSQL(c, sql, param);
+	}
+	
 	@Transactional(readOnly = true)//只查事务申明
 	public Object get(Class<?> c, Serializable id) {
 		return baseDao.get(c, id);
