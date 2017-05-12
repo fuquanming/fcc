@@ -30,6 +30,7 @@ import org.springframework.web.util.WebUtils;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.utils.ClassUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
@@ -61,7 +62,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @Controller
 @RequestMapping(value={"/manage/workflow/leave"} )
 public class LeaveController extends WorkflowController {
-    
     private Logger logger = Logger.getLogger(LeaveController.class);
     
     private ExportTask exportTask;
@@ -79,7 +79,20 @@ public class LeaveController extends WorkflowController {
     private LeaveService leaveService;
     
     public LeaveController() {
-        WorkflowDefinitionKey.definitionKeyMap.put(Leave.processDefinitionKey, Leave.processDefinitionName);
+        // 判断文件是否存在
+        File file = new File(ClassUtil.getClassRootPath());
+        if (file.exists()) {
+            file.getParentFile();
+            StringBuilder sb = new StringBuilder();
+            sb.append(file.getParent()).append(File.separatorChar)
+            .append("manage").append(File.separatorChar)
+            .append("workflow").append(File.separatorChar)
+            .append("leave").append(File.separatorChar);
+            File listFile = new File(sb.toString());
+            if (listFile.exists() && listFile.isDirectory()) {
+                WorkflowDefinitionKey.definitionKeyMap.put(Leave.processDefinitionKey, Leave.processDefinitionName);
+            }
+        }
     }
     
     /** 显示列表 */

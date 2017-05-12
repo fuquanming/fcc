@@ -30,6 +30,7 @@ import org.springframework.web.util.WebUtils;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.utils.ClassUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
@@ -41,13 +42,12 @@ import com.fcc.commons.web.view.ExportMessage;
 import com.fcc.commons.web.view.ImportMessage;
 import com.fcc.commons.web.view.Message;
 import com.fcc.commons.web.view.ReportInfo;
-import com.fcc.commons.workflow.controller.WorkflowController;
+import com.fcc.commons.workflow.common.StatusCode;
 import com.fcc.commons.workflow.common.WorkflowDefinitionKey;
 import com.fcc.commons.workflow.common.WorkflowStatus;
-import com.fcc.commons.workflow.common.StatusCode;
+import com.fcc.commons.workflow.controller.WorkflowController;
 import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
-
 import com.fcc.web.workflow.model.AmountApply;
 import com.fcc.web.workflow.service.AmountApplyService;
 
@@ -62,7 +62,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @Controller
 @RequestMapping(value={"/manage/workflow/amountApply"} )
 public class AmountApplyController extends WorkflowController {
-    
     private Logger logger = Logger.getLogger(AmountApplyController.class);
     
     private ExportTask exportTask;
@@ -80,7 +79,20 @@ public class AmountApplyController extends WorkflowController {
     private AmountApplyService amountApplyService;
     
     public AmountApplyController() {
-        WorkflowDefinitionKey.definitionKeyMap.put(AmountApply.processDefinitionKey, AmountApply.processDefinitionName);
+     // 判断文件是否存在
+        File file = new File(ClassUtil.getClassRootPath());
+        if (file.exists()) {
+            file.getParentFile();
+            StringBuilder sb = new StringBuilder();
+            sb.append(file.getParent()).append(File.separatorChar)
+            .append("manage").append(File.separatorChar)
+            .append("workflow").append(File.separatorChar)
+            .append("leave").append(File.separatorChar);
+            File listFile = new File(sb.toString());
+            if (listFile.exists() && listFile.isDirectory()) {
+                WorkflowDefinitionKey.definitionKeyMap.put(AmountApply.processDefinitionKey, AmountApply.processDefinitionName);
+            }
+        }
     }
     
     /** 显示列表 */
