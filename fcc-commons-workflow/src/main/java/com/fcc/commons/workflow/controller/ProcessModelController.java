@@ -24,10 +24,10 @@ import com.fcc.commons.web.annotation.Logical;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.common.Constants;
 import com.fcc.commons.web.common.StatusCode;
-import com.fcc.commons.web.config.Resources;
 import com.fcc.commons.web.view.EasyuiDataGrid;
 import com.fcc.commons.web.view.EasyuiDataGridJson;
 import com.fcc.commons.web.view.Message;
+import com.fcc.commons.workflow.config.Resources;
 import com.fcc.commons.workflow.query.WorkflowModelQuery;
 import com.fcc.commons.workflow.service.ProcessModelService;
 

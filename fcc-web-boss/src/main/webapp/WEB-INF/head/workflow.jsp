@@ -1,4 +1,4 @@
-<%@page import="com.fcc.commons.web.config.Resources"%>
+<%@ page import="com.fcc.commons.workflow.config.Resources"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%
 // 工作流jsp
