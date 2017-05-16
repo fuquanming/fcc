@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.annotation.Login;
 import com.fcc.commons.web.service.RequestIpService;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.Constants;
@@ -44,6 +45,7 @@ public class LoginController extends AppWebController {
     private RequestIpService requestIpService;
 
     @ApiOperation(value = "用户登录")
+    @Login
     // 请求 /login.do?login
     @RequestMapping(value = {"/login.do"}, method = RequestMethod.POST)
     public ModelAndView login(HttpServletRequest request,
@@ -51,7 +53,6 @@ public class LoginController extends AppWebController {
             @ApiParam(required = true, value = "登录密码") @RequestParam(name = "password") String password,
             @ApiParam(required = true, value = "验证码") @RequestParam(name = "randCode", defaultValue = "") String subCode) {
         //	    Assert.notNull(userId, LoginErrorEnums.usernameIsNull.getInfo());
-        System.out.println(request.getSession().getId());
         String sesCode = (String) request.getSession().getAttribute(Constants.randCodeKey);
         Message message = new Message();
         try {

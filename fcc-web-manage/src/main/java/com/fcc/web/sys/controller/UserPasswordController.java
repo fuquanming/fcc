@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fcc.commons.execption.RefusedException;
-import com.fcc.commons.utils.EncryptionUtil;
 import com.fcc.commons.web.annotation.Permissions;
 import com.fcc.commons.web.view.Message;
 import com.fcc.web.sys.common.StatusCode;
@@ -61,11 +60,10 @@ public class UserPasswordController extends AppWebController {
 			if (StringUtils.isEmpty(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.emptyConfirmPassword);
 			if (!newPassword.equals(confirmPassword)) throw new RefusedException(StatusCode.UserPassword.errorPasswordConsistent);
 			SysUser user = getSysUser();
-			String password = user.getPassword();
-			if (!EncryptionUtil.encodeMD5(oldPassword).toLowerCase().equals(password)) {
+			if (!sysUserService.checkPassword(user, oldPassword)) {
 			    throw new RefusedException(StatusCode.UserPassword.errorOldPassword);
 			}
-			sysUserService.updatePassword(user.getUserId(), EncryptionUtil.encodeMD5(newPassword).toLowerCase());
+			sysUserService.resetPassword(user.getUserId(), newPassword);
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
 		} catch (RefusedException e) {

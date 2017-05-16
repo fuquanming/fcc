@@ -33,6 +33,7 @@ import com.fcc.web.sys.dao.RoleDao;
 import com.fcc.web.sys.dao.SysKeyDao;
 import com.fcc.web.sys.dao.SysUserDao;
 import com.fcc.web.sys.enums.SysDictType;
+import com.fcc.web.sys.enums.UserStatus;
 import com.fcc.web.sys.model.Module;
 import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.RoleModuleRight;
@@ -222,6 +223,11 @@ public class SysUserServiceImpl implements SysUserService {
 		if (sysUser == null) {
 			throw new RefusedException(StatusCode.Login.errorUserName);
 		} else {
+		    // 用户状态
+		    String userStatus = sysUser.getUserStatus();
+		    if (UserStatus.locked.name().equals(userStatus)) {
+		        throw new RefusedException(StatusCode.Login.lockUserName);
+		    }
 		    // 登录次数限制
 		    String loginCount = cacheService.getLoginCount(userId);
 		    String[] params = StringUtils.split(loginCount, ":");
@@ -247,7 +253,7 @@ public class SysUserServiceImpl implements SysUserService {
 		        }
 		    }
 		    // 判断密码
-			if (!getEncodePass(getKey(userId), password).equalsIgnoreCase(sysUser.getPassword())) {
+			if (!checkPassword(sysUser, password)) {
 			    // 登录次数累加
 			    cacheService.updateLoginCount(userId, count);
 //				throw new RefusedException(StatusCode.Login.errorPassword);
@@ -261,6 +267,12 @@ public class SysUserServiceImpl implements SysUserService {
 			sysUser.getRoles().addAll(sysUser.getUserTypeRoles());
 		}
 		return sysUser;
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public boolean checkPassword(SysUser sysUser, String password) {
+	    return getEncodePass(getKey(sysUser.getUserId()), password).equalsIgnoreCase(sysUser.getPassword());
 	}
 	
 	/**
