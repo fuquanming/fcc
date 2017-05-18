@@ -1,19 +1,13 @@
 package com.fcc.commons.workflow.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.controller.BaseController;
@@ -38,26 +32,26 @@ public class WorkflowController extends BaseController {
     @Resource
 	public WorkflowService workflowService;
 	
-	/**
-	 * 读取带跟踪的图片
-	 * @param processInstanceId
-	 * @param businessKey
-	 * @param definitionKey
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = {"/trace/img.do"})
-	public void trace(@RequestParam(defaultValue = "", value = "processInstanceId") String processInstanceId, 
-			@RequestParam(defaultValue = "", value = "businessKey") String businessKey, 
-			@RequestParam(defaultValue = "", value = "definitionKey") String definitionKey, 
-			HttpServletRequest request, HttpServletResponse response) {
-		try {
-			InputStream is = workflowService.trace(processInstanceId, businessKey, definitionKey);
-			FileCopyUtils.copy(is, response.getOutputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	/**
+//	 * 读取带跟踪的图片
+//	 * @param processInstanceId
+//	 * @param businessKey
+//	 * @param definitionKey
+//	 * @param request
+//	 * @param response
+//	 */
+//	@RequestMapping(value = {"/trace/img.do"})
+//	public void trace(@RequestParam(defaultValue = "", value = "processInstanceId") String processInstanceId, 
+//			@RequestParam(defaultValue = "", value = "businessKey") String businessKey, 
+//			@RequestParam(defaultValue = "", value = "definitionKey") String definitionKey, 
+//			HttpServletRequest request, HttpServletResponse response) {
+//		try {
+//			InputStream is = workflowService.trace(processInstanceId, businessKey, definitionKey);
+//			FileCopyUtils.copy(is, response.getOutputStream());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	/**
 	 * 签收任务
