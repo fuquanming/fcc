@@ -92,6 +92,7 @@
 </html>
 <%@ include file="/WEB-INF/head/init_save.jsp" %>
 <%@ include file="/WEB-INF/head/init_combotree.jsp" %>
+<%@ include file="/WEB-INF/head/init_combobox.jsp" %>
 <script type="text/javascript" charset="UTF-8">
 var organTree;
 saveParam_form = 'userForm';
@@ -111,6 +112,6 @@ saveParam_afterCallback = function(data, success) {
     return false;// 不执行自动跳转
 }
 $(function() {
-	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true',id:'organId',closed:false});
+	organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true&codeIdFlag=true',id:'organId',closed:false});
 })
 </script>

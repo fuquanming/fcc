@@ -12,12 +12,14 @@ function getComboTree(param) {
 	} else {
 		queryUrl = queryUrl + '&random=' + Math.random();
 	}
+	var multiple = false;
+	if (param.multiple) multiple = true;
 	return $('#' + id).combotree({
         url : queryUrl,
         animate : false,
         lines : !Tool.isLessThanIe8(),
         checkbox : true,
-        multiple : false,
+        multiple : multiple,
         onLoadSuccess : function(node, data) {
             var t = $(this);
             if (data) {

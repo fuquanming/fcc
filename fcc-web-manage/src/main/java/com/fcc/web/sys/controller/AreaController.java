@@ -277,12 +277,17 @@ public class AreaController extends AppWebController {
 	@RequestMapping(value = "/tree.do", method = RequestMethod.POST)
     @ResponseBody
 	public List<EasyuiTreeNode> tree(HttpServletRequest request,
-	        @ApiParam(required = true, value = "节点ID") @RequestParam(name = "id", defaultValue = "") String nodeId, 
+	        @ApiParam(required = false, value = "节点ID") @RequestParam(name = "id", defaultValue = "") String nodeId,
+	        @ApiParam(required = false, value = "是否code为ID") @RequestParam(name = "codeIdFlag", defaultValue = "false") boolean codeIdFlag,
 	        @ApiParam(required = false, value = "是否全部节点") @RequestParam(name = "all", defaultValue = "true") String all,
 	        @ApiParam(required = false, value = "是否包含父节点") @RequestParam(name = "parent", defaultValue = "false") String parent) {
 		List<EasyuiTreeNode> nodeList = null;
 		try {
-		    nodeList = treeableService.getTree(Area.class, nodeId, Boolean.valueOf(all), Boolean.valueOf(parent));
+		    if (codeIdFlag) {
+		        nodeList = treeableService.getTreeCode(Area.class, nodeId, Boolean.valueOf(all), Boolean.valueOf(parent));
+		    } else {
+		        nodeList = treeableService.getTree(Area.class, nodeId, Boolean.valueOf(all), Boolean.valueOf(parent));
+		    }
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("加载地区树形失败！", e);

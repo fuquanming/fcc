@@ -14,6 +14,8 @@ function getComboBoxByUrl(param) {
     } else {
         queryUrl = queryUrl + '&random=' + Math.random();
     }
+    var editable = true;// 是否可以编辑
+    if (param.editable == false) editable = false;
     return $('#' + id).combobox({
         url : queryUrl,
         animate : false,
@@ -22,6 +24,7 @@ function getComboBoxByUrl(param) {
         multiple : false,
         valueField : param.valueField,
         textField : param.textField,
+        editable : editable,
         onLoadSuccess : function(node, data) {
             
         },
@@ -31,6 +34,14 @@ function getComboBoxByUrl(param) {
         loadFilter : function(data) {
             var flag = Tool.operate.check({'data':data});
             if (flag != true || flag != false) {
+            	// 是否添加--请选择---
+            	if (param.selectFlag) {
+            		var length = data.length;
+            		for (var i = length; i > 0; i--) {
+            			data[i] = data[i - 1];
+            		}
+            		data[0] = {'id':'', 'text':'--请选择--'}
+            	}
                 return data;                                            
             }
             return {};

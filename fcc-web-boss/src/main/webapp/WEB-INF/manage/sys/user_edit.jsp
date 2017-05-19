@@ -43,7 +43,7 @@
         <tr>
 			<th>组织机构</th>
 			<td><!-- required="true" id="organId"  validType="comboTreeRequired" -->
-			 <input name="organId" id="organId" type="text" value="${organ.nodeId }" class="easyui-validatebox easyui-textbox" required="true" />
+			 <input name="organId" id="organId" type="text" value="" class="easyui-validatebox easyui-textbox" required="true" />
 			 <%-- <input  name="organId" type="text" value="${organ.nodeId }" class="easyui-validatebox" required="true" style="width: 200px;"/> --%>
 			</td>
 		</tr>
@@ -128,6 +128,7 @@ $(function() {
         } 
     });
     Tool.removeSelect({'sourceId':'unSelectRole','targetId':'selecetRole'})
-    organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true',name:'organId',id:'organId',closed:false});
+    organTree = getComboTree({queryUrl:'manage/sys/organ/tree.do?parent=true&codeIdFlag=true',name:'organId',id:'organId',closed:false});
+    setCombotreeValues(organTree, '${data.dept}');
 })
 </script>

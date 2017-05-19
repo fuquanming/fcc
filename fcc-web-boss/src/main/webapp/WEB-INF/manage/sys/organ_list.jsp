@@ -90,10 +90,10 @@ treegridParam_column_value = [ [ {
 }, {
     field : 'nodeCode',
     title : '编码',
-    width : 50,
+    width : 100,
     formatter : function(value, rowData, rowIndex) {
         if (rowData.attributes) {
-            return rowData.attributes.nodeCode;
+            return rowData.code;
         }
     }
 }, {

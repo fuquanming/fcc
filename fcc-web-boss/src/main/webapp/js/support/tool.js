@@ -199,6 +199,15 @@ Tool.isFlash = function() {
     }
     return iFlash;
 }
+//支持easyui取值
+Tool.getValue = function(id) {
+	return $("#" + id).textbox('getValue');
+}
+// 支持easyui赋值
+Tool.setValue = function(id, value) {
+	$("#" + id).textbox('setValue', value);
+}
+
 Tool.goPage = function(page) {
 	window.location.href = page;
 }
@@ -280,6 +289,7 @@ Tool.message.alert = function(title, msg, icon, autoClose, fn) {
 			} catch (e) {console.log(e)}
 			if(x == 0) {  
 		       clearInterval(interval_alert);
+		       $(".dialog-button span span").html(buttonStr);
 		       $(".messager-body").window('close');
 		    }  
 		};

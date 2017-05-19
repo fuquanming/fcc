@@ -49,10 +49,17 @@ public interface TreeableDao {
     /**
      * 取得Treeable通过Name
      * @param clazz
-     * @param nodeCode
+     * @param nodeName
      * @return
      */
     Treeable getTreeableByName(Class<?> clazz, String nodeName);
+    /**
+     * 取得Treeable通过Code
+     * @param clazz
+     * @param nodeCode
+     * @return
+     */
+    Treeable getTreeableByCode(Class<?> clazz, String nodeCode);
     /**
      * 查询子节点
      * @param clazz

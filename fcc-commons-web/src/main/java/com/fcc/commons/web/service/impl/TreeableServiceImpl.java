@@ -98,6 +98,12 @@ public class TreeableServiceImpl implements TreeableService {
     public Treeable getTreeableByName(Class<?> clazz, String nodeName) {
         return treeableDao.getTreeableByName(clazz, nodeName);
     }
+    
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public Treeable getTreeableByCode(Class<?> clazz, String nodeCode) {
+        return treeableDao.getTreeableByCode(clazz, nodeCode);
+    }
 
     @Override
     @Transactional(readOnly = true)//只查事务申明
@@ -107,7 +113,7 @@ public class TreeableServiceImpl implements TreeableService {
         dataList = treeableDao.queryList(clazz, params);
         nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
         for (Treeable data : dataList) {
-            nodeList.add(getEasyuiTreeNode(data, false));
+            nodeList.add(getEasyuiTreeNode(data, false, false));
         }
         return nodeList;
     }
@@ -118,19 +124,49 @@ public class TreeableServiceImpl implements TreeableService {
         List<Treeable> dataList = treeableDao.getChilds(clazz, nodeId, allChildren, parent);
         List<EasyuiTreeNode> nodeList = null;
         if (allChildren) {
-            nodeList = getEasyuiTreeNodeChild(dataList);
+            nodeList = getEasyuiTreeNodeChild(dataList, false);
         } else {
             nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
             for (Treeable data : dataList) {
-                nodeList.add(getEasyuiTreeNode(data, true));
+                nodeList.add(getEasyuiTreeNode(data, true, false));
             }
         }
         return nodeList;
     }
     
-    private EasyuiTreeNode getEasyuiTreeNode(Treeable data, boolean childFlag) {
+    @Override
+    @Transactional(readOnly = true)//只查事务申明
+    public List<EasyuiTreeNode> getTreeCode(Class<?> clazz, String nodeCode, boolean allChildren, boolean parent) {
+        String nodeId = nodeCode;
+        if (nodeId == null || "".equals(nodeId)) {
+        } else {
+            Treeable treeable = getTreeableByCode(clazz, nodeCode);
+            if (treeable != null) {
+                nodeId = treeable.getNodeId();
+            }
+        }
+        List<Treeable> dataList = treeableDao.getChilds(clazz, nodeId, allChildren, parent);
+        List<EasyuiTreeNode> nodeList = null;
+        if (allChildren) {
+            nodeList = getEasyuiTreeNodeChild(dataList, true);
+        } else {
+            nodeList = new ArrayList<EasyuiTreeNode>(dataList.size());
+            for (Treeable data : dataList) {
+                nodeList.add(getEasyuiTreeNode(data, true, true));
+            }
+        }
+        return nodeList;
+    }
+    /**
+     * 构建TreeNode
+     * @param data          数据
+     * @param childFlag     是否设置子节点
+     * @param codeId        是否nodeCode为ID
+     * @return
+     */
+    private EasyuiTreeNode getEasyuiTreeNode(Treeable data, boolean childFlag, boolean codeIdFlag) {
         EasyuiTreeNode node = new EasyuiTreeNode();
-        node.setId(data.getNodeId());
+        node.setId((codeIdFlag ==  true) ? data.getNodeCode() : data.getNodeId());
         node.setText(data.getNodeName());
         if (childFlag) node.setState(data.getChildSize() > 0 ? EasyuiTreeNode.STATE_CLOSED : EasyuiTreeNode.STATE_OPEN);
         Map<String, Object> attributes = new HashMap<String, Object>(6);
@@ -146,9 +182,10 @@ public class TreeableServiceImpl implements TreeableService {
     /**
      * 构建树形结构
      * @param dataList
+     * @param codeIdFlag    是否nodeCode为ID
      * @return
      */
-    private List<EasyuiTreeNode> getEasyuiTreeNodeChild(List<Treeable> dataList) {
+    private List<EasyuiTreeNode> getEasyuiTreeNodeChild(List<Treeable> dataList, boolean codeIdFlag) {
         List<EasyuiTreeNode> nodeList = new ArrayList<EasyuiTreeNode>();
         if (dataList != null) {
             TreeSet<Treeable> dataSet = new TreeSet<Treeable>();
@@ -159,9 +196,9 @@ public class TreeableServiceImpl implements TreeableService {
             for (Iterator<Treeable> it = dataSet.iterator(); it.hasNext();) {
                 Treeable m = it.next();
                 
-                EasyuiTreeNode node = getEasyuiTreeNode(m, true);
+                EasyuiTreeNode node = getEasyuiTreeNode(m, true, codeIdFlag);
                 
-                nodeMap.put(node.getId(), node);
+                nodeMap.put(m.getNodeId(), node);
                 
                 String parendId = m.getParentId();
                 EasyuiTreeNode cacheNode = nodeMap.get(parendId);

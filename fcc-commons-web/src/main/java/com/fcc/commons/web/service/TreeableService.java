@@ -76,6 +76,13 @@ public interface TreeableService {
      */
     Treeable getTreeableByName(Class<?> clazz, String nodeName);
     /**
+     * 取得Treeable通过Code
+     * @param clazz
+     * @param nodeCode
+     * @return
+     */
+    Treeable getTreeableByCode(Class<?> clazz, String nodeCode);
+    /**
      * 查询
      * @param clazz
      * @param params        
@@ -83,8 +90,22 @@ public interface TreeableService {
      */
     List<EasyuiTreeNode> getTreeGrid(Class<?> clazz, Map<String, Object> params);
     /**
-     * 查询树形
-     * @return tree
+     * 查询树形     用户nodeId为ID
+     * @param clazz         
+     * @param nodeId        nodeId
+     * @param allChildren   是否查询所有子节点
+     * @param parent        是否返回node父节点
+     * @return
      */
     List<EasyuiTreeNode> getTree(Class<?> clazz, String nodeId, boolean allChildren, boolean parent);
+    
+    /**
+     * 查询树形     用nodeCode为ID
+     * @param clazz         
+     * @param nodeCode      nodeCode
+     * @param allChildren   是否查询所有子节点
+     * @param parent        是否返回node父节点
+     * @return
+     */
+    List<EasyuiTreeNode> getTreeCode(Class<?> clazz, String nodeCode, boolean allChildren, boolean parent);
 }
