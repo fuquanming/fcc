@@ -93,7 +93,7 @@ treegridParam_column_value = [ [ {
     width : 100,
     formatter : function(value, rowData, rowIndex) {
         if (rowData.attributes) {
-            return rowData.code;
+            return rowData.attributes.nodeCode;
         }
     }
 }, {

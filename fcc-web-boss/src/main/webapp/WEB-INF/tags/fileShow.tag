@@ -37,7 +37,7 @@ request.setAttribute("annexList", list);
    for (int i = 0; i < dataSize; i++) {
        SysAnnex data = (SysAnnex) list.get(i);
        %>
-       <div id="${annexType }-fileShow-<%=i %>" ids="<%=data.getAnnexId()%>">
+       <div id="${linkType }-${annexType }-fileShow-<%=i %>" ids="<%=data.getAnnexId()%>">
        <%
        String fileType = data.getFileType().toLowerCase();
        if ("jpg".equals(fileType) || "jpeg".equals(fileType) || "png".equals(fileType) || "bmp".equals(fileType) || "gif".equals(fileType)) {
@@ -62,7 +62,7 @@ request.setAttribute("annexList", list);
        }
        %>
        <% if (deleteFlag == null || deleteFlag == true) { %>
-           <a href="javascript:void(0)" class="l-btn l-btn-small fileShowButton" iconcls="icon-remove" onclick="javascript:${annexType }_file.delFile('<%=i%>')"><span class="l-btn-left"><span class="l-btn-text">删除</span></span></a><br/></div>
+           <a href="javascript:void(0)" class="l-btn l-btn-small fileShowButton" iconcls="icon-remove" onclick="javascript:${linkType }_${annexType }_file.delFile('<%=i%>')"><span class="l-btn-left"><span class="l-btn-text">删除</span></span></a><br/></div>
        <% } %>
        <%
    }
@@ -71,9 +71,9 @@ request.setAttribute("annexList", list);
 <a href="javascript:void(0)" class="easyui-linkbutton l-btn l-btn-small l-btn-plain" iconcls="icon-remove" onclick="delFile();" plain="true">删除</a>
 <br/> --%>
 <script type="text/javascript">
-var ${annexType }_file = {
+var ${linkType }_${annexType }_file = {
         delFile : function(index) {
-            var file = $('#${annexType }-fileShow-' + index);
+            var file = $('#${linkType }-${annexType }-fileShow-' + index);
             var ids = file.attr('ids');
             Tool.message.progress();
             $.ajax({
@@ -82,7 +82,7 @@ var ${annexType }_file = {
                 dataType : "json",
                 success : function(data) {
                     Tool.message.progress('close');
-                    var flag = Tool.operate.check(data, true);
+                    var flag = Tool.operate.check({'data':data,'message':false,'close':true});
                     if (flag == true) {
                         // 删除成功
                         file.remove();

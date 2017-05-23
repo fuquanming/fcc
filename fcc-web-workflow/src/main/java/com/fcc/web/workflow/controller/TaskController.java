@@ -36,6 +36,7 @@ import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.controller.AppWebController;
 import com.fcc.web.sys.model.SysAnnex;
 import com.fcc.web.sys.service.SysAnnexService;
+import com.fcc.web.sys.util.SysAnnexUtil;
 
 import io.swagger.annotations.ApiParam;
 
@@ -52,6 +53,10 @@ import io.swagger.annotations.ApiParam;
 public class TaskController extends WorkflowController {
 	
 	private static Logger logger = Logger.getLogger(TaskController.class);
+	/** 附件上传关联类型 */
+    private String linkType = "workflowFile";
+    /** 附件上传类型 */
+    private String annexType = "workflowFile";
 	@Resource
 	private BaseService baseService;
 	@Resource
@@ -107,8 +112,8 @@ public class TaskController extends WorkflowController {
                 }
                 request.setAttribute("dataId", businessKey);
                 // 附件类型
-                request.setAttribute("linkType", "workflowFile");
-                request.setAttribute("annexType", "workflowFile");
+                request.setAttribute("linkType", linkType);
+                request.setAttribute("annexType", annexType);
             }
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,7 +154,7 @@ public class TaskController extends WorkflowController {
                 variables.put(conditionKey, conditionValue);
                 
                 // 上传附件
-                List<SysAnnex> annexList = addUploadFile(taskId, request);
+                List<SysAnnex> annexList = addUploadFile(taskId, linkType, annexType, request);
                 List<ProcessTaskAttachmentInfo> attachmentList = null;
                 if (annexList != null && annexList.size() > 0) {
                     attachmentList = new ArrayList<ProcessTaskAttachmentInfo>(annexList.size());
@@ -223,25 +228,14 @@ public class TaskController extends WorkflowController {
      * @param request
      * @return
      */
-    public List<SysAnnex> addUploadFile(String linkId, HttpServletRequest request) {
-        // 附件
-        String[] linkType = request.getParameterValues("linkType");// 附件关联类型
-        String[] annexType = request.getParameterValues("annexType");// 附件类型
-        List<SysAnnex> list = null;
-        if (linkType != null) {
-            int length = linkType.length;
-            for (int i = 0; i < length; i++) {
-                String link = linkType[i];
-                String annex = annexType[i];
-                String[] fileName = request.getParameterValues(annex + "-uploadFileName");// 提交的文件名
-                String[] fileRealName = request.getParameterValues(annex + "-uploadFileRealName");// 保存的文件名
-                String fName = fileName[i];
-                String frName = fileRealName[i];
-                String[] fileNames = StringUtils.split(fName, ",");
-                String[] fileRealNames = StringUtils.split(frName, ",");
-                if (fileNames != null && fileNames.length > 0) {
-                    list = sysAnnexService.add(link, linkId, annex, fileNames, fileRealNames);
-                }
+    public List<SysAnnex> addUploadFile(String linkId, String linkType, String annexType, HttpServletRequest request) {
+        Map<String, String[]> fileMap = SysAnnexUtil.getUploadFileName(linkType, annexType, request);
+        List<SysAnnex> list = Collections.emptyList();
+        if (fileMap != null && fileMap.size() > 0) {
+            String[] fileNames = fileMap.get(SysAnnexUtil.fileNameKey);
+            String[] fileRealNames = fileMap.get(SysAnnexUtil.fileRealNameKey);
+            if (fileNames != null && fileNames.length > 0) {
+                list = sysAnnexService.add(linkType, linkId, annexType, fileNames, fileRealNames);
             }
         }
         return list;

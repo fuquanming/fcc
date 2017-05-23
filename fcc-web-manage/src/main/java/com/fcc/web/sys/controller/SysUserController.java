@@ -225,7 +225,7 @@ public class SysUserController extends AppWebController {
 			sysUser.setCreateUser(user.getUserId());
 			sysUserService.add(sysUser, roleIds);
 			
-			addUploadFile(sysUser.getUserId(), request);
+			addUploadFile(sysUser.getUserId(), SysUser.annexLinkType, SysUser.AnnexType.logo, request);
 			
 			message.setSuccess(true);
 			message.setMsg(StatusCode.Sys.success);
@@ -264,7 +264,7 @@ public class SysUserController extends AppWebController {
 			
 			// 获取logo附件
 			List<SysAnnex> annexList = sysAnnexService.query(sysUser.getUserId(), SysUser.annexLinkType, SysUser.AnnexType.logo);
-			List<SysAnnex> list = addUploadFile(sysUser.getUserId(), request);
+			List<SysAnnex> list = addUploadFile(sysUser.getUserId(), SysUser.annexLinkType, SysUser.AnnexType.logo, request);
 			if (list != null && list.size() > 0) {
 			    // 删除原来logo文件
 			    if (annexList != null && annexList.size() > 0) {

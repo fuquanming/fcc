@@ -1,11 +1,11 @@
 package com.fcc.web.sys.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.fcc.commons.web.controller.BaseController;
 import com.fcc.web.sys.cache.SysUserAuthentication;
@@ -15,6 +15,7 @@ import com.fcc.web.sys.model.SysAnnex;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CacheService;
 import com.fcc.web.sys.service.SysAnnexService;
+import com.fcc.web.sys.util.SysAnnexUtil;
 
 public class AppWebController extends BaseController {
 
@@ -48,25 +49,14 @@ public class AppWebController extends BaseController {
      * @param request
      * @return
      */
-    public List<SysAnnex> addUploadFile(String linkId, HttpServletRequest request) {
-        // 附件
-        String[] linkType = request.getParameterValues("linkType");// 附件关联类型
-        String[] annexType = request.getParameterValues("annexType");// 附件类型
-        List<SysAnnex> list = null;
-        if (linkType != null) {
-            int length = linkType.length;
-            for (int i = 0; i < length; i++) {
-                String link = linkType[i];
-                String annex = annexType[i];
-                String[] fileName = request.getParameterValues(annex + "-uploadFileName");// 提交的文件名
-                String[] fileRealName = request.getParameterValues(annex + "-uploadFileRealName");// 保存的文件名
-                String fName = fileName[i];
-                String frName = fileRealName[i];
-                String[] fileNames = StringUtils.split(fName, ",");
-                String[] fileRealNames = StringUtils.split(frName, ",");
-                if (fileNames != null && fileNames.length > 0) {
-                    list = sysAnnexService.add(link, linkId, annex, fileNames, fileRealNames);
-                }
+    public List<SysAnnex> addUploadFile(String linkId, String linkType, String annexType, HttpServletRequest request) {
+        Map<String, String[]> fileMap = SysAnnexUtil.getUploadFileName(linkType, annexType, request);
+        List<SysAnnex> list = Collections.emptyList();
+        if (fileMap != null && fileMap.size() > 0) {
+            String[] fileNames = fileMap.get(SysAnnexUtil.fileNameKey);
+            String[] fileRealNames = fileMap.get(SysAnnexUtil.fileRealNameKey);
+            if (fileNames != null && fileNames.length > 0) {
+                list = sysAnnexService.add(linkType, linkId, annexType, fileNames, fileRealNames);
             }
         }
         return list;

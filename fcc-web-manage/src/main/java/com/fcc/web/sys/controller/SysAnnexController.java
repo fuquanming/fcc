@@ -75,7 +75,22 @@ public class SysAnnexController extends AppWebController {
         FileOutputStream fos = null;
         MultipartFile file = null;
         try {
-            String prefix = request.getParameter("annexType");
+            String prefix = "";
+            String[] annexTypes = request.getParameterValues("annexType");
+            String[] linkTypes = request.getParameterValues("linkType");
+            // 获取上传哪个
+            int length = annexTypes.length;
+            for (int i = 0; i < length; i++) {
+                String annexType = annexTypes[i];
+                String linkType = linkTypes[i];
+                if (StringUtils.isEmpty(annexType)) continue;
+                String linkAnnexType = request.getParameter(linkType + "-" + annexType);
+                if ("upload".equals(linkAnnexType)) {// 上传该文件类型
+                    prefix = linkType + "-" + annexType;
+                    break;
+                }
+            }
+//            String prefix = request.getParameter("annexType");
             file = ((MultipartHttpServletRequest) request).getFile(prefix + "-upload");
             if (file != null && file.isEmpty() == false) {
                 logger.info("上传文件的大小：" + file.getSize());

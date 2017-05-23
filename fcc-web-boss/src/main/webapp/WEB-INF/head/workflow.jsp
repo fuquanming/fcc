@@ -28,7 +28,8 @@ $(function() {
 	            {text : '${success.value }', id : 'success'},
 	            {text : '${fail.value }', id : 'fail'},
 	            {text : '${cannel.value }', id : 'cannel'}
-	        ]
+	        ],
+	        editable : false
 	    })
 	}
 })

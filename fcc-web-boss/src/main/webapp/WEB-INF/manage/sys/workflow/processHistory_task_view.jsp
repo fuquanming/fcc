@@ -1,10 +1,15 @@
 <%@page import="com.fcc.commons.workflow.amountApply.model.*" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<tr>
+    <th>流程：</th>
+</tr>
 <table id="datagrid">
 </table>
 <%@ include file="/WEB-INF/head/init_datagrid.jsp" %>
 <script type="text/javascript">
 datagridParam_id = 'datagrid';// 用到的datagrid的ID
+datagridParam_toolbar = '#aaa';
+datagridParam_fit = false;
 datagridParam_url = 'manage/sys/workflow/processHistory/viewDatagrid.do?processInstanceId=${param.processInstanceId}';// 数据源url
 datagridParam_idField = 'id';// datagrid表格的唯一标识
 datagridParam_idField_checkbox = false;// 是否显示多选框
@@ -52,7 +57,7 @@ datagridParam_column_value = [ [
         title : '持续时间',
         width : 80,
         formatter : function(value, rowData, rowIndex) {
-        	if (value < 0) return '';
+            if (value < 0) return '';
             return Tool.dateFormat({'value' : value, 'interval' : true});
         }
     }  ,
