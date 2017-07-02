@@ -7,7 +7,7 @@ package com.fcc.commons.workflow.common;
  */
 public enum WorkflowStatus {
 	
-	unstart("未启动"), start("已启动"), success("成功"), fail("失败"), cannel("取消");
+	unstart("草稿"), start("待审核"), success("成功"), fail("失败"), cannel("取消");
 	
 	private String value;
 

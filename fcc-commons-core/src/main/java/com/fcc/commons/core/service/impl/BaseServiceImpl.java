@@ -86,6 +86,18 @@ public class BaseServiceImpl implements BaseService {
 	}
 	
 	@Transactional(readOnly = true)//只查事务申明
+	@Override
+	public ListPage queryPageSQL(Class<?> c, int pageNo, int pageSize, String cHql, String bHql, Map<String, Object> param) {
+	    return baseDao.queryPageSQL(c, pageNo, pageSize, cHql, bHql, param);
+	}
+	
+	@Transactional(readOnly = true)//只查事务申明
+	@Override
+	public List queryPageSQL(Class<?> c, int pageNo, int pageSize, String bHql, Map<String, Object> param) {
+	    return baseDao.queryPageSQL(c, pageNo, pageSize, bHql, param);
+	}
+	
+	@Transactional(readOnly = true)//只查事务申明
 	public Object get(Class<?> c, Serializable id) {
 		return baseDao.get(c, id);
 	}

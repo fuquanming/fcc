@@ -1,6 +1,7 @@
 package com.fcc.commons.workflow.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.query.WorkflowHistoryQuery;
@@ -15,6 +16,20 @@ import com.fcc.commons.workflow.view.ProcessTaskInfo;
  */
 public interface ProcessHistoryService {
 	
+    /**
+     * 获取流程变量
+     * @param processInstanceId         流程实例ID
+     * @param variableName              变量名
+     * @return
+     */
+    Object getProcessVariable(String processInstanceId, String variableName);
+    /**
+     * 获取流程变量
+     * @param processInstanceId     流程实例ID
+     * @return
+     */
+    Map<String, Object> getProcessVariables(String processInstanceId);
+    
 	/**
 	 * 删除流程历史
 	 * @param id	

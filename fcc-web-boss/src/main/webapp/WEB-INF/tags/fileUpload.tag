@@ -128,7 +128,7 @@ var ${linkType }_${annexType }_fileupload = {
         cancelFile : function(index) {// 取消上文件
             if (index >= 0) {// 选择文件取消
                 this.fileuploadFiles[index] = null;
-                $('#${annexType}-fileuploadTr-' + index).remove();
+                $('#${linkType }-${annexType}-fileuploadTr-' + index).remove();
             } else {// 取消所有
                 var length = this.fileuploadFiles.length;
                 for (var i = 0; i < length; i++) {// 获取存在的button

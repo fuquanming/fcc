@@ -25,12 +25,13 @@
       <input name="conditionValue" type="hidden" value="" />
       <table class="tableForm" align="center" style="width: 80%">
         <tr>  
-            <th>申请人：</th>      
+            <th width="30%">申请人：</th>      
             <td>${taskInfo.processVariables.requestUserName }</td>
         </tr>
         <jsp:include page="${editTaskPage }"></jsp:include>
+        <c:if test="${empty appealMessage }">
         <tr>    
-            <th>审批意见：</th>      
+            <th>审核意见：</th>      
             <td>
             <textarea rows="5" cols="40" id="message" name="message" class="easyui-validatebox textbox eaayui-textarea" validType="length[0, 500]"></textarea>
             </td>
@@ -41,6 +42,7 @@
             <tool:fileUpload linkType="${linkType }" annexType="${annexType }" maxFileTotal="2" ></tool:fileUpload>
             </td>
         </tr>
+        </c:if>
         <c:forEach items="${commentList}" var="task">
         <c:if test="${task.id != taskInfo.id  && task.durationInMillis > 2000}">
         <tr>    
@@ -61,7 +63,7 @@
         </c:if>
         </c:forEach>
         <tr>
-          <td colspan="2" align="center">
+          <td colspan="3" align="center">
           <c:forEach items="${flowList}" var="flow">
           <a class="easyui-linkbutton" iconCls="icon-save" plain="true" onClick="edit('${flow.conditionKey }', '${flow.conditionValue }');" href="javascript:void(0);">${flow.name }</a> 
           </c:forEach>

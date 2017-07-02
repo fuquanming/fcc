@@ -10,7 +10,7 @@
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
-  <div id="toolbar" class="datagrid-toolbar" style="height: auto;display: none;">
+  <div id="toolbar" class="datagrid-toolbar" style="height: auto;">
     <fieldset>
     <legend>查看流程历史</legend>
     <form id="userForm" name="userForm" method="post">

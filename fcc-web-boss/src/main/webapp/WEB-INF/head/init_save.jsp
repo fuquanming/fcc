@@ -23,7 +23,11 @@ function save() {
                     Tool.message.progress('close');
                     var success = Tool.operate.check({'data':data,'message':true,'close':saveParam_closeWin});
                     if (saveParam_afterCallback) {
-                        if (saveParam_afterCallback(data, success) == false) return;
+                    	var d = $.parseJSON(data);
+                        if (!d) {// 转化成功为json对象、form提交返回需要转化
+                            d = data;// 已经转化过
+                        }
+                        if (saveParam_afterCallback(d, success) == false) return;
                     }
                     if (saveParam_backUrl) setTimeout(function() {toBack();}, 3000);
                 } catch(e) {
@@ -46,15 +50,10 @@ function save() {
         } else {
         	return;
         }
-        var datas = {};
-        $('#' + saveParam_form + ' input').each(function() {
-        	datas[$(this).attr('name')] = $(this).attr('value');
-        })
-        $('#' + saveParam_form + ' textarea').each(function() {
-            datas[$(this).attr('name')] = $(this).attr('value');
-        })
+        var datas = $('#' + saveParam_form).serializeArray();
         $.ajax({
             url : Tool.urlAddParam(saveParam_saveUrl, 'random=' + Math.random()),
+            type: 'POST',
             cache : false,
             data : datas,
             dataType : "json",

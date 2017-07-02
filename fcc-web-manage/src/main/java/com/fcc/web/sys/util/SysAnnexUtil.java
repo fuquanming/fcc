@@ -39,7 +39,7 @@ public class SysAnnexUtil {
         // 附件
         String[] linkTypes = request.getParameterValues("linkType");// 附件关联类型
         String[] annexTypes = request.getParameterValues("annexType");// 附件类型
-        if (linkType != null) {
+        if (linkType != null && linkTypes != null) {
             int length = linkTypes.length;
             for (int i = 0; i < length; i++) {
                 String link = linkTypes[i];

@@ -114,7 +114,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public String startWorkflow(WorkflowBean workflowBean, String userId, String userName, Map<String, Object> variables) {
 		//流程变量requestUser=当前登录用户,model=业务数据
-		if (variables == null) variables = new HashMap<String, Object>();
+		if (variables == null) variables = new HashMap<String, Object>(2);
 		variables.put(WorkflowVariableEnum.requestUserId.toString(), userId);
 		variables.put(WorkflowVariableEnum.requestUserName.toString(), userName);
 		//definitionKey：流程定义的id

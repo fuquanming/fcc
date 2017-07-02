@@ -13,6 +13,7 @@ import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.controller.BaseController;
 import com.fcc.commons.workflow.common.WorkflowStatus;
 import com.fcc.commons.workflow.query.WorkflowDefinitionQuery;
+import com.fcc.commons.workflow.service.ProcessHistoryService;
 import com.fcc.commons.workflow.service.WorkflowService;
 import com.fcc.commons.workflow.view.ProcessDefinitionInfo;
 import com.fcc.commons.workflow.view.ProcessHistoryInfo;
@@ -30,74 +31,76 @@ import com.fcc.commons.workflow.view.ProcessTaskSequenceFlowInfo;
 public class WorkflowController extends BaseController {
 
     @Resource
-	public WorkflowService workflowService;
-	
-//	/**
-//	 * 读取带跟踪的图片
-//	 * @param processInstanceId
-//	 * @param businessKey
-//	 * @param definitionKey
-//	 * @param request
-//	 * @param response
-//	 */
-//	@RequestMapping(value = {"/trace/img.do"})
-//	public void trace(@RequestParam(defaultValue = "", value = "processInstanceId") String processInstanceId, 
-//			@RequestParam(defaultValue = "", value = "businessKey") String businessKey, 
-//			@RequestParam(defaultValue = "", value = "definitionKey") String definitionKey, 
-//			HttpServletRequest request, HttpServletResponse response) {
-//		try {
-//			InputStream is = workflowService.trace(processInstanceId, businessKey, definitionKey);
-//			FileCopyUtils.copy(is, response.getOutputStream());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
-	/**
-	 * 签收任务
-	 * @param taskId
-	 * @param userId
-	 * @throws Exception
-	 */
-	public void taskClaim(String taskId, String userId) throws Exception {
-		workflowService.taskClaim(taskId, userId);
-	}
-	
-	/**
-	 * 完成任务
-	 * @param taskId
-	 * @param userId
-	 * @throws Exception
-	 */
-	public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message) throws Exception {
-		workflowService.taskComplete(userId, taskId, processInstanceId, variables, message);
-	}
-	
-	/**
-	 * 获取任务出去的线
-	 * @param processTaskInfo
-	 * @return
-	 */
-	public List<ProcessTaskSequenceFlowInfo> getTaskOutSequenceFlow(ProcessTaskInfo processTaskInfo) {
-	    List<ProcessTaskSequenceFlowInfo> flowList = workflowService.getTaskOutSequenceFlow(processTaskInfo);
-	    for (ProcessTaskSequenceFlowInfo info : flowList) {
+    public WorkflowService workflowService;
+    @Resource
+    public ProcessHistoryService processHistoryService;
+    
+//  /**
+//   * 读取带跟踪的图片
+//   * @param processInstanceId
+//   * @param businessKey
+//   * @param definitionKey
+//   * @param request
+//   * @param response
+//   */
+//  @RequestMapping(value = {"/trace/img.do"})
+//  public void trace(@RequestParam(defaultValue = "", value = "processInstanceId") String processInstanceId, 
+//          @RequestParam(defaultValue = "", value = "businessKey") String businessKey, 
+//          @RequestParam(defaultValue = "", value = "definitionKey") String definitionKey, 
+//          HttpServletRequest request, HttpServletResponse response) {
+//      try {
+//          InputStream is = workflowService.trace(processInstanceId, businessKey, definitionKey);
+//          FileCopyUtils.copy(is, response.getOutputStream());
+//      } catch (IOException e) {
+//          e.printStackTrace();
+//      }
+//  }
+    
+    /**
+     * 签收任务
+     * @param taskId
+     * @param userId
+     * @throws Exception
+     */
+    public void taskClaim(String taskId, String userId) throws Exception {
+        workflowService.taskClaim(taskId, userId);
+    }
+    
+    /**
+     * 完成任务
+     * @param taskId
+     * @param userId
+     * @throws Exception
+     */
+    public void taskComplete(String userId, String taskId, String processInstanceId, Map<String, Object> variables, String message) throws Exception {
+        workflowService.taskComplete(userId, taskId, processInstanceId, variables, message);
+    }
+    
+    /**
+     * 获取任务出去的线
+     * @param processTaskInfo
+     * @return
+     */
+    public List<ProcessTaskSequenceFlowInfo> getTaskOutSequenceFlow(ProcessTaskInfo processTaskInfo) {
+        List<ProcessTaskSequenceFlowInfo> flowList = workflowService.getTaskOutSequenceFlow(processTaskInfo);
+        for (ProcessTaskSequenceFlowInfo info : flowList) {
             String[] conditions = info.analyzeConditionText(info.getConditionText());
             info.setConditionKey(conditions[0]);
             info.setConditionValue(conditions[1]);
         }
-		return flowList;
-	}
-	
-	/**
-	 * 获取审批信息
-	 * @param processInstanceId
-	 * @return
-	 */
-	public List<ProcessTaskCommentInfo> getComments(String processInstanceId) {
-		return workflowService.getComments(processInstanceId);
-	}
-	
-	/**
+        return flowList;
+    }
+    
+    /**
+     * 获取审批信息
+     * @param processInstanceId
+     * @return
+     */
+    public List<ProcessTaskCommentInfo> getComments(String processInstanceId) {
+        return workflowService.getComments(processInstanceId);
+    }
+    
+    /**
      * 获取审批信息
      * @param processInstanceId
      * @return
@@ -112,16 +115,18 @@ public class WorkflowController extends BaseController {
      * @param processInstanceId
      */
     public void setProcessHistory(HttpServletRequest request, String processInstanceId) {
-        ProcessHistoryInfo instanceInfo = workflowService.getHistoricProcessInstance(processInstanceId);
-        if (instanceInfo == null) {
-//            Leave data = (Leave) baseService.get(Leave.class, businessKey);
-//            request.setAttribute("data", data);
-            return;
-        }
-        // 流程业务ID
-        String businessKey = instanceInfo.getBusinessKey();
+        ProcessHistoryInfo instanceInfo = null;
+        if (processInstanceId != null && !"".equals(processInstanceId)) instanceInfo = workflowService.getHistoricProcessInstance(processInstanceId);
         ProcessTaskInfo taskInfo = new ProcessTaskInfo();
-        taskInfo.setProcessDefinitionKey(instanceInfo.getProcessDefinitionKey());
+        String businessKey = null;
+        if (instanceInfo != null) {
+            // 流程业务ID
+            businessKey = instanceInfo.getBusinessKey();
+            taskInfo.setProcessInstanceId(instanceInfo.getProcessInstanceId());
+            taskInfo.setProcessDefinitionKey(instanceInfo.getProcessDefinitionKey());
+            taskInfo.setProcessVariables(processHistoryService.getProcessVariables(processInstanceId));
+        }
+        // 无流程时，数据使用WorkflowVariablesLocal绑定数据
         request.setAttribute("taskInfo", taskInfo);// 任务信息
         // 获取流程数据
         Map<String, Object> map = workflowService.getTaskBusinessData(taskInfo, businessKey);

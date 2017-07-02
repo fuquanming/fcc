@@ -10,28 +10,31 @@
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false">
-  <div id="toolbar" class="datagrid-toolbar" style="height: auto;display: none;">
+  <div id="toolbar" class="datagrid-toolbar" style="height: auto;">
     <fieldset>
     <legend>查看任务</legend>
     <form id="userForm" name="userForm" method="post">
-      <table class="tableForm" align="center">
+      <table class="tableForm" align="center" style="width: 80%">
         <tr>  
             <th>申请人：</th>      
             <td>${requestUserName }</td>
         </tr>
         <jsp:include page="${editTaskPage }"></jsp:include>
-        <tr>
+        <jsp:include page="../../sys/workflow/processHistory_task_view.jsp">
+            <jsp:param value="${param.id }" name="processInstanceId"/>
+        </jsp:include>
+        <div style="text-align: center;">
+        <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a>
+        </div>
+        <!-- <tr>
           <td colspan="2" align="center">
           <a class="easyui-linkbutton" iconCls="icon-back" plain="true" onClick="toBack();" href="javascript:void(0);">返回</a> 
           </td>
-        </tr>
+        </tr> -->
       </table>
     </form>
     </fieldset>
   </div>
-  <jsp:include page="../../sys/workflow/processHistory_task_view.jsp">
-    <jsp:param value="${param.id }" name="processInstanceId"/>
-  </jsp:include>
 </div>
 </body>
 </html>

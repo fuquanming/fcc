@@ -208,6 +208,41 @@ Tool.setValue = function(id, value) {
 	$("#" + id).textbox('setValue', value);
 }
 
+/** 浏览器视口的高度 */
+Tool.windowHeight = function() {
+	var de = document.documentElement;
+    return self.innerHeight || (de && de.clientHeight) || document.body.clientHeight;
+}
+/** 浏览器视口的宽度 */
+Tool.windowWidth = function() {
+    var de = document.documentElement;
+    return self.innerWidth || (de && de.clientWidth) || document.body.clientWidth
+}
+/** 浏览器垂直滚动位置 */
+Tool.scrollY = function() {
+	var de = document.documentElement;
+    return self.pageYOffset || (de && de.scrollTop) || document.body.scrollTop;
+}
+/** 浏览器水平滚动位置 */
+Tool.scrollX = function() {
+    var de = document.documentElement;
+    return self.pageXOffset || (de && de.scrollLeft) || document.body.scrollLeft;
+}
+/** 定位到页面中心 */
+Tool.centerPage = function(id) {
+	var obj = $('#' + id);
+    var w = obj.width();
+    var h = obj.height();
+    var t = Tool.scrollY() + (Tool.windowHeight()/2) - (h/2);
+    if(t < 0) t = 0;
+    var l = Tool.scrollX() + (Tool.windowWidth()/2) - (w/2);
+    if(l < 0) l = 0;
+    obj.css({left: l+'px', top: t+'px'});
+}
+/** 定位到该ID */
+Tool.position = function(id) {
+	document.getElementById(id).scrollIntoView();
+}
 Tool.goPage = function(page) {
 	window.location.href = page;
 }

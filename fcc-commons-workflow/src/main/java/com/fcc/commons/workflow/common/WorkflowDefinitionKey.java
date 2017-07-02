@@ -10,6 +10,9 @@ import java.util.Map;
  * @version v1.0
  */
 public class WorkflowDefinitionKey {
+    /** 流程标识ID */
+    public static final String processDefinitionKey = "processDefinitionKey";
+    
 	/** key,name */
 	public static Map<String, String> definitionKeyMap = new HashMap<String, String>();
 	

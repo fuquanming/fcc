@@ -343,6 +343,79 @@ public class BaseDaoImpl implements BaseDao {
 		return result;
 	}
 	
+	@Override
+	public ListPage queryPageSQL(Class<?> c, int pageNo, int pageSize, String cHql, String bHql, Map<String, Object> param) {
+	    ListPage listPage = null;
+        if(bHql != null){
+            //如果pageCount为0,则认为无限制,返回所有记录
+            int firstResultIndex = 0;
+            if (pageSize <= 0){
+                firstResultIndex = 0;
+                pageSize = Integer.MAX_VALUE;
+            } else {
+                firstResultIndex = (pageNo - 1) * pageSize;
+            }
+            Query query = getCurrentSession().createSQLQuery(cHql);
+            launchParamValues(query, param);
+            
+            Object tempCount = "0";
+            List tempCountList = query.list();
+            if (tempCountList != null) {
+                int size = tempCountList.size();
+                if (size == 1) {
+                    tempCount = tempCountList.get(0);
+                } else if (size > 1) {
+                    tempCount = size + "";
+                }
+            }
+            int totalCount = Integer.valueOf(tempCount.toString());
+            if (totalCount == 0 || firstResultIndex > totalCount) {
+                listPage = ListPage.EMPTY_PAGE;
+                listPage.setDataList(new ArrayList(1));
+            } else {
+                query = getCurrentSession().createSQLQuery(bHql);
+                
+                launchParamValues(query, param);
+                query.setResultTransformer(Transformers.aliasToBean(c));
+                
+                query.setFirstResult(firstResultIndex);
+                query.setMaxResults(pageSize);
+                
+                List result = query.list();
+                
+                listPage = new ListPage();
+                listPage.setTotalSize(totalCount);
+                listPage.setDataList(result);
+            }
+            listPage.setCurrentPageNo(pageNo);
+            listPage.setCurrentPageSize(pageSize);
+        }
+        return listPage;
+	}
+	
+	@Override
+	public List queryPageSQL(Class<?> c, int pageNo, int pageSize, String bHql, Map<String, Object> param) {
+	    List result = null;
+        if(bHql != null){
+            //如果pageCount为0,则认为无限制,返回所有记录
+            int firstResultIndex = 0;
+            if (pageSize <= 0){
+                firstResultIndex = 0;
+                pageSize = Integer.MAX_VALUE;
+            } else {
+                firstResultIndex = (pageNo - 1) * pageSize;
+            }
+            Query query = getCurrentSession().createSQLQuery(bHql);
+            launchParamValues(query, param);
+            query.setResultTransformer(Transformers.aliasToBean(c));
+            
+            query.setFirstResult(firstResultIndex);
+            query.setMaxResults(pageSize);
+            result = query.list();
+        }
+        return result;
+	}
+	
 	public List<String> queryColumns(String sql) {
 		List<String> list = new ArrayList<String>();
 		PreparedStatement ps = null;

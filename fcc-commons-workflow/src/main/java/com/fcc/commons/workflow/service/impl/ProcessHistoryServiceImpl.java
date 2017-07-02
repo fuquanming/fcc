@@ -1,7 +1,9 @@
 package com.fcc.commons.workflow.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -11,6 +13,7 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.history.HistoricProcessInstanceQuery;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.springframework.stereotype.Service;
@@ -65,6 +68,24 @@ public class ProcessHistoryServiceImpl implements ProcessHistoryService {
         HistoricProcessInstanceEntity entiy = (HistoricProcessInstanceEntity) historicProcessInstance;
         info.setProcessInstanceId(entiy.getProcessInstanceId());
         return info;
+    }
+    
+    @Transactional(readOnly = true)//只查事务申明
+    @Override
+    public Map<String, Object> getProcessVariables(String processInstanceId) {
+        List<HistoricVariableInstance> historicVariableInstances = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).list();
+        Map<String, Object> variables = new HashMap<String, Object>(historicVariableInstances.size());
+        for (HistoricVariableInstance historicProcessInstance : historicVariableInstances) {
+            variables.put(historicProcessInstance.getVariableName(), historicProcessInstance.getValue());
+        }
+        return variables;
+    }
+    
+    @Transactional(readOnly = true)//只查事务申明
+    @Override
+    public Object getProcessVariable(String processInstanceId, String variableName) {
+        HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstanceId).variableName(variableName).singleResult();
+        return historicVariableInstance.getValue();
     }
     
 	@Transactional(rollbackFor = Exception.class)//事务申明

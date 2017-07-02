@@ -1,7 +1,11 @@
 package com.fcc.commons.workflow.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -9,6 +13,7 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
@@ -44,6 +49,52 @@ public class ProcessInstanceServiceImpl implements ProcessInstanceService {
 	private ProcessBaseService processBaseService;
 	@Resource
 	private HistoryService historyService;
+	
+	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
+	public void setProcessVariable(String processInstanceId, String variableName, Object value) {
+	    runtimeService.setVariable(processInstanceId, variableName, value);
+	}
+	
+	@Transactional(rollbackFor = Exception.class)//事务申明
+	@Override
+	public void setProcessVariables(String processInstanceId, Map<String, ? extends Object> variables) {
+	    runtimeService.setVariables(processInstanceId, variables);
+	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+	public Object getProcessVariable(String processInstanceId, String variableName) {
+	    VariableInstance variableInstance = runtimeService.getVariableInstance(processInstanceId, variableName);
+	    if (variableInstance != null) return variableInstance.getValue();
+	    return null;
+	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+	public Map<String, Object> getProcessVariables(String processInstanceId) {
+	    Map<String, VariableInstance> param = runtimeService.getVariableInstances(processInstanceId);
+	    Map<String, Object> values = new HashMap<String, Object>(param.size());
+	    for (Iterator<String> it = param.keySet().iterator(); it.hasNext();) {
+	        String key = it.next();
+	        VariableInstance value = param.get(key);
+	        values.put(key, value.getValue());
+	    }
+	    return values;
+	}
+	
+	@Transactional(readOnly = true) //只查事务申明
+	@Override
+	public Map<String, Object> getVariables(String processInstanceId, Collection<String> variableNames) {
+	    Map<String, VariableInstance> param = runtimeService.getVariableInstances(processInstanceId, variableNames);
+	    Map<String, Object> values = new HashMap<String, Object>(param.size());
+        for (Iterator<String> it = param.keySet().iterator(); it.hasNext();) {
+            String key = it.next();
+            VariableInstance value = param.get(key);
+            values.put(key, value.getValue());
+        }
+        return values;
+	}
 	
 	@Transactional(rollbackFor = Exception.class)//事务申明
 	public void activateProcessInstanceById(String processInstanceId) {

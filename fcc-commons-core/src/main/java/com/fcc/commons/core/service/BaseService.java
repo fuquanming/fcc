@@ -155,6 +155,31 @@ public interface BaseService {
 			Map<String, Object> param, boolean isSQL);
 	
 	/**
+     * 分页查询
+     * @param pageNo    第几页
+     * @param pageSize  每页数据大小
+     * @param cHql      
+     * @param bHql
+     * @param params
+     * @param isSQL
+     * @return
+     */
+    public ListPage queryPageSQL(Class<?> c, int pageNo, int pageSize, String cHql,
+            String bHql, Map<String, Object> param);
+    
+    /**
+     * 分页查询
+     * @param pageNo    第几页
+     * @param pageSize  每页数据大小
+     * @param bHql
+     * @param params
+     * @param isSQL
+     * @return
+     */
+    public List queryPageSQL(Class<?> c, int pageNo, int pageSize, String bHql, 
+            Map<String, Object> param);
+	
+	/**
 	 * 查询sql语句返回的列名
 	 * @param sql	执行的sql语句
 	 * @return

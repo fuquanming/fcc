@@ -1,6 +1,8 @@
 package com.fcc.commons.workflow.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.workflow.query.WorkflowInstanceQuery;
@@ -15,6 +17,44 @@ import com.fcc.commons.workflow.view.ProcessTaskCommentInfo;
  * @version v1.0
  */
 public interface ProcessInstanceService {
+    
+    /**
+     * 设置流程实例变量
+     * @param processInstanceId         流程实例ID
+     * @param variableName              变量名
+     * @param value                     变量值
+     * @return
+     */
+    void setProcessVariable(String processInstanceId, String variableName, Object value);
+    
+    /**
+     * 设置流程实例变量
+     * @param processInstanceId         流程实例ID
+     * @param variables                 变量
+     * @return
+     */
+    void setProcessVariables(String processInstanceId, Map<String, ? extends Object> variables);
+    
+    /**
+     * 获取流程实例变量
+     * @param processInstanceId         流程实例ID
+     * @param variableName              变量名
+     * @return
+     */
+    Object getProcessVariable(String processInstanceId, String variableName);
+    /**
+     * 获取流程实例变量
+     * @param processInstanceId     流程实例ID
+     * @return
+     */
+    Map<String, Object> getProcessVariables(String processInstanceId);
+    /**
+     * 获取流程实例变量
+     * @param processInstanceId     流程实例ID
+     * @param variableNames         变量集合
+     * @return
+     */
+    Map<String, Object> getVariables(String processInstanceId, Collection<String> variableNames);
 	
 	/**
 	 * 激活指定id的流程实例
