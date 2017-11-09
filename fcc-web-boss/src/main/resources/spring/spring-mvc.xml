@@ -53,7 +53,32 @@
 	</bean>
 	
 	<!-- 拦截器 -->
-	<mvc:annotation-driven />
+    <!-- <mvc:annotation-driven /> -->
+    <!-- 3.1版本以上,指定json 替换 <mvc:annotation-driven /> -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html; charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html; charset=UTF-8</value>
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean> 
+    
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />

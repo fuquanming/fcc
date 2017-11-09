@@ -78,10 +78,8 @@ public class LoginController extends AppWebController {
         } catch (RefusedException e) {
             if (e.getMsg() != null) {
                 message.setMsg(e.getMsg());
-                message.setObj(e.getCode());
             } else {
                 message.setMsg(e.getMessage());
-                message.setObj(e.getMessage());
             }
         } catch (Exception e) {
             e.printStackTrace();

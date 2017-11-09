@@ -54,9 +54,9 @@ public class RbacPermissionTag extends BodyTagSupport {
 	        cacheService = SpringContextUtil.getBean(CacheService.class);
 	    }
 		SysUser user = cacheService.getSysUser((HttpServletRequest)pageContext.getRequest());
-		if (moduleId == null || "".equals(moduleId)) {
+//		if (moduleId == null || "".equals(moduleId)) {
 		    moduleId = (String) pageContext.getRequest().getAttribute("rightModuleId");
-		}
+//		}
 		if (rbacPermissionService.checkPermissionCache(user.getRoles(), moduleId, operateId)) {
 			return EVAL_BODY_INCLUDE;
 		}
