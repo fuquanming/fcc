@@ -266,7 +266,7 @@ public class HttpMultipart extends RequestBase {
 		if (sbLen > 0) sb.delete(0, sbLen);
 		sb.append(splitParam).append(rn);
 		if (multipartType.equals(MULTIPART_FORM_DATA)) {
-			sb.append("Content-Disposition: ").append(multipartType).append("; name=\"").append(key).append("\"; filename=\"")
+			sb.append("Content-Disposition: ").append("form-data").append("; name=\"").append(key).append("\"; filename=\"")
 			.append(fileName).append("\"").append(rn)
 			.append("Content-Type: ").append(fileContentType).append(rn);
 		} else if (multipartType.equals(MULTIPART_RELATED)) {
