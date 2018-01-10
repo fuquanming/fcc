@@ -22,7 +22,7 @@
 	</properties>
 	
 	<dependencies>
-        <!-- -->
+        <!-- 
         <dependency>
             <groupId>com.fcc.commons</groupId>
             <artifactId>fcc-commons</artifactId>
@@ -52,7 +52,7 @@
             <artifactId>fcc-commons-workflow</artifactId>
             <version>${fcc-commons-workflow.version}</version>
         </dependency>
-        
+        -->
         <dependency>
             <groupId>com.fcc.commons</groupId>
             <artifactId>fcc-web-manage</artifactId>
@@ -63,6 +63,30 @@
             <groupId>com.fcc.commons</groupId>
             <artifactId>fcc-web-workflow</artifactId>
             <version>${fcc-web-workflow.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.log4jdbc</groupId>
+            <artifactId>log4jdbc4</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        
+        <!-- encache 相关jar包 -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-web</artifactId>
         </dependency>
         
     </dependencies>

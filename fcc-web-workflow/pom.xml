@@ -22,7 +22,7 @@
 
 	<dependencies>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.fcc.commons</groupId>
 			<artifactId>fcc-commons</artifactId>
 			<version>${fcc-commons.version}</version>
@@ -43,20 +43,19 @@
 			<version>${fcc-commons-web.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-web-manage</artifactId>
+            <version>${fcc-web-manage.version}</version>
+        </dependency> -->
+		<dependency>
 			<groupId>com.fcc.commons</groupId>
 			<artifactId>fcc-commons-workflow</artifactId>
 			<version>${fcc-commons-workflow.version}</version>
 		</dependency>
-		<dependency>
-            <groupId>com.fcc.commons</groupId>
-            <artifactId>fcc-web-manage</artifactId>
-            <version>${fcc-web-manage.version}</version>
-        </dependency>
         
 	</dependencies>
 
     <build>
-        <finalName>fcc-commons-config</finalName>
         <resources>
             <!-- 先指定 src/main/resources下所有文件及文件夹为资源文件 -->
             <resource>

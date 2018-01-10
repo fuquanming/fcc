@@ -41,10 +41,11 @@
 
 		<!-- common projects -->
 		<fcc-commons.version>1.0-SNAPSHOT</fcc-commons.version>
-		<fcc-commons-config.version>1.1-SNAPSHOT</fcc-commons-config.version>
+		<fcc-commons-config.version>1.0-SNAPSHOT</fcc-commons-config.version>
 		<fcc-commons-core.version>1.0-SNAPSHOT</fcc-commons-core.version>
 		<fcc-commons-web.version>1.0-SNAPSHOT</fcc-commons-web.version>
 		<fcc-commons-workflow.version>1.0-SNAPSHOT</fcc-commons-workflow.version>
+		<fcc-commons-fastdfs.version>1.0-SNAPSHOT</fcc-commons-fastdfs.version>
 		
 		<fcc-web-manage.version>1.0-SNAPSHOT</fcc-web-manage.version>
 		<fcc-web-workflow.version>1.0-SNAPSHOT</fcc-web-workflow.version>
@@ -104,11 +105,11 @@
 	<dependencyManagement>
 		<dependencies>
 			<!-- Common Dependency Begin -->
-			<dependency>
+			<!-- <dependency>
 				<groupId>xalan</groupId>
 				<artifactId>xalan</artifactId>
 				<version>2.7.1</version>
-			</dependency>
+			</dependency> -->
 			<dependency>
 				<groupId>antlr</groupId>
 				<artifactId>antlr</artifactId>
@@ -256,11 +257,11 @@
 				<artifactId>slf4j-log4j12</artifactId>
 				<version>1.7.5</version>
 			</dependency>
-			<dependency>
+			<!-- <dependency>
 				<groupId>net.sourceforge.jexcelapi</groupId>
 				<artifactId>jxl</artifactId>
 				<version>2.6.12</version>
-			</dependency>
+			</dependency> -->
 			<!-- <dependency> <groupId>com.alibaba.external</groupId> <artifactId>sourceforge.spring</artifactId> 
 				<version>2.0.1</version> </dependency> <dependency> <groupId>com.alibaba.external</groupId> 
 				<artifactId>jakarta.commons.poolg</artifactId> <version>1.3</version> </dependency> -->
@@ -349,7 +350,7 @@
 			</dependency>
 			<!-- excel end -->
 
-			<!-- Zookeeper 用于分布式服务管�? -->
+			<!-- Zookeeper 用于分布式服务管理 Begin -->
 			<dependency>
 				<groupId>org.apache.zookeeper</groupId>
 				<artifactId>zookeeper</artifactId>
@@ -360,7 +361,7 @@
 				<artifactId>zkclient</artifactId>
 				<version>0.3</version>
 			</dependency>
-			<!-- Zookeeper 用于分布式服务管�?end -->
+			<!-- Zookeeper 用于分布式服务管理 End -->
 
 
 			<!-- Spring Dependency Begin -->
@@ -579,11 +580,6 @@
 				<version>1.0.27</version>
 			</dependency>
 			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-				<version>1.1.41</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>4.3.3</version>
@@ -777,6 +773,37 @@
 			    <version>0.11.1</version>
 			</dependency>
 			<!-- activiti end -->
+			
+			<!-- servlet 用3.0的 
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-servlet_2.4_spec</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-servlet_3.0_spec</artifactId>
+                <version>1.0</version>
+            </dependency>
+            -->
+            <dependency>
+                <groupId>org.eclipse.jetty.orbit</groupId>
+                <artifactId>javax.servlet</artifactId>
+                <version>3.0.0.v201112011016</version>
+            </dependency>
+            <!-- jsp -->
+            <dependency>
+                <groupId>org.eclipse.jetty.orbit</groupId>
+                <artifactId>javax.servlet.jsp</artifactId>
+                <version>2.2.0.v201112011158</version>
+            </dependency>
+            <!-- jstl -->
+            <dependency>
+                <groupId>org.eclipse.jetty.orbit</groupId>
+                <artifactId>javax.servlet.jsp.jstl</artifactId>
+                <version>1.2.0.v201105211821</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -852,7 +879,22 @@
 				</executions>
 			</plugin>
 
-
+            <!-- 
+            1、使用Maven deploy命令部署构建到Nexus上
+	                             工程选择Run As ->Maven build...->在Main里输入deploy -e 
+	                             跳过测试可以勾选Skip Tests或添加如下插件
+            <plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-surefire-plugin</artifactId>  
+                <configuration>  
+                    <skip>true</skip>  
+                </configuration>  
+            </plugin>
+            ***要替换原本的包需要在nexus中删除原来版本的包，才能发布到nexus中***
+            
+            2、如果version中没有-RELEASE 或 -SNAPSHOT ，可以上传jar包，但是会报错
+            <fcc-commons.version>1.1.1-RELEASE</fcc-commons.version>
+            -->
 
 		</plugins>
 	</build>
