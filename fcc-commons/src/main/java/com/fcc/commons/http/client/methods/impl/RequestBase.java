@@ -32,6 +32,7 @@ public abstract class RequestBase implements Request {
 	
 	protected Map<String, String> urlParams;
 	
+	protected String requestMethod = "POST";
 	protected String requestCharset = "UTF-8";
 	protected String responseCharset = "UTF-8";
 	
@@ -182,4 +183,11 @@ public abstract class RequestBase implements Request {
 		this.readTimeout = readTimeout;
 	}
 	
+	public String getRequestMethod() {
+        return requestMethod;
+    }
+
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
 }

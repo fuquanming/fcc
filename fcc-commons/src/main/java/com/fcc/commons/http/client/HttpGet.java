@@ -24,10 +24,12 @@ public class HttpGet extends BaseHttpRequest {
     
     public HttpGet(String urlStr) {
         super(urlStr);
+        requestMethod = "GET";
     }
     
     public HttpGet(String urlStr, String requestCharset) {
         super(urlStr, requestCharset);
+        requestMethod = "GET";
     }
     
     @Override
@@ -42,8 +44,6 @@ public class HttpGet extends BaseHttpRequest {
                 tempPath = tempPath + "?" + paramsStr;
             }
             urlStr = tempPath;
-            // 设定请求的方法，默认是GET
-            requestMethod = "GET";
             connection();
             writeBody();
             

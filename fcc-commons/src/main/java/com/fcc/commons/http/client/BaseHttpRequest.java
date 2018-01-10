@@ -284,4 +284,11 @@ public abstract class BaseHttpRequest implements HttpRequest {
         return fileByte;
     }
 
+    public String getRequestMethod() {
+        return requestMethod;
+    }
+
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
 }

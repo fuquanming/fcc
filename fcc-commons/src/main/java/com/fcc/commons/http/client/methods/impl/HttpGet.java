@@ -30,10 +30,12 @@ public class HttpGet extends RequestBase {
 	
 	public HttpGet(String urlStr) {
 		super(urlStr);
+		requestMethod = METHOD_NAME;
 	}
 	
 	public HttpGet(String urlStr, int requestTimeout) {
 		super(urlStr, requestTimeout);
+		requestMethod = METHOD_NAME;
 	}
 	
 	public URL getURL() {
@@ -55,7 +57,7 @@ public class HttpGet extends RequestBase {
 				tempPath = tempPath + "?" + paramsStr;
 			}
 			StringBuilder sb = new StringBuilder();
-			sb.append("GET ").append(tempPath).append(" HTTP/").append(httpAgreement).append("\r\n")
+			sb.append(requestMethod).append(" ").append(tempPath).append(" HTTP/").append(httpAgreement).append("\r\n")
 			.append("HOST:").append(host).append("\r\n")
 			.append("User-Agent: FuQuanming\r\n");
 			if (!"".equals(headers)) {

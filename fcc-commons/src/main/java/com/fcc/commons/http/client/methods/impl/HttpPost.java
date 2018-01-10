@@ -29,10 +29,12 @@ public class HttpPost extends RequestBase {
 	
 	public HttpPost(String urlStr) {
 		super(urlStr);
+		requestMethod = METHOD_NAME;
 	}
 	
 	public HttpPost(String urlStr, int requestTimeout) {
 		super(urlStr, requestTimeout);
+		requestMethod = METHOD_NAME;
 	}
 	
 	public URL getURL() {
@@ -53,7 +55,7 @@ public class HttpPost extends RequestBase {
 			byte[] paramByte = params.getBytes();
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("POST ").append(getPath()).append(" HTTP/").append(httpAgreement).append("\r\n")
+			sb.append(requestMethod).append(" ").append(getPath()).append(" HTTP/").append(httpAgreement).append("\r\n")
 			.append("HOST:").append(host).append("\r\n")
 			.append("User-Agent: FuQuanming\r\n")
 			.append("Content-Length: ").append(paramByte.length + bodyByte.length).append("\r\n");

@@ -22,17 +22,17 @@ public class HttpPost extends BaseHttpRequest {
     
     public HttpPost(String urlStr) {
         super(urlStr);
+        requestMethod = "POST";
     }
     
     public HttpPost(String urlStr, String requestCharset) {
         super(urlStr, requestCharset);
+        requestMethod = "POST";
     }
     
     @Override
     public HttpResponse execute() {
         try {
-            // 设定请求的方法，默认是GET
-            requestMethod = "POST";
             connection();
             if (fileInfos != null && fileInfos.size() > 0) {// 附件上传
                 writeMultipart();
