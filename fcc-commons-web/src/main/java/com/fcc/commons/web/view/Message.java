@@ -10,6 +10,7 @@ public class Message implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private boolean success = false;// 是否成功
 	private String msg = "";// 提示信息
+	private String requestId;// 请求ID
 	private Object obj = null;// 其他信息
 //	private String id;
 	private String module; // 访问模块
@@ -26,6 +27,12 @@ public class Message implements java.io.Serializable {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
+	public String getRequestId() {
+        return requestId;
+    }
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 	public Object getObj() {
 		return obj;
 	}
