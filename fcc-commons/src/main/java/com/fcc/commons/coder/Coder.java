@@ -65,7 +65,12 @@ public class Coder {
      */
     public static Key getKey(CoderEnum coderEnum, byte[] strKey) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         KeyGenerator kg = KeyGenerator.getInstance(coderEnum.getInfo());
-        kg.init(new SecureRandom(strKey));
+//        kg.init(new SecureRandom(strKey)); Window 
+        
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");// linux 
+        random.setSeed(strKey);
+        kg.init(random);
+        
         // 生成秘密密钥
         SecretKey secretKey = kg.generateKey();
         return secretKey;
