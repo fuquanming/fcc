@@ -255,7 +255,8 @@ public class SysAnnex implements java.io.Serializable{
     public String getUrl() {
         if (this.url == null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(ConfigUtil.getFileAccessPath()).append(this.fileUrl).append("/").append(this.fileName);
+//            sb.append(ConfigUtil.getFileAccessPath()).append(this.fileUrl).append("/").append(this.fileName);
+            sb.append(ConfigUtil.getFileAccessPath()).append(this.fileUrl);
             this.url = sb.toString();
         }
         return this.url;

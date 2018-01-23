@@ -23,10 +23,12 @@ import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
+import com.fcc.web.sys.cache.SysUserAuthentication;
 import com.fcc.web.sys.common.Constants;
 import com.fcc.web.sys.config.ConfigUtil;
 import com.fcc.web.sys.dao.SysAnnexDao;
 import com.fcc.web.sys.model.SysAnnex;
+import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.SysAnnexService;
 /**
  * <p>Description:SysAnnex</p>
@@ -145,15 +147,25 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
         .append(File.separatorChar).append(annexType)
         .append(File.separatorChar).append(timePath);
         StringBuilder fileUrlSb = new StringBuilder();
+//        fileUrlSb.append(Constants.uploadFilePath)
+//        .append(File.separatorChar).append(linkType)
+//        .append(File.separatorChar).append(annexType)
+//        .append(File.separatorChar).append(timePath);
         fileUrlSb.append(Constants.uploadFilePath)
-        .append(File.separatorChar).append(linkType)
-        .append(File.separatorChar).append(annexType)
-        .append(File.separatorChar).append(timePath);
+        .append("/").append(linkType)
+        .append("/").append(annexType)
+        .append("/").append(timePath)
+        .append("/");
         String parentPath = sb.toString();
         String urlPath = fileUrlSb.toString();
         File parentFile = new File(parentPath);
         if (parentFile.exists() == false) parentFile.mkdirs();
         List<SysAnnex> list = new ArrayList<SysAnnex>(length);
+        SysUser sysUser = SysUserAuthentication.getSysUser();
+        String userId = null;
+        if (sysUser != null) {
+            userId = sysUser.getUserId();
+        }
         for (int i = 0; i < length; i++) {
             boolean temp = false;
             String fileName = uploadFileNames[i];
@@ -171,8 +183,9 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     sysAnnex.setFileType(fileRealName.substring(fileRealName.lastIndexOf(".") + 1).toLowerCase());
                     sysAnnex.setFileSize(file.length());
                     FileUtils.moveFileToDirectory(file, parentFile, true);
-                    sysAnnex.setFileUrl(urlPath);
+                    sysAnnex.setFileUrl(urlPath + fileRealName);
                     sysAnnex.setCreateTime(now);
+                    sysAnnex.setCreateUser(userId);
                     baseService.add(sysAnnex);
                     list.add(sysAnnex);
                 } catch (IOException e) {
