@@ -57,25 +57,25 @@ datagridParam_column_value = [ [
             field : 'linkId',
             title : '关联ID',
             sortable:true,
-            width : 100
+            width : 80
         } ,
         {
             field : 'linkType',
             title : '关联类型',
             sortable:true,
-            width : 80
+            width : 50
         } ,
         {
             field : 'annexName',
             title : '附件名称',
             sortable:true,
-            width : 80
+            /* width : 80 */
         } ,
         {
             field : 'fileName',
             title : '文件名称',
             sortable:true,
-            width : 100
+            /* width : 100 */
         } ,
         {
             field : 'fileType',
@@ -87,23 +87,26 @@ datagridParam_column_value = [ [
             field : 'fileUrl',
             title : '文件地址',
             sortable:true,
-            width : 100
+            /* width : 100, */
+            formatter : function(value, rowData, rowIndex) {
+                return '<a href="<tool:fileUrl />' + rowData.fileUrl + '" target="_blank" >' + rowData.fileUrl + '</a>';
+            } 
         } ,
         {
             field : 'fileSize',
             title : '文件大小',
             sortable:true,
-            width : 80
+            width : 50
         } ,
         {
             field : 'remark',
             title : '文件备注',
             sortable:true,
-            width : 100,
-            formatter : function(value, rowData, rowIndex) {
-            	return '<a href="<tool:fileUrl />' + rowData.fileUrl + '\\' + rowData.fileName + '" target="_blank" >' + rowData.annexName + '</a>';
-            }
-        } 
+            /* width : 100, */
+            /*formatter : function(value, rowData, rowIndex) {
+            	return '<a href="<tool:fileUrl />' + rowData.fileUrl + '" target="_blank" >' + rowData.annexName + '</a>';
+            }*/
+        }
 ] ];// 表格的列
 datagridParam_queryParamName = [
         'linkType',
