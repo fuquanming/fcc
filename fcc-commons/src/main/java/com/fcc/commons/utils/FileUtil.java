@@ -6,7 +6,6 @@ package com.fcc.commons.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
@@ -31,35 +29,36 @@ import org.dom4j.io.SAXReader;
 @SuppressWarnings("rawtypes")
 public class FileUtil {
 	// 文件类型
-	private static String FILE_TYPE = "file-type.xml";
+	private static String FILE_TYPE = "config/file-type.xml";
 	private static Map<String, String> fileTypeMap = new HashMap<String, String>();
 	private static Map<String, String> contentTypeMap = new HashMap<String, String>();
 	
 	static {
-		String path = ClassUtil.getClassRootPath();
+//		String path = ClassUtil.getClassRootPath();
 		// 读取文件
 		InputStream is = null;
 		try {
-			is = new FileInputStream(path + FILE_TYPE);
-			SAXReader saxReader = new SAXReader();
-			Document xmlDoc = saxReader.read(is);
-			Element rootEle = xmlDoc.getRootElement();
-			// 加载数据
+//			is = new FileInputStream(path + FILE_TYPE);
+		    is = getResourceAsStream(FILE_TYPE);
+		    if (is != null) {
+		        SAXReader saxReader = new SAXReader();
+		        Document xmlDoc = saxReader.read(is);
+		        Element rootEle = xmlDoc.getRootElement();
+		        // 加载数据
 //			<mime-mapping>
 //		        <extension>abs</extension>
 //		        <mime-type>audio/x-mpeg</mime-type>
 //		    </mime-mapping>
-			Iterator mimeIt = rootEle.elementIterator("mime-mapping");
-			while (mimeIt.hasNext()) {
-				Element mimeEle = (Element) mimeIt.next();
-				String fileFix = mimeEle.elementTextTrim("extension");
-				String type = mimeEle.elementTextTrim("mime-type");
-				fileTypeMap.put(fileFix, type);
-				contentTypeMap.put(type, fileFix);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (DocumentException e) {
+		        Iterator mimeIt = rootEle.elementIterator("mime-mapping");
+		        while (mimeIt.hasNext()) {
+		            Element mimeEle = (Element) mimeIt.next();
+		            String fileFix = mimeEle.elementTextTrim("extension");
+		            String type = mimeEle.elementTextTrim("mime-type");
+		            fileTypeMap.put(fileFix, type);
+		            contentTypeMap.put(type, fileFix);
+		        }
+		    }
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -101,5 +100,33 @@ public class FileUtil {
 	public static String getFileFix(String contentType) {
 		return contentTypeMap.get(contentType);
 	}
-	
+	/**
+	 * 获取资源文件的文件流
+	 * @param filePath
+	 * @return
+	 */
+	public static InputStream getResourceAsStream(String filePath) {
+	    InputStream is = null;
+	    try {
+	        // 文件路径获取
+            File file = new File(filePath);
+            if (file.exists()) {
+                is = new FileInputStream(file);
+            } else {
+                // 从类路径加载 路径：config/a.xml
+                ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                if (loader == null) {
+                    loader = ClassLoader.getSystemClassLoader();
+                }
+                is = loader.getResourceAsStream(filePath);
+            }
+            if (is == null) {
+                // 从jar加载 路径：/config/a.xml
+                is = FileUtil.class.getResourceAsStream(filePath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	    return is;
+	}
 }

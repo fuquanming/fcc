@@ -1,7 +1,6 @@
 package com.fcc.web.sys.service.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,8 +10,8 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.data.DataFormater;
 import com.fcc.commons.data.ListPage;
+import com.fcc.commons.file.FileService;
 import com.fcc.commons.web.service.ExportService;
 import com.fcc.commons.web.service.ImportService;
 import com.fcc.web.sys.cache.SysUserAuthentication;
@@ -36,10 +36,14 @@ import com.fcc.web.sys.service.SysAnnexService;
 
 @Service
 public class SysAnnexServiceImpl implements SysAnnexService, ExportService, ImportService {
+    
+    private Logger logger = Logger.getLogger(SysAnnexServiceImpl.class);
     @Resource
     private SysAnnexDao sysAnnexDao;
     @Resource
     private BaseService baseService;
+    @Resource
+    private FileService fileService;
     
     @Override
     public List<String> dataConver(Object converObj) {
@@ -146,18 +150,18 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
         .append(File.separatorChar).append(linkType)
         .append(File.separatorChar).append(annexType)
         .append(File.separatorChar).append(timePath);
-        StringBuilder fileUrlSb = new StringBuilder();
+//        StringBuilder fileUrlSb = new StringBuilder();
 //        fileUrlSb.append(Constants.uploadFilePath)
 //        .append(File.separatorChar).append(linkType)
 //        .append(File.separatorChar).append(annexType)
 //        .append(File.separatorChar).append(timePath);
-        fileUrlSb.append(Constants.uploadFilePath)
-        .append("/").append(linkType)
-        .append("/").append(annexType)
-        .append("/").append(timePath)
-        .append("/");
+//        fileUrlSb.append(Constants.uploadFilePath)
+//        .append("/").append(linkType)
+//        .append("/").append(annexType)
+//        .append("/").append(timePath)
+//        .append("/");
+//        String urlPath = fileUrlSb.toString();
         String parentPath = sb.toString();
-        String urlPath = fileUrlSb.toString();
         File parentFile = new File(parentPath);
         if (parentFile.exists() == false) parentFile.mkdirs();
         List<SysAnnex> list = new ArrayList<SysAnnex>(length);
@@ -182,13 +186,25 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     sysAnnex.setFileName(fileRealName);
                     sysAnnex.setFileType(fileRealName.substring(fileRealName.lastIndexOf(".") + 1).toLowerCase());
                     sysAnnex.setFileSize(file.length());
-                    FileUtils.moveFileToDirectory(file, parentFile, true);
-                    sysAnnex.setFileUrl(urlPath + fileRealName);
-                    sysAnnex.setCreateTime(now);
-                    sysAnnex.setCreateUser(userId);
-                    baseService.add(sysAnnex);
-                    list.add(sysAnnex);
-                } catch (IOException e) {
+                    // 选择文件上传的方式
+                    fileService.setObject(sysAnnex);
+//                    InputStream is = new FileInputStream(file);
+//                    String fileUrl = fileService.uploadFile(IOUtils.toByteArray(is), fileName);
+//                    IOUtils.closeQuietly(is);
+                    String fileUrl = fileService.uploadFile(file, fileName);
+//                    FileUtils.moveFileToDirectory(file, parentFile, true);
+                    if (file.exists()) {
+                        logger.info("----delete temp File=" + file.delete());
+                    }
+//                    sysAnnex.setFileUrl(urlPath + fileRealName);
+                    if (fileUrl != null) {
+                        sysAnnex.setFileUrl(fileUrl);
+                        sysAnnex.setCreateTime(now);
+                        sysAnnex.setCreateUser(userId);
+                        baseService.add(sysAnnex);
+                        list.add(sysAnnex);
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -216,14 +232,14 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
     }
     
     public void deleteFile(SysAnnex sysAnnex) {
-        String fileName = sysAnnex.getFileName();
         String fileUrl = sysAnnex.getFileUrl();
-        StringBuilder sb = new StringBuilder();
-        sb.append(ConfigUtil.getFileUploadPath()).append(fileUrl).append(File.separatorChar).append(fileName);
-        File file = new File(sb.toString());
-        if (file.exists()) {
-            file.delete();
-        }
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(ConfigUtil.getFileUploadPath()).append(fileUrl);
+//        File file = new File(sb.toString());
+//        if (file.exists()) {
+//            file.delete();
+//        }
+        fileService.deleteFile(fileUrl);
     }
     
     @Transactional(rollbackFor = Exception.class)

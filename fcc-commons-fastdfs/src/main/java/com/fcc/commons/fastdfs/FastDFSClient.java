@@ -109,11 +109,11 @@ public class FastDFSClient {
     }
     /**
      * 上传文件
-     * @param fileBuff  文件字节数组
+     * @param fileByte  文件字节数组
      * @param fileName  文件名
      * @return
      */
-    public static String uploadFile(byte[] fileBuff, String fileName) {
+    public static String uploadFile(byte[] fileByte, String fileName) {
         String fileid = null;
         
         TrackerServer trackerServer = null;
@@ -122,7 +122,7 @@ public class FastDFSClient {
             NameValuePair[] meta_list = null; // new NameValuePair[0];
             trackerServer = ConnectionManager.getTrackerServer();
             storageServer = getStorageServer(trackerServer);
-            fileid = getStorageClient1(trackerServer, storageServer).upload_file1(fileBuff, getFileExt(fileName), meta_list);
+            fileid = getStorageClient1(trackerServer, storageServer).upload_file1(fileByte, getFileExt(fileName), meta_list);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e);

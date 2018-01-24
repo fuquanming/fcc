@@ -53,6 +53,11 @@
     </bean>
 
     <bean id="lock" class="com.fcc.commons.locks.SimpleLock"/>
+    
+    <!-- 开启FastDFS文件存储，并且将config.properties中file.access.path切换到FastDFS浏览地址 -->
+    <!-- <bean id="fileService" class="com.fcc.commons.fastdfs.FileServiceFastDFSImpl"/>
+    <bean id="fastDFSConnectionManager" class="com.fcc.commons.fastdfs.pool.ConnectionManager" 
+         init-method="init" destroy-method="destroy" /> -->
     <!-- 开启切面注解 -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
 </beans>

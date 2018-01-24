@@ -11,14 +11,17 @@ package com.fcc.commons.fastdfs.pool;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.log4j.Logger;
 import org.csource.fastdfs.TrackerServer;
 
 /**
- * 
+ * FastDFS TrackerServer 连接池
  * @version 
  * @author 傅泉明
  */
 public class ConnectionManager {
+    
+    private static Logger logger = Logger.getLogger(ConnectionManager.class);
     
     private static GenericObjectPool<TrackerServer> pool;
     
@@ -29,6 +32,7 @@ public class ConnectionManager {
     public static void init() {
         synchronized (lockFlag) {
             if (initFlag == false) {
+                logger.info("FastDFS ConnectionManager init");
                 ConnectionFactory connectionFactory = new ConnectionFactory();
                 GenericObjectPoolConfig config = new GenericObjectPoolConfig();
                 config.setMaxIdle(10);   //最大空闲数量
@@ -63,5 +67,6 @@ public class ConnectionManager {
     public static void destroy() {
         pool.clear();
         pool.close();
+        logger.info("FastDFS ConnectionManager destory");
     }
 }

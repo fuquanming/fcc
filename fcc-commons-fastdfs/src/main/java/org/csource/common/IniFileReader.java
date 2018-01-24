@@ -46,10 +46,14 @@ public class IniFileReader {
         in = new FileInputStream(filePath);
         //System.out.println("loadFrom...file path done");
       }
-      // 从类路径加载
+      // 从类路径加载 路径：fast/fdfs_client.conf
       else {
         in = classLoader().getResourceAsStream(filePath);
         //System.out.println("loadFrom...class path done");
+      }
+      // jar路径加载 路径：/fast/fdfs_client.conf
+      if (in == null) {
+          in = IniFileReader.class.getResourceAsStream(filePath);
       }
     } catch (Exception ex) {
       ex.printStackTrace();

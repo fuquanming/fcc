@@ -9,7 +9,6 @@
  */
 package com.fcc.commons.fastdfs.pool;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -20,10 +19,8 @@ import org.csource.fastdfs.ProtoCommon;
 import org.csource.fastdfs.TrackerClient;
 import org.csource.fastdfs.TrackerServer;
 
-import com.fcc.commons.utils.ClassUtil;
-
 /**
- * 
+ * FastDFS TrackerServer 获取
  * @version 
  * @author 傅泉明
  */
@@ -36,10 +33,9 @@ public class ConnectionFactory extends BasePooledObjectFactory<TrackerServer> {
     
     static {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(ClassUtil.getClassRootPath()).append("fdfs").append(File.separatorChar)
-            .append("fdfs_client.conf");
-            ClientGlobal.init(sb.toString());
+//            StringBuilder sb = new StringBuilder();
+//            sb.append(ClassUtil.getClassRootPath()).append("/fdfs/fdfs_client.conf");
+            ClientGlobal.init("fdfs/fdfs_client.conf");
             trackerClient = new TrackerClient(ClientGlobal.g_tracker_group);
         } catch (Exception e) {
             e.printStackTrace();
