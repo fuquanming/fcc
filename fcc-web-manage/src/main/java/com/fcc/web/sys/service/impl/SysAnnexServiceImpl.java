@@ -198,7 +198,7 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     }
 //                    sysAnnex.setFileUrl(urlPath + fileRealName);
                     if (fileUrl != null) {
-                        sysAnnex.setFileName(fileUrl.substring(fileUrl.lastIndexOf("/") + 1).toLowerCase());
+                        sysAnnex.setFileName(fileUrl.substring(fileUrl.lastIndexOf("/") + 1));
                         sysAnnex.setFileUrl(fileUrl);
                         sysAnnex.setCreateTime(now);
                         sysAnnex.setCreateUser(userId);
