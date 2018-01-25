@@ -15,6 +15,10 @@
   	<input name="ids" type="hidden" value=""/>
     <table class="tableForm">
 		<tr>	
+		    <th>关联ID</th> 
+            <td colspan="2">
+                <input id="linkId" name="linkId" maxlength="32"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入关联ID...'"/>
+            </td>
 			<th>关联类型</th>	
 			<td colspan="2">
 				<input id="linkType" name="linkType" maxlength="32"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入关联类型...'"/>
@@ -23,6 +27,10 @@
 			<td colspan="2">
 				<input id="annexName" name="annexName" maxlength="50"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入附件名称...'"/>
 			</td>
+			<th>附件类型</th>    
+            <td colspan="2">
+                <input id="annexType" name="annexType" maxlength="50"  style="width: 120px;" class="easyui-textbox" data-options="prompt:'请输入附件类型...'"/>
+            </td>
 		</tr>	
 		<tr>
 	        <td colspan="3" align="left">
@@ -72,16 +80,16 @@ datagridParam_column_value = [ [
             /* width : 80 */
         } ,
         {
+            field : 'annexType',
+            title : '附件类型',
+            sortable:true,
+            width : 50
+        } ,
+        {
             field : 'fileName',
             title : '文件名称',
             sortable:true,
             /* width : 100 */
-        } ,
-        {
-            field : 'fileType',
-            title : '文件类型',
-            sortable:true,
-            width : 50
         } ,
         {
             field : 'fileUrl',
@@ -101,22 +109,21 @@ datagridParam_column_value = [ [
         {
             field : 'remark',
             title : '文件备注',
-            sortable:true,
-            /* width : 100, */
-            /*formatter : function(value, rowData, rowIndex) {
-            	return '<a href="<tool:fileUrl />' + rowData.fileUrl + '" target="_blank" >' + rowData.annexName + '</a>';
-            }*/
+            sortable:true
         }
 ] ];// 表格的列
 datagridParam_queryParamName = [
+	    'linkId',
         'linkType',
-        'annexName'
+        'annexName',
+        'annexType'
 ];
 
 operateParam_form = 'userForm';
 operateParam_operateDiv = 'operateDiv';
 operateParam_dataId = 'annexId';
 operateParam_dataName = 'linkId';
+operateParam_addUrl = 'manage/sys/sysAnnex/toAdd.do';
 operateParam_delUrl = 'manage/sys/sysAnnex/delete.do';
 
 </script>

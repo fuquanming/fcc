@@ -52,6 +52,10 @@ public class ConfigUtil {
     public static String getFileUploadPath() {
         return Resources.CONFIG.getString("file.upload.path");
     }
+    /** 临时文件访问的路径 */
+    public static String getTempFileAccessPath() {
+        return Resources.CONFIG.getString("temp.file.access.path");
+    }
     /** 文件访问的路径 */
     public static String getFileAccessPath() {
         return Resources.CONFIG.getString("file.access.path");

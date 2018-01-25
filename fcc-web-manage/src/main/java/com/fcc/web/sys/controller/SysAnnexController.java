@@ -67,6 +67,46 @@ public class SysAnnexController extends AppWebController {
         return "/manage/sys/sysAnnex/sysAnnex_list";
     }
     
+    /** 跳转到新增页面 */
+    @ApiOperation(value = "显示SysAnnex新增页面")
+    @RequestMapping(value = "/toAdd.do", method = RequestMethod.GET)
+    @Permissions("add")
+    public String toAdd(HttpServletRequest request, HttpServletResponse response) {
+        return "/manage/sys/sysAnnex/sysAnnex_add";
+    }
+    
+    /** 跳转到上传文件页面 */
+    @ApiOperation(value = "显示SysAnnex新增页面")
+    @RequestMapping(value = "/toAddFile.do", method = RequestMethod.GET)
+    @Permissions("add")
+    public String toFileAdd(HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("linkType", request.getParameter("linkType"));
+        request.setAttribute("annexType", request.getParameter("annexType"));
+        return "/manage/sys/sysAnnex/sysAnnex_add_file";
+    }
+    
+    /** 新增 */
+    @ApiOperation(value = "新增SysAnnex")
+    @RequestMapping(value = "/add.do", method = RequestMethod.POST)
+    @Permissions("add")
+    public ModelAndView add(SysAnnex sysAnnex, HttpServletRequest request, HttpServletResponse response) {
+        Message message = new Message();
+        try {
+            String linkId = sysAnnex.getLinkId();
+            String linkType = sysAnnex.getLinkType();
+            String annexType = sysAnnex.getAnnexType();
+            addUploadFile(linkId, linkType, annexType, request);
+            message.setSuccess(true);
+            message.setMsg(StatusCode.Sys.success);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("保存SysAnnex失败！", e);
+            message.setMsg(StatusCode.Sys.fail);
+            message.setObj(e.getMessage());
+        }
+        return getModelAndView(message);
+    }
+    
     /** 上传附件 */
     @ApiOperation(value = "上传附件")
     @RequestMapping(value = "/upload.do", method = {RequestMethod.POST})
@@ -115,7 +155,7 @@ public class SysAnnexController extends AppWebController {
                 message.setMsg(StatusCode.Sys.success);
                 UploadFileItem item = new UploadFileItem();
                 item.setFileRealName(saveFilePath);
-                item.setUrl(new StringBuilder(ConfigUtil.getFileAccessPath()).append(Constants.uploadFileTempPath)
+                item.setUrl(new StringBuilder(ConfigUtil.getTempFileAccessPath()).append(Constants.uploadFileTempPath)
                         .append("/").append(saveFilePath).toString());
                 message.setObj(item);
             } else {
@@ -304,6 +344,10 @@ public class SysAnnexController extends AppWebController {
             String annexName = request.getParameter("annexName");
             if (StringUtils.isNotEmpty(annexName)) {
                 param.put("annexName", annexName);
+            }
+            String annexType = request.getParameter("annexType");
+            if (StringUtils.isNotEmpty(annexType)) {
+                param.put("annexType", annexType);
             }
             String fileName = request.getParameter("fileName");
             if (StringUtils.isNotEmpty(fileName)) {

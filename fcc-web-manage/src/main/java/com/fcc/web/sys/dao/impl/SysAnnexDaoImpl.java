@@ -47,6 +47,10 @@ public class SysAnnexDaoImpl implements SysAnnexDao {
                 bHql.append(" and  t.annexName = :annexName ");
                 cHql.append(" and  t.annexName = :annexName ");
             }
+            if(param.get("annexType") != null) {
+                bHql.append(" and  t.annexType = :annexType ");
+                cHql.append(" and  t.annexType = :annexType ");
+            }
             if(param.get("fileName") != null) {
                 bHql.append(" and  t.fileName = :fileName ");
                 cHql.append(" and  t.fileName = :fileName ");
@@ -119,6 +123,9 @@ public class SysAnnexDaoImpl implements SysAnnexDao {
             }
             if(param.get("annexName") != null) {
                 bHql.append(" and  t.annexName = :annexName ");
+            }
+            if(param.get("annexType") != null) {
+                bHql.append(" and  t.annexType = :annexType ");
             }
             if(param.get("annexType") != null) {
                 bHql.append(" and  t.annexType = :annexType ");
