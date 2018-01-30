@@ -1,16 +1,18 @@
 package com.fcc.commons.data.task;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
 
 import com.fcc.commons.data.ExportData;
 
@@ -78,28 +80,18 @@ public class ExportXmlTask extends BaseExportTask {
     @Override
     protected void saveFile(File file) {
         if (file.exists() == false) {// 写文件
-            FileWriter fileWriter = null;
-            XMLWriter xmlWriter = null;
+            Writer wr = null;
             try {
-                fileWriter = new FileWriter(file);
-                xmlWriter = new XMLWriter(fileWriter);
-                xmlWriter.write(document);
-                xmlWriter.flush();
+                wr = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+                wr.write(document.asXML());
+                wr.flush();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (xmlWriter != null) {
-                    try {
-                        xmlWriter.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                 IOUtils.closeQuietly(wr);
             }
             if (document != null) document.clearContent();
             document = null;
-            fileWriter = null;
-            xmlWriter = null;
         } else {// 追加文件
             if (dataList != null) {
                 int size = dataList.size();
