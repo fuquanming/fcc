@@ -18,17 +18,19 @@ public class RefusedException extends Exception {
 	/**
 	 * 异常代码
 	 */
-	private int code;
-
+	private String code;
+	
     public RefusedException() {
 		super("拒绝操作");
 	}
 	
 	public RefusedException(String message) {
 		super(message);
+		this.code = message;
+		this.msg = message;
 	}
 	
-	public RefusedException(int code, String msgFormat, Object... args) {
+	public RefusedException(String code, String msgFormat, Object... args) {
         super(String.format(msgFormat, args));
         this.code = code;
         this.msg = String.format(msgFormat, args);
@@ -38,7 +40,7 @@ public class RefusedException extends Exception {
         return msg;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
     

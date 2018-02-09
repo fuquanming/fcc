@@ -260,7 +260,7 @@ public class SysUserServiceImpl implements SysUserService {
 			    if (maxCount - count == 0) {
 			        throw new RefusedException(StatusCode.Login.emptyLoginCount);
 			    }
-			    throw new RefusedException(maxCount - count, StatusCode.Login.errorLoginCount);
+			    throw new RefusedException((maxCount - count) + "", StatusCode.Login.errorLoginCount);
 			}
 			sysUser.getUserTypeRoles().size();
 			sysUser.getRoles().size();
