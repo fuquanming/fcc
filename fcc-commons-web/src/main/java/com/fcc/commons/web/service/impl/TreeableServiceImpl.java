@@ -9,6 +9,7 @@
  */
 package com.fcc.commons.web.service.impl;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -170,12 +171,30 @@ public class TreeableServiceImpl implements TreeableService {
         node.setText(data.getNodeName());
         if (childFlag) node.setState(data.getChildSize() > 0 ? EasyuiTreeNode.STATE_CLOSED : EasyuiTreeNode.STATE_OPEN);
         Map<String, Object> attributes = new HashMap<String, Object>(6);
-        attributes.put("nodeLevel", data.getNodeLevel());
-        attributes.put("nodeSort", data.getNodeSort());
-        attributes.put("nodeCode", data.getNodeCode());
-        attributes.put("nodeStatus", data.getNodeStatus());
-        attributes.put("nodeDesc", data.getNodeDesc());
-        attributes.put("parentId", data.getParentId());
+//        attributes.put("nodeLevel", data.getNodeLevel());
+//        attributes.put("nodeSort", data.getNodeSort());
+//        attributes.put("nodeCode", data.getNodeCode());
+//        attributes.put("nodeStatus", data.getNodeStatus());
+//        attributes.put("nodeDesc", data.getNodeDesc());
+//        attributes.put("parentId", data.getParentId());
+        
+        Object[] param = null;
+        Method[] methods = data.getClass().getMethods();
+        for (Method method : methods) {
+            String methodName = method.getName();
+            if (methodName.indexOf("get") != -1) {
+                try {
+                    Object obj = method.invoke(data, param);
+                    String methodNameLower = methodName.toLowerCase();
+                    String firstLetter = methodNameLower.substring(3, 4);
+//                    System.out.println(method.getName() + "=" + obj + ":" + firstLetter + methodName.substring(4, methodName.length()));
+                    attributes.put(firstLetter + methodName.substring(4, methodName.length()), obj);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
         node.setAttributes(attributes);
         return node;
     }

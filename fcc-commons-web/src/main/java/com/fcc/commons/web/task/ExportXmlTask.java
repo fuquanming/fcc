@@ -1,8 +1,14 @@
 package com.fcc.commons.web.task;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -193,27 +199,37 @@ public class ExportXmlTask extends BaseExportTask {
 
     @Override
     protected void saveFile(File file) {
-        FileWriter fileWriter = null;
-        XMLWriter xmlWriter = null;
+//        FileWriter fileWriter = null;
+//        XMLWriter xmlWriter = null;
+//        try {
+//            fileWriter = new FileWriter(file);
+//            xmlWriter = new XMLWriter(fileWriter);
+//            xmlWriter.write(document);
+//            xmlWriter.flush();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (xmlWriter != null) {
+//                try {
+//                    xmlWriter.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//        fileWriter = null;
+//        xmlWriter = null;
+        Writer wr = null;
         try {
-            fileWriter = new FileWriter(file);
-            xmlWriter = new XMLWriter(fileWriter);
-            xmlWriter.write(document);
-            xmlWriter.flush();
+            wr = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+            wr.write(document.asXML());
+            wr.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (xmlWriter != null) {
-                try {
-                    xmlWriter.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+             IOUtils.closeQuietly(wr);
         }
         document = null;
-        fileWriter = null;
-        xmlWriter = null;
     }
     
 	public ExportXmlService getExportXmlService() {
