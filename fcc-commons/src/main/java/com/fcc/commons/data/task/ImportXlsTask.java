@@ -30,9 +30,9 @@ import com.fcc.commons.data.view.ImportDataMessage;
  * @author 傅泉明
  * @version v1.0
  */
-public class ImportXslTask implements Runnable {
+public class ImportXlsTask implements Runnable {
 	
-	private Logger logger = Logger.getLogger(ImportXslTask.class);
+	private Logger logger = Logger.getLogger(ImportXlsTask.class);
 	
 	private ImportDataMessage importMessage;
 	
@@ -63,14 +63,14 @@ public class ImportXslTask implements Runnable {
 	
 	private ReentrantLock lock = new ReentrantLock();
 	
-	private List<BatchTask> batchTaskList = new ArrayList<ImportXslTask.BatchTask>(batchTaskSize);
+	private List<BatchTask> batchTaskList = new ArrayList<ImportXlsTask.BatchTask>(batchTaskSize);
 	
 	private ThreadPoolExecutor pool;
 	
-    public ImportXslTask() {
+    public ImportXlsTask() {
 	}
 	
-	public ImportXslTask(String runningKey, String importDataPath, ImportFileInfo file, ImportData importData, int beginRowNum, ThreadPoolExecutor pool) {
+	public ImportXlsTask(String runningKey, String importDataPath, ImportFileInfo file, ImportData importData, int beginRowNum, ThreadPoolExecutor pool) {
         super();
         this.runningKey = runningKey;
         this.importDataPath = importDataPath;
@@ -80,7 +80,7 @@ public class ImportXslTask implements Runnable {
         this.pool = pool;
     }
 	
-	public ImportXslTask(String runningKey, String importDataPath, String fileName, InputStream fileInputStream, ImportData importData, int beginRowNum, ThreadPoolExecutor pool) {
+	public ImportXlsTask(String runningKey, String importDataPath, String fileName, InputStream fileInputStream, ImportData importData, int beginRowNum, ThreadPoolExecutor pool) {
         super();
         this.runningKey = runningKey;
         this.importDataPath = importDataPath;
@@ -305,14 +305,14 @@ public class ImportXslTask implements Runnable {
 	public String getRunningKey() {
 		return runningKey;
 	}
-	public ImportXslTask setRunningKey(String runningKey) {
+	public ImportXlsTask setRunningKey(String runningKey) {
 		this.runningKey = runningKey;
 		return this;
 	}
 	public String getImportDataPath() {
 		return importDataPath;
 	}
-	public ImportXslTask setImportDataPath(String importDataPath) {
+	public ImportXlsTask setImportDataPath(String importDataPath) {
 		this.importDataPath = importDataPath;
 		return this;
 	}
@@ -325,7 +325,7 @@ public class ImportXslTask implements Runnable {
 	public String getFileName() {
 		return fileName;
 	}
-	public ImportXslTask setFileName(String fileName) {
+	public ImportXlsTask setFileName(String fileName) {
 		this.fileName = fileName;
 		return this;
 	}
@@ -338,14 +338,14 @@ public class ImportXslTask implements Runnable {
 	public InputStream getFileInputStream() {
 		return fileInputStream;
 	}
-	public ImportXslTask setFileInputStream(InputStream fileInputStream) {
+	public ImportXlsTask setFileInputStream(InputStream fileInputStream) {
 		this.fileInputStream = fileInputStream;
 		return this;
 	}
 	public ImportData getImportData() {
 		return importData;
 	}
-	public ImportXslTask setImportData(ImportData importData) {
+	public ImportXlsTask setImportData(ImportData importData) {
 		this.importData = importData;
 		return this;
 	}
