@@ -19,6 +19,7 @@ var importDialog;
 var importDataFlag = false;
 var fileuploadTable;
 var fileupload_data;
+var fileParamMap = {};
 $(function() {
 	fileuploadTable = $('#fileuploadTable');
 	if (importParam_importFileType) {
@@ -56,6 +57,9 @@ $(function() {
                 queryImportDataSize();
         	}
         }
+	}).bind('fileuploadsubmit', function (e, data) {
+        //data.formData = { userId: '123' };  //如果需要额外添加参数可以在这里添加
+        data.formData = fileParamMap;
     });
 	
 	// 上传文件
