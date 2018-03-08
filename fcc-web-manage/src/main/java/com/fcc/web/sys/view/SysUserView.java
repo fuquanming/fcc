@@ -14,7 +14,8 @@ public class SysUserView {
 	private String email;//
 	private String mobile;//
 	private String userStatus;
-	private Date createTime;//注册时间
+	private String userType;
+    private Date createTime;//注册时间
 	
 	private String createUser;
     private String roleIds;
@@ -68,6 +69,12 @@ public class SysUserView {
 	public void setUserStatus(String userStatus) {
 		this.userStatus = userStatus;
 	}
+	public String getUserType() {
+        return userType;
+    }
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
 	public String getCreateUser() {
         return createUser;
     }

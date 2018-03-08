@@ -379,7 +379,7 @@ public class SysUserController extends AppWebController {
             param.put("dept", organId);
             param.put("userName", userName);
             // 默认查询系统用户
-            param.put("userType", SysUser.userTypeKey);
+//            param.put("userType", SysUser.userTypeKey);
             if (isGroup()) {
                 if (getSysUser().isAdmin()) {
                     param.put("createUser", (createUser == null || "".equals(createUser)) ? null : createUser);

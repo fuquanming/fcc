@@ -1,17 +1,19 @@
 package com.fcc.web.sys.model;
 
-import java.io.File;
-
-import javax.persistence.*;
-
-import org.hibernate.annotations.GenericGenerator;
-
-import com.fcc.web.sys.config.ConfigUtil;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.GenericGenerator;
+
+import com.fcc.web.sys.config.ConfigUtil;
 
 /**
  * <p>Description:SysAnnex</p>
@@ -270,7 +272,8 @@ public class SysAnnex implements java.io.Serializable{
     public String getFilePath() {
         if (this.filePath == null) {
             StringBuilder sb = new StringBuilder();
-            sb.append(ConfigUtil.getFileUploadPath()).append(this.fileUrl).append(File.separatorChar).append(this.fileName);
+//            sb.append(ConfigUtil.getFileUploadPath()).append(this.fileUrl).append(File.separatorChar).append(this.fileName);
+            sb.append(ConfigUtil.getFileUploadPath()).append(this.fileUrl);
             this.filePath = sb.toString();
         }
         return this.filePath;

@@ -183,7 +183,7 @@ public class SysAnnexServiceImpl implements SysAnnexService, ExportService, Impo
                     sysAnnex.setLinkType(linkType);
                     sysAnnex.setAnnexType(annexType);
                     sysAnnex.setAnnexName(fileName);
-//                    sysAnnex.setFileName(fileRealName);
+                    sysAnnex.setFileName(fileRealName);
                     sysAnnex.setFileType(fileRealName.substring(fileRealName.lastIndexOf(".") + 1).toLowerCase());
                     sysAnnex.setFileSize(file.length());
                     // 选择文件上传的方式

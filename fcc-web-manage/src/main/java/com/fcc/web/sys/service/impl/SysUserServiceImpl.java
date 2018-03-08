@@ -269,6 +269,25 @@ public class SysUserServiceImpl implements SysUserService {
 		return sysUser;
 	}
 	
+	@Override
+	@Transactional(readOnly = true)
+	public SysUser getLoginUser(String userId) throws RefusedException {
+	    SysUser sysUser = (SysUser) baseService.get(SysUser.class, userId);
+        if (sysUser == null) {
+            throw new RefusedException(StatusCode.Login.errorUserName);
+        } else {
+            // 用户状态
+            String userStatus = sysUser.getUserStatus();
+            if (UserStatus.locked.name().equals(userStatus)) {
+                throw new RefusedException(StatusCode.Login.lockUserName);
+            }
+            sysUser.getUserTypeRoles().size();
+            sysUser.getRoles().size();
+            sysUser.getRoles().addAll(sysUser.getUserTypeRoles());
+        }
+        return sysUser;
+	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public boolean checkPassword(SysUser sysUser, String password) {

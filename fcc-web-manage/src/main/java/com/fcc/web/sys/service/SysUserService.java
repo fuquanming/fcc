@@ -40,6 +40,15 @@ public interface SysUserService {
      * @throws RefusedException     错误信息，登录次数限制等
      */
     SysUser getLoginUser(String userId, String password) throws RefusedException;
+    
+    /**
+     * 系统登录
+     * @param userId
+     * @param password
+     * @return
+     * @throws RefusedException     错误信息
+     */
+    SysUser getLoginUser(String userId) throws RefusedException;
     /**
      * 检查密码是否一致
      * @param sysUser   比较的用户

@@ -5,6 +5,22 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dataformater_tag.tld" prefix="format" %>
 --%>
+<%
+String casUrl = (String) request.getServletContext().getAttribute("CAS_URL");
+if (casUrl != null && !casUrl.equals("")) {
+    // 是否server登录
+    String login = request.getParameter("login");
+    if (!"normal".equals(login)) {
+        // 使用cas登录
+        String path_ = request.getContextPath();
+        String sPort_ = (request.getServerPort() == 80)?"":(":" + request.getServerPort());
+        String base_ = request.getScheme()+"://"+request.getServerName()+sPort_;
+        //String base = request.getScheme()+"://"+request.getServerName();
+        String basePath_ = base_ + path_ + "/";
+        response.sendRedirect(casUrl + "/login?service=" + basePath_ + "cas/login.do");
+    }
+}
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>

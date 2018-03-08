@@ -66,6 +66,18 @@
         </dependency>
         
         <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-commons-fastdfs</artifactId>
+            <version>${fcc-commons-fastdfs.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fcc.commons</groupId>
+            <artifactId>fcc-web-cas</artifactId>
+            <version>${fcc-web-cas.version}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
