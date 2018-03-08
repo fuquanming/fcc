@@ -116,3 +116,8 @@ function logout(b) {
     });
 }
     
+8、使用InstallCert.java 将证书添加为JDK信任
+    1、编译：javac InstallCert.java
+    2、运行：java InstallCert localhost:8443，当提示Enter certificate to add to trusted keystore or 'q' to quit: [1]时，输入1，回车
+    3、再次运行java InstallCert localhost:8443，提示如下即无误。
+    4、复制InstallCert.java目录下的jssecacerts文件至你的%JAVA_HOME%/jre/lib/security目录下即可
