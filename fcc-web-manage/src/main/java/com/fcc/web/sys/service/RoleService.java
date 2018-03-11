@@ -67,4 +67,10 @@ public interface RoleService {
      */
     ListPage queryPage(int pageNo, int pageSize, Map<String, Object> param);
 
+    /**
+     * 新增角色或返回同权限的角色
+     * @param moduleRightMap moduleId, operateId
+     * @return
+     */
+    String getRoleId(Map<String, List<String>> moduleRightMap);
 }

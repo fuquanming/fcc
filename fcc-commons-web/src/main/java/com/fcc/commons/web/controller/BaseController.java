@@ -35,6 +35,10 @@ public abstract class BaseController {
     @Resource
     ConfigService configService;
     
+    public String getCasUrl(HttpServletRequest request) {
+        return (String) request.getServletContext().getAttribute("CAS_URL");
+    }
+    
     public void execute(Runnable runnable) {
         configService.getThreadPool().execute(runnable);
     }

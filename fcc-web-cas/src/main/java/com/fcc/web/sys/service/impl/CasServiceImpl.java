@@ -10,6 +10,7 @@
 package com.fcc.web.sys.service.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 
 import javax.annotation.Resource;
 
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import com.fcc.commons.core.service.BaseService;
 import com.fcc.commons.execption.RefusedException;
+import com.fcc.commons.web.service.ConfigService;
 import com.fcc.web.sys.enums.UserStatus;
+import com.fcc.web.sys.model.Role;
 import com.fcc.web.sys.model.SysUser;
 import com.fcc.web.sys.service.CasService;
 import com.fcc.web.sys.service.SysUserService;
@@ -35,6 +38,8 @@ public class CasServiceImpl implements CasService {
 
     private Logger logger = Logger.getLogger(CasServiceImpl.class);
     
+    @Resource
+    private ConfigService configService;
     @Resource
     private SysUserService sysUserService;
     @Resource
@@ -56,11 +61,15 @@ public class CasServiceImpl implements CasService {
             user.setRegDate(new Date());
             user.setCreateTime(user.getRegDate());
             user.setCreateUser(CasUser.userTypeKey);
-            sysUserService.add(user, null);
-            logger.info("create cas user=" + loginName);
+            try {
+                sysUserService.add(user, null);
+                user.setRoles(new HashSet<Role>());
+                user.setUserTypeRoles(user.getRoles());
+                logger.info("create cas user=" + loginName);
+            } catch (Exception e) {
+            }
         }
         user = sysUserService.getLoginUser(loginName);
         return user;
     }
-    
 }
