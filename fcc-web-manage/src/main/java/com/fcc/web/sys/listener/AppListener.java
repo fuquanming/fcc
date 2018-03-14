@@ -67,7 +67,7 @@ public class AppListener implements ServletContextListener, HttpSessionListener 
 	public void sessionDestroyed(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
 		SysUser user = (SysUser) session.getAttribute(Constants.SysUserSession.loginUser);
-		if (user != null && StringUtils.isNotEmpty(user.getUserId())) {
+		if (user != null && StringUtils.isNotEmpty(user.getUserId()) && StringUtils.isNotEmpty(user.getPassword())) {
 			try {
 				SysLog sysLog = new SysLog();
 				sysLog.setIpAddress(user.getIp());

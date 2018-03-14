@@ -208,6 +208,10 @@
         <description>cas监听器</description>
         <listener-class>com.fcc.commons.web.listener.CasListener</listener-class>
     </listener>
+    <listener>
+        <description>memory监听器</description>
+        <listener-class>com.fcc.commons.web.listener.MemoryListener</listener-class>
+    </listener>
     
     <servlet>
         <description>spring mvc servlet</description>
