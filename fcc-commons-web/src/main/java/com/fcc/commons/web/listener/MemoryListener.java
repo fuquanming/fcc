@@ -23,9 +23,19 @@ public class MemoryListener implements ServletContextListener {
 
     private Logger logger = Logger.getLogger(MemoryListener.class);
     private Timer memoryTime = null;
-    private float scale = Float.valueOf(Resources.CONFIG.getString("memory.scale"));
-	
+    private float scale = 0.1f;
+    private int cycle = 600000;
+    
 	public void contextInitialized(ServletContextEvent event) {
+	    try {
+            scale = Float.valueOf(Resources.CONFIG.getString("memory.scale"));
+        } catch (Exception e) {
+        }
+	    try {
+            cycle = Integer.valueOf(Resources.CONFIG.getString("memory.cycle")) * 60000;
+        } catch (Exception e) {
+        }
+	    
         memoryTime = new Timer(true);
         memoryTime.schedule(new TimerTask() {
             private boolean running;
@@ -44,7 +54,8 @@ public class MemoryListener implements ServletContextListener {
                     running = false;
                 }
             }
-        }, 10000, 600000);// 10秒后，每10分钟检查
+        }, 10000, cycle);// 10秒后，每10分钟检查
+        logger.info("memory check:cycle=" + cycle + ",scale=" + scale);
 	}
 	
 	public void contextDestroyed(ServletContextEvent event) {

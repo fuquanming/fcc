@@ -29,72 +29,87 @@ import com.fcc.web.sys.service.CacheService;
  * @version v1.0
  */
 public class LogInterceptor implements HandlerInterceptor {
-	private Logger logger = Logger.getLogger(LogInterceptor.class);
-	@Resource
-	private RequestIpService requestIpService;
-	@Resource
-	private CacheService cacheService;
-	
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
-	}
+    private Logger logger = Logger.getLogger(LogInterceptor.class);
+    @Resource
+    private RequestIpService requestIpService;
+    @Resource
+    private CacheService cacheService;
+    
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) throws Exception {
+    }
 
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
-		if (modelAndView == null) return;
-		String messageKey = "message";
-		Message message = (Message) modelAndView.getModelMap().get(messageKey);
-		if (message == null) return;
-		String status = message.isSuccess() ? SysLog.EVENT_RESULT_OK : SysLog.EVENT_RESULT_FAIL;
-		Object obj = message.getObj();
-		Module module = (Module) request.getAttribute(Constants.Request.module);
-		Operate operate = (Operate) request.getAttribute(Constants.Request.operate);
-		try {
-			SysUser user = cacheService.getSysUser(request);
-			SysLog sysLog = new SysLog();
-			sysLog.setModuleName(module != null ? module.getModuleId() : message.getModule());
-			sysLog.setOperateName(operate != null ? operate.getOperateId() : message.getOperate());
-			boolean isLogin = false;
-			if (Constants.Module.requestApp.equals(sysLog.getModuleName()) &&
-			        Constants.Operate.login.equals(sysLog.getOperateName())) {
-				// 访问系统，登录
-				isLogin = true;
-			}
-			// 主动退出系统不记录，session回话记录
-			if (Constants.Module.requestApp.equals(sysLog.getModuleName()) &&
-                    Constants.Operate.logout.equals(sysLog.getOperateName())) {
-			    return;
-			}
-			if (user != null) {
-				sysLog.setIpAddress(user.getIp());
-				sysLog.setUserId(user.getUserId());
-				sysLog.setUserName(user.getUserName());
-			} else {
-				sysLog.setIpAddress(requestIpService.getRequestIp(request));
-			}
-			sysLog.setEventObject(obj != null ? obj.toString() : null);
-			
-			StringBuilder sb = new StringBuilder();
-			Enumeration<String> it = request.getParameterNames();
-			while (it.hasMoreElements()) {
-				String key = it.nextElement();
-				String value = request.getParameter(key);
-				if (isLogin && "password".equals(key)) {
-					value = "***";
-				}
-				sb.append(key).append("=").append(value).append("\r\n");
-			}
-			String sbStr = sb.toString();
-			if (sbStr.length() > 2000) sbStr = sbStr.substring(0, 1996) + "...";
-			sysLog.setEventParam(sbStr);
-			sysLog.setEventResult(status);
-			sysLog.setLogTime(new Date());
-			QueueUtil.getCreateQueue().offer(sysLog);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
-		}
-	}
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView modelAndView) throws Exception {
+        if (modelAndView == null) return;
+        String messageKey = "message";
+        Message message = (Message) modelAndView.getModelMap().get(messageKey);
+        if (message == null) return;
+        Module module = (Module) request.getAttribute(Constants.Request.module);
+        Operate operate = (Operate) request.getAttribute(Constants.Request.operate);
+        String moduleName = null;
+        String operateName = null;
+        try {
+            moduleName = module != null ? module.getModuleId() : message.getModule();
+            operateName = operate != null ? operate.getOperateId() : message.getOperate();
+            boolean isLogin = false;
+            // 主动退出系统不记录，session回话记录
+            if (Constants.Module.requestApp.equals(moduleName) &&
+                    Constants.Operate.logout.equals(operateName)) {
+                return;
+            }
+            String status = message.isSuccess() ? SysLog.EVENT_RESULT_OK : SysLog.EVENT_RESULT_FAIL;
+            if (Constants.Module.requestApp.equals(moduleName) &&
+                    Constants.Operate.login.equals(operateName)) {
+                // 访问系统，登录
+                isLogin = true;
+            }
+            SysUser user = cacheService.getSysUser(request);
+            SysLog sysLog = new SysLog();
+            sysLog.setModuleName(moduleName);
+            sysLog.setOperateName(operateName);
+            if (user != null) {
+                sysLog.setIpAddress(user.getIp());
+                sysLog.setUserId(user.getUserId());
+                sysLog.setUserName(user.getUserName());
+            } else {
+                sysLog.setIpAddress(requestIpService.getRequestIp(request));
+            }
+            Object obj = message.getObj();
+            if (obj != null) {
+                String str = obj.toString();
+                if (str.length() > 2000) str = str.substring(0, 1996) + "...";
+                sysLog.setEventObject(str);
+            }
+            
+            StringBuilder sb = new StringBuilder();
+            Enumeration<String> it = request.getParameterNames();
+            while (it.hasMoreElements()) {
+                String key = it.nextElement();
+                String value = request.getParameter(key);
+                if (isLogin && "password".equals(key)) {
+                    value = "***";
+                }
+                String[] values = request.getParameterValues(key);
+                if (values.length == 1) {
+                    sb.append(key).append("=").append(value).append("\r\n");
+                } else {
+                    for (String v : values) {
+                        sb.append(key).append("=").append(v).append("\r\n");
+                    }
+                }
+            }
+            String sbStr = sb.toString();
+            if (sbStr.length() > 2000) sbStr = sbStr.substring(0, 1996) + "...";
+            sysLog.setEventParam(sbStr);
+            sysLog.setEventResult(status);
+            sysLog.setLogTime(new Date());
+            QueueUtil.getCreateQueue().offer(sysLog);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e);
+        }
+    }
 
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-		return true;
-	}
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
+        return true;
+    }
 }
