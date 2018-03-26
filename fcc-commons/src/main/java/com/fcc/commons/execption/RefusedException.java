@@ -7,10 +7,8 @@ package com.fcc.commons.execption;
  * Jul 21, 2009
  */
 public class RefusedException extends Exception {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
 	/**
 	 * 异常信息
 	 */
@@ -29,6 +27,12 @@ public class RefusedException extends Exception {
 		this.code = message;
 		this.msg = message;
 	}
+	
+	public RefusedException(String code, String msgFormat) {
+        super(msgFormat);
+        this.code = code;
+        this.msg = msgFormat;
+    }
 	
 	public RefusedException(String code, String msgFormat, Object... args) {
         super(String.format(msgFormat, args));
