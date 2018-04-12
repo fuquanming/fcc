@@ -123,8 +123,13 @@ public abstract class BaseExportTask implements Runnable {
             .append(fileFlag).append(".").append(fileExt).toString();
             
             for (int i = 0; i < flag; i++) {
-                Object returnObj = method.invoke(queryService, queryParams);
-                list = (List<Object>) returnObj;
+                try {
+                    Object returnObj = method.invoke(queryService, queryParams);
+                    list = (List<Object>) returnObj;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    list = null;
+                }
                 pageNo++;
                 queryParams[pageNoSub] = pageNo;
                 int dataSize = (list == null) ? 0 : list.size();
