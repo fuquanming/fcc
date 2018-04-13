@@ -7,7 +7,6 @@ package com.fcc.commons.execption;
  * Jul 21, 2009
  */
 public class RefusedException extends Exception {
-
     private static final long serialVersionUID = 1L;
 	/**
 	 * 异常信息

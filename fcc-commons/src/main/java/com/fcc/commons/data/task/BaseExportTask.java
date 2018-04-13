@@ -43,6 +43,8 @@ public abstract class BaseExportTask implements Runnable {
     protected String queryServiceMethodName;
     /** 每次查询后返回的数据总数 */
     protected int queryDataSize;
+    /** 每次查询后重试次数，默认：3 */
+    protected int queryDataRetryCount = 3;
     /** 页码在参数的下标位置 */
     protected int pageNoSub;
     /** 查询参数 */
@@ -121,14 +123,18 @@ public abstract class BaseExportTask implements Runnable {
             int flag = dataQueryCycle;// 轮询10次,一个xml总数1000数据量
             String saveFile = new StringBuilder().append(exportDataPath).append(fileNo)
             .append(fileFlag).append(".").append(fileExt).toString();
-            
+
             for (int i = 0; i < flag; i++) {
-                try {
-                    Object returnObj = method.invoke(queryService, queryParams);
-                    list = (List<Object>) returnObj;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    list = null;
+                int retryCount = queryDataRetryCount;// 重试次数
+                for (int j = 0; j < retryCount; j++) {
+                    try {
+                        Object returnObj = method.invoke(queryService, queryParams);
+                        list = (List<Object>) returnObj;
+                        break;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        list = null;
+                    }
                 }
                 pageNo++;
                 queryParams[pageNoSub] = pageNo;
@@ -238,6 +244,14 @@ public abstract class BaseExportTask implements Runnable {
 
     public void setPageNoSub(int pageNoSub) {
         this.pageNoSub = pageNoSub;
+    }
+    
+    public int getQueryDataRetryCount() {
+        return queryDataRetryCount;
+    }
+
+    public void setQueryDataRetryCount(int queryDataRetryCount) {
+        this.queryDataRetryCount = queryDataRetryCount;
     }
 
     public Object[] getQueryParams() {
